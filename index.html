@@ -3,68 +3,139 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Khoa Học D10 - Xin Chào</title>
-  <!-- Nhúng Tailwind CSS để có giao diện đẹp ngay lập tức -->
+  <title>Khoa Học D10 - Lời Nhắn</title>
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-900 text-white min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-900 text-white min-h-screen p-4 md:p-8 flex flex-col items-center">
 
-  <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700 max-w-md w-full text-center space-y-6">
-    <div class="inline-block p-4 bg-indigo-500/10 rounded-full text-indigo-400 text-4xl">
-      👋
+  <div class="max-w-xl w-full space-y-6">
+    <!-- Header -->
+    <div class="text-center space-y-2">
+      <h1 class="text-3xl font-bold text-indigo-400">Khoa Học D10</h1>
+      <p class="text-slate-400 text-sm">Gửi lời nhắn lưu trực tiếp vào cơ sở dữ liệu Supabase</p>
     </div>
-    
-    <h1 class="text-3xl font-bold tracking-tight">
-      Chào Mừng Đến Với <br />
-      <span class="text-indigo-400">Khoa Học D10</span>
-    </h1>
-    
-    <p class="text-slate-400 text-sm">
-      Hệ thống đã triển khai thành công trên Cloudflare Pages!
-    </p>
 
-    <!-- Ô nhập tên để chào tương tác -->
-    <div class="space-y-3">
-      <input 
-        id="nameInput" 
-        type="text" 
-        placeholder="Nhập tên của bạn..." 
-        class="w-full px-4 py-3 rounded-lg bg-slate-700/60 border border-slate-600 focus:outline-none focus:border-indigo-400 text-white placeholder-slate-400 transition"
-      />
+    <!-- Form gửi tin nhắn -->
+    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1">Tên của bạn</label>
+        <input 
+          id="nameInput" 
+          type="text" 
+          placeholder="Ví dụ: Hoàng Mạnh" 
+          class="w-full px-4 py-2.5 rounded-lg bg-slate-700 border border-slate-600 focus:outline-none focus:border-indigo-400 text-white"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1">Lời nhắn / Ý kiến</label>
+        <textarea 
+          id="contentInput" 
+          rows="3" 
+          placeholder="Nhập nội dung bạn muốn gửi..." 
+          class="w-full px-4 py-2.5 rounded-lg bg-slate-700 border border-slate-600 focus:outline-none focus:border-indigo-400 text-white"
+        ></textarea>
+      </div>
+
       <button 
-        onclick="sayHello()" 
-        class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-lg shadow-md transition transform active:scale-95"
+        onclick="sendMessage()" 
+        id="btnSend"
+        class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-lg transition active:scale-95 shadow"
       >
-        Gửi lời chào
+        Gửi lên Supabase
       </button>
     </div>
 
-    <!-- Nơi hiển thị kết quả chào -->
-    <div id="greetingMessage" class="hidden p-4 rounded-lg bg-indigo-950/60 border border-indigo-500/30 text-indigo-200 text-base font-medium"></div>
+    <!-- Danh sách lời nhắn đã lưu -->
+    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+        <h2 class="text-lg font-semibold text-slate-200">Danh sách lời nhắn gần đây</h2>
+        <button onclick="loadMessages()" class="text-xs text-indigo-400 hover:text-indigo-300">Làm mới ↻</button>
+      </div>
+      <div id="messagesList" class="space-y-3">
+        <p class="text-slate-500 text-sm">Đang tải dữ liệu từ Supabase...</p>
+      </div>
+    </div>
   </div>
 
   <script>
-    function sayHello() {
-      const input = document.getElementById('nameInput');
-      const messageDiv = document.getElementById('greetingMessage');
-      const name = input.value.trim();
+    // THÔNG TIN KẾT NỐI SUPABASE
+    const SUPABASE_URL = "https://oywcbdkwnaxwpnwqmnxq.supabase.co";
+    // Dán toàn bộ mã Publishable Key (sb_publishable_...) bạn vừa copy vào giữa hai dấu ngoặc kép bên dưới:
+    const SUPABASE_KEY = "DÁN_KEY_PUBLISHABLE_CỦA_BẠN_VÀO_ĐÂY";
 
-      if (name) {
-        messageDiv.innerHTML = `🎉 Xin chào <b>${name}</b>! Chúc bạn một ngày học tập và làm việc thật hiệu quả!`;
-      } else {
-        messageDiv.innerHTML = `👋 Xin chào bạn! Rất vui được gặp bạn tại Khoa Học D10.`;
+    // Khởi tạo client
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // TÊN BẢNG (Nếu bạn đặt là "massages" thì giữ nguyên, nếu đặt là "messages" thì sửa lại)
+    const TABLE_NAME = "massages"; 
+
+    // Hàm lấy danh sách từ Supabase
+    async function loadMessages() {
+      const listContainer = document.getElementById('messagesList');
+      const { data, error } = await client
+        .from(TABLE_NAME)
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        listContainer.innerHTML = `<p class="text-red-400 text-sm">Lỗi kết nối: ${error.message}</p>`;
+        return;
       }
-      
-      messageDiv.classList.remove('hidden');
+
+      if (!data || data.length === 0) {
+        listContainer.innerHTML = `<p class="text-slate-500 text-sm">Chưa có lời nhắn nào.</p>`;
+        return;
+      }
+
+      listContainer.innerHTML = data.map(msg => `
+        <div class="p-3 bg-slate-700/50 rounded-lg border border-slate-600/50">
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-semibold text-indigo-300">${msg.name || 'Ẩn danh'}</span>
+            <span class="text-xs text-slate-400">${new Date(msg.created_at).toLocaleTimeString('vi-VN')}</span>
+          </div>
+          <p class="text-slate-200 text-sm">${msg.content}</p>
+        </div>
+      `).join('');
     }
 
-    // Nhấn phím Enter để gửi luôn
-    document.getElementById('nameInput').addEventListener('keyup', function(event) {
-      if (event.key === 'Enter') {
-        sayHello();
-      }
-    });
-  </script>
+    // Hàm gửi tin nhắn mới
+    async function sendMessage() {
+      const nameInput = document.getElementById('nameInput');
+      const contentInput = document.getElementById('contentInput');
+      const btnSend = document.getElementById('btnSend');
 
+      const name = nameInput.value.trim();
+      const content = contentInput.value.trim();
+
+      if (!content) {
+        alert("Vui lòng nhập nội dung lời nhắn!");
+        return;
+      }
+
+      btnSend.disabled = true;
+      btnSend.innerText = "Đang gửi...";
+
+      const { error } = await client.from(TABLE_NAME).insert([
+        { name: name || "Ẩn danh", content: content }
+      ]);
+
+      btnSend.disabled = false;
+      btnSend.innerText = "Gửi lên Supabase";
+
+      if (error) {
+        alert("Lỗi khi gửi: " + error.message);
+      } else {
+        contentInput.value = "";
+        loadMessages();
+      }
+    }
+
+    // Tự động load dữ liệu khi vào trang
+    loadMessages();
+  </script>
 </body>
 </html>
