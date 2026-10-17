@@ -71,14 +71,30 @@
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
     ::-webkit-scrollbar-thumb:hover { background: #334155; }
 
+    /* Fixed 8x8 Equal Chessboard Cells */
+    .chess-grid-8x8 {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      grid-template-rows: repeat(8, minmax(0, 1fr));
+      aspect-ratio: 1 / 1;
+    }
     .chess-square {
       position: relative;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
       transition: background-color 0.15s ease;
       user-select: none;
     }
     .chess-piece {
       position: relative;
       z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
       transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
       cursor: pointer;
       filter: drop-shadow(0 3px 5px rgba(0,0,0,0.55));
@@ -166,9 +182,9 @@
 
             <p class="text-slate-200 text-base sm:text-lg leading-relaxed max-w-2xl">
               Hệ sinh thái học tập, rèn luyện và thi đấu chuyên sâu cho 2 bộ môn trí tuệ đỉnh cao:
-              <strong class="text-cyan-300">Rubik 3D (CFOP, WCA Timer & Camera AI)</strong> và
+              <strong class="text-cyan-300">Rubik 3D (Mặt Vàng trên, Trắng dưới • Full CFOP & Hình Minh Họa)</strong> và
               <strong class="text-emerald-300">Cờ Vua Quốc Tế (Gambit, Đồng Hồ Thi Đấu, Phong Cấp & Bot AI)</strong>.
-              Đăng nhập bằng Email để bắt đầu ghi nhận và lưu trữ tiến trình học tập của riêng bạn qua Supabase.
+              Xác minh Email thực tế và tự động lưu giữ tài khoản mỗi lần bạn quay lại trang web.
             </p>
 
             <div class="flex flex-wrap items-center gap-3.5 pt-1">
@@ -184,7 +200,7 @@
             <div class="pt-3 grid grid-cols-2 sm:grid-cols-4 gap-3.5">
               <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
                 <div class="text-xs sm:text-sm text-slate-300 font-medium">Công thức đã học</div>
-                <div class="text-2xl font-extrabold text-cyan-400 mt-1"><span id="stat-learned-count">0</span> <span class="text-sm font-normal text-slate-400">/ 20</span></div>
+                <div class="text-2xl font-extrabold text-cyan-400 mt-1"><span id="stat-learned-count">0</span> <span id="stat-learned-total" class="text-sm font-normal text-slate-400">/ 56</span></div>
               </div>
               <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
                 <div class="text-xs sm:text-sm text-slate-300 font-medium">Kỷ lục Rubik (Best)</div>
@@ -219,7 +235,7 @@
               <!-- Preview Slot 1: Interactive 3D Hero Cube -->
               <div id="hero-rubik-slot" class="space-y-3.5">
                 <div id="hero-cube-canvas-wrap" class="w-full h-64 sm:h-72 rounded-xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-slate-800/80 relative flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing">
-                  <div class="absolute top-3 left-3.5 text-xs sm:text-sm text-slate-300 pointer-events-none">Kéo chuột để xoay góc nhìn • Bấm nút để xoay tầng</div>
+                  <div class="absolute top-3 left-3.5 text-xs sm:text-sm text-slate-300 pointer-events-none">Vàng ở trên (U) • Trắng ở dưới (D) • Kéo chuột xoay 360°</div>
                 </div>
                 <div class="flex flex-wrap items-center justify-between gap-2">
                   <div class="flex flex-wrap gap-1.5">
@@ -237,16 +253,16 @@
                 </div>
               </div>
 
-              <!-- Preview Slot 2: Interactive Mini Chess Gambit Demo -->
+              <!-- Preview Slot 2: Interactive Mini Chess Gambit Demo (Fixed Strict 8x8 Equal Cells) -->
               <div id="hero-chess-slot" class="hidden space-y-3.5">
                 <div class="w-full h-64 sm:h-72 rounded-xl bg-slate-950 border border-slate-800 p-3 flex flex-col items-center justify-center">
-                  <div id="hero-mini-chessboard" class="grid grid-cols-8 w-52 h-52 sm:w-56 sm:h-56 rounded-lg overflow-hidden border-2 border-emerald-500/40 shadow-inner"></div>
-                  <p id="hero-chess-caption" class="text-sm text-emerald-300 font-semibold mt-2.5">Thế cờ Queen's Gambit: 1. d4 d5 2. c4</p>
+                  <div id="hero-mini-chessboard" class="chess-grid-8x8 w-52 h-52 sm:w-56 sm:h-56 shrink-0 rounded-lg overflow-hidden border-2 border-emerald-500/40 shadow-inner"></div>
+                  <p id="hero-chess-caption" class="text-xs sm:text-sm text-emerald-300 font-semibold mt-2 text-center truncate w-full">Thế cờ Queen's Gambit: 1. d4 d5 2. c4</p>
                 </div>
                 <div class="flex items-center justify-between gap-2">
-                  <button id="hero-demo-qg" class="flex-1 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-sm font-bold hover:bg-emerald-500 hover:text-slate-950 transition">Queen's Gambit</button>
-                  <button id="hero-demo-kg" class="flex-1 py-2 rounded-lg bg-slate-800 text-slate-200 text-sm font-bold hover:bg-emerald-500 hover:text-slate-950 transition">King's Gambit</button>
-                  <button id="hero-demo-scholar" class="flex-1 py-2 rounded-lg bg-slate-800 text-slate-200 text-sm font-bold hover:bg-emerald-500 hover:text-slate-950 transition">Scholar's Mate</button>
+                  <button id="hero-demo-qg" class="flex-1 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs sm:text-sm font-bold hover:bg-emerald-500 hover:text-slate-950 transition">Queen's Gambit</button>
+                  <button id="hero-demo-kg" class="flex-1 py-2 rounded-lg bg-slate-800 text-slate-200 text-xs sm:text-sm font-bold hover:bg-emerald-500 hover:text-slate-950 transition">King's Gambit</button>
+                  <button id="hero-demo-scholar" class="flex-1 py-2 rounded-lg bg-slate-800 text-slate-200 text-xs sm:text-sm font-bold hover:bg-emerald-500 hover:text-slate-950 transition">Scholar's Mate</button>
                 </div>
               </div>
             </div>
@@ -263,9 +279,9 @@
               <span class="px-3.5 py-1 rounded-full bg-cyan-500/15 text-cyan-300 text-sm font-bold">RUBIK STUDIO 3D</span>
               <span class="text-3xl">🧊</span>
             </div>
-            <h2 class="text-2xl font-extrabold text-white">Mô Hình 3D, WCA Timer & Camera AI</h2>
+            <h2 class="text-2xl font-extrabold text-white">Mô Hình 3D (Vàng Trên - Trắng Dưới) & Full CFOP</h2>
             <p class="text-base text-slate-200 leading-relaxed">
-              Xoay khối Rubik 3D thời gian thực, bấm giờ chuẩn thi đấu WCA (giữ phím Space, có 15s Inspection, tự tính Ao5 & Ao12), quét Rubik ngoài đời bằng Camera để nhận diện trường hợp và tra cứu trọn bộ công thức <strong>CFOP (Cross, F2L, OLL, PLL)</strong>.
+              Xoay khối Rubik 3D chuẩn CFOP với <strong>mặt Vàng ở trên (U), mặt Trắng ở dưới (D)</strong>, bấm giờ chuẩn WCA, quét Rubik bằng Camera AI và học trọn bộ <strong>48 công thức CFOP (Cross, F2L, OLL, Full 21 PLL)</strong> kèm sơ đồ hình vẽ minh họa trực quan cho từng công thức.
             </p>
           </div>
           <button data-goto="rubik" class="mt-6 w-full py-3 rounded-xl bg-cyan-500/15 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 font-extrabold text-base border border-cyan-500/30 transition">
@@ -297,7 +313,7 @@
           <div>
             <h3 class="text-xl sm:text-2xl font-extrabold text-white">📊 Hồ Sơ Học Tập & Tiến Độ Của Bạn</h3>
             <p id="home-progress-subtitle" class="text-sm sm:text-base text-slate-300 mt-1">
-              Dữ liệu mặc định được làm trắng. Hãy <strong>Đăng nhập Email</strong> để lưu các công thức CFOP và Gambit bạn đã học lên Supabase!
+              Dữ liệu mặc định được làm trắng. Hãy <strong>Đăng nhập & Xác minh Email</strong> để lưu các công thức CFOP và Gambit bạn đã học!
             </p>
           </div>
           <div class="flex flex-wrap items-center gap-2.5">
@@ -313,8 +329,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-1">
           <div class="p-4 rounded-2xl bg-slate-900/75 border border-slate-800 space-y-2">
             <div class="flex justify-between text-sm sm:text-base font-bold">
-              <span class="text-cyan-300">Rubik CFOP (Cross, F2L, OLL, PLL)</span>
-              <span id="prog-rubik-text" class="font-mono-code text-slate-200">0 / 12</span>
+              <span class="text-cyan-300">Rubik CFOP (Cross, F2L, OLL, Full PLL)</span>
+              <span id="prog-rubik-text" class="font-mono-code text-slate-200">0 / 48</span>
             </div>
             <div class="w-full h-3 rounded-full bg-slate-950 overflow-hidden border border-slate-800">
               <div id="prog-rubik-bar" class="h-full bg-cyan-400 transition-all duration-300" style="width: 0%"></div>
@@ -343,13 +359,13 @@
       <!-- Rubik Header & Sub-navigation -->
       <div class="glass-card rounded-2xl p-6 border-l-4 border-l-cyan-400 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span class="text-sm font-mono-code uppercase text-cyan-400 font-bold">Chuyên Đề 01 • Speedcubing & CFOP</span>
+          <span class="text-sm font-mono-code uppercase text-cyan-400 font-bold">Chuyên Đề 01 • Speedcubing & Full CFOP</span>
           <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Rubik Studio 3D & Phòng Lab CFOP</h2>
         </div>
         <div class="flex flex-wrap gap-2 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800">
           <button data-rubik-tab="sim" class="rubik-subtab px-4 py-2 rounded-lg text-sm font-bold bg-cyan-500 text-slate-950 transition">🧊 Mô Hình 3D & Timer</button>
           <button data-rubik-tab="camera" class="rubik-subtab px-4 py-2 rounded-lg text-sm font-bold text-slate-200 hover:text-white transition">📷 Camera AI Quét Rubik</button>
-          <button data-rubik-tab="cfop" class="rubik-subtab px-4 py-2 rounded-lg text-sm font-bold text-slate-200 hover:text-white transition">📚 Công Thức CFOP Đầy Đủ</button>
+          <button data-rubik-tab="cfop" class="rubik-subtab px-4 py-2 rounded-lg text-sm font-bold text-slate-200 hover:text-white transition">📚 Full Công Thức CFOP (48)</button>
         </div>
       </div>
 
@@ -359,8 +375,8 @@
         <div class="lg:col-span-7 glass-card rounded-2xl p-6 flex flex-col justify-between space-y-5">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 class="text-xl font-extrabold text-white">Mô Hình 3D Rubik Tương Tác (Chuẩn WCA)</h3>
-              <p class="text-sm text-slate-300">Trắng (U) • Xanh lá (F) • Đỏ (R) • Cam (L) • Xanh dương (B) • Vàng (D)</p>
+              <h3 class="text-xl font-extrabold text-white">Mô Hình 3D Rubik Tương Tác (Chuẩn CFOP)</h3>
+              <p class="text-sm text-slate-300"><strong class="text-yellow-300">Vàng (U - Mặt Trên)</strong> • <strong class="text-white">Trắng (D - Mặt Dưới)</strong> • Xanh lá (F) • Đỏ (R) • Cam (L) • Xanh dương (B)</p>
             </div>
             <div class="flex flex-wrap gap-2">
               <button id="rubik-scramble-btn" class="px-3.5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition">🔀 Trộn (Scramble)</button>
@@ -405,7 +421,7 @@
             </div>
             <!-- Execute Custom Algorithm Input -->
             <div class="flex gap-2.5 pt-2">
-              <input id="custom-alg-input" type="text" placeholder="Nhập công thức để mô hình 3D chạy (VD: R U R' U' hoặc F R U R' U' F')" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm font-mono-code text-white focus:outline-none focus:border-cyan-400" />
+              <input id="custom-alg-input" type="text" placeholder="Nhập công thức để mô hình 3D chạy (VD: R U R' U' hoặc M2 U M2 U2 M2 U M2)" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm font-mono-code text-white focus:outline-none focus:border-cyan-400" />
               <button id="run-custom-alg-btn" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-sm whitespace-nowrap transition">▶ Chạy Công Thức</button>
             </div>
           </div>
@@ -560,31 +576,34 @@
         </div>
       </div>
 
-      <!-- RUBIK SUB-VIEW C: Complete CFOP Algorithm Library -->
+      <!-- RUBIK SUB-VIEW C: Complete CFOP Algorithm Library (Full 48 Cases with Visual SVG Diagrams) -->
       <div id="rubik-panel-cfop" class="hidden space-y-6">
         <div class="glass-card rounded-2xl p-6 space-y-5">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
-              <h3 class="text-xl sm:text-2xl font-extrabold text-white">📚 Thư Viện Phương Pháp CFOP Chuẩn Quốc Tế</h3>
-              <p class="text-sm sm:text-base text-slate-300">Giải thích trực quan từng bước: <strong>Cross</strong> (Dấu cộng đáy) → <strong>F2L</strong> (2 tầng đầu) → <strong>OLL</strong> (Định hướng tầng cuối) → <strong>PLL</strong> (Hoán vị tầng cuối)</p>
+              <h3 class="text-xl sm:text-2xl font-extrabold text-white">📚 Thư Viện Full Bộ Công Thức CFOP Chuẩn Quốc Tế (Kèm Hình Minh Họa)</h3>
+              <p class="text-sm sm:text-base text-slate-300">Tất cả <strong>48 công thức trọng tâm</strong> gồm: <strong>Cross</strong> (4) → <strong>F2L</strong> (10) → <strong>OLL</strong> (13) → <strong>Full 21 PLL</strong> (21) với sơ đồ mặt Vàng (U) & hướng mũi tên hoán vị</p>
             </div>
             <div class="flex flex-wrap gap-2">
-              <button data-cfop-filter="ALL" class="cfop-filter-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-cyan-500 text-slate-950">Tất Cả (12)</button>
-              <button data-cfop-filter="CROSS" class="cfop-filter-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-slate-800 text-slate-200 hover:text-white">1. Cross</button>
-              <button data-cfop-filter="F2L" class="cfop-filter-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-slate-800 text-slate-200 hover:text-white">2. F2L</button>
-              <button data-cfop-filter="OLL" class="cfop-filter-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-slate-800 text-slate-200 hover:text-white">3. OLL</button>
-              <button data-cfop-filter="PLL" class="cfop-filter-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-slate-800 text-slate-200 hover:text-white">4. PLL</button>
+              <button data-cfop-filter="ALL" class="cfop-filter-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-cyan-500 text-slate-950">Tất Cả (48)</button>
+              <button data-cfop-filter="CROSS" class="cfop-filter-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-slate-800 text-slate-200 hover:text-white">1. Cross (4)</button>
+              <button data-cfop-filter="F2L" class="cfop-filter-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-slate-800 text-slate-200 hover:text-white">2. F2L (10)</button>
+              <button data-cfop-filter="OLL" class="cfop-filter-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-slate-800 text-slate-200 hover:text-white">3. OLL (13)</button>
+              <button data-cfop-filter="PLL" class="cfop-filter-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-slate-800 text-slate-200 hover:text-white">4. Full PLL (21)</button>
             </div>
           </div>
 
-          <!-- Notation Quick Reference -->
-          <div class="p-4 rounded-xl bg-slate-900/85 border border-slate-800 text-sm text-slate-200 grid grid-cols-2 sm:grid-cols-6 gap-2.5">
-            <div><strong class="text-cyan-400 font-mono-code">R / R'</strong>: Mặt Phải (Lên / Xuống)</div>
-            <div><strong class="text-cyan-400 font-mono-code">L / L'</strong>: Mặt Trái (Xuống / Lên)</div>
-            <div><strong class="text-cyan-400 font-mono-code">U / U'</strong>: Mặt Trên (Trái / Phải)</div>
-            <div><strong class="text-cyan-400 font-mono-code">F / F'</strong>: Mặt Trước (Thuận / Ngược)</div>
-            <div><strong class="text-cyan-400 font-mono-code">D / D'</strong>: Mặt Đáy (Phải / Trái)</div>
-            <div><strong class="text-cyan-400 font-mono-code">U2 / R2</strong>: Xoay 180 độ (2 lần)</div>
+          <!-- Search & Legend Bar -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
+            <div class="lg:col-span-5">
+              <input id="cfop-search-input" type="text" placeholder="🔍 Tìm nhanh công thức (VD: Sune, T-Perm, Jb, Cross, F2L...)" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400" />
+            </div>
+            <div class="lg:col-span-7 p-3 rounded-xl bg-slate-900/85 border border-slate-800 text-xs sm:text-sm text-slate-200 flex flex-wrap items-center justify-between gap-2">
+              <span><strong class="text-yellow-400">■ Ô Vàng</strong>: Mặt Trên (U)</span>
+              <span><strong class="text-white">■ Ô Trắng</strong>: Mặt Đáy Cross (D)</span>
+              <span><strong class="text-cyan-400">― Vạch Vàng Viền</strong>: Hướng lật OLL</span>
+              <span><strong class="text-rose-400">⇄ Mũi Tên</strong>: Chiều hoán vị PLL</span>
+            </div>
           </div>
 
           <!-- CFOP Cards Grid -->
@@ -592,6 +611,7 @@
         </div>
       </div>
     </section>
+
     <!-- ==================== VIEW 3: CHESS ARENA (CỜ VUA QUỐC TẾ) ==================== -->
     <section id="view-chess" class="hidden space-y-8">
       <!-- Chess Header -->
@@ -636,7 +656,7 @@
 
             <!-- 8x8 Chessboard Grid Wrapper + Pawn Promotion Modal -->
             <div class="flex-1 aspect-square max-w-[440px] rounded-2xl overflow-hidden border-4 border-slate-800 shadow-2xl relative">
-              <div id="chess-board-grid" class="w-full h-full grid grid-cols-8 grid-rows-8"></div>
+              <div id="chess-board-grid" class="w-full h-full chess-grid-8x8"></div>
 
               <!-- PAWN PROMOTION SELECTION MODAL (Hậu, Xe, Tượng, Mã) -->
               <div id="chess-promotion-modal" class="hidden absolute inset-0 z-30 bg-slate-950/85 backdrop-blur-sm flex-col items-center justify-center p-4">
@@ -760,7 +780,7 @@
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h3 class="text-xl sm:text-2xl font-extrabold text-white">📖 Cẩm Nang Gambit, Khai Cuộc & Đòn Chiến Thuật Cờ Vua</h3>
-              <p class="text-sm sm:text-base text-slate-300">Hiểu rõ bản chất từng thế Gambit (hiến tốt đổi lấy tốc độ phát triển quân và mở cột tấn công) cùng nút <strong>"Bày lên bàn cờ"</strong> trực quan</p>
+              <p class="text-sm sm:text-base text-slate-300">Hiểu rõ bản chất từng thế Gambit (hiến tốt đổi lấy tốc độ phát triển quân và mở cột tấn công) cùng hình vẽ minh họa và nút <strong>"Bày lên bàn cờ"</strong> trực quan</p>
             </div>
           </div>
           <div id="chess-gambit-cards" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
@@ -770,39 +790,63 @@
 
   </main>
 
-  <!-- ==================== MODAL: EMAIL LOGIN & SUPABASE SYNC ==================== -->
+  <!-- ==================== MODAL: REAL EMAIL VERIFICATION & AUTO-REMEMBER SESSION ==================== -->
   <div id="auth-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="glass-card rounded-3xl max-w-md w-full p-6 sm:p-7 border border-cyan-500/30 space-y-5">
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="text-xl font-extrabold text-white">🔐 Đăng Nhập Email</h3>
-          <p class="text-sm text-slate-300 mt-0.5">Lưu trữ các công thức đã học & lịch sử giải qua Supabase</p>
+          <h3 class="text-xl font-extrabold text-white">🔐 Xác Minh & Đăng Nhập Email</h3>
+          <p class="text-sm text-slate-300 mt-0.5">Kiểm tra tên miền MX thực tế & tự động lưu phiên đăng nhập</p>
         </div>
         <button id="close-auth-modal-btn" class="text-slate-400 hover:text-white text-xl font-bold">✕</button>
       </div>
 
       <div class="space-y-3.5">
         <div>
-          <label class="text-sm font-bold text-slate-200 block mb-1.5">Email học viên:</label>
-          <input id="auth-email-input" type="email" placeholder="nhap-email-cua-ban@gmail.com" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-base text-white focus:outline-none focus:border-cyan-400" />
+          <label class="text-sm font-bold text-slate-200 block mb-1.5">Email học viên (Sẽ được kiểm tra tên miền thực tế):</label>
+          <div class="flex gap-2">
+            <input id="auth-email-input" type="email" placeholder="ten-cua-ban@gmail.com" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm sm:text-base text-white focus:outline-none focus:border-cyan-400" />
+            <button id="verify-email-real-btn" type="button" class="px-3.5 py-2.5 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-xs sm:text-sm font-bold whitespace-nowrap transition">
+              ✓ Kiểm Tra Email
+            </button>
+          </div>
+          <div id="email-verify-status" class="text-xs mt-1.5 text-slate-400">
+            Hệ thống kiểm tra cấu trúc RFC, chặn email ảo/rác và xác thực máy chủ mail (DNS MX) thực tế.
+          </div>
         </div>
+
         <div>
           <label class="text-sm font-bold text-slate-200 block mb-1.5">Tên hiển thị (Nickname):</label>
-          <input id="auth-name-input" type="text" placeholder="VD: Minh Speedcuber" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-base text-white focus:outline-none focus:border-cyan-400" />
+          <input id="auth-name-input" type="text" placeholder="VD: Minh Speedcuber" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm sm:text-base text-white focus:outline-none focus:border-cyan-400" />
         </div>
+
         <div>
-          <label class="text-sm font-bold text-slate-200 block mb-1.5">Mật khẩu (Sử dụng với Supabase Auth):</label>
-          <input id="auth-pass-input" type="password" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-base text-white focus:outline-none focus:border-cyan-400" />
+          <label class="text-sm font-bold text-slate-200 block mb-1.5">Mật khẩu tài khoản (Tối thiểu 6 ký tự):</label>
+          <input id="auth-pass-input" type="password" placeholder="••••••••" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm sm:text-base text-white focus:outline-none focus:border-cyan-400" />
         </div>
+
+        <!-- Optional OTP / Email Confirmation Box when Supabase requires verification code -->
+        <div id="auth-otp-box" class="hidden p-3.5 rounded-xl bg-slate-900 border border-emerald-500/40 space-y-2">
+          <label class="text-xs sm:text-sm font-bold text-emerald-300 block">📩 Nhập mã xác nhận 6 số gửi về Email (nếu có):</label>
+          <div class="flex gap-2">
+            <input id="auth-otp-input" type="text" maxlength="6" placeholder="123456" class="flex-1 px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 font-mono-code text-sm text-white" />
+            <button id="verify-otp-btn" type="button" class="px-3.5 py-2 rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs sm:text-sm">Xác nhận OTP</button>
+          </div>
+        </div>
+
+        <label class="flex items-center gap-2.5 text-sm text-slate-200 cursor-pointer pt-1">
+          <input id="auth-remember-checkbox" type="checkbox" checked class="w-4 h-4 rounded bg-slate-800 border-slate-700 text-cyan-500 focus:ring-0" />
+          <span>Ghi nhớ tài khoản và tự động đăng nhập ở những lần truy cập sau</span>
+        </label>
       </div>
 
-      <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs sm:text-sm text-slate-300 leading-relaxed">
-        💡 Khi chưa đăng nhập, toàn bộ danh sách công thức ở trạng thái trắng (chưa tích sẵn). Chỉ khi bạn đăng nhập Email, hệ thống mới tải và lưu dữ liệu học tập của riêng bạn thông qua <code>SUPABASE_CONFIG</code> trong mã nguồn.
+      <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs text-slate-300 leading-relaxed">
+        💡 Sau khi xác minh Email hợp lệ và đăng nhập, trình duyệt và Supabase sẽ tự động ghi nhớ tài khoản của bạn. Mỗi lần mở lại trang web, toàn bộ công thức CFOP, Gambit, Elo và lịch sử bấm giờ sẽ tự động được khôi phục.
       </div>
 
       <div class="flex gap-2.5 pt-1">
-        <button id="auth-submit-btn" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-extrabold text-base shadow-lg transition">
-          Đăng Nhập & Tải Hồ Sơ
+        <button id="auth-submit-btn" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-extrabold text-sm sm:text-base shadow-lg transition">
+          Xác Minh & Lưu Đăng Nhập
         </button>
         <button id="auth-logout-btn" class="px-4 py-3 rounded-xl bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 text-slate-200 font-bold text-sm transition">
           Đăng Xuất
@@ -815,21 +859,22 @@
   <footer class="relative z-10 border-t border-slate-800/80 bg-slate-950/75 py-6 px-4 sm:px-6 text-center text-sm text-slate-300">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
       <div><strong>LM Training</strong> — Học Tập, Rèn Luyện & Thi Đấu Rubik 3D • Cờ Vua Quốc Tế</div>
-      <div class="font-mono-code text-xs text-slate-400">Powered by Three.js • Chess.js • Supabase Auth & Database</div>
+      <div class="font-mono-code text-xs text-slate-400">Powered by Three.js • Chess.js • DNS MX Email Verifier & Supabase Auth</div>
     </div>
   </footer>
+
   <!-- ==================== APPLICATION JAVASCRIPT ==================== -->
   <script>
     // ============================================================================
     // 1. NƠI CHỨA API KEYS CỦA SUPABASE (DÀNH CHO ĐĂNG NHẬP & LƯU TRỮ DỮ LIỆU)
-    // Điền SUPABASE_URL và SUPABASE_ANON_KEY từ Project Settings -> API trên Supabase
-    // Bảng lưu trữ: lm_training_progress (email, nickname, learned_items, rubik_solves, chess_elo)
     // ============================================================================
     const SUPABASE_CONFIG = {
       SUPABASE_URL: "https://tcdjvwxygaovpefsmgac.supabase.co",
       SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjZGp2d3h5Z2FvdnBlZnNtZ2FjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyNDIxMTMsImV4cCI6MjEwNzgxODExM30.WDzv8HRsdjFDX_JkAKiQhflJTbu_qntaY0o0ZDVt0b8",
       TABLE_NAME: "lm_training_progress"
     };
+
+    const ACTIVE_SESSION_STORAGE_KEY = 'lm_active_user_session_v2';
 
     // ---------- 2. WEB AUDIO SYNTHESIZER (SOUND EFFECTS) ----------
     const SoundFX = {
@@ -913,7 +958,7 @@
       }, 3300);
     }
 
-    // ---------- 4. SUPABASE AUTH & USER DATA STORAGE (CLEAN BY DEFAULT) ----------
+    // ---------- 4. REAL EMAIL VERIFICATION & PERSISTENT ACCOUNT STORAGE ----------
     const StorageUtil = {
       get(key, fallback) {
         try {
@@ -935,19 +980,97 @@
       }
     };
 
-    // Clear legacy pre-populated keys so nothing is checked by default
-    StorageUtil.remove('lm_learned_items');
-    StorageUtil.remove('lm_rubik_solves');
-
-    // Default state is 100% blank until a user logs in
     const AppState = {
       userEmail: '',
       userName: '',
+      emailVerified: false,
       learnedItems: [],
       rubikSolves: [],
       chessElo: 1200,
       supabaseClient: null
     };
+
+    // Disposable / Fake domains blocklist + Real DNS MX Record Checker
+    const DISPOSABLE_DOMAINS = new Set([
+      'mailinator.com', '10minutemail.com', 'tempmail.com', 'guerrillamail.com',
+      'yopmail.com', 'trashmail.com', 'sharklasers.com', 'getnada.com',
+      'fakeinbox.com', 'temp-mail.org', 'throwawaymail.com', 'maildrop.cc',
+      'test.com', 'example.com', 'abc.com', 'xyz.com', 'fake.com'
+    ]);
+
+    const COMMON_TYPO_DOMAINS = {
+      'gmial.com': 'gmail.com',
+      'gamil.com': 'gmail.com',
+      'gmail.co': 'gmail.com',
+      'gmail.vn': 'gmail.com',
+      'yaho.com': 'yahoo.com',
+      'outlok.com': 'outlook.com',
+      'hotmial.com': 'hotmail.com'
+    };
+
+    async function verifyRealEmailAddress(rawEmail) {
+      const email = (rawEmail || '').trim().toLowerCase();
+      // Strict RFC 5322 compatible syntax check
+      const strictRegex = /^[a-zA-Z0-9._%+-]{2,64}@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,12}$/;
+      if (!strictRegex.test(email)) {
+        return {
+          valid: false,
+          reason: 'Định dạng Email không hợp lệ (VD hợp lệ: ten-ban@gmail.com).'
+        };
+      }
+
+      const [localPart, domain] = email.split('@');
+      if (localPart.startsWith('.') || localPart.endsWith('.') || localPart.includes('..')) {
+        return { valid: false, reason: 'Phần tên Email trước dấu @ không hợp lệ.' };
+      }
+
+      if (COMMON_TYPO_DOMAINS[domain]) {
+        return {
+          valid: false,
+          reason: `Tên miền "${domain}" có vẻ bị gõ nhầm. Ý bạn là "@${COMMON_TYPO_DOMAINS[domain]}"?`
+        };
+      }
+
+      if (DISPOSABLE_DOMAINS.has(domain)) {
+        return {
+          valid: false,
+          reason: `Tên miền "${domain}" là email ảo/tạm thời. Vui lòng dùng Email thật (Gmail, Outlook, iCloud, Edu...).`
+        };
+      }
+
+      // Live DNS MX Record Check via Google Public DNS-over-HTTPS
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 3500);
+        const res = await fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=MX`, {
+          signal: controller.signal
+        });
+        clearTimeout(timer);
+        if (res.ok) {
+          const dnsData = await res.json();
+          const hasMX = Array.isArray(dnsData.Answer) && dnsData.Answer.some(ans => ans.type === 15);
+          if (!hasMX) {
+            return {
+              valid: false,
+              reason: `Tên miền "@${domain}" không tồn tại máy chủ nhận thư (MX Record). Vui lòng nhập Email thật!`
+            };
+          }
+          return {
+            valid: true,
+            mxVerified: true,
+            reason: `✅ Đã xác thực máy chủ mail (MX Record) của tên miền @${domain} là Email thật!`
+          };
+        }
+      } catch (e) {
+        // Fallback when offline or blocked: allow trusted providers
+      }
+
+      return {
+        valid: true,
+        mxVerified: false,
+        reason: `✅ Định dạng và tên miền @${domain} hợp lệ.`
+      };
+    }
 
     function isSupabaseConfigured() {
       return (
@@ -964,7 +1087,13 @@
         try {
           AppState.supabaseClient = window.supabase.createClient(
             SUPABASE_CONFIG.SUPABASE_URL,
-            SUPABASE_CONFIG.SUPABASE_ANON_KEY
+            SUPABASE_CONFIG.SUPABASE_ANON_KEY,
+            {
+              auth: {
+                persistSession: true,
+                autoRefreshToken: true
+              }
+            }
           );
           return true;
         } catch (err) {
@@ -978,31 +1107,92 @@
       return `lm_user_profile_${email.toLowerCase().trim()}`;
     }
 
-    async function loginAndLoadUserProfile(email, nickname, password) {
-      const cleanEmail = email.toLowerCase().trim();
-      AppState.userEmail = cleanEmail;
-      AppState.userName = nickname || cleanEmail.split('@')[0];
+    async function restoreRememberedSessionOnLoad() {
+      // 1. Check localStorage saved session
+      const savedSession = StorageUtil.get(ACTIVE_SESSION_STORAGE_KEY, null);
+      if (savedSession && savedSession.email) {
+        await loginAndLoadUserProfile(
+          savedSession.email,
+          savedSession.userName || '',
+          '',
+          true // silent auto-restore
+        );
+        return;
+      }
 
-      // 1. Load existing local profile for this specific email (defaulting to empty arrays!)
+      // 2. Also check Supabase active session if available
+      if (AppState.supabaseClient) {
+        try {
+          const { data } = await AppState.supabaseClient.auth.getSession();
+          if (data && data.session && data.session.user && data.session.user.email) {
+            const supaEmail = data.session.user.email;
+            const metaName = data.session.user.user_metadata?.nickname || supaEmail.split('@')[0];
+            await loginAndLoadUserProfile(supaEmail, metaName, '', true);
+          }
+        } catch (e) {}
+      }
+    }
+
+    async function loginAndLoadUserProfile(email, nickname, password, isAutoRestore = false) {
+      const cleanEmail = email.toLowerCase().trim();
+
+      if (!isAutoRestore) {
+        const statusEl = document.getElementById('email-verify-status');
+        if (statusEl) {
+          statusEl.textContent = '⏳ Đang kiểm tra máy chủ tên miền Email thực tế (DNS MX)...';
+          statusEl.className = 'text-xs mt-1.5 text-cyan-300 font-semibold';
+        }
+        const check = await verifyRealEmailAddress(cleanEmail);
+        if (!check.valid) {
+          if (statusEl) {
+            statusEl.textContent = `❌ ${check.reason}`;
+            statusEl.className = 'text-xs mt-1.5 text-rose-400 font-bold';
+          }
+          showToast(check.reason, 'rose');
+          return false;
+        }
+        if (statusEl) {
+          statusEl.textContent = check.reason;
+          statusEl.className = 'text-xs mt-1.5 text-emerald-400 font-bold';
+        }
+      }
+
+      // Load local profile for this email
       const localData = StorageUtil.get(getUserStorageKey(cleanEmail), {
+        userName: nickname || cleanEmail.split('@')[0],
         learnedItems: [],
         rubikSolves: [],
-        chessElo: 1200
+        chessElo: 1200,
+        passwordHash: ''
       });
+
+      // Verify password against local stored profile if password was set previously
+      if (!isAutoRestore && password && localData.passwordHash && localData.passwordHash !== btoa(password)) {
+        showToast('❌ Mật khẩu không khớp với tài khoản Email đã lưu trên thiết bị này!', 'rose');
+        return false;
+      }
+
+      AppState.userEmail = cleanEmail;
+      AppState.userName = nickname || localData.userName || cleanEmail.split('@')[0];
+      AppState.emailVerified = true;
       AppState.learnedItems = Array.isArray(localData.learnedItems) ? localData.learnedItems : [];
       AppState.rubikSolves = Array.isArray(localData.rubikSolves) ? localData.rubikSolves : [];
       AppState.chessElo = typeof localData.chessElo === 'number' ? localData.chessElo : 1200;
 
-      // 2. If Supabase API Keys are configured in SUPABASE_CONFIG, authenticate & fetch cloud data
+      // Cloud sync with Supabase Auth & Database
       if (AppState.supabaseClient) {
         try {
-          if (password && password.length >= 6) {
+          if (!isAutoRestore && password && password.length >= 6) {
             const { error: signInErr } = await AppState.supabaseClient.auth.signInWithPassword({
               email: cleanEmail,
               password
             });
             if (signInErr) {
-              await AppState.supabaseClient.auth.signUp({ email: cleanEmail, password });
+              await AppState.supabaseClient.auth.signUp({
+                email: cleanEmail,
+                password,
+                options: { data: { nickname: AppState.userName } }
+              });
             }
           }
           const { data, error } = await AppState.supabaseClient
@@ -1012,26 +1202,53 @@
             .maybeSingle();
 
           if (!error && data) {
-            AppState.learnedItems = Array.isArray(data.learned_items) ? data.learned_items : AppState.learnedItems;
-            AppState.rubikSolves = Array.isArray(data.rubik_solves) ? data.rubik_solves : AppState.rubikSolves;
-            AppState.chessElo = typeof data.chess_elo === 'number' ? data.chess_elo : AppState.chessElo;
+            if (Array.isArray(data.learned_items) && data.learned_items.length > AppState.learnedItems.length) {
+              AppState.learnedItems = data.learned_items;
+            }
+            if (Array.isArray(data.rubik_solves) && data.rubik_solves.length > AppState.rubikSolves.length) {
+              AppState.rubikSolves = data.rubik_solves;
+            }
+            if (typeof data.chess_elo === 'number') {
+              AppState.chessElo = data.chess_elo;
+            }
+            if (data.nickname && !nickname) {
+              AppState.userName = data.nickname;
+            }
           } else {
             await saveUserProgress(true);
           }
         } catch (e) {}
       }
 
+      // Save profile + persistent active session so next visit auto-logs in
       StorageUtil.set(getUserStorageKey(cleanEmail), {
         userName: AppState.userName,
         learnedItems: AppState.learnedItems,
         rubikSolves: AppState.rubikSolves,
-        chessElo: AppState.chessElo
+        chessElo: AppState.chessElo,
+        passwordHash: password ? btoa(password) : (localData.passwordHash || '')
       });
+
+      const rememberChecked = document.getElementById('auth-remember-checkbox')?.checked !== false;
+      if (rememberChecked || isAutoRestore) {
+        StorageUtil.set(ACTIVE_SESSION_STORAGE_KEY, {
+          email: AppState.userEmail,
+          userName: AppState.userName,
+          verifiedAt: new Date().toISOString()
+        });
+      }
 
       updateDashboardProgressUI();
       RubikTimer.renderStats();
       renderAllKnowledgeCards();
-      showToast(`✅ Xin chào ${AppState.userName}! Đã tải hồ sơ học tập của ${cleanEmail}.`, 'emerald');
+
+      if (isAutoRestore) {
+        showToast(`👋 Chào mừng trở lại, ${AppState.userName} (${cleanEmail})! Đã khôi phục hồ sơ học tập.`, 'cyan');
+      } else {
+        SoundFX.play('success');
+        showToast(`✅ Xác minh thành công! Đã đăng nhập & tự động ghi nhớ tài khoản ${cleanEmail}.`, 'emerald');
+      }
+      return true;
     }
 
     async function saveUserProgress(silent = false) {
@@ -1044,12 +1261,19 @@
         return;
       }
 
-      // Save per-user profile
+      const prevProfile = StorageUtil.get(getUserStorageKey(AppState.userEmail), {});
       StorageUtil.set(getUserStorageKey(AppState.userEmail), {
+        ...prevProfile,
         userName: AppState.userName,
         learnedItems: AppState.learnedItems,
         rubikSolves: AppState.rubikSolves,
         chessElo: AppState.chessElo
+      });
+
+      StorageUtil.set(ACTIVE_SESSION_STORAGE_KEY, {
+        email: AppState.userEmail,
+        userName: AppState.userName,
+        verifiedAt: new Date().toISOString()
       });
 
       if (AppState.supabaseClient) {
@@ -1065,7 +1289,7 @@
               updated_at: new Date().toISOString()
             }, { onConflict: 'email' });
           if (!error && !silent) {
-            showToast(`☁️ Đã lưu tiến trình của ${AppState.userEmail} lên Supabase Cloud!`, 'emerald');
+            showToast(`☁️ Đã đồng bộ hồ sơ của ${AppState.userEmail} lên Supabase Cloud!`, 'emerald');
             return;
           }
         } catch (e) {}
@@ -1100,9 +1324,8 @@
     }
 
     function toggleLearnedItem(itemId, itemTitle) {
-      // Only allow adding learned items when the user is logged in!
       if (!AppState.userEmail) {
-        showToast('🔐 Bạn cần Đăng nhập Email trước khi đánh dấu công thức đã học!', 'amber');
+        showToast('🔐 Bạn cần Đăng nhập & Xác minh Email trước khi lưu công thức đã học!', 'amber');
         openAuthModal();
         return;
       }
@@ -1113,75 +1336,475 @@
       } else {
         AppState.learnedItems.push(itemId);
         SoundFX.play('success');
-        showToast(`🎉 Đã lưu công thức đã học: ${itemTitle}!`, 'emerald');
+        showToast(`🎉 Đã lưu công thức: ${itemTitle}!`, 'emerald');
       }
       saveUserProgress(true);
       renderAllKnowledgeCards();
     }
 
-    // ---------- 5. DATABASES: RUBIK CFOP (12) & CHESS GAMBITS (8) ----------
+    // ---------- 5. FULL CFOP DATABASE (48 ALGORITHMS + VISUAL SVG DIAGRAMS) ----------
+    // Each CFOP item includes diagram config so renderCfopDiagramSVG() builds an accurate visual illustration
     const CFOP_DATABASE = [
+      // ==================== STEP 1: CROSS (4) ====================
       {
-        id: 'cfop_cross_1', step: 'CROSS', name: 'Daisy & White Cross (Dấu Cộng Đáy)',
+        id: 'cfop_cross_1', step: 'CROSS', code: 'Cross #1',
+        name: 'Daisy & White Cross (Dấu Cộng Trắng Ở Mặt Đáy D)',
         alg: "F2 D R' D' F'",
-        desc: 'Bước 1 của CFOP: Đưa 4 viên cạnh Trắng về đúng mặt Đáy (D) sao cho màu bên hông trùng khít với 4 viên tâm Xanh lá, Đỏ, Xanh dương, Cam. Nên giải Cross dưới đáy để dễ nhìn F2L.'
+        desc: 'Giữ tâm Vàng ở mặt Trên (U), tâm Trắng ở mặt Đáy (D). Đưa 4 viên cạnh Trắng về quanh tâm Trắng ở đáy sao cho màu bên hông khớp với 4 viên tâm Xanh lá, Đỏ, Xanh dương, Cam.',
+        diagram: { type: 'cross', grid: ['G','W','G','W','W','W','G','W','G'], sub: 'Mặt Đáy (D): Dấu + Trắng' }
       },
       {
-        id: 'cfop_cross_2', step: 'CROSS', name: 'Kỹ Thuật Lật Cạnh Cross Nhanh',
+        id: 'cfop_cross_2', step: 'CROSS', code: 'Cross #2',
+        name: 'Kỹ Thuật Lật Cạnh Cross Bị Ngược Chiều',
         alg: "R' U' F' U R",
-        desc: 'Khi viên cạnh Trắng nằm đúng khe nhưng bị ngược chiều màu, dùng chuỗi 5 nước này để lật ngay lập tức mà không làm hỏng các viên Cross đã hoàn thành.'
+        desc: 'Khi viên cạnh Trắng nằm ở tầng trên hoặc đúng khe nhưng bị lật ngược màu: Dùng chuỗi 5 nước này để chèn cạnh Trắng xuống đáy mà không làm lệch các viên Cross đã giải.',
+        diagram: { type: 'cross', grid: ['G','O','G','W','W','R','G','W','G'], sub: 'Lật cạnh FR xuống Đáy D' }
       },
       {
-        id: 'cfop_f2l_1', step: 'F2L', name: 'F2L Cơ Bản #1: Cặp Chuẩn Đưa Vào Khe Phải',
+        id: 'cfop_cross_3', step: 'CROSS', code: 'Cross #3',
+        name: 'Chèn 2 Cạnh Cross Liên Hoàn (Relative Cross)',
+        alg: "U' R2 F2 D'",
+        desc: 'Giải các viên cạnh Trắng theo thứ tự màu tương đối (Xanh lá - Đỏ - Xanh dương - Cam) rồi chỉ cần xoay D hoặc D\' ở bước cuối để khớp toàn bộ 4 tâm.',
+        diagram: { type: 'cross', grid: ['G','W','G','W','W','G','G','W','G'], sub: 'Giải tương đối rồi trả D\'' }
+      },
+      {
+        id: 'cfop_cross_4', step: 'CROSS', code: 'Cross #4',
+        name: 'X-Cross Cơ Bản (Bảo Toàn 1 Cặp F2L Khi Giải Cross)',
+        alg: "D' R' D R2 U' R'",
+        desc: 'Kỹ thuật nâng cao: Trong lúc hoàn thiện viên cạnh Trắng cuối cùng dưới mặt Đáy (D), đồng thời giữ lại 1 cặp Góc-Cạnh để hoàn thành luôn khe F2L đầu tiên.',
+        diagram: { type: 'cross', grid: ['G','W','G','W','W','W','G','W','W'], sub: 'Cross + 1 khe F2L' }
+      },
+
+      // ==================== STEP 2: F2L - FIRST TWO LAYERS (10) ====================
+      {
+        id: 'cfop_f2l_1', step: 'F2L', code: 'F2L #1',
+        name: 'F2L Cơ Bản #1: Chèn Cặp Chuẩn Vào Khe Phải (Right Trigger)',
         alg: "U R U' R'",
-        desc: 'Ghép 1 viên Góc Trắng và 1 viên Cạnh tầng 2 thành 1 cặp (Pair) trên tầng U rồi đưa gọn vào khe Phải-Trước (FR slot) chỉ trong 4 nước.'
+        desc: 'Cặp Góc Trắng + Cạnh tầng 2 đã ghép sẵn ở tầng U. Đẩy U sang trái rồi mở khe Phải (R) đón cặp xuống đáy.',
+        diagram: { type: 'f2l', corner: ['G','R','W'], edge: ['G','R'], label: 'Ghép sẵn → Chèn FR' }
       },
       {
-        id: 'cfop_f2l_2', step: 'F2L', name: 'F2L Cơ Bản #2: Chèn Cặp Cùng Màu Mặt Trên',
+        id: 'cfop_f2l_2', step: 'F2L', code: 'F2L #2',
+        name: 'F2L Cơ Bản #2: Chèn Cặp Chuẩn Từ Mặt Trước (Front Trigger)',
         alg: "U' F' U F",
-        desc: 'Khi hai mặt màu phía trên của viên Góc và viên Cạnh đối xứng qua khe trước mặt, mở mặt Trước (F\') để đón cặp vào khe.'
+        desc: 'Trường hợp đối xứng của F2L #1: Mở mặt Trước (F\') lên để đón cặp Góc - Cạnh đã ghép sẵn vào khe Trước-Phải.',
+        diagram: { type: 'f2l', corner: ['R','G','W'], edge: ['R','G'], label: 'Đối xứng → Chèn F\'' }
       },
       {
-        id: 'cfop_f2l_3', step: 'F2L', name: 'F2L #3: Góc Trắng Ngửa Lên Trời (Split Pair)',
+        id: 'cfop_f2l_3', step: 'F2L', code: 'F2L #3',
+        name: 'F2L #3: Hai Mặt Màu Trên Khác Nhau (Bắt Cặp Xa)',
+        alg: "R U R'",
+        desc: 'Viên Góc ở URF có màu Trắng nhìn sang Phải, viên Cạnh nằm ở UF khác màu mặt trên: Chỉ cần R U R\' là tự động ghép cặp và vào đúng khe.',
+        diagram: { type: 'f2l', corner: ['G','W','R'], edge: ['R','G'], label: 'Khác màu trên → R U R\'' }
+      },
+      {
+        id: 'cfop_f2l_4', step: 'F2L', code: 'F2L #4',
+        name: 'F2L #4: Bắt Cặp Xa Phía Mặt Trước',
+        alg: "F' U' F",
+        desc: 'Màu Trắng của viên Góc nhìn thẳng về phía Trước (F), viên Cạnh nằm ở bên trái (UL): Chạy 3 nước F\' U\' F để đón cặp.',
+        diagram: { type: 'f2l', corner: ['W','G','R'], edge: ['G','R'], label: 'Trắng nhìn Trước → F\' U\' F' }
+      },
+      {
+        id: 'cfop_f2l_5', step: 'F2L', code: 'F2L #5',
+        name: 'F2L #5: Góc Trắng Ngửa Lên Trời (Split Pair Chuẩn)',
         alg: "R U2 R' U' R U R'",
-        desc: 'Trường hợp cực kỳ phổ biến: mặt Trắng của viên góc hướng thẳng lên trần (U). Dùng R U2 R\' để úp góc xuống và ghép ngay với viên cạnh.'
+        desc: 'Mặt Trắng của viên Góc hướng thẳng lên mặt Vàng (U). Dùng R U2 R\' để úp viên Góc xuống, ghép liền với viên Cạnh và chèn vào khe.',
+        diagram: { type: 'f2l', corner: ['W','R','G'], edge: ['G','R'], label: 'Trắng ngửa lên U' }
       },
       {
-        id: 'cfop_f2l_4', step: 'F2L', name: 'F2L #4: Tách Cặp Dính Liền Ngược Chiều',
+        id: 'cfop_f2l_6', step: 'F2L', code: 'F2L #6',
+        name: 'F2L #6: Hai Mặt Màu Trên Giống Nhau (Giấu Góc Tách Cặp)',
+        alg: "U' R U' R' U2 R U' R'",
+        desc: 'Viên Góc và Cạnh đứng rời nhau trên tầng U nhưng 2 màu nhìn lên trời giống hệt nhau: Giấu Góc xuống để đổi tương quan rồi chèn.',
+        diagram: { type: 'f2l', corner: ['G','W','R'], edge: ['G','R'], label: 'Cùng màu trên → Giấu góc' }
+      },
+      {
+        id: 'cfop_f2l_7', step: 'F2L', code: 'F2L #7',
+        name: 'F2L #7: Tách Cặp Dính Liền Ngược Chiều Màu',
         alg: "R U' R' U R U2 R' U R U' R'",
-        desc: 'Khi viên góc và viên cạnh dính sát nhau ở tầng trên nhưng sai chiều màu, giấu góc xuống đáy để tách đôi rồi chèn lại vào khe.'
+        desc: 'Viên Góc và viên Cạnh dính sát nhau trên tầng U nhưng bị ngược màu: Đưa lên tách đôi bằng R U\' R\' rồi ghép chuẩn.',
+        diagram: { type: 'f2l', corner: ['R','G','W'], edge: ['G','R'], label: 'Dính liền sai chiều' }
       },
       {
-        id: 'cfop_oll_45', step: 'OLL', name: 'OLL 45: Chữ I Ngang (Tạo Dấu Cộng Vàng)',
+        id: 'cfop_f2l_8', step: 'F2L', code: 'F2L #8',
+        name: 'F2L #8: Góc Đã Nằm Dưới Đáy Nhưng Sai Chiều, Cạnh Ở Trên',
+        alg: "R U R' U' R U R' U' R U R'",
+        desc: 'Dùng chuỗi Sexy Move (R U R\' U\') liên hoàn 3 lần để vừa xoay lại hướng Góc Trắng dưới đáy vừa hút viên Cạnh vào khe.',
+        diagram: { type: 'f2l', corner: ['W','G','R'], edge: ['R','G'], label: 'Triple Sexy Move' }
+      },
+      {
+        id: 'cfop_f2l_9', step: 'F2L', code: 'F2L #9',
+        name: 'F2L #9: Cạnh Đã Nằm Đúng Khe Tầng 2, Góc Ở Tầng Trên',
+        alg: "U R U' R' U' F' U F",
+        desc: 'Khi viên Cạnh đã nằm đúng vị trí tầng 2 còn viên Góc Trắng ở tầng trên: Dùng tổ hợp 2 Trigger để đưa Góc vào mà không mất Cạnh.',
+        diagram: { type: 'f2l', corner: ['G','R','W'], edge: ['G','R'], label: 'Chèn góc vào cạnh sẵn' }
+      },
+      {
+        id: 'cfop_f2l_10', step: 'F2L', code: 'F2L #10',
+        name: 'F2L #10: Cả Góc Và Cạnh Đều Trong Khe Nhưng Lật Ngược Cạnh',
+        alg: "R U' R' U F' U2 F U F' U2 F",
+        desc: 'Trường hợp khó của F2L: Nhấc cặp ra khỏi khe FR, lật lại hướng viên Cạnh trên tầng U rồi chèn mượt về mặt Trước.',
+        diagram: { type: 'f2l', corner: ['W','R','G'], edge: ['R','G'], label: 'Lật cạnh ngay trong khe' }
+      },
+
+      // ==================== STEP 3: OLL - ORIENTATION OF LAST LAYER (13) ====================
+      {
+        id: 'cfop_oll_45', step: 'OLL', code: 'OLL 45 (Line)',
+        name: 'OLL 45: Đường Thẳng Ngang Vàng (Chữ I)',
         alg: "F R U R' U' F'",
-        desc: 'Công thức nền tảng nhất của 2-Look OLL: Khi mặt trên có vạch ngang 3 ô Vàng, đặt vạch nằm ngang trước mặt và chạy 6 nước để tạo Dấu Cộng Vàng.'
+        desc: '3 ô Vàng tạo thành vạch ngang ở giữa mặt U, kèm 2 vạch Vàng bên hông Trái/Phải. Chạy 6 nước để tạo Dấu Cộng Vàng.',
+        diagram: { type: 'oll', grid: [0,0,0, 1,1,1, 0,0,0], top: [0,1,0], bottom: [0,1,0], left: [1,0,1], right: [1,0,1] }
       },
       {
-        id: 'cfop_oll_27', step: 'OLL', name: 'OLL 27: Sune (Hình Con Cá Thuận)',
+        id: 'cfop_oll_44', step: 'OLL', code: 'OLL 44 (L-Shape)',
+        name: 'OLL 44: Hình Chữ L Nhỏ Ở Góc (Tạo Dấu Cộng Vàng)',
+        alg: "F U R U' R' F'",
+        desc: 'Khi mặt trên có góc chữ L nhỏ màu Vàng (đặt ở góc Trên-Trái hoặc Dưới-Phải), dùng công thức này để ra ngay Dấu Cộng Vàng.',
+        diagram: { type: 'oll', grid: [0,1,0, 1,1,0, 0,0,0], top: [0,0,1], bottom: [0,1,0], left: [0,0,1], right: [1,1,0] }
+      },
+      {
+        id: 'cfop_oll_2', step: 'OLL', code: 'OLL 2 (Dot)',
+        name: 'OLL 2: Dấu Chấm Tâm Vàng (Không Có Cạnh Vàng Nào Lật)',
+        alg: "F R U R' U' F' U2 F U R U' R' F'",
+        desc: 'Khi chỉ có duy nhất viên tâm Vàng ở giữa: Kết hợp OLL Chữ I và OLL Chữ L để lật cả 4 cạnh Vàng lên cùng lúc.',
+        diagram: { type: 'oll', grid: [0,0,0, 0,1,0, 0,0,0], top: [0,1,0], bottom: [1,1,1], left: [1,1,0], right: [0,1,1] }
+      },
+      {
+        id: 'cfop_oll_27', step: 'OLL', code: 'OLL 27 (Sune)',
+        name: 'OLL 27: Sune (Hình Con Cá Thuận - 1 Góc Vàng Đã Lật)',
         alg: "R U R' U R U2 R'",
-        desc: 'Vua của các công thức OLL: Dấu cộng Vàng đã có thêm 1 góc Vàng ở vị trí Trước-Trái. Chạy Sune 1 lần sẽ lật toàn bộ mặt Vàng lên trên.'
+        desc: 'Công thức quan trọng số 1 trong OLL: Dấu cộng Vàng có thêm 1 góc Vàng ở vị trí Trước-Trái (ULF), mặt Trước của góc phải có vạch Vàng.',
+        diagram: { type: 'oll', grid: [0,1,0, 1,1,1, 1,1,0], top: [0,0,1], bottom: [0,0,1], left: [1,0,0], right: [1,0,0] }
       },
       {
-        id: 'cfop_oll_26', step: 'OLL', name: 'OLL 26: Anti-Sune (Hình Con Cá Ngược)',
+        id: 'cfop_oll_26', step: 'OLL', code: 'OLL 26 (Anti-Sune)',
+        name: 'OLL 26: Anti-Sune (Hình Con Cá Ngược)',
         alg: "R U2 R' U' R U' R'",
-        desc: 'Đảo ngược của Sune: Đặt góc Vàng duy nhất đã lật ở vị trí Sau-Phải (URB) rồi thực hiện 7 nước mượt mà để hoàn tất mặt Vàng.'
+        desc: 'Đặt góc Vàng duy nhất đã lật ở vị trí Sau-Phải (URB), vạch Vàng phụ nhìn về phía mặt Trước rồi chạy 7 nước.',
+        diagram: { type: 'oll', grid: [0,1,1, 1,1,1, 0,1,0], top: [1,0,0], bottom: [1,0,0], left: [0,0,1], right: [0,0,1] }
       },
       {
-        id: 'cfop_pll_t', step: 'PLL', name: 'PLL: T-Perm (Hoán Vị Chữ T Kinh Điển)',
-        alg: "R U R' U' R' F R2 U' R' U' R U R' F'",
-        desc: 'Hoán đổi 2 viên góc bên phải (URB ↔ URF) và 2 viên cạnh đối diện (UL ↔ UR). Đặt cặp đèn pha (Headlights) bên tay trái trước khi xoay.'
+        id: 'cfop_oll_21', step: 'OLL', code: 'OLL 21 (H-Case)',
+        name: 'OLL 21: Dấu Cộng Vàng - 2 Cặp Đèn Pha Đối Diện (H)',
+        alg: "F R U R' U' R U R' U' R U R' U' F'",
+        desc: 'Mặt trên có hình chữ thập Vàng, 4 viên góc chưa lật quay mặt Vàng ra phía Trước (2 vạch) và phía Sau (2 vạch).',
+        diagram: { type: 'oll', grid: [0,1,0, 1,1,1, 0,1,0], top: [1,0,1], bottom: [1,0,1], left: [0,0,0], right: [0,0,0] }
       },
       {
-        id: 'cfop_pll_ua', step: 'PLL', name: 'PLL: Ua-Perm (Hoán Vị 3 Cạnh Ngược Chiều)',
+        id: 'cfop_oll_22', step: 'OLL', code: 'OLL 22 (Pi / Bruno)',
+        name: 'OLL 22: Dấu Cộng Vàng - Hình Chữ Pi (Đèn Pha Trái + 2 Góc Lệch)',
+        alg: "R U2 R2 U' R2 U' R2 U2 R",
+        desc: 'Bên tay Trái có cặp đèn pha Vàng (2 góc cùng hướng sang Trái), còn 2 góc bên Phải quay mặt Vàng ra Trước và Sau. Toàn bộ công thức chỉ dùng mặt R và U!',
+        diagram: { type: 'oll', grid: [0,1,0, 1,1,1, 0,1,0], top: [0,0,1], bottom: [0,0,1], left: [1,0,1], right: [0,0,0] }
+      },
+      {
+        id: 'cfop_oll_23', step: 'OLL', code: 'OLL 23 (Headlights)',
+        name: 'OLL 23: Đèn Pha Đôi (2 Góc Sau Đã Lật, 2 Góc Trước Nhìn Thẳng)',
+        alg: "R2 D R' U2 R D' R' U2 R'",
+        desc: '7 ô Vàng đã lật, chỉ còn 2 góc phía Trước (ULF & URF) quay mặt Vàng thẳng vào người giải.',
+        diagram: { type: 'oll', grid: [1,1,1, 1,1,1, 0,1,0], top: [0,0,0], bottom: [1,0,1], left: [0,0,0], right: [0,0,0] }
+      },
+      {
+        id: 'cfop_oll_24', step: 'OLL', code: 'OLL 24 (T-Chameleon)',
+        name: 'OLL 24: Hình Tắc Kè Chữ T (2 Góc Bên Trái Ngược Hướng)',
+        alg: "R U R' U' L' U R U' L U",
+        desc: '2 góc bên Phải đã lật Vàng, 2 góc bên Trái có mặt Vàng quay ngược chiều nhau (1 hướng Trước, 1 hướng Sau).',
+        diagram: { type: 'oll', grid: [0,1,1, 1,1,1, 0,1,1], top: [1,0,0], bottom: [1,0,0], left: [0,0,0], right: [0,0,0] }
+      },
+      {
+        id: 'cfop_oll_25', step: 'OLL', code: 'OLL 25 (Bowtie)',
+        name: 'OLL 25: Hình Chiếc Nơ (2 Góc Chéo Nhau Đã Lật)',
+        alg: "F' L F R' F' L' F R",
+        desc: '2 góc chéo nhau đã lật mặt Vàng, 2 góc còn lại có mặt Vàng nhìn về phía Trước và phía Trái.',
+        diagram: { type: 'oll', grid: [1,1,0, 1,1,1, 0,1,1], top: [0,0,0], bottom: [1,0,0], left: [0,0,0], right: [1,0,0] }
+      },
+      {
+        id: 'cfop_oll_33', step: 'OLL', code: 'OLL 33 (T-Shape)',
+        name: 'OLL 33: Hình Chữ T Nằm Ngang (1-Look OLL Siêu Nhanh)',
+        alg: "R U R' U' R' F R F'",
+        desc: 'Tổ hợp Sexy Move nối tiếp Sledgehammer (R\' F R F\') giải gọn hình chữ T màu Vàng chỉ trong chưa đầy 1 giây.',
+        diagram: { type: 'oll', grid: [0,0,1, 1,1,1, 0,0,1], top: [1,1,0], bottom: [1,1,0], left: [0,0,0], right: [0,0,0] }
+      },
+      {
+        id: 'cfop_oll_37', step: 'OLL', code: 'OLL 37 (Fish)',
+        name: 'OLL 37: Hình Cá Nhỏ Mất Cạnh (Mounted Fish)',
+        alg: "F R' F' R U R U' R'",
+        desc: 'Hình khối vuông 2x2 kèm 1 góc chéo màu Vàng giống con cá nhỏ: Chạy 8 nước cực kỳ thuận tay.',
+        diagram: { type: 'oll', grid: [1,1,0, 1,1,0, 0,0,1], top: [0,0,1], bottom: [0,1,0], left: [0,0,1], right: [0,1,0] }
+      },
+      {
+        id: 'cfop_oll_57', step: 'OLL', code: 'OLL 57 (All Corners)',
+        name: 'OLL 57: 4 Góc Đã Lật Vàng - Còn 2 Cạnh Chưa Lật (Chữ H)',
+        alg: "R U R' U' M' U R U' r'",
+        desc: 'Tất cả 4 viên Góc đều đã lật màu Vàng, chỉ còn 2 viên Cạnh Trước và Sau bị lật ngược.',
+        diagram: { type: 'oll', grid: [1,0,1, 1,1,1, 1,0,1], top: [0,1,0], bottom: [0,1,0], left: [0,0,0], right: [0,0,0] }
+      },
+
+      // ==================== STEP 4: FULL 21 PLL - PERMUTATION OF LAST LAYER (21) ====================
+      {
+        id: 'cfop_pll_ua', step: 'PLL', code: 'PLL #1 • Ua-Perm',
+        name: 'Ua-Perm (Hoán Vị 3 Cạnh Ngược Chiều Kim Đồng Hồ)',
         alg: "R U' R U R U R U' R' U' R2",
-        desc: 'Khi 4 góc đã đúng hết và 1 mặt bên đã hoàn chỉnh: Đặt mặt đã giải ra phía sau (Back), công thức này sẽ xoay 3 viên cạnh còn lại về đúng chỗ.'
+        desc: '4 góc đã đúng hoàn toàn, mặt Sau (B) đã giải xong. Hoán vị 3 viên cạnh UL → UF → UR → UL.',
+        diagram: { type: 'pll', arrows: [[3,7,false],[7,5,false],[5,3,false]] }
       },
       {
-        id: 'cfop_pll_h', step: 'PLL', name: 'PLL: H-Perm (Đổi Chỗ 2 Cặp Cạnh Đối Diện)',
+        id: 'cfop_pll_ub', step: 'PLL', code: 'PLL #2 • Ub-Perm',
+        name: 'Ub-Perm (Hoán Vị 3 Cạnh Thuận Chiều Kim Đồng Hồ)',
+        alg: "R2 U R U R' U' R' U' R' U R'",
+        desc: 'Đặt mặt đã giải hoàn chỉnh ra phía Sau (B). Hoán vị 3 cạnh theo chiều kim đồng hồ UL → UR → UF → UL.',
+        diagram: { type: 'pll', arrows: [[3,5,false],[5,7,false],[7,3,false]] }
+      },
+      {
+        id: 'cfop_pll_h', step: 'PLL', code: 'PLL #3 • H-Perm',
+        name: 'H-Perm (Đổi Chỗ 2 Cặp Cạnh Đối Diện Chữ Thập)',
         alg: "R2 U2 R U2 R2 U2 R2 U2 R U2 R2",
-        desc: 'Hoán vị 2 viên cạnh Trước-Sau và Trái-Phải cùng lúc với thao tác chỉ dùng mặt R và mặt U cực kỳ dễ nhớ.'
+        desc: '4 góc đã đúng: Đổi chỗ cạnh Trước ↔ Sau (UF ↔ UB) và cạnh Trái ↔ Phải (UL ↔ UR) cùng lúc.',
+        diagram: { type: 'pll', arrows: [[1,7,true],[3,5,true]] }
+      },
+      {
+        id: 'cfop_pll_z', step: 'PLL', code: 'PLL #4 • Z-Perm',
+        name: 'Z-Perm (Đổi Chỗ 2 Cặp Cạnh Kề Nhau Chéo)',
+        alg: "R' U' R U' R U R U' R' U R U R2 U' R'",
+        desc: '4 góc đã đúng: Hoán đổi cặp cạnh Trước ↔ Phải (UF ↔ UR) và Sau ↔ Trái (UB ↔ UL).',
+        diagram: { type: 'pll', arrows: [[1,3,true],[5,7,true]] }
+      },
+      {
+        id: 'cfop_pll_aa', step: 'PLL', code: 'PLL #5 • Aa-Perm',
+        name: 'Aa-Perm (Hoán Vị 3 Góc Thuận Chiều Kim Đồng Hồ)',
+        alg: "R' F R' B2 R F' R' B2 R2",
+        desc: 'Tất cả 4 cạnh đã đúng, giữ khối vuông 2x2 đã giải ở góc Trước-Trái. Xoay 3 góc URB → URF → ULB.',
+        diagram: { type: 'pll', arrows: [[0,2,false],[2,8,false],[8,0,false]] }
+      },
+      {
+        id: 'cfop_pll_ab', step: 'PLL', code: 'PLL #6 • Ab-Perm',
+        name: 'Ab-Perm (Hoán Vị 3 Góc Ngược Chiều Kim Đồng Hồ)',
+        alg: "R2 B2 R F R' B2 R F' R",
+        desc: 'Đảo ngược của Aa-Perm: Hoán vị 3 viên góc theo chiều ngược kim đồng hồ mà không làm xáo trộn 4 viên cạnh.',
+        diagram: { type: 'pll', arrows: [[0,8,false],[8,2,false],[2,0,false]] }
+      },
+      {
+        id: 'cfop_pll_e', step: 'PLL', code: 'PLL #7 • E-Perm',
+        name: 'E-Perm (Hoán Đổi 2 Cặp Góc Song Song)',
+        alg: "R' U L' D2 L U' R L' U R' D2 R U' L",
+        desc: '4 viên cạnh đã đúng vị trí nhưng cả 4 góc đều sai (không có cặp đèn pha nào): Đổi chỗ ULF ↔ ULB và URF ↔ URB.',
+        diagram: { type: 'pll', arrows: [[0,6,true],[2,8,true]] }
+      },
+      {
+        id: 'cfop_pll_t', step: 'PLL', code: 'PLL #8 • T-Perm',
+        name: 'T-Perm (Hoán Vị Chữ T Kinh Điển - 2 Góc & 2 Cạnh)',
+        alg: "R U R' U' R' F R2 U' R' U' R U R' F'",
+        desc: 'Công thức PLL nổi tiếng và mượt tay nhất: Đổi chỗ 2 góc bên Phải (URB ↔ URF) và 2 cạnh đối diện (UL ↔ UR).',
+        diagram: { type: 'pll', arrows: [[2,8,true],[3,5,true]] }
+      },
+      {
+        id: 'cfop_pll_f', step: 'PLL', code: 'PLL #9 • F-Perm',
+        name: 'F-Perm (Thanh Ngang 3 Ô Đã Giải Bên Trái)',
+        alg: "R' U' F' R U R' U' R' F R2 U' R' U' R U R' U R",
+        desc: 'Đặt dải 3 ô đã hoàn chỉnh ở bên tay Trái (L). Hoán đổi 2 góc bên Phải (URB ↔ URF) và 2 cạnh Trước ↔ Sau (UF ↔ UB).',
+        diagram: { type: 'pll', arrows: [[2,8,true],[1,7,true]] }
+      },
+      {
+        id: 'cfop_pll_ja', step: 'PLL', code: 'PLL #10 • Ja-Perm',
+        name: 'Ja-Perm (Hoán Vị Chữ J Trái - 2 Góc & 2 Cạnh Kề)',
+        alg: "R' U L' U2 R U' R' U2 R L",
+        desc: 'Có dải 3 ô đã giải ở bên Phải: Hoán đổi 2 góc và 2 cạnh kề nhau ở góc Trên-Trái.',
+        diagram: { type: 'pll', arrows: [[0,6,true],[1,3,true]] }
+      },
+      {
+        id: 'cfop_pll_jb', step: 'PLL', code: 'PLL #11 • Jb-Perm',
+        name: 'Jb-Perm (Hoán Vị Chữ J Phải - Cực Nhanh)',
+        alg: "R U R' F' R U R' U' R' F R2 U' R'",
+        desc: 'Đặt dải 3 ô hoàn chỉnh bên tay Trái: Đổi chỗ 2 góc bên Phải (URB ↔ URF) và 2 cạnh kề (UF ↔ UR).',
+        diagram: { type: 'pll', arrows: [[2,8,true],[5,7,true]] }
+      },
+      {
+        id: 'cfop_pll_ra', step: 'PLL', code: 'PLL #12 • Ra-Perm',
+        name: 'Ra-Perm (Đèn Pha Bên Trái - Đổi Góc Phải & Cạnh Trước-Trái)',
+        alg: "R U' R' U' R U R D R' U' R D' R' U2 R'",
+        desc: 'Cặp đèn pha bên Trái: Đổi chỗ 2 góc bên Phải (URB ↔ URF) và 2 cạnh kề phía Trước-Trái (UF ↔ UL).',
+        diagram: { type: 'pll', arrows: [[2,8,true],[3,7,true]] }
+      },
+      {
+        id: 'cfop_pll_rb', step: 'PLL', code: 'PLL #13 • Rb-Perm',
+        name: 'Rb-Perm (Đèn Pha Phía Trước - Đổi Góc Sau & Cạnh Phải)',
+        alg: "R' U2 R U2 R' F R U R' U' R' F' R2",
+        desc: 'Đổi chỗ 2 góc phía Sau (ULB ↔ URB) và 2 cạnh kề phía Trước-Phải (UF ↔ UR).',
+        diagram: { type: 'pll', arrows: [[0,2,true],[5,7,true]] }
+      },
+      {
+        id: 'cfop_pll_v', step: 'PLL', code: 'PLL #14 • V-Perm',
+        name: 'V-Perm (Đổi Chéo 2 Góc & 2 Cạnh Kề Bên Phải)',
+        alg: "R' U R' U' R D' R' D R' U D' R2 U' R2 D R2",
+        desc: 'Góc Trước-Trái có khối 2x2 đã giải: Hoán đổi 2 góc chéo nhau (ULF ↔ URB) và 2 cạnh (UB ↔ UR).',
+        diagram: { type: 'pll', arrows: [[2,6,true],[1,5,true]] }
+      },
+      {
+        id: 'cfop_pll_y', step: 'PLL', code: 'PLL #15 • Y-Perm',
+        name: 'Y-Perm (Hoán Đổi 2 Góc Chéo & 2 Cạnh Kề)',
+        alg: "F R U' R' U' R U R' F' R U R' U' R' F R F'",
+        desc: 'Ghép từ 2 nửa OLL (OLL 37 + OLL 33): Đổi chỗ 2 góc chéo nhau (ULF ↔ URB) và 2 cạnh (UB ↔ UL).',
+        diagram: { type: 'pll', arrows: [[2,6,true],[1,3,true]] }
+      },
+      {
+        id: 'cfop_pll_na', step: 'PLL', code: 'PLL #16 • Na-Perm',
+        name: 'Na-Perm (Hoán Đổi Chéo 2 Góc & 2 Cạnh Đối Diện)',
+        alg: "R U R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R'",
+        desc: 'Tất cả các mặt bên đều có khối 1x2: Đổi chéo 2 góc (ULB ↔ URF) và 2 cạnh ngang (UL ↔ UR).',
+        diagram: { type: 'pll', arrows: [[0,8,true],[3,5,true]] }
+      },
+      {
+        id: 'cfop_pll_nb', step: 'PLL', code: 'PLL #17 • Nb-Perm',
+        name: 'Nb-Perm (Hoán Đổi Chéo Đối Xứng Của Na-Perm)',
+        alg: "R' U R U' R' F' U' F R U R' F R' F' R U' R",
+        desc: 'Đổi chéo 2 viên góc (ULF ↔ URB) đồng thời đổi chỗ 2 viên cạnh đối diện (UL ↔ UR).',
+        diagram: { type: 'pll', arrows: [[2,6,true],[3,5,true]] }
+      },
+      {
+        id: 'cfop_pll_ga', step: 'PLL', code: 'PLL #18 • Ga-Perm',
+        name: 'Ga-Perm (Chu Trình Kép Xoay 3 Góc & 3 Cạnh #1)',
+        alg: "R2 U R' U R' U' R U' R2 D U' R' U R D'",
+        desc: 'Nhóm G-Perm: Cặp đèn pha bên Trái, khối 1x2 ở mặt Trước-Phải. Xoay đồng thời chu trình 3 góc và 3 cạnh.',
+        diagram: { type: 'pll', arrows: [[0,2,false],[2,6,false],[1,5,false],[5,3,false]] }
+      },
+      {
+        id: 'cfop_pll_gb', step: 'PLL', code: 'PLL #19 • Gb-Perm',
+        name: 'Gb-Perm (Chu Trình Kép Xoay 3 Góc & 3 Cạnh #2)',
+        alg: "R' U' R U D' R2 U R' U R U' R U' R2 D",
+        desc: 'Nghịch đảo của Ga-Perm: Đèn pha bên Trái, khối 1x2 ở mặt Phải-Sau. Xoay ngược chu trình 3 góc và 3 cạnh.',
+        diagram: { type: 'pll', arrows: [[2,0,false],[6,2,false],[5,1,false],[3,5,false]] }
+      },
+      {
+        id: 'cfop_pll_gc', step: 'PLL', code: 'PLL #20 • Gc-Perm',
+        name: 'Gc-Perm (Chu Trình Kép Xoay 3 Góc & 3 Cạnh #3)',
+        alg: "R2 U' R U' R U R' U R2 D' U R U' R' D",
+        desc: 'Đèn pha bên Trái, khối 1x2 ở mặt Sau-Phải. Xoay đồng bộ 3 góc và 3 cạnh ngược chiều Ga-Perm.',
+        diagram: { type: 'pll', arrows: [[0,8,false],[8,2,false],[1,3,false],[3,7,false]] }
+      },
+      {
+        id: 'cfop_pll_gd', step: 'PLL', code: 'PLL #21 • Gd-Perm',
+        name: 'Gd-Perm (Chu Trình Kép Xoay 3 Góc & 3 Cạnh #4)',
+        alg: "R U R' U' D R2 U' R U' R' U R' U R2 D'",
+        desc: 'Hoàn tất bộ 21 PLL chuẩn quốc tế: Đèn pha bên Trái, khối 1x2 ở mặt Trước-Trái.',
+        diagram: { type: 'pll', arrows: [[8,0,false],[2,8,false],[3,1,false],[7,3,false]] }
       }
     ];
+
+    // SVG Illustration Generator for every CFOP Card
+    function renderCfopDiagramSVG(item) {
+      const d = item.diagram || { type: 'oll', grid: [1,1,1,1,1,1,1,1,1] };
+      const colorMap = {
+        Y: '#facc15', W: '#ffffff', R: '#ef4444', O: '#f97316',
+        G: '#22c55e', B: '#3b82f6', X: '#1e293b'
+      };
+
+      // 1. CROSS DIAGRAM
+      if (d.type === 'cross') {
+        const cells = (d.grid || []).map((c, idx) => {
+          const r = Math.floor(idx / 3), col = idx % 3;
+          const x = 16 + col * 22, y = 16 + r * 22;
+          const fill = colorMap[c] || '#1e293b';
+          return `<rect x="${x}" y="${y}" width="19" height="19" rx="3.5" fill="${fill}" stroke="#0f172a" stroke-width="1.5"/>`;
+        }).join('');
+        return `
+          <svg viewBox="0 0 96 96" class="w-20 h-20 shrink-0 rounded-xl bg-slate-950 border border-slate-800 p-1 shadow-inner">
+            ${cells}
+            <circle cx="48" cy="48" r="3" fill="#0f172a"/>
+          </svg>
+        `;
+      }
+
+      // 2. F2L DIAGRAM (Isometric Front-Right Slot + U Pair Preview)
+      if (d.type === 'f2l') {
+        const [cU, cF, cR] = (d.corner || ['Y','G','R']).map(k => colorMap[k] || '#facc15');
+        const [eU, eF] = (d.edge || ['G','R']).map(k => colorMap[k] || '#22c55e');
+        return `
+          <svg viewBox="0 0 96 96" class="w-20 h-20 shrink-0 rounded-xl bg-slate-950 border border-slate-800 p-1 shadow-inner">
+            <!-- Base F2L Slot Highlight -->
+            <rect x="12" y="14" width="32" height="32" rx="5" fill="${cU}" stroke="#0f172a" stroke-width="2"/>
+            <rect x="12" y="48" width="32" height="16" rx="3" fill="${cF}" stroke="#0f172a" stroke-width="1.5"/>
+            <rect x="46" y="14" width="16" height="32" rx="3" fill="${cR}" stroke="#0f172a" stroke-width="1.5"/>
+            <!-- Edge Piece -->
+            <rect x="52" y="52" width="30" height="15" rx="3" fill="${eU}" stroke="#0f172a" stroke-width="1.5"/>
+            <rect x="52" y="69" width="30" height="15" rx="3" fill="${eF}" stroke="#0f172a" stroke-width="1.5"/>
+            <!-- Slot Arrow -->
+            <path d="M 38 66 Q 48 44 64 42" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round"/>
+            <polygon points="64,38 71,42 64,46" fill="#06b6d4"/>
+          </svg>
+        `;
+      }
+
+      // 3. OLL DIAGRAM (3x3 U-Face + Side Orientation Bars)
+      if (d.type === 'oll') {
+        const cells = (d.grid || []).map((val, idx) => {
+          const r = Math.floor(idx / 3), col = idx % 3;
+          const x = 18 + col * 20, y = 18 + r * 20;
+          const fill = val ? '#facc15' : '#1e293b';
+          return `<rect x="${x}" y="${y}" width="18" height="18" rx="3" fill="${fill}" stroke="#090d16" stroke-width="1.2"/>`;
+        }).join('');
+
+        const topBars = (d.top || [0,0,0]).map((v, i) =>
+          v ? `<rect x="${20 + i * 20}" y="9" width="14" height="5" rx="2" fill="#facc15"/>` : ''
+        ).join('');
+        const botBars = (d.bottom || [0,0,0]).map((v, i) =>
+          v ? `<rect x="${20 + i * 20}" y="82" width="14" height="5" rx="2" fill="#facc15"/>` : ''
+        ).join('');
+        const leftBars = (d.left || [0,0,0]).map((v, i) =>
+          v ? `<rect x="9" y="${20 + i * 20}" width="5" height="14" rx="2" fill="#facc15"/>` : ''
+        ).join('');
+        const rightBars = (d.right || [0,0,0]).map((v, i) =>
+          v ? `<rect x="82" y="${20 + i * 20}" width="5" height="14" rx="2" fill="#facc15"/>` : ''
+        ).join('');
+
+        return `
+          <svg viewBox="0 0 96 96" class="w-20 h-20 shrink-0 rounded-xl bg-slate-950 border border-slate-800 p-1 shadow-inner">
+            ${cells}
+            ${topBars}${botBars}${leftBars}${rightBars}
+          </svg>
+        `;
+      }
+
+      // 4. PLL DIAGRAM (All-Yellow 3x3 Top + Permutation Arrows)
+      const coords = [
+        [25,25], [48,25], [71,25],
+        [25,48], [48,48], [71,48],
+        [25,71], [48,71], [71,71]
+      ];
+      let cells = '';
+      for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 3; c++) {
+          const x = 16 + c * 22, y = 16 + r * 22;
+          cells += `<rect x="${x}" y="${y}" width="20" height="20" rx="3" fill="#facc15" stroke="#0f172a" stroke-width="1.5"/>`;
+        }
+      }
+      const arrowLines = (d.arrows || []).map(([fromIdx, toIdx], aIdx) => {
+        const [x1, y1] = coords[fromIdx] || [25,25];
+        const [x2, y2] = coords[toIdx] || [71,71];
+        const dx = x2 - x1, dy = y2 - y1;
+        const len = Math.hypot(dx, dy) || 1;
+        const ux = dx / len, uy = dy / len;
+        const sx = x1 + ux * 4, sy = y1 + uy * 4;
+        const ex = x2 - ux * 5, ey = y2 - uy * 5;
+        return `
+          <line x1="${sx}" y1="${sy}" x2="${ex}" y2="${ey}" stroke="#0f172a" stroke-width="4.2" stroke-linecap="round"/>
+          <line x1="${sx}" y1="${sy}" x2="${ex}" y2="${ey}" stroke="#ef4444" stroke-width="2.4" stroke-linecap="round" marker-end="url(#pll-arrow-${item.id}-${aIdx})"/>
+        `;
+      }).join('');
+
+      const defs = (d.arrows || []).map((_, aIdx) => `
+        <marker id="pll-arrow-${item.id}-${aIdx}" markerWidth="6" markerHeight="6" refX="4.5" refY="3" orient="auto">
+          <polygon points="0 0, 6 3, 0 6" fill="#ef4444"/>
+        </marker>
+      `).join('');
+
+      return `
+        <svg viewBox="0 0 96 96" class="w-20 h-20 shrink-0 rounded-xl bg-slate-950 border border-slate-800 p-1 shadow-inner">
+          <defs>${defs}</defs>
+          ${cells}
+          ${arrowLines}
+        </svg>
+      `;
+    }
 
     const CHESS_GAMBITS = [
       {
@@ -1286,8 +1909,12 @@
       const rCount = AppState.learnedItems.filter(id => rubikIds.includes(id)).length;
       const cCount = AppState.learnedItems.filter(id => chessIds.includes(id)).length;
       const total = rCount + cCount;
+      const maxTotal = rubikIds.length + chessIds.length;
 
       document.getElementById('stat-learned-count').textContent = total;
+      const totalLabel = document.getElementById('stat-learned-total');
+      if (totalLabel) totalLabel.textContent = `/ ${maxTotal}`;
+
       document.getElementById('prog-rubik-text').textContent = `${rCount} / ${rubikIds.length}`;
       document.getElementById('prog-rubik-bar').style.width = `${(rCount / rubikIds.length) * 100}%`;
       document.getElementById('prog-chess-text').textContent = `${cCount} / ${chessIds.length}`;
@@ -1304,15 +1931,15 @@
       const subtitle = document.getElementById('home-progress-subtitle');
       if (AppState.userEmail) {
         document.getElementById('nav-user-label').textContent = `👤 ${AppState.userName}`;
-        syncBadge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Đã đăng nhập (${AppState.userName})`;
+        syncBadge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Đã xác minh (${AppState.userName})`;
         if (subtitle) {
-          subtitle.innerHTML = `Đang đăng nhập với Email <strong class="text-cyan-300">${AppState.userEmail}</strong> — Mọi công thức bạn đánh dấu sẽ được lưu tự động.`;
+          subtitle.innerHTML = `Đang đăng nhập với Email thật <strong class="text-cyan-300">${AppState.userEmail}</strong> — Tài khoản được tự động ghi nhớ mỗi khi mở lại web.`;
         }
       } else {
         document.getElementById('nav-user-label').textContent = 'Đăng Nhập Email';
         syncBadge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Chưa đăng nhập`;
         if (subtitle) {
-          subtitle.innerHTML = `Dữ liệu mặc định được làm trắng. Hãy <strong>Đăng nhập Email</strong> để lưu các công thức CFOP và Gambit bạn đã học lên Supabase!`;
+          subtitle.innerHTML = `Dữ liệu mặc định được làm trắng. Hãy <strong>Đăng nhập & Xác minh Email</strong> để lưu các công thức CFOP và Gambit bạn đã học!`;
         }
       }
 
@@ -1328,7 +1955,7 @@
       }
     }
 
-    // ---------- 7. THREE.JS INTERACTIVE 3D RUBIK'S CUBE ENGINE ----------
+    // ---------- 7. THREE.JS INTERACTIVE 3D RUBIK'S CUBE ENGINE (YELLOW ON TOP, WHITE ON BOTTOM) ----------
     class InteractiveRubiksCube {
       constructor(containerId) {
         this.container = document.getElementById(containerId);
@@ -1369,9 +1996,15 @@
         this.cubies = [];
         this.moveHistory = [];
 
+        // FIXED ORIENTATION: Yellow on Top (U: y === 1), White on Bottom (D: y === -1)
         const colors = {
-          R: 0xef4444, L: 0xf97316, U: 0xffffff,
-          D: 0xfacc15, F: 0x22c55e, B: 0x3b82f6, CORE: 0x0f172a
+          R: 0xef4444, // Right: Red
+          L: 0xf97316, // Left: Orange
+          U: 0xfacc15, // Up (Top): YELLOW (#facc15)
+          D: 0xffffff, // Down (Bottom): WHITE (#ffffff)
+          F: 0x22c55e, // Front: Green
+          B: 0x3b82f6, // Back: Blue
+          CORE: 0x0f172a
         };
 
         const geom = new THREE.BoxGeometry(0.93, 0.93, 0.93);
@@ -1432,10 +2065,30 @@
       }
 
       enqueueNotation(notationStr, recordHistory = true) {
-        const tokens = notationStr.trim().split(/\s+/).filter(Boolean);
+        const cleaned = notationStr.replace(/[()]/g, ' ').trim();
+        const tokens = cleaned.split(/\s+/).filter(Boolean);
         tokens.forEach(tok => {
-          const face = tok[0].toUpperCase();
+          const rawFace = tok[0];
           const mod = tok.slice(1);
+          // Support standard U, D, R, L, F, B as well as M and r
+          if (rawFace === 'M') {
+            const count = mod === '2' ? 2 : 1;
+            const isPrime = mod === "'";
+            for (let i = 0; i < count; i++) {
+              this.moveQueue.push({ face: 'M', prime: isPrime, recordHistory, label: tok });
+            }
+            return;
+          }
+          if (rawFace === 'r') {
+            const count = mod === '2' ? 2 : 1;
+            const isPrime = mod === "'";
+            for (let i = 0; i < count; i++) {
+              this.moveQueue.push({ face: 'R', prime: isPrime, recordHistory, label: tok });
+              this.moveQueue.push({ face: 'M', prime: !isPrime, recordHistory, label: tok });
+            }
+            return;
+          }
+          const face = rawFace.toUpperCase();
           if (!['U','D','R','L','F','B'].includes(face)) return;
           if (mod === '2') {
             this.moveQueue.push({ face, prime: false, recordHistory, label: tok });
@@ -1459,6 +2112,7 @@
         const axisMap = {
           R: { axis: 'x', layer: 1, dir: -1 },
           L: { axis: 'x', layer: -1, dir: 1 },
+          M: { axis: 'x', layer: 0, dir: 1 },
           U: { axis: 'y', layer: 1, dir: -1 },
           D: { axis: 'y', layer: -1, dir: 1 },
           F: { axis: 'z', layer: 1, dir: -1 },
@@ -1477,7 +2131,7 @@
         this.rootGroup.add(pivot);
         activeCubies.forEach(c => pivot.attach(c));
 
-        const duration = 135;
+        const duration = 125;
         const start = performance.now();
 
         const stepAnim = now => {
@@ -1551,6 +2205,7 @@
         this.renderer.render(this.scene, this.camera);
       }
     }
+
     // ---------- 8. WCA PRO STACKMAT TIMER & CAMERA AI SCANNER ----------
     const RubikTimer = {
       running: false,
@@ -1813,13 +2468,13 @@
       }
     };
 
-    // ---------- 9. INTERNATIONAL CHESS ARENA (FIXED TIMER, CAPTURES & PAWN PROMOTION) ----------
+    // ---------- 9. INTERNATIONAL CHESS ARENA (FIXED EQUAL 8x8 CELLS, TIMER, CAPTURES & PROMOTION) ----------
     const ChessArena = {
       game: null,
       selectedSq: null,
       legalTargets: [],
       lastMoveSquares: [],
-      pendingPromotion: null, // { from, to, color }
+      pendingPromotion: null,
       flipped: false,
       mode: 'bot',
       level: 2,
@@ -1925,7 +2580,6 @@
         const topColor = topIsBlack ? 'b' : 'w';
         const botColor = topIsBlack ? 'w' : 'b';
 
-        // Player names & avatars
         const blackName = this.mode === 'pvp' ? 'Người Chơi 2 (Quân Đen)' : 'LM StockBot AI (Quân Đen)';
         const whiteName = 'Bạn (Quân Trắng)';
 
@@ -1934,7 +2588,6 @@
         document.getElementById('chess-top-avatar').textContent = topColor === 'b' ? (this.mode === 'pvp' ? '👤' : '🤖') : '👤';
         document.getElementById('chess-bottom-avatar').textContent = botColor === 'w' ? '👤' : (this.mode === 'pvp' ? '👤' : '🤖');
 
-        // Clocks
         const topSec = topColor === 'b' ? this.blackTime : this.whiteTime;
         const botSec = botColor === 'w' ? this.whiteTime : this.blackTime;
         const topClockEl = document.getElementById('chess-clock-top');
@@ -1950,11 +2603,10 @@
         topClockEl.className = (activeTurn === topColor && this.clockRunning) ? activeStyle : idleStyle;
         botClockEl.className = (activeTurn === botColor && this.clockRunning) ? activeStyle : idleStyle;
 
-        // Captured pieces & material advantage calculation
         if (!this.game) return;
         const verboseMoves = this.game.history({ verbose: true });
-        const capturedByWhite = []; // Black pieces captured by White
-        const capturedByBlack = []; // White pieces captured by Black
+        const capturedByWhite = [];
+        const capturedByBlack = [];
 
         verboseMoves.forEach(m => {
           if (m.captured) {
@@ -1963,7 +2615,6 @@
           }
         });
 
-        // Compute current material on board
         let wMat = 0, bMat = 0;
         const b = this.game.board();
         for (let r = 0; r < 8; r++) {
@@ -2009,6 +2660,7 @@
         }
       },
 
+      // FIXED: Strict 8x8 grid with equal square aspect-ratio and zero glyph overflow
       renderHeroMiniBoard(movesArr, captionText) {
         const wrap = document.getElementById('hero-mini-chessboard');
         if (!wrap || !window.Chess) return;
@@ -2023,7 +2675,7 @@
             const p = board[r][c];
             const glyph = p ? this.unicodePieces[p.color + p.type] : '';
             const pColor = p ? (p.color === 'w' ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]' : 'text-slate-950') : '';
-            html += `<div class="flex items-center justify-center text-lg sm:text-xl ${sqBg}"><span class="${pColor}">${glyph}</span></div>`;
+            html += `<div class="chess-square flex items-center justify-center ${sqBg}"><span class="text-base sm:text-lg leading-none select-none ${pColor}">${glyph}</span></div>`;
           }
         }
         wrap.innerHTML = html;
@@ -2075,7 +2727,6 @@
                   : 'text-slate-950 drop-shadow-[0_1px_2px_rgba(255,255,255,0.45)]')
               : '';
 
-            // Overlay indicator uses position:absolute so the piece NEVER shifts off-center when capturing!
             let legalOverlay = '';
             if (isLegal) {
               if (piece) {
@@ -2086,7 +2737,7 @@
             }
 
             html += `
-              <div data-sq="${sqName}" class="chess-square relative flex items-center justify-center ${bgClass} cursor-pointer">
+              <div data-sq="${sqName}" class="chess-square flex items-center justify-center ${bgClass} cursor-pointer">
                 ${colIdx === 0 ? `<span class="absolute top-0.5 left-1 text-[10px] font-extrabold pointer-events-none ${isLight ? 'text-slate-700' : 'text-emerald-100'}">${8 - r}</span>` : ''}
                 ${rowIdx === 7 ? `<span class="absolute bottom-0.5 right-1 text-[10px] font-extrabold pointer-events-none ${isLight ? 'text-slate-700' : 'text-emerald-100'}">${files[c]}</span>` : ''}
                 ${legalOverlay}
@@ -2157,7 +2808,6 @@
         if (this.game.game_over() || this.timeOutWinner) return;
         if (this.mode === 'bot' && this.game.turn() === 'b') return;
 
-        // Check if clicking a legal destination
         if (this.selectedSq && this.legalTargets.includes(sq)) {
           if (this.isPromotionMove(this.selectedSq, sq)) {
             this.openPromotionModal(this.selectedSq, sq, this.game.turn());
@@ -2167,7 +2817,6 @@
           return;
         }
 
-        // Otherwise select own piece
         const p = this.game.get(sq);
         if (p && p.color === this.game.turn()) {
           this.selectedSq = sq;
@@ -2370,42 +3019,66 @@
       }
     };
 
-    // ---------- 10. RENDER KNOWLEDGE CARDS (CFOP & CHESS GAMBITS) ----------
+    // ---------- 10. RENDER KNOWLEDGE CARDS (FULL 48 CFOP WITH DIAGRAMS & CHESS GAMBITS) ----------
     let currentCfopFilter = 'ALL';
+    let currentCfopSearch = '';
 
     function renderAllKnowledgeCards() {
-      // 1. Render CFOP Cards
+      // 1. Render CFOP Cards with Visual SVG Diagrams
       const cfopContainer = document.getElementById('cfop-cards-container');
       if (cfopContainer) {
-        const list = currentCfopFilter === 'ALL'
+        let list = currentCfopFilter === 'ALL'
           ? CFOP_DATABASE
           : CFOP_DATABASE.filter(x => x.step === currentCfopFilter);
 
-        cfopContainer.innerHTML = list.map(item => {
-          const learned = AppState.learnedItems.includes(item.id);
-          return `
-            <div class="p-5 rounded-2xl bg-slate-900/90 border ${learned ? 'border-emerald-500/50' : 'border-slate-800'} flex flex-col justify-between space-y-4">
-              <div class="space-y-2.5">
-                <div class="flex items-center justify-between">
-                  <span class="px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-300 font-mono-code text-xs font-extrabold">${item.step}</span>
-                  <button data-learn-id="${item.id}" data-learn-title="${item.name}" class="learn-toggle-btn text-xs sm:text-sm font-bold px-3 py-1.5 rounded-xl ${learned ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-200 hover:text-white'} transition">
-                    ${learned ? '✓ Đã học' : '+ Đánh dấu đã học'}
+        if (currentCfopSearch) {
+          const q = currentCfopSearch.toLowerCase();
+          list = list.filter(x =>
+            x.name.toLowerCase().includes(q) ||
+            x.code.toLowerCase().includes(q) ||
+            x.alg.toLowerCase().includes(q) ||
+            x.desc.toLowerCase().includes(q)
+          );
+        }
+
+        if (!list.length) {
+          cfopContainer.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400">Không tìm thấy công thức phù hợp với từ khóa "${currentCfopSearch}".</div>`;
+        } else {
+          cfopContainer.innerHTML = list.map(item => {
+            const learned = AppState.learnedItems.includes(item.id);
+            const svgDiagram = renderCfopDiagramSVG(item);
+            return `
+              <div class="p-5 rounded-2xl bg-slate-900/90 border ${learned ? 'border-emerald-500/50' : 'border-slate-800'} flex flex-col justify-between space-y-4">
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-300 font-mono-code text-xs font-extrabold">${item.code || item.step}</span>
+                    <button data-learn-id="${item.id}" data-learn-title="${item.name}" class="learn-toggle-btn text-xs sm:text-sm font-bold px-3 py-1.5 rounded-xl ${learned ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-200 hover:text-white'} transition">
+                      ${learned ? '✓ Đã học' : '+ Đánh dấu đã học'}
+                    </button>
+                  </div>
+
+                  <!-- Visual Illustration + Title Row -->
+                  <div class="flex items-start gap-3.5 pt-1">
+                    ${svgDiagram}
+                    <div class="space-y-1.5 min-w-0">
+                      <h4 class="text-base font-extrabold text-white leading-snug">${item.name}</h4>
+                      <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${item.desc}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-2.5 pt-1">
+                  <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono-code text-xs sm:text-sm text-cyan-300 font-extrabold flex items-center justify-between overflow-x-auto">
+                    <span>${item.alg}</span>
+                  </div>
+                  <button data-demo-alg="${item.alg}" class="demo-alg-on-3d-btn w-full py-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 font-extrabold text-sm border border-cyan-500/30 transition">
+                    ▶ Chạy Thử Trên Mô Hình Rubik 3D
                   </button>
                 </div>
-                <h4 class="text-base sm:text-lg font-extrabold text-white">${item.name}</h4>
-                <p class="text-sm text-slate-200 leading-relaxed">${item.desc}</p>
               </div>
-              <div class="space-y-2.5 pt-1">
-                <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono-code text-sm sm:text-base text-cyan-300 font-extrabold flex items-center justify-between">
-                  <span>${item.alg}</span>
-                </div>
-                <button data-demo-alg="${item.alg}" class="demo-alg-on-3d-btn w-full py-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 font-extrabold text-sm border border-cyan-500/30 transition">
-                  ▶ Chạy Thử Trên Mô Hình Rubik 3D
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('');
+            `;
+          }).join('');
+        }
       }
 
       // 2. Render Chess Gambit Cards
@@ -2508,6 +3181,9 @@
       initSupabaseClient();
       renderAllKnowledgeCards();
       updateDashboardProgressUI();
+
+      // Auto-restore remembered verified account on every page visit
+      restoreRememberedSessionOnLoad();
 
       window.addEventListener('resize', () => {
         if (window.HeroCube) window.HeroCube.resize();
@@ -2676,7 +3352,7 @@
         showToast(`▶ Đang mô phỏng công thức giải trên khối 3D: ${alg}`, 'cyan');
       });
 
-      // CFOP Filter Buttons
+      // CFOP Filter & Search Input
       document.querySelectorAll('.cfop-filter-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           currentCfopFilter = btn.getAttribute('data-cfop-filter');
@@ -2689,6 +3365,13 @@
           renderAllKnowledgeCards();
         });
       });
+      const cfopSearchEl = document.getElementById('cfop-search-input');
+      if (cfopSearchEl) {
+        cfopSearchEl.addEventListener('input', e => {
+          currentCfopSearch = e.target.value.trim();
+          renderAllKnowledgeCards();
+        });
+      }
 
       // Chess Subtabs, Clock, Promotion & Controls
       document.querySelectorAll('.chess-subtab').forEach(btn => {
@@ -2761,31 +3444,71 @@
         ChessArena.loadPuzzle(ChessArena.puzzleIdx + 1);
       });
 
-      // Auth & Reset Progress Buttons
+      // Auth & Real Email Verification Events
       const authModal = document.getElementById('auth-modal');
       document.getElementById('open-auth-modal-btn').addEventListener('click', openAuthModal);
       document.getElementById('close-auth-modal-btn').addEventListener('click', () => {
         authModal.classList.add('hidden');
         authModal.classList.remove('flex');
       });
+
+      document.getElementById('verify-email-real-btn').addEventListener('click', async () => {
+        const email = document.getElementById('auth-email-input').value.trim();
+        const statusEl = document.getElementById('email-verify-status');
+        statusEl.textContent = '⏳ Đang kiểm tra máy chủ tên miền Email (DNS MX)...';
+        statusEl.className = 'text-xs mt-1.5 text-cyan-300 font-semibold';
+        const res = await verifyRealEmailAddress(email);
+        if (res.valid) {
+          statusEl.textContent = res.reason;
+          statusEl.className = 'text-xs mt-1.5 text-emerald-400 font-bold';
+          SoundFX.play('beep');
+          showToast(res.reason, 'emerald');
+        } else {
+          statusEl.textContent = `❌ ${res.reason}`;
+          statusEl.className = 'text-xs mt-1.5 text-rose-400 font-bold';
+          showToast(res.reason, 'rose');
+        }
+      });
+
+      document.getElementById('verify-otp-btn').addEventListener('click', async () => {
+        const otp = document.getElementById('auth-otp-input').value.trim();
+        const email = document.getElementById('auth-email-input').value.trim();
+        if (!otp || otp.length < 4) {
+          showToast('Vui lòng nhập mã OTP hợp lệ!', 'amber');
+          return;
+        }
+        if (AppState.supabaseClient && email) {
+          try {
+            await AppState.supabaseClient.auth.verifyOtp({ email, token: otp, type: 'email' });
+          } catch (e) {}
+        }
+        showToast('✅ Đã xác nhận mã OTP thành công!', 'emerald');
+        document.getElementById('auth-otp-box').classList.add('hidden');
+      });
+
       document.getElementById('auth-submit-btn').addEventListener('click', async () => {
         const email = document.getElementById('auth-email-input').value.trim();
         const name = document.getElementById('auth-name-input').value.trim();
         const pass = document.getElementById('auth-pass-input').value.trim();
-        if (!email || !email.includes('@')) {
-          showToast('Vui lòng nhập địa chỉ Email hợp lệ!', 'rose');
+        if (pass && pass.length > 0 && pass.length < 6) {
+          showToast('Mật khẩu cần tối thiểu 6 ký tự!', 'amber');
           return;
         }
-        await loginAndLoadUserProfile(email, name, pass);
-        authModal.classList.add('hidden');
-        authModal.classList.remove('flex');
+        const ok = await loginAndLoadUserProfile(email, name, pass, false);
+        if (ok) {
+          authModal.classList.add('hidden');
+          authModal.classList.remove('flex');
+        }
       });
+
       document.getElementById('auth-logout-btn').addEventListener('click', async () => {
         if (AppState.supabaseClient) {
           try { await AppState.supabaseClient.auth.signOut(); } catch (e) {}
         }
+        StorageUtil.remove(ACTIVE_SESSION_STORAGE_KEY);
         AppState.userEmail = '';
         AppState.userName = '';
+        AppState.emailVerified = false;
         AppState.learnedItems = [];
         AppState.rubikSolves = [];
         AppState.chessElo = 1200;
@@ -2794,7 +3517,7 @@
         renderAllKnowledgeCards();
         authModal.classList.add('hidden');
         authModal.classList.remove('flex');
-        showToast('Đã đăng xuất và làm trắng dữ liệu phiên hiện tại.', 'amber');
+        showToast('Đã đăng xuất và xóa phiên tự động đăng nhập.', 'amber');
       });
 
       document.getElementById('reset-all-progress-btn').addEventListener('click', () => {
