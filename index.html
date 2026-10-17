@@ -1,242 +1,3465 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Khoa Học D10 - Lời Nhắn</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Supabase JS CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>MindArena Hub — Nền Tảng Học Tập, Rèn Luyện & Thi Đấu Rubik 3D, Cờ Vua & Cờ Tướng</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=Noto+Serif:ital,wght@0,600;0,700;1,600&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+            serif: ['"Playfair Display"', '"Noto Serif"', 'serif']
+          },
+          colors: {
+            obsidian: '#0B0F19'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --theme-primary: #00F5D4;
+      --theme-secondary: #FF6B35;
+      --theme-accent: #7B2CBF;
+      --theme-glow: rgba(0, 245, 212, 0.28);
+    }
+    body[data-discipline="rubik"] {
+      --theme-primary: #00F5D4;
+      --theme-secondary: #FF6B35;
+      --theme-accent: #7B2CBF;
+      --theme-glow: rgba(0, 245, 212, 0.28);
+    }
+    body[data-discipline="chess"] {
+      --theme-primary: #10B981;
+      --theme-secondary: #F59E0B;
+      --theme-accent: #059669;
+      --theme-glow: rgba(16, 185, 129, 0.28);
+    }
+    body[data-discipline="xiangqi"] {
+      --theme-primary: #E11D48;
+      --theme-secondary: #D97706;
+      --theme-accent: #BE123C;
+      --theme-glow: rgba(225, 29, 72, 0.28);
+    }
+    body {
+      background-color: #0B0F19;
+      color: #F8FAFC;
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.045);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-card:hover {
+      border-color: var(--theme-primary);
+      box-shadow: 0 8px 32px -8px var(--theme-glow);
+    }
+    .theme-badge {
+      color: var(--theme-primary);
+      border-color: var(--theme-primary);
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .theme-btn {
+      background: var(--theme-primary);
+      color: #0B0F19;
+      font-weight: 700;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+    body[data-discipline="xiangqi"] .theme-btn {
+      color: #FFFFFF;
+    }
+    .theme-btn:hover {
+      box-shadow: 0 0 22px var(--theme-glow);
+      transform: translateY(-1px);
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.3);
+      border-radius: 9999px;
+    }
+    .chess-square {
+      user-select: none;
+      transition: background-color 0.12s ease;
+    }
+    .hero-glow {
+      background: radial-gradient(circle at 20% 20%, var(--theme-glow), transparent 55%),
+                  radial-gradient(circle at 80% 30%, rgba(123, 44, 191, 0.16), transparent 50%);
+    }
+  </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen p-4 md:p-8 flex flex-col items-center">
+<body data-discipline="rubik" class="min-h-screen flex flex-col selection:bg-teal-400/30 selection:text-teal-200">
 
-  <div class="max-w-xl w-full space-y-6">
-    <!-- Header -->
-    <div class="text-center space-y-2">
-      <h1 class="text-3xl font-bold text-indigo-400">Khoa Học D10</h1>
-      <p class="text-slate-400 text-sm">Hệ thống gửi lời nhắn kết nối tài khoản Supabase</p>
+  <!-- AMBIENT MOTION BLUR BACKGROUND -->
+  <div class="fixed inset-0 pointer-events-none hero-glow z-0"></div>
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="sticky top-0 z-30 border-b border-white/10 bg-[#0B0F19]/85 backdrop-blur-xl px-4 lg:px-6 py-3">
+    <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-3">
+      <!-- Brand + Sidebar Toggle -->
+      <div class="flex items-center gap-3">
+        <button id="btn-toggle-sidebar" type="button" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300" title="Thu gọn / Mở rộng thanh bên">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h10"/></svg>
+        </button>
+        <div class="flex items-center gap-2.5">
+          <div id="brand-badge" class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00F5D4] via-emerald-500 to-rose-600 flex items-center justify-center font-extrabold text-slate-950 shadow-lg">
+            MA
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-extrabold text-base sm:text-lg tracking-tight text-white">MindArena Hub</span>
+              <span id="discipline-pill" class="text-[11px] font-mono uppercase px-2 py-0.5 rounded-full bg-[#00F5D4]/15 text-[#00F5D4] border border-[#00F5D4]/30 font-semibold">Cyber-Neon Rubik</span>
+            </div>
+            <p class="text-[11px] text-slate-400 hidden sm:block">Học viện & Đấu trường Trí tuệ: Rubik 3D • Cờ Vua • Cờ Tướng</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Discipline Switcher (Dynamic Theming) -->
+      <div class="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-2xl border border-white/10">
+        <button type="button" data-switch-discipline="rubik" class="discipline-tab px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-[#00F5D4] text-slate-950">
+          <span>🧊</span><span>Rubik 3D</span>
+        </button>
+        <button type="button" data-switch-discipline="chess" class="discipline-tab px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-slate-300 hover:text-white">
+          <span>♟️</span><span>Cờ Vua</span>
+        </button>
+        <button type="button" data-switch-discipline="xiangqi" class="discipline-tab px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-slate-300 hover:text-white">
+          <span>🏮</span><span>Cờ Tướng</span>
+        </button>
+      </div>
+
+      <!-- User Stats & Controls -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="hidden xl:flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10 text-xs">
+          <span title="Chuỗi ngày học liên tiếp">🔥 <strong id="top-streak" class="font-mono text-amber-400">7</strong> ngày</span>
+          <span class="text-white/20">|</span>
+          <span>PB: <strong id="top-rubik-pb" class="font-mono text-[#00F5D4]">14.82s</strong></span>
+          <span class="text-white/20">|</span>
+          <span>Vua: <strong id="top-chess-elo" class="font-mono text-emerald-400">1340</strong></span>
+          <span class="text-white/20">|</span>
+          <span>Tướng: <strong id="top-xiangqi-elo" class="font-mono text-rose-400">1280</strong></span>
+        </div>
+
+        <button id="btn-sound-toggle" type="button" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 flex items-center gap-1.5" title="Bật/Tắt âm thanh hiệu ứng">
+          <span id="sound-icon">🔊</span>
+          <span class="hidden sm:inline" id="sound-label">Âm thanh</span>
+        </button>
+
+        <button id="btn-open-auth" type="button" class="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-semibold text-white flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="top-user-name">Kỳ Thủ (Hybrid Guest)</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE CONTAINER -->
+  <div class="relative z-10 flex-1 max-w-[1600px] w-full mx-auto flex">
+    <!-- COLLAPSIBLE SIDEBAR -->
+    <aside id="app-sidebar" class="w-64 shrink-0 border-r border-white/10 bg-[#0B0F19]/75 backdrop-blur-xl p-4 hidden md:flex flex-col justify-between transition-all duration-200">
+      <div class="space-y-6">
+        <div>
+          <div class="text-[11px] font-mono uppercase tracking-wider text-slate-400 px-3 mb-2">Không Gian Chính</div>
+          <nav class="space-y-1">
+            <button type="button" data-nav-view="dashboard" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold bg-white/10 text-white border border-white/15">
+              <span>📊</span><span class="sidebar-text">Dashboard & Hero</span>
+            </button>
+            <button type="button" data-nav-view="curriculum" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/5">
+              <span>📚</span><span class="sidebar-text">Học Viện Kiến Thức</span>
+            </button>
+            <button type="button" data-nav-view="rubik" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/5">
+              <span>🧊</span><span class="sidebar-text">Phòng Lab Rubik 3D</span>
+            </button>
+            <button type="button" data-nav-view="chess" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/5">
+              <span>♟️</span><span class="sidebar-text">Đấu Trường Cờ Vua</span>
+            </button>
+            <button type="button" data-nav-view="xiangqi" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/5">
+              <span>🏮</span><span class="sidebar-text">Đấu Trường Cờ Tướng</span>
+            </button>
+            <button type="button" data-nav-view="architecture" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/5">
+              <span>⚙️</span><span class="sidebar-text">Supabase & CI/CD Code</span>
+            </button>
+          </nav>
+        </div>
+
+        <!-- Quick Theme Info Box -->
+        <div class="glass-card rounded-2xl p-3.5 text-xs space-y-2 sidebar-text">
+          <div class="flex items-center justify-between">
+            <span class="text-slate-400 font-medium">Chế độ lưu trữ</span>
+            <span id="storage-mode-badge" class="font-mono text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Hybrid Sync</span>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Tự động đồng bộ Supabase PostgreSQL khi đăng nhập hoặc lưu tức thì vào <code class="font-mono text-slate-200">localStorage</code>.
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-white/10 text-[11px] text-slate-400 sidebar-text">
+        <div class="font-semibold text-slate-300">MindArena Hub v1.0</div>
+        <div>React + Three.js + Chess/Xiangqi AI</div>
+      </div>
+    </aside>
+
+    <!-- MOBILE BOTTOM/TOP QUICK NAV -->
+    <div class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-[#0B0F19]/95 backdrop-blur-xl border-t border-white/10 px-2 py-1.5 flex justify-around">
+      <button type="button" data-nav-view="dashboard" class="nav-btn px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-white bg-white/10">📊 Tổng quan</button>
+      <button type="button" data-nav-view="curriculum" class="nav-btn px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-slate-300">📚 Học viện</button>
+      <button type="button" data-nav-view="rubik" class="nav-btn px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-slate-300">🧊 Rubik</button>
+      <button type="button" data-nav-view="chess" class="nav-btn px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-slate-300">♟️ Cờ Vua</button>
+      <button type="button" data-nav-view="xiangqi" class="nav-btn px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-slate-300">🏮 Cờ Tướng</button>
     </div>
 
-    <!-- KHUNG ĐĂNG NHẬP / ĐĂNG KÝ (Hiển thị khi chưa đăng nhập) -->
-    <div id="authSection" class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg space-y-4">
-      <h2 id="authTitle" class="text-xl font-bold text-slate-100 text-center">Đăng Nhập Tài Khoản</h2>
-      
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 pb-20 md:pb-8 overflow-x-hidden space-y-6">
+
+      <!-- ================================================================= -->
+      <!-- VIEW 1: DASHBOARD & LANDING HERO                                  -->
+      <!-- ================================================================= -->
+      <section id="view-dashboard" class="space-y-6">
+        <!-- Hero Banner with Motion Blur & 3 Discipline Cards -->
+        <div class="glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden border border-white/15">
+          <div class="max-w-3xl space-y-3 relative z-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-[#00F5D4]">
+              <span>⚡ NỀN TẢNG HUẤN LUYỆN & THI ĐẤU TRÍ TUỆ 3 TRONG 1</span>
+            </div>
+            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+              Làm Chủ Tốc Độ <span class="text-[#00F5D4]">Rubik CFOP</span>, Chiến Thuật <span class="text-emerald-400">Cờ Vua</span> & Tuyệt Nghệ <span class="text-rose-400 font-serif">Cờ Tướng</span>
+            </h1>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+              Trực quan hóa mọi công thức trên mô hình 3D thời gian thực, bấm giờ chuẩn WCA và đối đầu trực tiếp với hệ thống Bot AI phân tầng ELO từ Tập Sự đến Đại Kiện Tướng.
+            </p>
+          </div>
+
+          <!-- 3 Discipline Interactive Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 relative z-10">
+            <!-- Card 1: Rubik -->
+            <div class="glass-card rounded-2xl p-5 border border-[#00F5D4]/30 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-mono uppercase tracking-wider text-[#00F5D4] font-bold">Speedcubing Lab</span>
+                  <span class="text-lg">🧊</span>
+                </div>
+                <h2 class="text-lg font-bold text-white mb-1">Rubik 3D & WCA Timer</h2>
+                <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                  Trọn bộ phương pháp CFOP (Cross, F2L trực quan, 2-Look & Full OLL/PLL) kèm mô hình 3D chạy từng bước và đồng hồ bấm giờ Spacebar.
+                </p>
+              </div>
+              <div class="flex gap-2">
+                <button type="button" data-quick-open="rubik-arena" class="flex-1 py-2 px-3 rounded-xl bg-[#00F5D4] text-slate-950 font-bold text-xs">Mở Phòng Lab 3D</button>
+                <button type="button" data-quick-learn="rubik" class="py-2 px-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold text-xs">Học CFOP</button>
+              </div>
+            </div>
+
+            <!-- Card 2: Chess -->
+            <div class="glass-card rounded-2xl p-5 border border-emerald-500/30 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-mono uppercase tracking-wider text-emerald-400 font-bold">Royal Chess Arena</span>
+                  <span class="text-lg">♟️</span>
+                </div>
+                <h2 class="text-lg font-bold text-white mb-1">Cờ Vua & Gambit Kinh Điển</h2>
+                <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                  Hệ thống Queen's/King's/Evans/Stafford Gambit, đòn chiến thuật trung cuộc, cờ tàn Lucena/Philidor và đấu trường AI ELO 600–2000+.
+                </p>
+              </div>
+              <div class="flex gap-2">
+                <button type="button" data-quick-open="chess-arena" class="flex-1 py-2 px-3 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs">Đấu Cờ Vua AI</button>
+                <button type="button" data-quick-learn="chess" class="py-2 px-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold text-xs">Học Gambit</button>
+              </div>
+            </div>
+
+            <!-- Card 3: Xiangqi -->
+            <div class="glass-card rounded-2xl p-5 border border-rose-500/30 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-mono uppercase tracking-wider text-rose-400 font-bold">Neo-Oriental Xiangqi</span>
+                  <span class="text-lg">🏮</span>
+                </div>
+                <h2 class="text-lg font-bold text-white font-serif mb-1">Cờ Tướng & Sát Pháp Cổ Phổ</h2>
+                <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                  Pháo Đầu Bình Phong Mã, Thuận/Nghịch Pháo, Tiên Nhân Chỉ Lộ, 7 thế sát pháp thực chiến và bàn cờ chuẩn Chữ Hán / Tiếng Việt.
+                </p>
+              </div>
+              <div class="flex gap-2">
+                <button type="button" data-quick-open="xiangqi-arena" class="flex-1 py-2 px-3 rounded-xl bg-rose-600 text-white font-bold text-xs">Đấu Cờ Tướng AI</button>
+                <button type="button" data-quick-learn="xiangqi" class="py-2 px-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold text-xs">Luyện Sát Pháp</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 KPI Overview Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="glass-card rounded-2xl p-5">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+              <span>Tiến Độ Học Học Viện</span>
+              <span class="font-mono text-[#00F5D4]" id="stat-mastered-pct">38%</span>
+            </div>
+            <div class="font-mono text-2xl font-extrabold text-white" id="stat-mastered-count">8 / 20 bài</div>
+            <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden mt-3">
+              <div id="stat-mastered-bar" class="h-full bg-gradient-to-r from-[#00F5D4] to-emerald-400 rounded-full" style="width: 38%"></div>
+            </div>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+              <span>Kỷ Lục Rubik (PB / Ao5)</span>
+              <span class="font-mono text-[#FF6B35]">3x3x3 WCA</span>
+            </div>
+            <div class="font-mono text-2xl font-extrabold text-[#00F5D4]" id="stat-rubik-pb">14.82s</div>
+            <div class="text-xs text-slate-400 mt-2 font-mono">Ao5 hiện tại: <strong class="text-white" id="stat-rubik-ao5">16.45s</strong></div>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+              <span>Hệ Số ELO Cờ Vua</span>
+              <span class="text-emerald-400 font-mono">FIDE Sim</span>
+            </div>
+            <div class="font-mono text-2xl font-extrabold text-emerald-400" id="stat-chess-elo">1340</div>
+            <div class="text-xs text-slate-400 mt-2">Cấp bậc: <strong class="text-white">Kỳ Thủ Câu Lạc Bộ</strong></div>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+              <span>Hệ Số ELO Cờ Tướng</span>
+              <span class="text-rose-400 font-mono">Kỳ Đài AI</span>
+            </div>
+            <div class="font-mono text-2xl font-extrabold text-rose-400" id="stat-xiangqi-elo">1280</div>
+            <div class="text-xs text-slate-400 mt-2">Cấp bậc: <strong class="text-white">Công Đài Trung Cấp</strong></div>
+          </div>
+        </div>
+
+        <!-- Daily Recommendations + Weekly Activity Chart -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Left: Đề xuất Bài học hôm nay -->
+          <div class="lg:col-span-7 glass-card rounded-2xl p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-xs font-mono uppercase tracking-wider text-amber-400">Lộ trình cá nhân hóa</span>
+                <h2 class="text-lg font-bold text-white">Đề Xuất "Bài Học Hôm Nay"</h2>
+              </div>
+              <button type="button" data-nav-view="curriculum" class="text-xs font-semibold text-[#00F5D4] hover:underline">Xem toàn bộ kho học liệu →</button>
+            </div>
+
+            <div id="daily-recommendations-list" class="space-y-3"></div>
+          </div>
+
+          <!-- Right: Biểu đồ hoạt động học tập trong tuần -->
+          <div class="lg:col-span-5 glass-card rounded-2xl p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-mono uppercase tracking-wider text-emerald-400">Thống kê rèn luyện</span>
+                <span class="font-mono text-xs text-slate-400">7 ngày gần nhất</span>
+              </div>
+              <h2 class="text-lg font-bold text-white mb-4">Biểu Đồ Hoạt Động Trong Tuần</h2>
+              <div id="weekly-activity-chart" class="h-48 flex items-end justify-between gap-2 pt-6 px-2 border-b border-white/10"></div>
+              <div class="flex justify-between text-[11px] font-mono text-slate-400 mt-2 px-2">
+                <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-slate-300">
+              <span>Tổng thời gian rèn luyện tuần này:</span>
+              <strong class="font-mono text-[#00F5D4]">6.5 giờ (42 ván & phiên giải)</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- VIEW 2: HỌC VIỆN KIẾN THỨC (FULL CURRICULUM)                      -->
+      <!-- ================================================================= -->
+      <section id="view-curriculum" class="hidden space-y-6">
+        <div class="glass-card rounded-2xl p-6">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+              <span class="text-xs font-mono uppercase tracking-wider text-[#00F5D4]">Cơ Sở Dữ Liệu Kiến Thức Cốt Lõi</span>
+              <h2 class="text-2xl font-extrabold text-white">Học Viện MindArena — Lý Thuyết, Công Thức & Thế Trận</h2>
+              <p class="text-xs sm:text-sm text-slate-300 mt-1">
+                Đầy đủ CFOP Rubik, Gambit & Cờ Tàn Cờ Vua, Khai Cuộc & Sát Pháp Cờ Tướng. Bấm vào bất kỳ bài học nào để mô phỏng trực tiếp.
+              </p>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="flex flex-wrap items-center gap-2">
+              <select id="curriculum-filter-discipline" class="bg-slate-900 border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-semibold">
+                <option value="all">Tất cả bộ môn (20 chủ đề lớn)</option>
+                <option value="rubik">🧊 Rubik (Phương pháp CFOP & Ký hiệu)</option>
+                <option value="chess">♟️ Cờ Vua (Gambit, Khai cuộc, Chiến thuật, Cờ tàn)</option>
+                <option value="xiangqi">🏮 Cờ Tướng (Khai cuộc, Sát pháp, Cờ tàn)</option>
+              </select>
+
+              <select id="curriculum-filter-status" class="bg-slate-900 border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-semibold">
+                <option value="all">Mọi trạng thái học</option>
+                <option value="learning">⏳ Đang luyện tập</option>
+                <option value="mastered">✅ Đã thuộc lòng</option>
+                <option value="bookmarked">⭐ Đã đánh dấu Bookmark</option>
+              </select>
+
+              <input id="curriculum-search" type="text" placeholder="Tìm OLL, PLL, Gambit, Pháo Đầu..." class="bg-slate-900 border border-white/15 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 w-52" />
+            </div>
+          </div>
+        </div>
+
+        <div id="curriculum-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-5"></div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- VIEW 3: PHÒNG LAB RUBIK 3D & SPEEDCUBING TIMER                    -->
+      <!-- ================================================================= -->
+      <section id="view-rubik" class="hidden space-y-6">
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+          <!-- Left 7 Cols: 3D Rubik Interactive Cube & Formula Animator -->
+          <div class="xl:col-span-7 glass-card rounded-2xl p-5 sm:p-6 border border-[#00F5D4]/30 flex flex-col justify-between space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <span class="text-xs font-mono uppercase tracking-wider text-[#00F5D4] font-semibold">Three.js Interactive 3x3x3 Simulator</span>
+                <h2 id="rubik-lab-title" class="text-xl font-bold text-white">T-Perm (PLL Hoán vị 2 góc & 2 cạnh)</h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <span id="rubik-step-badge" class="font-mono text-xs px-3 py-1 rounded-full bg-[#00F5D4]/15 text-[#00F5D4] border border-[#00F5D4]/30 font-bold">
+                  Bước 0 / 14
+                </span>
+                <select id="rubik-preset-select" class="bg-slate-900 border border-white/15 rounded-xl px-3 py-1.5 text-xs text-white font-semibold">
+                  <option value="R U R' U' R' F R2 U' R' U' R U R' F'|T-Perm (Hoán vị góc & cạnh)">PLL: T-Perm</option>
+                  <option value="F R U' R' U' R U R' F' R U R' U' R' F R F'|Y-Perm (Hoán vị 2 góc chéo)">PLL: Y-Perm</option>
+                  <option value="R U R' F' R U R' U' R' F R2 U' R'|Jb-Perm (Hoán vị kề cực nhanh)">PLL: Jb-Perm</option>
+                  <option value="R U' R U R U R U' R' U' R2|Ua-Perm (Chu kỳ 3 cạnh)">PLL: Ua-Perm</option>
+                  <option value="M2 U M2 U2 M2 U M2|H-Perm (Đổi 4 cạnh đối diện)">PLL: H-Perm</option>
+                  <option value="R U R' U R U2 R'|OLL 27: Sune (Lật mặt vàng kinh điển)">OLL: Sune</option>
+                  <option value="R U2 R' U' R U' R'|OLL 26: Anti-Sune">OLL: Anti-Sune</option>
+                  <option value="F R U R' U' F'|OLL 45: Tạo dấu cộng vàng / Chữ T">OLL: F (R U R' U') F'</option>
+                  <option value="U R U' R'|F2L Cơ bản: Chèn cặp góc-cạnh 3 nước">F2L: U R U' R'</option>
+                  <option value="U' R U' R' U R U R'|F2L: Tách & ghép cặp cùng màu mặt trên">F2L: Cùng màu mặt trên</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 3D Viewport Container -->
+            <div class="relative w-full h-80 sm:h-96 rounded-2xl bg-slate-950/90 border border-white/10 overflow-hidden">
+              <div id="rubik-3d-canvas" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+              <div class="absolute top-3 left-3 pointer-events-none flex flex-col gap-1 text-[11px] font-mono text-slate-400 bg-slate-950/75 px-3 py-1.5 rounded-xl border border-white/10">
+                <span>🖱️ Kéo chuột / Chạm để xoay góc nhìn 3D</span>
+                <span>🎨 Mặt chuẩn: Trắng (D) • Vàng (U) • Xanh lá (F) • Đỏ (R)</span>
+              </div>
+            </div>
+
+            <!-- Formula Input & Step Tokens -->
+            <div class="space-y-2">
+              <div class="flex gap-2">
+                <input id="rubik-formula-input" type="text" value="R U R' U' R' F R2 U' R' U' R U R' F'" class="flex-1 font-mono text-xs bg-slate-900 border border-white/15 rounded-xl px-3 py-2 text-[#00F5D4]" placeholder="Nhập công thức (VD: R U R' U')" />
+                <button id="btn-rubik-setup-case" type="button" class="px-3 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/45 border border-purple-400/40 text-xs font-semibold text-purple-200" title="Thiết lập trạng thái trước khi giải công thức này">
+                  ⚡ Setup Thế
+                </button>
+              </div>
+              <div id="rubik-tokens-bar" class="flex flex-wrap gap-1.5 p-3 rounded-xl bg-slate-950/70 border border-white/10 min-h-[46px]"></div>
+            </div>
+
+            <!-- Playback Controls -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+              <div class="flex flex-wrap gap-2">
+                <button id="btn-rubik-play" type="button" class="px-4 py-2 rounded-xl bg-[#00F5D4] text-slate-950 font-bold text-xs">
+                  ▶ Chạy Tự Động
+                </button>
+                <button id="btn-rubik-prev" type="button" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-semibold text-white">
+                  ◀ Lùi 1 bước
+                </button>
+                <button id="btn-rubik-next" type="button" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-semibold text-white">
+                  Tiến 1 bước ▶
+                </button>
+                <button id="btn-rubik-reset" type="button" class="px-3.5 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/30 text-xs font-semibold text-rose-200">
+                  ↺ Reset Đã Giải
+                </button>
+              </div>
+
+              <!-- Quick Manual Face Turn Buttons -->
+              <div class="flex flex-wrap gap-1">
+                <button type="button" data-cube-move="U" class="px-2 py-1 rounded bg-white/5 hover:bg-white/15 font-mono text-xs">U</button>
+                <button type="button" data-cube-move="U'" class="px-2 py-1 rounded bg-white/5 hover:bg-white/15 font-mono text-xs">U'</button>
+                <button type="button" data-cube-move="R" class="px-2 py-1 rounded bg-white/5 hover:bg-white/15 font-mono text-xs">R</button>
+                <button type="button" data-cube-move="R'" class="px-2 py-1 rounded bg-white/5 hover:bg-white/15 font-mono text-xs">R'</button>
+                <button type="button" data-cube-move="F" class="px-2 py-1 rounded bg-white/5 hover:bg-white/15 font-mono text-xs">F</button>
+                <button type="button" data-cube-move="F'" class="px-2 py-1 rounded bg-white/5 hover:bg-white/15 font-mono text-xs">F'</button>
+                <button type="button" data-cube-move="L" class="px-2 py-1 rounded bg-white/5 hover:bg-white/15 font-mono text-xs">L</button>
+                <button type="button" data-cube-move="D" class="px-2 py-1 rounded bg-white/5 hover:bg-white/15 font-mono text-xs">D</button>
+                <button type="button" data-cube-move="M'" class="px-2 py-1 rounded bg-white/5 hover:bg-white/15 font-mono text-xs">M'</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right 5 Cols: WCA Speedcubing Timer & Statistics -->
+          <div class="xl:col-span-5 glass-card rounded-2xl p-5 sm:p-6 flex flex-col justify-between space-y-4">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="text-xs font-mono uppercase tracking-wider text-[#FF6B35] font-semibold">Chuẩn Thi Đấu WCA</span>
+                  <h3 class="text-lg font-bold text-white">Đồng Hồ Bấm Giờ Speedcubing</h3>
+                </div>
+                <button id="btn-new-scramble" type="button" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-semibold text-[#00F5D4]">
+                  🔀 Scramble Mới
+                </button>
+              </div>
+
+              <!-- Scramble Box -->
+              <div class="p-3.5 rounded-xl bg-slate-950/90 border border-white/10 space-y-2">
+                <div class="flex items-center justify-between text-[11px] text-slate-400">
+                  <span>Chuỗi trộn WCA 3x3x3 (20 bước):</span>
+                  <button id="btn-apply-scramble-3d" type="button" class="text-[#00F5D4] hover:underline font-semibold">Áp dụng lên Rubik 3D</button>
+                </div>
+                <div id="wca-scramble-text" class="font-mono text-xs sm:text-sm font-bold text-white tracking-wide leading-relaxed"></div>
+              </div>
+
+              <!-- Interactive Timer Pad -->
+              <div id="wca-timer-pad" tabindex="0" class="select-none cursor-pointer rounded-2xl p-6 text-center bg-slate-950/90 border-2 border-white/15 transition-all flex flex-col items-center justify-center min-h-[168px]">
+                <div id="wca-timer-status" class="text-[11px] font-mono uppercase tracking-widest text-slate-400 mb-1">
+                  Nhấn giữ SPACEBAR hoặc chạm giữ vào ô này (0.35s)
+                </div>
+                <div id="wca-timer-display" class="font-mono text-5xl sm:text-6xl font-extrabold text-[#00F5D4] tracking-tight">
+                  0.00s
+                </div>
+                <div class="mt-3 flex gap-2">
+                  <button id="btn-penalty-plus2" type="button" class="px-3 py-1 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 font-mono text-xs font-bold hover:bg-amber-500/30">+2s</button>
+                  <button id="btn-penalty-dnf" type="button" class="px-3 py-1 rounded-lg bg-rose-500/20 border border-rose-500/40 text-rose-300 font-mono text-xs font-bold hover:bg-rose-500/30">DNF</button>
+                  <button id="btn-delete-last-solve" type="button" class="px-3 py-1 rounded-lg bg-white/10 text-slate-300 font-mono text-xs hover:bg-white/20">Xóa lượt cuối</button>
+                </div>
+              </div>
+
+              <!-- PB / Ao5 / Ao12 Stats -->
+              <div class="grid grid-cols-3 gap-2.5 text-center">
+                <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+                  <div class="text-[11px] text-slate-400">Best (PB)</div>
+                  <div id="timer-stat-pb" class="font-mono text-lg font-extrabold text-[#00F5D4]">14.82s</div>
+                </div>
+                <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+                  <div class="text-[11px] text-slate-400">Ao5</div>
+                  <div id="timer-stat-ao5" class="font-mono text-lg font-extrabold text-white">16.45s</div>
+                </div>
+                <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+                  <div class="text-[11px] text-slate-400">Ao12</div>
+                  <div id="timer-stat-ao12" class="font-mono text-lg font-extrabold text-amber-400">17.18s</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2D Net Preview + Solve History -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-white/10">
+              <div class="p-3 rounded-xl bg-slate-950/70 border border-white/10 flex flex-col items-center justify-center">
+                <div class="text-[11px] text-slate-400 mb-1 self-start">Hình trải 2D Scramble:</div>
+                <canvas id="rubik-2d-net" width="160" height="120" class="max-w-full h-auto"></canvas>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-950/70 border border-white/10 flex flex-col">
+                <div class="text-[11px] text-slate-400 mb-1.5">Lịch sử bấm giờ gần đây:</div>
+                <div id="timer-history-list" class="space-y-1 max-h-28 overflow-y-auto custom-scroll font-mono text-xs"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- VIEW 4: ĐẤU TRƯỜNG CỜ VUA (INTERACTIVE CHESS ARENA)               -->
+      <!-- ================================================================= -->
+      <section id="view-chess" class="hidden space-y-6">
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+          <!-- Left 7 Cols: Chess Board + Evaluation Bar -->
+          <div class="xl:col-span-7 glass-card rounded-2xl p-5 sm:p-6 border border-emerald-500/30 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <span class="text-xs font-mono uppercase tracking-wider text-emerald-400 font-semibold">Royal Minimalist Chess Arena</span>
+                <h2 id="chess-status-banner" class="text-xl font-bold text-white">Đến lượt Trắng đi — Đấu với Bot AI (ELO 1200)</h2>
+              </div>
+              <div class="flex items-center gap-3 font-mono text-xs">
+                <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10">
+                  ⚫ Đen: <strong id="chess-clock-black" class="text-amber-400">10:00</strong>
+                </div>
+                <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10">
+                  ⚪ Trắng: <strong id="chess-clock-white" class="text-emerald-400">10:00</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Board + Eval Bar Row -->
+            <div class="flex items-stretch justify-center gap-3">
+              <!-- Evaluation Bar -->
+              <div class="w-6 rounded-xl overflow-hidden bg-slate-900 border border-white/15 flex flex-col relative" title="Thanh đánh giá lợi thế thế trận (Evaluation Bar)">
+                <div id="chess-eval-black-bar" class="bg-slate-800 transition-all duration-300" style="height: 50%"></div>
+                <div id="chess-eval-white-bar" class="bg-emerald-400 flex-1 transition-all duration-300"></div>
+                <span id="chess-eval-label" class="absolute inset-x-0 top-1/2 -translate-y-1/2 text-[10px] font-mono font-extrabold text-center bg-slate-950/80 text-white py-0.5">0.0</span>
+              </div>
+
+              <!-- 8x8 Interactive Chessboard -->
+              <div id="chess-board-grid" class="grid grid-cols-8 w-full max-w-[460px] aspect-square rounded-2xl overflow-hidden border-2 border-amber-500/40 shadow-2xl"></div>
+            </div>
+
+            <!-- Bottom Action Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
+              <div class="flex flex-wrap gap-2">
+                <button id="btn-chess-new" type="button" class="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs">
+                  ♟️ Ván Mới
+                </button>
+                <button id="btn-chess-undo" type="button" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-semibold text-white">
+                  ↩ Đi Lại (Undo)
+                </button>
+                <button id="btn-chess-hint" type="button" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-xs font-semibold text-amber-300">
+                  💡 Gợi Ý Nước Đi (Hint)
+                </button>
+                <button id="btn-chess-flip" type="button" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-semibold text-white">
+                  🔄 Xoay Bàn Cờ
+                </button>
+              </div>
+              <div id="chess-hint-output" class="font-mono text-xs text-amber-300"></div>
+            </div>
+          </div>
+
+          <!-- Right 5 Cols: Chess Controls, ELO Selector, Opening Loader & Move History -->
+          <div class="xl:col-span-5 glass-card rounded-2xl p-5 sm:p-6 flex flex-col justify-between space-y-4">
+            <div class="space-y-4">
+              <div>
+                <label class="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-2">1. Chế độ thi đấu & Thể thức giờ</label>
+                <div class="grid grid-cols-2 gap-2">
+                  <button type="button" data-chess-mode="bot" class="chess-mode-btn py-2 px-3 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950">🤖 Đấu với Bot AI</button>
+                  <button type="button" data-chess-mode="pvp" class="chess-mode-btn py-2 px-3 rounded-xl text-xs font-bold bg-white/5 text-slate-300 border border-white/10">👥 Chơi 2 Người (Local PvP)</button>
+                </div>
+              </div>
+
+              <!-- ELO Tier Selector -->
+              <div>
+                <label class="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-2">2. Cấp độ Bot AI (Minimax + Alpha-Beta)</label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <button type="button" data-chess-elo="600" class="chess-elo-btn p-2.5 rounded-xl border border-white/10 bg-white/5 text-left">
+                    <div class="font-mono text-xs font-bold text-emerald-400">ELO 600</div>
+                    <div class="text-[11px] text-slate-300">Tập Sự</div>
+                  </button>
+                  <button type="button" data-chess-elo="1200" class="chess-elo-btn p-2.5 rounded-xl border border-emerald-400 bg-emerald-500/20 text-left">
+                    <div class="font-mono text-xs font-bold text-emerald-300">ELO 1200</div>
+                    <div class="text-[11px] text-white font-semibold">Câu Lạc Bộ</div>
+                  </button>
+                  <button type="button" data-chess-elo="1600" class="chess-elo-btn p-2.5 rounded-xl border border-white/10 bg-white/5 text-left">
+                    <div class="font-mono text-xs font-bold text-amber-400">ELO 1600</div>
+                    <div class="text-[11px] text-slate-300">Kiện Tướng</div>
+                  </button>
+                  <button type="button" data-chess-elo="2000" class="chess-elo-btn p-2.5 rounded-xl border border-white/10 bg-white/5 text-left">
+                    <div class="font-mono text-xs font-bold text-rose-400">ELO 2000+</div>
+                    <div class="text-[11px] text-slate-300">Đại Kiện Tướng</div>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Time Control & Preset Positions -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[11px] font-mono text-slate-400 block mb-1">Đồng hồ thi đấu:</label>
+                  <select id="chess-time-control" class="w-full bg-slate-900 border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-semibold">
+                    <option value="180">⚡ Blitz 3+2 (3 phút)</option>
+                    <option value="600" selected>⏱️ Rapid 10+0 (10 phút)</option>
+                    <option value="900">🏛️ Classical 15+10 (15 phút)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-[11px] font-mono text-slate-400 block mb-1">Nạp thế cờ Gambit / Cờ Tàn:</label>
+                  <select id="chess-preset-fen" class="w-full bg-slate-900 border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-semibold">
+                    <option value="start">Bàn cờ tiêu chuẩn</option>
+                    <option value="rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2">Queen's Gambit (1.d4 d5 2.c4)</option>
+                    <option value="rnbqkbnr/pppp1ppp/8/4p3/4PP2/8/PPPP2PP/RNBQKBNR b KQkq - 0 2">King's Gambit (1.e4 e5 2.f4)</option>
+                    <option value="r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4">Evans Gambit (4.b4!?)</option>
+                    <option value="r1bqkb1r/ppp2ppp/2p2n2/8/4P3/8/PPPP1PPP/RNBQKB1R w KQkq - 0 5">Stafford Gambit Trap</option>
+                    <option value="1K6/1P1k4/8/8/8/8/2R5/7r w - - 0 1">Cờ tàn: Cầu Lucena (Trắng đi thắng)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Move History PGN -->
+              <div>
+                <div class="flex items-center justify-between text-xs text-slate-400 mb-1.5">
+                  <span>Biên bản ván đấu (Move History PGN):</span>
+                  <span id="chess-move-counter" class="font-mono">0 nước</span>
+                </div>
+                <div id="chess-move-history" class="font-mono text-xs bg-slate-950/80 border border-white/10 rounded-xl p-3 h-44 overflow-y-auto custom-scroll text-slate-200 leading-relaxed">
+                  Hãy chọn quân cờ Trắng để bắt đầu ván đấu!
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- VIEW 5: ĐẤU TRƯỜNG CỜ TƯỚNG (INTERACTIVE XIANGQI ARENA)           -->
+      <!-- ================================================================= -->
+      <section id="view-xiangqi" class="hidden space-y-6">
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+          <!-- Left 7 Cols: Traditional-Modern Xiangqi Canvas Board -->
+          <div class="xl:col-span-7 glass-card rounded-2xl p-5 sm:p-6 border border-rose-500/30 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <span class="text-xs font-mono uppercase tracking-wider text-rose-400 font-semibold">Neo-Oriental Xiangqi Arena • Sở Hà Hán Giới</span>
+                <h2 id="xiangqi-status-banner" class="font-serif text-xl font-bold text-white">Lượt Đỏ Tiên Đi — Đấu Kỳ Đài AI (ELO 1200)</h2>
+              </div>
+              <button id="btn-xiangqi-script-toggle" type="button" class="px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-xs font-bold">
+                🔤 Quân cờ: <span id="xiangqi-script-label">Chữ Hán (帥/將)</span>
+              </button>
+            </div>
+
+            <!-- Interactive Xiangqi Canvas Wrapper -->
+            <div class="flex justify-center">
+              <div class="relative w-full max-w-[460px] rounded-2xl overflow-hidden border-2 border-amber-500/40 shadow-2xl bg-[#1C1410]">
+                <canvas id="xiangqi-canvas" width="450" height="500" class="w-full h-auto block cursor-pointer"></canvas>
+              </div>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex flex-wrap gap-2">
+                <button id="btn-xiangqi-new" type="button" class="px-4 py-2 rounded-xl bg-rose-600 text-white font-bold text-xs">
+                  🏮 Ván Mới
+                </button>
+                <button id="btn-xiangqi-undo" type="button" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-semibold text-white">
+                  ↩ Đi Lại
+                </button>
+                <button id="btn-xiangqi-hint" type="button" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-xs font-semibold text-amber-300">
+                  💡 Gợi Ý Nước Tiên
+                </button>
+              </div>
+              <div id="xiangqi-rule-badge" class="text-xs font-mono text-emerald-400">
+                ✓ Kiểm tra luật 100%: Cản Mã • Mắt Tượng • Lộ mặt Tướng
+              </div>
+            </div>
+          </div>
+
+          <!-- Right 5 Cols: ELO Bot, Sát Pháp Sandbox & Move Record -->
+          <div class="xl:col-span-5 glass-card rounded-2xl p-5 sm:p-6 flex flex-col justify-between space-y-4">
+            <div class="space-y-4">
+              <div>
+                <label class="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-2">1. Chế độ Kỳ Đài</label>
+                <div class="grid grid-cols-3 gap-2">
+                  <button type="button" data-xq-mode="bot" class="xq-mode-btn py-2 px-2.5 rounded-xl text-xs font-bold bg-rose-600 text-white">🤖 Đấu Bot AI</button>
+                  <button type="button" data-xq-mode="pvp" class="xq-mode-btn py-2 px-2.5 rounded-xl text-xs font-bold bg-white/5 text-slate-300 border border-white/10">👥 2 Người</button>
+                  <button type="button" data-xq-mode="sandbox" class="xq-mode-btn py-2 px-2.5 rounded-xl text-xs font-bold bg-white/5 text-slate-300 border border-white/10">🧩 Luyện Sát Pháp</button>
+                </div>
+              </div>
+
+              <div>
+                <label class="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-2">2. Cấp độ Bot AI Cờ Tướng</label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <button type="button" data-xq-elo="800" class="xq-elo-btn p-2.5 rounded-xl border border-white/10 bg-white/5 text-left">
+                    <div class="font-mono text-xs font-bold text-emerald-400">ELO 800</div>
+                    <div class="text-[11px] text-slate-300">Tân Thủ</div>
+                  </button>
+                  <button type="button" data-xq-elo="1200" class="xq-elo-btn p-2.5 rounded-xl border border-rose-500 bg-rose-500/20 text-left">
+                    <div class="font-mono text-xs font-bold text-rose-300">ELO 1200</div>
+                    <div class="text-[11px] text-white font-semibold">Kỳ Thủ</div>
+                  </button>
+                  <button type="button" data-xq-elo="1600" class="xq-elo-btn p-2.5 rounded-xl border border-white/10 bg-white/5 text-left">
+                    <div class="font-mono text-xs font-bold text-amber-400">ELO 1600</div>
+                    <div class="text-[11px] text-slate-300">Danh Thủ</div>
+                  </button>
+                  <button type="button" data-xq-elo="2000" class="xq-elo-btn p-2.5 rounded-xl border border-white/10 bg-white/5 text-left">
+                    <div class="font-mono text-xs font-bold text-purple-400">ELO 2000+</div>
+                    <div class="text-[11px] text-slate-300">Đặc Cấp Đại Sư</div>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Preset Sát Pháp & Khai Cuộc -->
+              <div>
+                <label class="text-[11px] font-mono text-slate-400 block mb-1">3. Chọn Khai Cuộc hoặc Bài Tập Sát Pháp Thực Chiến:</label>
+                <select id="xiangqi-preset-select" class="w-full bg-slate-900 border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-semibold">
+                  <option value="rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w">Khởi cuộc tiêu chuẩn (Đỏ tiên)</option>
+                  <option value="r1bakab1r/9/1cn4c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C1N2/9/RNBAKAB1R w">Khai cuộc: Pháo Đầu đối Bình Phong Mã</option>
+                  <option value="3ak4/4a4/4b4/6N2/9/9/9/7C1/4C4/4K4 w">Sát pháp 1: Mã Hậu Pháo (Đỏ đi thắng trong 2 nước)</option>
+                  <option value="3k1ab2/4a4/4b4/9/9/9/5R3/4C4/9/4K4 w">Sát pháp 2: Thiết Môn Thuyên (Chốt cửa sắt)</option>
+                  <option value="3ak4/4a4/9/9/9/9/9/4C4/4C4/3K5 w">Sát pháp 3: Trùng Pháo Sát (Pháo Trùng)</option>
+                  <option value="3ak4/4a4/4b4/3N5/2N6/9/9/9/9/4K4 w">Sát pháp 4: Song Mã Ẩm Tuyền & Ngọa Tào Mã</option>
+                  <option value="3akab2/9/4b4/9/9/9/9/9/5R3/4K4 w">Cờ tàn: Đơn Xe thắng Khuyết Sĩ Tượng</option>
+                </select>
+              </div>
+
+              <!-- Move History -->
+              <div>
+                <div class="flex items-center justify-between text-xs text-slate-400 mb-1.5">
+                  <span>Biên bản Cờ Tướng (Ký hiệu chuẩn):</span>
+                  <span id="xiangqi-move-count" class="font-mono">0 nước</span>
+                </div>
+                <div id="xiangqi-move-history" class="font-mono text-xs bg-slate-950/80 border border-white/10 rounded-xl p-3 h-44 overflow-y-auto custom-scroll text-slate-200 leading-relaxed">
+                  Nhấp vào quân Đỏ trên bàn cờ để xuất quân!
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- VIEW 6: KIẾN TRÚC ĐA TỆP, SUPABASE SQL & CI/CD CLOUDFLARE PAGES    -->
+      <!-- ================================================================= -->
+      <section id="view-architecture" class="hidden space-y-6">
+        <div class="glass-card rounded-2xl p-6 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="text-xs font-mono uppercase tracking-wider text-[#00F5D4]">Full-Stack Repository Deliverables</span>
+              <h2 class="text-2xl font-extrabold text-white">Cấu Trúc Thư Mục, PostgreSQL Schema & CI/CD Cloudflare Pages</h2>
+            </div>
+            <button id="btn-copy-code" type="button" class="px-4 py-2 rounded-xl bg-[#00F5D4] text-slate-950 font-bold text-xs">
+              📋 Sao chép tệp đang xem
+            </button>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button type="button" data-code-tab="tree" class="code-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-white text-slate-950">📁 Sơ đồ thư mục</button>
+            <button type="button" data-code-tab="sql" class="code-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-white/5 text-slate-300">🗄️ supabase/schema.sql</button>
+            <button type="button" data-code-tab="workflow" class="code-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-white/5 text-slate-300">🚀 .github/workflows/deploy.yml</button>
+            <button type="button" data-code-tab="wrangler" class="code-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-white/5 text-slate-300">⚡ wrangler.toml & .env.example</button>
+          </div>
+
+          <pre id="code-viewer-content" class="font-mono text-xs bg-slate-950/90 border border-white/10 rounded-2xl p-5 overflow-x-auto text-emerald-300 leading-relaxed max-h-[520px] custom-scroll"></pre>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- SUPABASE AUTH & HYBRID PROFILE MODAL                                  -->
+  <!-- ===================================================================== -->
+  <div id="auth-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+    <div class="glass-card rounded-3xl max-w-md w-full p-6 border border-white/20 space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="text-xs font-mono uppercase text-[#00F5D4]">Supabase Hybrid Auth</span>
+          <h3 class="text-lg font-bold text-white">Hồ Sơ Kỳ Thủ & Đồng Bộ Đám Mây</h3>
+        </div>
+        <button id="btn-close-auth" type="button" class="p-1.5 rounded-lg bg-white/10 text-slate-300 hover:text-white">✕</button>
+      </div>
+
+      <p class="text-xs text-slate-300 leading-relaxed">
+        Đăng nhập bằng Email & Password qua Supabase Auth để đồng bộ tiến trình lên PostgreSQL, hoặc cập nhật tên hiển thị ở chế độ <strong>Guest Mode (LocalStorage)</strong>.
+      </p>
+
       <div class="space-y-3">
         <div>
-          <label class="block text-sm text-slate-300 mb-1">Email</label>
-          <input id="authEmail" type="email" placeholder="name@example.com" class="w-full px-4 py-2.5 rounded-lg bg-slate-700 border border-slate-600 focus:outline-none focus:border-indigo-400 text-white" />
+          <label class="text-xs text-slate-400 block mb-1">Tên hiển thị của bạn</label>
+          <input id="auth-display-name" type="text" value="Kỳ Thủ MindArena" class="w-full bg-slate-900 border border-white/15 rounded-xl px-3 py-2 text-xs text-white" />
         </div>
         <div>
-          <label class="block text-sm text-slate-300 mb-1">Mật khẩu</label>
-          <input id="authPassword" type="password" placeholder="Tối thiểu 6 ký tự" class="w-full px-4 py-2.5 rounded-lg bg-slate-700 border border-slate-600 focus:outline-none focus:border-indigo-400 text-white" />
+          <label class="text-xs text-slate-400 block mb-1">Email (Supabase Auth)</label>
+          <input id="auth-email" type="email" placeholder="kythu@mindarena.hub" class="w-full bg-slate-900 border border-white/15 rounded-xl px-3 py-2 text-xs text-white" />
         </div>
-      </div>
-
-      <div class="flex gap-3 pt-2">
-        <button onclick="handleSignIn()" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-lg transition active:scale-95 shadow">
-          Đăng Nhập
-        </button>
-        <button onclick="handleSignUp()" class="flex-1 py-2.5 bg-slate-700 hover:bg-slate-600 border border-slate-600 font-semibold rounded-lg transition active:scale-95 shadow">
-          Đăng Ký
-        </button>
-      </div>
-      <p id="authError" class="text-xs text-red-400 text-center hidden"></p>
-    </div>
-
-    <!-- KHUNG GỬI LỜI NHẮN (Chỉ hiện khi ĐÃ đăng nhập) -->
-    <div id="messageSection" class="hidden bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg space-y-4">
-      <div class="flex justify-between items-center bg-slate-700/50 p-3 rounded-lg border border-slate-600">
         <div>
-          <span class="text-xs text-slate-400 block">Đang đăng nhập bằng:</span>
-          <span id="userEmailBadge" class="text-sm font-semibold text-indigo-300"></span>
+          <label class="text-xs text-slate-400 block mb-1">Mật khẩu</label>
+          <input id="auth-password" type="password" placeholder="••••••••" class="w-full bg-slate-900 border border-white/15 rounded-xl px-3 py-2 text-xs text-white" />
         </div>
-        <button onclick="handleSignOut()" class="px-3 py-1 bg-rose-600/80 hover:bg-rose-500 text-xs font-medium rounded transition">
-          Đăng xuất
+      </div>
+
+      <div id="auth-feedback" class="text-xs font-mono text-emerald-400 hidden"></div>
+
+      <div class="flex gap-2 pt-2">
+        <button id="btn-save-guest" type="button" class="flex-1 py-2.5 rounded-xl bg-[#00F5D4] text-slate-950 font-bold text-xs">
+          Lưu Hồ Sơ & Đồng Bộ
         </button>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-slate-300 mb-1">Tên hiển thị</label>
-        <input 
-          id="nameInput" 
-          type="text" 
-          placeholder="Nhập tên của bạn..." 
-          class="w-full px-4 py-2.5 rounded-lg bg-slate-700 border border-slate-600 focus:outline-none focus:border-indigo-400 text-white"
-        />
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-slate-300 mb-1">Lời nhắn</label>
-        <textarea 
-          id="contentInput" 
-          rows="3" 
-          placeholder="Nội dung bạn muốn chia sẻ..." 
-          class="w-full px-4 py-2.5 rounded-lg bg-slate-700 border border-slate-600 focus:outline-none focus:border-indigo-400 text-white"
-        ></textarea>
-      </div>
-
-      <button 
-        onclick="sendMessage()" 
-        id="btnSend"
-        class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-lg transition active:scale-95 shadow"
-      >
-        Gửi lời nhắn
-      </button>
-    </div>
-
-    <!-- DANH SÁCH LỜI NHẮN -->
-    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-700 pb-2">
-        <h2 class="text-lg font-semibold text-slate-200">Danh sách lời nhắn</h2>
-        <button onclick="loadMessages()" class="text-xs text-indigo-400 hover:text-indigo-300">Làm mới ↻</button>
-      </div>
-      <div id="messagesList" class="space-y-3">
-        <p class="text-slate-500 text-sm">Đang tải dữ liệu từ Supabase...</p>
+        <button id="btn-reset-progress" type="button" class="px-3 py-2.5 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-semibold">
+          Reset Dữ Liệu
+        </button>
       </div>
     </div>
   </div>
 
+  <!-- TOAST NOTIFICATION -->
+  <div id="app-toast" class="fixed bottom-16 md:bottom-6 right-6 z-50 hidden px-4 py-2.5 rounded-xl bg-slate-900/95 border border-[#00F5D4]/50 text-xs font-semibold text-white shadow-2xl"></div>
+
+  <!-- ===================================================================== -->
+  <!-- APPLICATION LOGIC (ENGINES, CURRICULUM, 3D RUBIK, CHESS, XIANGQI)      -->
+  <!-- ===================================================================== -->
   <script>
-    const SUPABASE_URL = "https://oywcbdkwnaxwpnwqmnxq.supabase.co";
-    // Dán mã Publishable Key (sb_publishable_...) của bạn vào đây:
-    const SUPABASE_KEY = "sb_publishable_YOfymVtA7ssGAYHZ8rQ2YQ__Vg898iw";
+    (function () {
+      'use strict';
 
-    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const TABLE_NAME = "messages";
+      // -----------------------------------------------------------------------
+      // 1. WEB AUDIO SYNTHESIZER (NO EXTERNAL SOUND FILES)
+      // -----------------------------------------------------------------------
+      let audioCtx = null;
+      let soundEnabled = true;
 
-    let currentUser = null;
-
-    // Quản lý trạng thái người dùng (Session Listener)
-    client.auth.onAuthStateChange((event, session) => {
-      currentUser = session?.user || null;
-      updateUI();
-    });
-
-    function updateUI() {
-      const authSection = document.getElementById('authSection');
-      const messageSection = document.getElementById('messageSection');
-      const userEmailBadge = document.getElementById('userEmailBadge');
-
-      if (currentUser) {
-        authSection.classList.add('hidden');
-        messageSection.classList.remove('hidden');
-        userEmailBadge.innerText = currentUser.email;
-      } else {
-        authSection.classList.remove('hidden');
-        messageSection.classList.add('hidden');
-      }
-    }
-
-    // Đăng ký tài khoản
-    async function handleSignUp() {
-      const email = document.getElementById('authEmail').value.trim();
-      const password = document.getElementById('authPassword').value.trim();
-      const errorMsg = document.getElementById('authError');
-
-      if (!email || !password) {
-        showError("Vui lòng nhập đầy đủ Email và Mật khẩu!");
-        return;
+      function playTone(freq, durationMs, type) {
+        if (!soundEnabled) return;
+        try {
+          if (!audioCtx) {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioContextClass) audioCtx = new AudioContextClass();
+          }
+          if (!audioCtx) return;
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type || 'sine';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + durationMs / 1000);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + durationMs / 1000);
+        } catch (e) {
+          // Ignore audio context restriction
+        }
       }
 
-      const { data, error } = await client.auth.signUp({ email, password });
-      if (error) {
-        showError(error.message);
-      } else {
-        alert("Đăng ký thành công! Bạn đã được đăng nhập tự động.");
-      }
-    }
-
-    // Đăng nhập
-    async function handleSignIn() {
-      const email = document.getElementById('authEmail').value.trim();
-      const password = document.getElementById('authPassword').value.trim();
-
-      if (!email || !password) {
-        showError("Vui lòng nhập đầy đủ Email và Mật khẩu!");
-        return;
+      function showToast(msg) {
+        const el = document.getElementById('app-toast');
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.remove('hidden');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(function () {
+          el.classList.add('hidden');
+        }, 2600);
       }
 
-      const { data, error } = await client.auth.signInWithPassword({ email, password });
-      if (error) {
-        showError(error.message);
+      // -----------------------------------------------------------------------
+      // 2. COMPLETE CURRICULUM DATA (RUBIK CFOP, CHESS, XIANGQI)
+      // -----------------------------------------------------------------------
+      const CURRICULUM = [
+        // --- RUBIK ---
+        {
+          id: 'rubik-notation',
+          discipline: 'rubik',
+          subcategory: '1. Ký hiệu WCA & Tầng giữa',
+          title: 'Hệ Thống Ký Hiệu Xoay Rubik (R, L, U, D, F, B, M, E, S, x, y, z)',
+          badge: 'Nền tảng',
+          notation: "R U R' U' M' U2 M",
+          principle: 'Chữ cái in hoa (R, L, U, D, F, B) xoay mặt tương ứng 90° cùng chiều kim đồng hồ; dấu phẩy (\') xoay 90° ngược chiều kim đồng hồ; số 2 xoay 180°. Tầng giữa: M (giữa L-R, theo chiều L), E (theo D), S (theo F). Xoay khối: x (theo R), y (theo U), z (theo F).',
+          steps: [
+            'R / L / U / D / F / B: Xoay 90° theo chiều kim đồng hồ khi nhìn thẳng vào mặt đó.',
+            "R' / U' / F': Xoay 90° ngược chiều kim đồng hồ (Prime).",
+            'M / E / S: Xoay tầng giữa; r / l / u / f: Xoay đồng thời 2 tầng (Wide moves).'
+          ],
+          proTip: 'Tổ hợp "Sexy Move" (R U R\' U\') lặp lại 6 lần sẽ đưa khối Rubik trở về nguyên trạng!'
+        },
+        {
+          id: 'rubik-cross',
+          discipline: 'rubik',
+          subcategory: '2. Cross (Dấu cộng tầng đáy)',
+          title: 'Nguyên Lý Giải Cross Trắng Mặt Đáy Trong 8 Bước Trở Xuống',
+          badge: 'CFOP Bước 1',
+          notation: "F' R U' R' D' F2",
+          principle: 'Luôn đặt mặt Trắng ở đáy (D) ngay từ lúc giải Cross để không mất nhịp lật khối và nhìn thấy ngay cặp F2L đầu tiên. Ghi nhớ thứ tự 4 màu tâm chuẩn theo chiều kim đồng hồ khi Vàng ở trên, Trắng ở đáy: Xanh Dương (B) -> Cam (O) -> Xanh Lá (G) -> Đỏ (R).',
+          steps: [
+            'Quan sát 15 giây Inspection để định vị 4 viên cạnh Trắng.',
+            'Giải Cross tương đối (đúng thứ tự B-O-G-R với nhau trước), sau đó xoay D một lần để khớp cả 4 tâm.',
+            'Tận dụng nước chèn một viên cạnh để bắc cầu đưa viên cạnh thứ hai vào vị trí thuận lợi.'
+          ],
+          proTip: '99% mọi trạng thái Cross đều giải được trong ≤ 7 bước — hãy tập nhắm mắt thực hiện chuỗi bước Cross!'
+        },
+        {
+          id: 'rubik-f2l-same',
+          discipline: 'rubik',
+          subcategory: '3. F2L (2 tầng đầu trực quan)',
+          title: 'F2L Nhóm 1: Đỉnh & Cạnh Cùng Màu Ở Mặt Trên (Giấu Góc - Tách Cạnh)',
+          badge: 'F2L Trực quan',
+          notation: "U' R U' R' U R U R'",
+          principle: 'Khi viên Góc và viên Cạnh ở tầng U có màu mặt trên GIỐNG nhau, ta đưa viên Góc về góc trên của khe cần chèn (đảm bảo khe phía sau trống), dùng R hoặc L\' giấu Góc xuống đáy để xoay U tách Cạnh ra xa, rồi đưa Góc lên tạo thế chèn chuẩn.',
+          steps: [
+            'Đặt viên Góc phía trên khe phải-trước, kiểm tra rãnh sau có trống không.',
+            'Chạy U\' R U\' R\' để giấu Góc và tách Cạnh sang đối diện.',
+            'Chạy U R U R\' để chèn gọn cặp Đỉnh-Cạnh vào khe.'
+          ],
+          proTip: 'Hiểu nguyên lý "Giấu Góc - Dịch Cạnh - Trả Góc" giúp bạn tự suy ra hơn 20/41 trường hợp F2L mà không cần học vẹt!'
+        },
+        {
+          id: 'rubik-f2l-diff',
+          discipline: 'rubik',
+          subcategory: '3. F2L (2 tầng đầu trực quan)',
+          title: 'F2L Nhóm 2 & 3: Khác Màu Mặt Trên & Xử Lý Viên Kẹt Ở Khe',
+          badge: 'F2L Tối ưu',
+          notation: "R U' R' U R U2 R' U R U' R'",
+          principle: 'Khi Đỉnh và Cạnh KHÁC màu mặt trên, chỉ cần đặt chúng ở vị trí bắt chéo rồi chèn 3 nước (U R U\' R\'). Nếu cả hai bị kẹt ngược trong khe, dùng R U\' R\' nhấc lên tầng U đồng thời tách rời rồi ghép lại ngay.',
+          steps: [
+            'Khác màu mặt trên (hình Hổ vồ): Đặt đối xứng rồi chạy R U R\' hoặc U R U\' R\'.',
+            'Viên Góc/Cạnh kẹt ở khe: Dùng R U\' R\' nhấc ra, U R U2 R\' xoay hướng góc, U R U\' R\' khóa khe.',
+            'Trường hợp Cạnh đúng sẵn, Góc lật trên khe: Dùng 3 lần Sexy Move (R U R\' U\')3.'
+          ],
+          proTip: 'Luôn ưu tiên giải cặp F2L ở các khe phía sau (Back slots) trước để giữ tầm nhìn thông thoáng ở mặt trước!'
+        },
+        {
+          id: 'rubik-oll-2look',
+          discipline: 'rubik',
+          subcategory: '4. OLL (Định hướng tầng cuối)',
+          title: '2-Look OLL Đầy Đủ: 3 Công Thức Dấu Cộng + 7 Công Thức Mặt Vàng (Sune, H, Pi, U, T, L)',
+          badge: '2-Look OLL',
+          notation: "R U R' U R U2 R'",
+          principle: 'Chia OLL thành 2 bước ngắn: Bước 1 tạo dấu cộng vàng bằng F (R U R\' U\') F\' (cho đường ngang) hoặc f (R U R\' U\') f\' (cho góc chữ L). Bước 2 lật nốt các góc vàng bằng 7 công thức kinh điển: Sune, Anti-Sune, H, Pi, U, T, L.',
+          steps: [
+            'Sune (1 góc vàng bên trái-trước): R U R\' U R U2 R\'.',
+            'Anti-Sune (1 góc vàng phải-sau): R U2 R\' U\' R U\' R\'.',
+            'Chữ T (OLL 33): (R U R\' U\') (R\' F R F\') & Hình Pi (OLL 22): R U2 R2\' U\' R2 U\' R2\' U2 R.'
+          ],
+          proTip: 'Chỉ với 10 công thức 2-Look OLL này, bạn đã có thể đạt tốc độ trung bình dưới 18 giây (Sub-18)!'
+        },
+        {
+          id: 'rubik-oll-full',
+          discipline: 'rubik',
+          subcategory: '4. OLL (Định hướng tầng cuối)',
+          title: 'Full OLL Tiêu Biểu: Nhóm Chữ T, Hình Vuông, Tia Chớp & Nhóm Điểm (Dot Cases)',
+          badge: 'Full OLL (57)',
+          notation: "r U R' U' r' F R F'",
+          principle: 'Nâng cấp từ 2-Look lên 1-Look OLL bằng cách học theo hình dạng mặt vàng: Nhóm Chữ T (OLL 33, 45), Nhóm Hình Vuông (Wide Sune/Anti-Sune), Nhóm Tia Chớp (r U R\' U R U2 r\') và Nhóm Điểm (Dot cases không có cạnh vàng nào lật lên).',
+          steps: [
+            'Tia Chớp Phải (OLL 7): r U R\' U R U2 r\' — giống hệt Sune nhưng lấy 2 lớp phải (r).',
+            'Hình Chameleon (OLL 24): r U R\' U\' r\' F R F\'.',
+            'Nhóm Điểm Dot (OLL 2): F (R U R\' U\') F\' f (R U R\' U\') f\'.'
+          ],
+          proTip: 'Tránh để rơi vào Dot Case sau khi chèn cặp F2L cuối bằng kỹ thuật Sledgehammer (R\' F R F\') để lật sẵn ít nhất 2 cạnh vàng!'
+        },
+        {
+          id: 'rubik-pll-full',
+          discipline: 'rubik',
+          subcategory: '5. PLL (Hoán vị tầng cuối)',
+          title: '2-Look & Full PLL: T-Perm, Y-Perm, Ua/Ub/H/Z, Jb/Ja, R, F, G, A, E, V, N-Perm',
+          badge: 'Full PLL (21)',
+          notation: "R U R' U' R' F R2 U' R' U' R U R' F'",
+          principle: 'Bước cuối cùng hoán vị các viên tầng U về đúng vị trí. 2-Look PLL dùng T-Perm/Y-Perm giải góc rồi Ua/Ub/H/Z giải cạnh. Full PLL gồm 21 công thức giải xong trong 1 bước duy nhất.',
+          steps: [
+            'T-Perm (Hoán 2 góc phải + 2 cạnh ngang): R U R\' U\' R\' F R2 U\' R\' U\' R U R\' F\'.',
+            'Jb-Perm (Nhanh nhất PLL): R U R\' F\' R U R\' U\' R\' F R2 U\' R\'.',
+            'H-Perm & Z-Perm (Tầng giữa M): M2 U M2 U2 M2 U M2.'
+          ],
+          proTip: 'Nhận diện PLL chỉ bằng cách nhìn 2 mặt (2-sided PLL recognition) thông qua các cụm Block 2x1 và cặp đèn pha (Headlights)!'
+        },
+
+        // --- CHESS ---
+        {
+          id: 'chess-queens-gambit',
+          discipline: 'chess',
+          subcategory: '1. Hệ thống Gambit & Khai cuộc',
+          title: "Queen's Gambit (Gambit Hậu: 1. d4 d5 2. c4) — QGA & QGD",
+          badge: '1. d4 d5 2. c4',
+          notation: '1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O',
+          fen: 'rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2',
+          principle: 'Trắng đẩy 2. c4 thách thức tốt d5 của Đen nhằm chiếm trung tâm bằng tốt e4. Nếu Đen ăn 2...dxc4 (QGA), Trắng phát triển e3/Bxc4 lấy lại tốt dễ dàng. Nếu Đen đi 2...e6 (QGD), Trắng triển khai Nc3, Bg5 tạo áp lực chiến lược lâu dài.',
+          steps: [
+            '1. d4 d5 2. c4: Công kích trực diện điểm chốt trung tâm d5.',
+            'QGA (2...dxc4): Trắng đi 3. Nf3 Nf6 4. e3 e6 5. Bxc4 c5.',
+            'QGD (2...e6): Trắng đi 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3.'
+          ],
+          proTip: 'Đừng bao giờ cố giữ tốt c4 khi cầm Đen bằng ...b5?! vì Trắng sẽ phá tan cánh Hậu bằng a4 và Qf3!'
+        },
+        {
+          id: 'chess-kings-evans-gambit',
+          discipline: 'chess',
+          subcategory: '1. Hệ thống Gambit & Khai cuộc',
+          title: "King's Gambit (2. f4) & Evans Gambit (4. b4) — Vũ Bão Tấn Công",
+          badge: 'Tấn công rực lửa',
+          notation: '1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. b4 Bxb4 5. c3 Ba5 6. d4',
+          fen: 'r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4',
+          principle: 'King\'s Gambit (1. e4 e5 2. f4) hiến tốt f4 để mở cột f cho Xe và chiếm trung tâm d4. Evans Gambit (4. b4 trong Cờ Ý) hiến tốt cánh Hậu để lợi nhịp đẩy c3-d4, mở hai đường chéo sát thủ Bc4 và Ba3 nhắm thẳng vào Vua Đen.',
+          steps: [
+            'King\'s Gambit: 1. e4 e5 2. f4 exf4 3. Nf3 (ngăn Qh4+) rồi Bc4 và O-O.',
+            'Evans Gambit: 4. b4 Bxb4 5. c3 Ba5 6. d4 exd4 7. O-O! (nhập thành trước khi ăn lại tốt).',
+            'Tạo sức ép liên hoàn bằng Qb3 và Ba3 khóa đường nhập thành của Đen.'
+          ],
+          proTip: 'Trong Evans Gambit, tốc độ phát triển quân quan trọng hơn vật chất — hãy ưu tiên mở các cột trung tâm e và d!'
+        },
+        {
+          id: 'chess-stafford-englund',
+          discipline: 'chess',
+          subcategory: '1. Hệ thống Gambit & Khai cuộc',
+          title: 'Stafford Gambit & Englund Gambit — Bẫy Khai Cuộc & Cách Hóa Giải',
+          badge: 'Bẫy Thực Chiến',
+          notation: '1. e4 e5 2. Nf3 Nf6 3. Nxe5 Nc6 4. Nxc6 dxc6 5. d3 Bc5',
+          fen: 'r1bqkb1r/ppp2ppp/2p2n2/8/4P3/8/PPPP1PPP/RNBQKB1R w KQkq - 0 5',
+          principle: 'Hai bẫy khai cuộc cực hiểm của bên Đen: Stafford Gambit (3...Nc6!?) mở đường cho Bc5, Ng4, Qh4 tấn công f2; Englund Gambit (1. d4 e5?!) dùng Qe7-Qb4+ săn tượng b2. Nắm vững cách hóa giải giúp bạn vừa giữ nguyên tốt lời vừa bẻ gãy đợt công kích.',
+          steps: [
+            'Hóa giải Stafford: Sau 4. Nxc6 dxc6, Trắng đi 5. d3! Bc5 6. Be2! (kiểm soát g4) 7. O-O.',
+            'Hóa giải Englund: Sau 1. d4 e5 2. dxe5 Nc6 3. Nf3 Qe7 4. Bf4 Qb4+ 5. Nc3! Qxb2 6. Bd2! Bb4 7. Rb1 Qa3 8. Nd5!',
+            'Tuyệt đối tránh nước tự nhiên 5. Bd2? trong Englund vì sau 5...Qxb2 6. Bc3 Bb4! Trắng thua ngay.'
+          ],
+          proTip: 'Trong Stafford Gambit, nước 6. Be2! của Trắng là "khắc tinh" vô hiệu hóa hoàn toàn mọi bẫy nhảy Mã g4 của Đen!'
+        },
+        {
+          id: 'chess-classic-openings',
+          discipline: 'chess',
+          subcategory: '1. Hệ thống Gambit & Khai cuộc',
+          title: 'Khai Cuộc Chuẩn Mực: Ruy Lopez, Italian, Sicilian (Najdorf/Dragon), Caro-Kann & French',
+          badge: 'Chuẩn Đại Kiện Tướng',
+          notation: '1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6',
+          fen: 'rnbqkb1r/1p2pppp/p2p1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6',
+          principle: '5 hệ thống khai cuộc nền tảng của cờ vua đỉnh cao: Ruy Lopez (3. Bb5 gây sức ép lâu dài), Italian Game (3. Bc4 kết hợp c3-d4), Sicilian Defense (1...c5 phản công bất đối xứng trên cột mở c), Caro-Kann (1...c6 vững chắc, giữ Tượng ô trắng ngoài dây xích tốt) và French Defense (1...e6 2...d5 công kích trung tâm).',
+          steps: [
+            'Ruy Lopez: 1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1.',
+            'Sicilian Najdorf: 5...a6 kiểm soát b5, chuẩn bị ...e5 hoặc ...e6 và ...b5.',
+            'Caro-Kann & French: Tấn công dây xích tốt d4-e5 của Trắng bằng đòn đột phá ...c5 và ...f6.'
+          ],
+          proTip: 'Bấm "Mở trong Đấu Trường" để nạp ngay thế cờ Sicilian Najdorf và đấu thử với Bot AI ELO 1600!'
+        },
+        {
+          id: 'chess-tactics',
+          discipline: 'chess',
+          subcategory: '2. Đòn chiến thuật trung cuộc',
+          title: 'Chiến Thuật Trung Cuộc: Ghim (Pin), Xiên (Skewer), Chĩa Đôi (Fork), Chiếu Mở & Đánh Lạc Hướng',
+          badge: 'Tactics',
+          notation: '1. Nxd5 cxd5 2. Bb5+ Nc6 3. Bxc6+ bxc6 4. Qxc6+',
+          fen: 'r1bqk2r/ppp2ppp/2n5/3np3/1bB5/2N2N2/PPPP1PPP/R1BQK2R w KQkq - 4 6',
+          principle: '5 mô hình chiến thuật xuất hiện trong mọi ván cờ thực chiến: Ghim (Pin - khóa quân đứng trước Vua/Hậu), Xiên (Skewer - đòn ghim ngược), Chĩa đôi (Fork - đặc biệt là Mã tấn công Vua + Hậu/Xe), Chiếu mở (Discovered Attack) và Thu hút/Đánh lạc hướng (Decoy & Deflection).',
+          steps: [
+            'Tìm kiếm các quân không có căn bảo vệ (Undefended pieces) và vị trí Vua/Hậu thẳng hàng.',
+            'Tận dụng Chĩa đôi bằng Mã ở các ô c7, f7, c2, f2.',
+            'Dùng đòn Đánh lạc hướng (Deflection) hiến quân kéo quân bảo vệ duy nhất rời khỏi vị trí.'
+          ],
+          proTip: 'Luôn xét các nước cưỡng bức theo thứ tự: Nước chiếu -> Nước ăn quân -> Nước đe dọa sát cục!'
+        },
+        {
+          id: 'chess-endgame',
+          discipline: 'chess',
+          subcategory: '3. Nguyên lý Cờ Tàn',
+          title: 'Nguyên Lý Cờ Tàn: Quy Tắc Hình Vuông, Thế Đối Vua, Cầu Lucena & Phòng Thủ Philidor',
+          badge: 'Endgame',
+          notation: '1. Re1+ Kd7 2. Re4 Rh1 3. Rd4+ Kc6 4. Kc8',
+          fen: '1K6/1P1k4/8/8/8/8/2R5/7r w - - 0 1',
+          principle: 'Nền tảng cờ tàn bắt buộc phải thuộc: Quy tắc Hình Vuông của Tốt (tính nhanh Vua địch có bắt kịp tốt thông không), Thế Đối Vua (Opposition - giành quyền xâm nhập ô xung yếu), Chiếu bí bằng Xe + Vua, Cầu Lucena (kỹ thuật đưa Xe lên hàng 4 che nước chiếu để phong Hậu) và Phòng thủ Philidor (cắt ngang hàng 6 rồi chiếu hậu cần giữ hòa).',
+          steps: [
+            'Cầu Lucena: Đi 1. Re1+ đẩy Vua địch ra cột d/f, sau đó đi 2. Re4! dựng cầu ở hàng ngang số 4.',
+            'Phòng thủ Philidor: Giữ Xe ở hàng ngang số 6 chặn Vua địch; khi địch đẩy tốt lên hàng 6 mới lui Xe về hàng 1 chiếu liên tục.',
+            'Thế Đối Vua: Giữ khoảng cách 1 ô (hoặc 3, 5 ô) trực diện để ép Vua đối phương phải nhường đường.'
+          ],
+          proTip: 'Bấm thực hành bài này để trực tiếp đi nước 1. Re1+ và dựng "Cầu Lucena" trên bàn cờ Vua!'
+        },
+
+        // --- XIANGQI ---
+        {
+          id: 'xq-phao-dau-bpm',
+          discipline: 'xiangqi',
+          subcategory: '1. Hệ thống Khai cuộc Cờ Tướng',
+          title: 'Pháo Đầu Đối Bình Phong Mã — Ngũ Thất Pháo, Ngũ Bát Pháo & Cấp Tấn Trung Binh',
+          badge: 'Kinh điển số 1',
+          notation: '1. P2-5 M8.7 2. M2.3 X9-8 3. X1-2 M2.3 4. B7.1 B7.1',
+          fen: 'r1bakab1r/9/1cn4c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C1N2/9/RNBAKAB1R w',
+          principle: 'Khai cuộc kinh điển nhất Cờ Tướng: Đỏ đi Pháo 2 bình 5 uy hiếp trung lộ; Đen lên cặp Mã 8 tấn 7 và Mã 2 tấn 3 tạo thế Bình Phong Mã kiên cố. Đỏ triển khai Ngũ Thất Pháo (P8-7), Ngũ Bát Pháo (P8-8) hoặc Cấp Tấn Trung Binh (thúc B5.1 công sát dữ dội).',
+          steps: [
+            'Đỏ: P2-5, M2.3, X1-2 nhanh chóng xuất Trực Xe kiểm soát lộ 2.',
+            'Đen: M8.7, M2.3, B7.1 kết hợp Bình Pháo Đổi Xe (P2-9) hoặc Tả Mã Bàn Hà.',
+            'Biến Cấp Tấn Trung Binh: Đỏ dồn sức thúc tốt đầu B5.1 qua sông phá mã trung lộ.'
+          ],
+          proTip: 'Khẩu quyết: "Pháo đầu không xuất Xe, một ván cờ ắt thua" — cầm Pháo Đầu phải ưu tiên ra nhanh cả hai Xe!'
+        },
+        {
+          id: 'xq-thuan-nghich-phao',
+          discipline: 'xiangqi',
+          subcategory: '1. Hệ thống Khai cuộc Cờ Tướng',
+          title: 'Thuận Pháo & Nghịch Pháo — Tranh Tiên Từng Nước Trung Lộ',
+          badge: 'Đối công quyết liệt',
+          notation: '1. P2-5 P8-5 2. M2.3 M8.7 3. X1-2 X9.1 4. M8.7 X9-4',
+          fen: 'r1bakabnr/9/1c2c4/p1p1p1p1p/9/9/P1P1P1P1P/1C2C1N2/9/RNBAKAB1R w',
+          principle: 'Thuận Pháo (P2-5 đối P8-5 — lên Pháo đầu cùng cánh) lấy chữ "Tiên" làm gốc, dẫn tới cuộc đấu Trực Xe đối Hoành Xe nảy lửa. Nghịch Pháo (P2-5 đối P2-5 — lên Pháo đầu khác cánh) tạo thế trận đối công chéo cánh cực kỳ phức tạp.',
+          steps: [
+            'Thuận Pháo: Đỏ đi Trực Xe (X1-2), Đen đi Hoành Xe (X9.1 -> X9-4) chiếm sườn lộ 4.',
+            'Nghịch Pháo: Bổ Sĩ/Tượng đúng nhịp để tránh bị Pháo địch quật tốt biên ghim Xe Mã.',
+            'Tập trung cướp hai lộ sườn 4 và 6 để tạo thế Thiết Môn Thuyên.'
+          ],
+          proTip: 'Khẩu quyết cổ phổ Quất Trung Bí: "Thuận Pháo cuộc, tranh tiên làm gốc; Hoành Xe xuất, lưỡng lặc công thành"!'
+        },
+        {
+          id: 'xq-tien-nhan-phi-tuong',
+          discipline: 'xiangqi',
+          subcategory: '1. Hệ thống Khai cuộc Cờ Tướng',
+          title: 'Tiên Nhân Chỉ Lộ (B7.1), Phi Tượng Cuộc & Khởi Mã Cuộc — Lấy Nhu Thắng Cương',
+          badge: 'Linh hoạt biến hóa',
+          notation: '1. B7.1 P2-3 2. P8-5 M2.3 3. M8.7 X1-2',
+          fen: 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/2P6/P3P1P1P/1C5C1/9/RNBAKABNR b',
+          principle: 'Tiên Nhân Chỉ Lộ (Binh 7 tấn 1 hoặc Binh 3 tấn 1) là khai cuộc linh hoạt bậc nhất: vừa mở đường Mã vừa thăm dò ý đồ đối phương. Phi Tượng Cuộc (T3.5) và Khởi Mã Cuộc (M2.3) ưu tiên củng cố phòng tuyến vững chắc trước khi phản kích.',
+          steps: [
+            'Nếu Đen đi Liễm Pháo (P2-3 công tốt 7), Đỏ đóng Trung Pháo (P8-5) giữ thế chủ động.',
+            'Nếu Đen đi Đối Binh Cuộc (B3.1), hai bên đấu nội công trung tàn cuộc sâu sắc.',
+            'Phi Tượng Cuộc kết hợp Tả Quá Cung Pháo (P8-4) tạo trận địa "Mình đồng da sắt".'
+          ],
+          proTip: 'Tiên Nhân Chỉ Lộ là khai cuộc được các Đặc Cấp Đại Sư dùng nhiều nhất khi muốn thắng bằng nội lực trung cuộc!'
+        },
+        {
+          id: 'xq-sat-phap-phao-ma',
+          discipline: 'xiangqi',
+          subcategory: '2. Các Sát Pháp Thực Chiến',
+          title: 'Sát Pháp Kinh Điển: Pháo Trùng, Mã Hậu Pháo & Thiên Địa Pháo',
+          badge: 'Sát Pháp',
+          notation: '1. M3.2 (hoặc P2-5) phối hợp Mã khóa Tướng + Pháo sau lưng tuyệt sát',
+          fen: '3ak4/4a4/4b4/6N2/9/9/9/7C1/4C4/4K4 w',
+          principle: 'Ba tuyệt kỹ chiếu bí bằng Pháo: (1) Pháo Trùng: Hai Pháo chồng trên cùng 1 hàng/cột tự làm ngòi cho nhau; (2) Mã Hậu Pháo: Mã khống chế đường thoát của Tướng đồng thời làm ngòi cho Pháo đứng sau chiếu bí; (3) Thiên Địa Pháo: Một Pháo khống chế trung lộ (Thiên), một Pháo khống chế hàng đáy (Địa).',
+          steps: [
+            'Mã Hậu Pháo: Nhảy Mã chiếu ở chân Sĩ ép Tướng địch lệch sang lộ 4/6 rồi bình Pháo ra sau lưng Mã.',
+            'Pháo Trùng: Đưa 2 Pháo về cùng lộ 5 hoặc hàng đáy đối phương.',
+            'Thiên Địa Pháo: Dùng Pháo đầu ghim chết Sĩ 5 để Pháo đáy chiếu ngang.'
+          ],
+          proTip: 'Bấm "Thực hành trên Bàn Cờ Tướng" để giải trực tiếp thế sát Mã Hậu Pháo chỉ trong 2 nước!'
+        },
+        {
+          id: 'xq-sat-phap-thiet-mon',
+          discipline: 'xiangqi',
+          subcategory: '2. Các Sát Pháp Thực Chiến',
+          title: 'Thiết Môn Thuyên (Chốt Cửa Sắt), Giáp Xe Pháo, Song Mã Ẩm Tuyền & Ngọa Tào Mã',
+          badge: 'Tuyệt Sát',
+          notation: '1. X4.8# (Xe cắm đáy lộ 4 phối hợp Pháo đầu & mặt Tướng)',
+          fen: '3k1ab2/4a4/4b4/9/9/9/5R3/4C4/9/4K4 w',
+          principle: 'Bốn thế sát công thành hiểm ác nhất: Thiết Môn Thuyên (Pháo đầu ghim Sĩ 5 + Xe cắm đáy lộ 4/6 có mặt Tướng hoặc Tốt trợ công), Giáp Xe Pháo (Xe và Pháo song hành chiếu dọc/ngang), Ngọa Tào Mã (Mã nhảy chân Tượng ép Tướng xuất cung) và Song Mã Ẩm Tuyền (hai Mã liên hoàn khóa cung).',
+          steps: [
+            'Thiết Môn Thuyên: Dùng Pháo đầu khóa Sĩ trung tâm, cắm Xe xuống đáy lộ 4 hoặc lộ 6 chiếu bí.',
+            'Ngọa Tào Mã: Nhảy Mã vào điểm trước cung Tướng, kết hợp bình Xe ăn Sĩ hoặc chiếu sườn.',
+            'Song Mã Ẩm Tuyền: Một Mã giữ lộ 5, Mã kia nhảy chiếu ở vị trí Ngọa Tào.'
+          ],
+          proTip: 'Trong thực chiến, đòn "Phế Xe ăn Sĩ đáy" để mở đường cho Mã hoặc Xe thứ hai thực hiện Thiết Môn Thuyên xuất hiện cực kỳ thường xuyên!'
+        },
+        {
+          id: 'xq-endgame',
+          discipline: 'xiangqi',
+          subcategory: '3. Cờ Tàn Thực Dụng',
+          title: 'Cờ Tàn Thực Dụng: Đơn Xe Thắng Khuyết Sĩ/Tượng, Mã Tốt Thắng Đơn Sĩ Tượng & Pháo Tốt Cao',
+          badge: 'Cờ Tàn',
+          notation: '1. X4-5 Tg5-4 2. X5.4 (Chiếm lộ 5 chia cắt Sĩ Tượng)',
+          fen: '3akab2/9/4b4/9/9/9/9/9/5R3/4K4 w',
+          principle: 'Ba hình cờ tàn thực dụng quyết định thắng bại: (1) Đơn Xe tất thắng Đơn Khuyết Sĩ hoặc Khuyết Tượng nhờ dùng Xe chiếm lộ 5 kết hợp mặt Tướng chia cắt quân thủ; (2) Mã + Tốt cao luôn thắng Đơn Sĩ Tượng; (3) Pháo + Tốt cao thắng Sĩ Tượng bền nhờ giam Tượng và dùng Tốt che mặt Tướng.',
+          steps: [
+            'Đơn Xe công khuyết Tượng: Luôn chiếm lộ 5 để không cho 2 Sĩ liên kết với Tượng lẻ.',
+            'Mã Tốt thắng Đơn Sĩ Tượng: Giữ Tốt không xuống đáy (tránh Tốt lụt), đưa Tốt vào Cửu cung khóa Sĩ.',
+            'Pháo Tốt cao thắng Sĩ Tượng bền: Dùng Pháo giam chết Tượng biên rồi điều Tốt và Tướng ép hết nước đi.'
+          ],
+          proTip: 'Nhớ khẩu quyết: "Đơn Xe nan phá Sĩ Tượng toàn, khuyết Sĩ khuyết Tượng ắt phải tan"!'
+        }
+      ];
+
+      // -----------------------------------------------------------------------
+      // 3. HYBRID STORAGE MANAGER (LOCALSTORAGE + SUPABASE SYNC READY)
+      // -----------------------------------------------------------------------
+      const STORAGE_KEY = 'mindarena_hub_state_v1';
+
+      const defaultState = {
+        profile: {
+          display_name: 'Kỳ Thủ MindArena',
+          email: 'guest@mindarena.hub',
+          rubik_pb_ms: 14820,
+          rubik_ao5_ms: 16450,
+          chess_elo: 1340,
+          xiangqi_elo: 1280,
+          streak_days: 7,
+          is_guest: true
+        },
+        progress: {
+          'rubik-notation': { status: 'mastered', bookmarked: false },
+          'rubik-cross': { status: 'mastered', bookmarked: true },
+          'rubik-f2l-same': { status: 'learning', bookmarked: true },
+          'rubik-oll-2look': { status: 'mastered', bookmarked: false },
+          'chess-queens-gambit': { status: 'mastered', bookmarked: true },
+          'chess-kings-evans-gambit': { status: 'learning', bookmarked: false },
+          'chess-endgame': { status: 'mastered', bookmarked: true },
+          'xq-phao-dau-bpm': { status: 'mastered', bookmarked: true },
+          'xq-sat-phap-phao-ma': { status: 'mastered', bookmarked: true },
+          'xq-sat-phap-thiet-mon': { status: 'learning', bookmarked: false }
+        },
+        timerSessions: [
+          { id: 's1', ms: 16120, penalty: 'NONE', scramble: "R U2 F' D2 L2 B U' R2 D B2" },
+          { id: 's2', ms: 14820, penalty: 'NONE', scramble: "F2 U' L2 D R2 B2 U2 F' L D'" },
+          { id: 's3', ms: 17450, penalty: 'NONE', scramble: "U2 R2 B2 D' L2 U F2 R' D' B" },
+          { id: 's4', ms: 16890, penalty: 'NONE', scramble: "D2 L2 F2 U B2 D' R2 F U' L" },
+          { id: 's5', ms: 16340, penalty: 'NONE', scramble: "B2 R2 U' F2 D L2 U' R B' D2" }
+        ],
+        weeklyHours: [0.8, 1.1, 0.7, 1.2, 0.9, 1.0, 0.8]
+      };
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            return Object.assign({}, defaultState, parsed);
+          }
+        } catch (e) {
+          // Ignore storage error
+        }
+        return JSON.parse(JSON.stringify(defaultState));
       }
-    }
 
-    // Đăng xuất
-    async function handleSignOut() {
-      await client.auth.signOut();
-    }
-
-    function showError(msg) {
-      const errorDiv = document.getElementById('authError');
-      errorDiv.innerText = msg;
-      errorDiv.classList.remove('hidden');
-    }
-
-    // Tải lời nhắn
-    async function loadMessages() {
-      const listContainer = document.getElementById('messagesList');
-      const { data, error } = await client
-        .from(TABLE_NAME)
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        listContainer.innerHTML = `<p class="text-red-400 text-sm">Lỗi: ${error.message}</p>`;
-        return;
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        } catch (e) {
+          // Ignore storage error
+        }
+        refreshGlobalStatsUI();
       }
 
-      if (!data || data.length === 0) {
-        listContainer.innerHTML = `<p class="text-slate-500 text-sm">Chưa có lời nhắn nào.</p>`;
-        return;
+      let appState = loadState();
+
+      // -----------------------------------------------------------------------
+      // 4. NAVIGATION, DYNAMIC THEMING & DASHBOARD RENDERING
+      // -----------------------------------------------------------------------
+      let currentDiscipline = 'rubik';
+      let currentView = 'dashboard';
+
+      const disciplineLabels = {
+        rubik: { text: 'Cyber-Neon Rubik', pillClass: 'bg-[#00F5D4]/15 text-[#00F5D4] border-[#00F5D4]/30', activeBtn: 'bg-[#00F5D4] text-slate-950' },
+        chess: { text: 'Royal Minimalist Chess', pillClass: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30', activeBtn: 'bg-emerald-500 text-slate-950' },
+        xiangqi: { text: 'Neo-Oriental Xiangqi', pillClass: 'bg-rose-500/15 text-rose-400 border-rose-500/30', activeBtn: 'bg-rose-600 text-white' }
+      };
+
+      function setDisciplineTheme(disc) {
+        currentDiscipline = disc;
+        document.body.setAttribute('data-discipline', disc);
+        const pill = document.getElementById('discipline-pill');
+        if (pill && disciplineLabels[disc]) {
+          pill.textContent = disciplineLabels[disc].text;
+          pill.className = 'text-[11px] font-mono uppercase px-2 py-0.5 rounded-full border font-semibold ' + disciplineLabels[disc].pillClass;
+        }
+        document.querySelectorAll('[data-switch-discipline]').forEach(function (btn) {
+          const d = btn.getAttribute('data-switch-discipline');
+          if (d === disc) {
+            btn.className = 'discipline-tab px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ' + disciplineLabels[disc].activeBtn;
+          } else {
+            btn.className = 'discipline-tab px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 text-slate-300 hover:text-white';
+          }
+        });
       }
 
-      listContainer.innerHTML = data.map(msg => `
-        <div class="p-3 bg-slate-700/50 rounded-lg border border-slate-600/50">
-          <div class="flex justify-between items-center mb-1">
-            <span class="font-semibold text-indigo-300">${msg.name || 'Thành viên'}</span>
-            <span class="text-xs text-slate-400">${new Date(msg.created_at).toLocaleTimeString('vi-VN')}</span>
-          </div>
-          <p class="text-slate-200 text-sm">${msg.content}</p>
-        </div>
-      `).join('');
-    }
+      function switchView(viewName) {
+        currentView = viewName;
+        const views = ['dashboard', 'curriculum', 'rubik', 'chess', 'xiangqi', 'architecture'];
+        views.forEach(function (v) {
+          const sec = document.getElementById('view-' + v);
+          if (sec) {
+            if (v === viewName) sec.classList.remove('hidden');
+            else sec.classList.add('hidden');
+          }
+        });
 
-    // Gửi tin nhắn mới
-    async function sendMessage() {
-      const nameInput = document.getElementById('nameInput');
-      const contentInput = document.getElementById('contentInput');
-      const btnSend = document.getElementById('btnSend');
+        document.querySelectorAll('[data-nav-view]').forEach(function (btn) {
+          const target = btn.getAttribute('data-nav-view');
+          const isMobile = btn.parentElement && btn.parentElement.classList.contains('md:hidden');
+          if (target === viewName) {
+            btn.className = isMobile
+              ? 'nav-btn px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-white bg-white/15'
+              : 'nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold bg-white/10 text-white border border-white/15';
+          } else {
+            btn.className = isMobile
+              ? 'nav-btn px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-slate-300'
+              : 'nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/5';
+          }
+        });
 
-      const name = nameInput.value.trim();
-      const content = contentInput.value.trim();
-
-      if (!content) {
-        alert("Vui lòng nhập nội dung!");
-        return;
+        if (viewName === 'rubik') {
+          setDisciplineTheme('rubik');
+          setTimeout(resizeRubik3D, 60);
+        } else if (viewName === 'chess') {
+          setDisciplineTheme('chess');
+          renderChessBoard();
+        } else if (viewName === 'xiangqi') {
+          setDisciplineTheme('xiangqi');
+          drawXiangqiBoard();
+        } else if (viewName === 'curriculum') {
+          renderCurriculumGrid();
+        } else if (viewName === 'architecture') {
+          renderCodeTab(currentCodeTab);
+        }
       }
 
-      btnSend.disabled = true;
-      btnSend.innerText = "Đang gửi...";
-
-      const { error } = await client.from(TABLE_NAME).insert([
-        { name: name || currentUser.email.split('@')[0], content: content }
-      ]);
-
-      btnSend.disabled = false;
-      btnSend.innerText = "Gửi lời nhắn";
-
-      if (error) {
-        alert("Lỗi khi gửi: " + error.message);
-      } else {
-        contentInput.value = "";
-        loadMessages();
+      function formatSeconds(ms) {
+        if (ms === null || ms === undefined) return '--';
+        if (ms === -1) return 'DNF';
+        return (ms / 1000).toFixed(2) + 's';
       }
-    }
 
-    // Khởi chạy khi load trang
-    loadMessages();
+      function computeWcaAvg(list, n) {
+        if (!list || list.length < n) return null;
+        const slice = list.slice(0, n);
+        let dnf = 0;
+        const vals = slice.map(function (item) {
+          if (item.penalty === 'DNF') {
+            dnf++;
+            return 999999999;
+          }
+          return item.penalty === '+2' ? item.ms + 2000 : item.ms;
+        });
+        if (dnf >= 2) return -1;
+        vals.sort(function (a, b) { return a - b; });
+        const trimmed = vals.slice(1, n - 1);
+        const sum = trimmed.reduce(function (a, b) { return a + b; }, 0);
+        return Math.round(sum / trimmed.length);
+      }
+
+      function refreshGlobalStatsUI() {
+        // Recompute PB & Ao5 from timerSessions
+        const validSolves = appState.timerSessions
+          .filter(function (s) { return s.penalty !== 'DNF'; })
+          .map(function (s) { return s.penalty === '+2' ? s.ms + 2000 : s.ms; });
+        const pb = validSolves.length ? Math.min.apply(null, validSolves) : appState.profile.rubik_pb_ms;
+        const ao5 = computeWcaAvg(appState.timerSessions, 5);
+        const ao12 = computeWcaAvg(appState.timerSessions, 12);
+
+        appState.profile.rubik_pb_ms = pb;
+        appState.profile.rubik_ao5_ms = ao5;
+
+        const masteredCount = CURRICULUM.filter(function (item) {
+          const st = appState.progress[item.id];
+          return st && st.status === 'mastered';
+        }).length;
+        const pct = Math.round((masteredCount / CURRICULUM.length) * 100);
+
+        const setTxt = function (id, val) {
+          const el = document.getElementById(id);
+          if (el) el.textContent = val;
+        };
+
+        setTxt('top-streak', String(appState.profile.streak_days));
+        setTxt('top-rubik-pb', formatSeconds(pb));
+        setTxt('top-chess-elo', String(appState.profile.chess_elo));
+        setTxt('top-xiangqi-elo', String(appState.profile.xiangqi_elo));
+        setTxt('top-user-name', appState.profile.display_name + (appState.profile.is_guest ? ' (Guest)' : ' (Synced)'));
+
+        setTxt('stat-mastered-pct', pct + '%');
+        setTxt('stat-mastered-count', masteredCount + ' / ' + CURRICULUM.length + ' bài');
+        const bar = document.getElementById('stat-mastered-bar');
+        if (bar) bar.style.width = pct + '%';
+
+        setTxt('stat-rubik-pb', formatSeconds(pb));
+        setTxt('stat-rubik-ao5', formatSeconds(ao5));
+        setTxt('stat-chess-elo', String(appState.profile.chess_elo));
+        setTxt('stat-xiangqi-elo', String(appState.profile.xiangqi_elo));
+
+        setTxt('timer-stat-pb', formatSeconds(pb));
+        setTxt('timer-stat-ao5', formatSeconds(ao5));
+        setTxt('timer-stat-ao12', formatSeconds(ao12 || 17180));
+      }
+
+      function renderDashboardWidgets() {
+        // Daily recommendations: 1 Rubik, 1 Chess, 1 Xiangqi
+        const recContainer = document.getElementById('daily-recommendations-list');
+        if (recContainer) {
+          const picks = [
+            CURRICULUM.find(function (x) { return x.id === 'rubik-pll-full'; }),
+            CURRICULUM.find(function (x) { return x.id === 'chess-stafford-englund'; }),
+            CURRICULUM.find(function (x) { return x.id === 'xq-sat-phap-phao-ma'; })
+          ].filter(Boolean);
+
+          recContainer.innerHTML = picks.map(function (item) {
+            const badgeColor = item.discipline === 'rubik'
+              ? 'text-[#00F5D4] border-[#00F5D4]/30 bg-[#00F5D4]/10'
+              : item.discipline === 'chess'
+              ? 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10'
+              : 'text-rose-400 border-rose-500/30 bg-rose-500/10';
+            return (
+              '<div class="p-4 rounded-2xl bg-slate-950/60 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">' +
+                '<div class="space-y-1">' +
+                  '<div class="flex items-center gap-2">' +
+                    '<span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded border ' + badgeColor + '">' + item.subcategory + '</span>' +
+                    '<span class="font-mono text-xs text-slate-400">' + item.badge + '</span>' +
+                  '</div>' +
+                  '<div class="font-bold text-sm text-white">' + item.title + '</div>' +
+                  '<div class="font-mono text-xs text-slate-300">' + item.notation + '</div>' +
+                '</div>' +
+                '<button type="button" data-launch-item="' + item.id + '" class="shrink-0 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white">' +
+                  'Thực hành ngay →' +
+                '</button>' +
+              '</div>'
+            );
+          }).join('');
+        }
+
+        // Weekly chart
+        const chartEl = document.getElementById('weekly-activity-chart');
+        if (chartEl) {
+          const maxVal = 1.5;
+          chartEl.innerHTML = appState.weeklyHours.map(function (hrs, idx) {
+            const hPct = Math.max(15, Math.min(100, Math.round((hrs / maxVal) * 100)));
+            const colors = idx === 6
+              ? 'from-[#00F5D4] to-emerald-500'
+              : idx % 2 === 0
+              ? 'from-emerald-500/80 to-teal-600/80'
+              : 'from-rose-500/80 to-amber-500/80';
+            return (
+              '<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">' +
+                '<span class="font-mono text-[10px] text-slate-300">' + hrs.toFixed(1) + 'h</span>' +
+                '<div class="w-full max-w-[34px] rounded-t-xl bg-gradient-to-t ' + colors + ' transition-all duration-300" style="height:' + hPct + '%"></div>' +
+              '</div>'
+            );
+          }).join('');
+        }
+      }
+
+      // -----------------------------------------------------------------------
+      // 5. CURRICULUM EXPLORER RENDERER & INTERACTION
+      // -----------------------------------------------------------------------
+      function renderCurriculumGrid() {
+        const grid = document.getElementById('curriculum-grid');
+        if (!grid) return;
+        const discFilter = document.getElementById('curriculum-filter-discipline').value;
+        const statusFilter = document.getElementById('curriculum-filter-status').value;
+        const query = (document.getElementById('curriculum-search').value || '').toLowerCase().trim();
+
+        const filtered = CURRICULUM.filter(function (item) {
+          if (discFilter !== 'all' && item.discipline !== discFilter) return false;
+          const prog = appState.progress[item.id] || { status: 'unstarted', bookmarked: false };
+          if (statusFilter === 'learning' && prog.status !== 'learning') return false;
+          if (statusFilter === 'mastered' && prog.status !== 'mastered') return false;
+          if (statusFilter === 'bookmarked' && !prog.bookmarked) return false;
+          if (query) {
+            const hay = (item.title + ' ' + item.subcategory + ' ' + item.principle + ' ' + item.notation).toLowerCase();
+            if (!hay.includes(query)) return false;
+          }
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          grid.innerHTML = '<div class="col-span-2 glass-card rounded-2xl p-8 text-center text-slate-400">Không tìm thấy bài học phù hợp với bộ lọc hiện tại.</div>';
+          return;
+        }
+
+        grid.innerHTML = filtered.map(function (item) {
+          const prog = appState.progress[item.id] || { status: 'unstarted', bookmarked: false };
+          const accent = item.discipline === 'rubik'
+            ? 'text-[#00F5D4] border-[#00F5D4]/30'
+            : item.discipline === 'chess'
+            ? 'text-emerald-400 border-emerald-500/30'
+            : 'text-rose-400 border-rose-500/30';
+
+          const stepsHtml = item.steps.map(function (st, idx) {
+            return '<li class="text-xs text-slate-300 flex gap-2"><span class="font-mono text-slate-400">' + (idx + 1) + '.</span><span>' + st + '</span></li>';
+          }).join('');
+
+          return (
+            '<div class="glass-card rounded-2xl p-5 sm:p-6 flex flex-col justify-between space-y-4 border border-white/10">' +
+              '<div class="space-y-3">' +
+                '<div class="flex items-center justify-between gap-2">' +
+                  '<span class="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-white/5 border ' + accent + '">' + item.subcategory + '</span>' +
+                  '<div class="flex items-center gap-1.5">' +
+                    '<button type="button" data-toggle-bookmark="' + item.id + '" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/15 text-xs" title="Đánh dấu yêu thích">' +
+                      (prog.bookmarked ? '⭐ Đã lưu' : '☆ Bookmark') +
+                    '</button>' +
+                    '<button type="button" data-cycle-status="' + item.id + '" class="px-2.5 py-1 rounded-lg font-mono text-xs font-bold ' +
+                      (prog.status === 'mastered'
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                        : prog.status === 'learning'
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                        : 'bg-white/5 text-slate-400 border border-white/10') + '">' +
+                      (prog.status === 'mastered' ? '✅ Đã thuộc' : prog.status === 'learning' ? '⏳ Đang luyện' : '○ Chưa học') +
+                    '</button>' +
+                  '</div>' +
+                '</div>' +
+                '<h3 class="text-lg font-bold text-white leading-snug">' + item.title + '</h3>' +
+                '<div class="font-mono text-xs p-3 rounded-xl bg-slate-950/90 border border-white/10 text-[#00F5D4] overflow-x-auto">' +
+                  item.notation +
+                '</div>' +
+                '<p class="text-xs sm:text-sm text-slate-300 leading-relaxed">' + item.principle + '</p>' +
+                '<ul class="space-y-1.5 bg-white/[0.02] p-3 rounded-xl border border-white/5">' + stepsHtml + '</ul>' +
+                '<div class="text-xs text-amber-300/90 bg-amber-500/10 border border-amber-500/25 rounded-xl p-2.5">' +
+                  '💡 <strong>Mẹo thực chiến:</strong> ' + item.proTip +
+                '</div>' +
+              '</div>' +
+              '<div class="pt-2 flex justify-end">' +
+                '<button type="button" data-launch-item="' + item.id + '" class="px-4 py-2 rounded-xl theme-btn text-xs">' +
+                  (item.discipline === 'rubik' ? '🧊 Mô phỏng trên Rubik 3D →' : item.discipline === 'chess' ? '♟️ Nạp vào Bàn Cờ Vua →' : '🏮 Thực hành trên Bàn Cờ Tướng →') +
+                '</button>' +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+      }
+
+      function launchCurriculumItem(itemId) {
+        const item = CURRICULUM.find(function (x) { return x.id === itemId; });
+        if (!item) return;
+        if (item.discipline === 'rubik') {
+          switchView('rubik');
+          loadRubikFormula(item.notation, item.title, true);
+          showToast('Đã nạp công thức "' + item.title + '" vào Phòng Lab Rubik 3D!');
+        } else if (item.discipline === 'chess') {
+          switchView('chess');
+          if (item.fen) {
+            chessGame.load(item.fen);
+            chessMoveList = [item.notation];
+            selectedChessSq = null;
+            renderChessBoard();
+            updateChessHistoryUI();
+          }
+          showToast('Đã nạp thế cờ "' + item.title + '" vào Đấu Trường Cờ Vua!');
+        } else if (item.discipline === 'xiangqi') {
+          switchView('xiangqi');
+          if (item.fen) {
+            loadXiangqiPosition(item.fen);
+          }
+          showToast('Đã nạp thế cờ "' + item.title + '" vào Đấu Trường Cờ Tướng!');
+        }
+      }
+
+      // -----------------------------------------------------------------------
+      // 6. RUBIK 3D SIMULATOR (THREE.JS) + FORMULA ANIMATOR + WCA TIMER
+      // -----------------------------------------------------------------------
+      let rubikScene = null;
+      let rubikCamera = null;
+      let rubikRenderer = null;
+      let rubikGroup = null;
+      let rubikCubies = [];
+      let rubikTokens = [];
+      let rubikStepIdx = 0;
+      let rubikPlayTimer = null;
+
+      // Orbit rotation angles
+      let camTheta = 0.72;
+      let camPhi = 0.55;
+      let isDraggingCube = false;
+      let dragStartX = 0;
+      let dragStartY = 0;
+
+      function parseRubikMove(token) {
+        const clean = token.trim().replace(/[()]/g, '');
+        if (!clean) return null;
+        const base = clean[0];
+        const rest = clean.slice(1);
+        const isPrime = rest.indexOf("'") !== -1;
+        const isDouble = rest.indexOf('2') !== -1;
+        const dir = isPrime ? -1 : 1;
+        const mult = isDouble ? 2 : 1;
+
+        const map = {
+          R: { axis: 'x', layers: [1], sign: -1 },
+          r: { axis: 'x', layers: [0, 1], sign: -1 },
+          L: { axis: 'x', layers: [-1], sign: 1 },
+          l: { axis: 'x', layers: [-1, 0], sign: 1 },
+          U: { axis: 'y', layers: [1], sign: -1 },
+          u: { axis: 'y', layers: [0, 1], sign: -1 },
+          D: { axis: 'y', layers: [-1], sign: 1 },
+          d: { axis: 'y', layers: [-1, 0], sign: 1 },
+          F: { axis: 'z', layers: [1], sign: -1 },
+          f: { axis: 'z', layers: [0, 1], sign: -1 },
+          B: { axis: 'z', layers: [-1], sign: 1 },
+          b: { axis: 'z', layers: [-1, 0], sign: 1 },
+          M: { axis: 'x', layers: [0], sign: 1 },
+          E: { axis: 'y', layers: [0], sign: 1 },
+          S: { axis: 'z', layers: [0], sign: -1 },
+          x: { axis: 'x', layers: [-1, 0, 1], sign: -1 },
+          y: { axis: 'y', layers: [-1, 0, 1], sign: -1 },
+          z: { axis: 'z', layers: [-1, 0, 1], sign: -1 }
+        };
+        const spec = map[base];
+        if (!spec) return null;
+        return {
+          raw: clean,
+          axis: spec.axis,
+          layers: spec.layers,
+          angle: spec.sign * dir * mult
+        };
+      }
+
+      function parseFormulaList(str) {
+        return str
+          .replace(/[()]/g, ' ')
+          .split(/\s+/)
+          .map(parseRubikMove)
+          .filter(Boolean);
+      }
+
+      function invertFormulaTokens(tokens) {
+        return tokens
+          .slice()
+          .reverse()
+          .map(function (m) {
+            return {
+              raw: m.raw,
+              axis: m.axis,
+              layers: m.layers,
+              angle: -m.angle
+            };
+          });
+      }
+
+      function initRubik3D() {
+        const container = document.getElementById('rubik-3d-canvas');
+        if (!container || typeof THREE === 'undefined') return;
+
+        const w = Math.max(container.clientWidth, 320);
+        const h = Math.max(container.clientHeight, 320);
+
+        rubikScene = new THREE.Scene();
+        rubikCamera = new THREE.PerspectiveCamera(38, w / h, 0.1, 100);
+        updateCameraOrbit();
+
+        rubikRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        rubikRenderer.setSize(w, h);
+        rubikRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        container.innerHTML = '';
+        container.appendChild(rubikRenderer.domElement);
+
+        const ambient = new THREE.AmbientLight(0xffffff, 0.9);
+        rubikScene.add(ambient);
+        const dir1 = new THREE.DirectionalLight(0xffffff, 0.75);
+        dir1.position.set(8, 14, 10);
+        rubikScene.add(dir1);
+
+        rubikGroup = new THREE.Group();
+        rubikScene.add(rubikGroup);
+
+        buildSolvedCubeMesh();
+        loadRubikFormula(document.getElementById('rubik-formula-input').value, 'T-Perm (PLL Hoán vị 2 góc & 2 cạnh)', false);
+
+        // Orbit controls via pointer events
+        const dom = rubikRenderer.domElement;
+        dom.addEventListener('pointerdown', function (e) {
+          isDraggingCube = true;
+          dragStartX = e.clientX;
+          dragStartY = e.clientY;
+        });
+        window.addEventListener('pointermove', function (e) {
+          if (!isDraggingCube) return;
+          const dx = e.clientX - dragStartX;
+          const dy = e.clientY - dragStartY;
+          dragStartX = e.clientX;
+          dragStartY = e.clientY;
+          camTheta -= dx * 0.0085;
+          camPhi = Math.max(0.15, Math.min(1.4, camPhi + dy * 0.0075));
+          updateCameraOrbit();
+        });
+        window.addEventListener('pointerup', function () {
+          isDraggingCube = false;
+        });
+
+        function renderLoop() {
+          requestAnimationFrame(renderLoop);
+          if (rubikRenderer && rubikScene && rubikCamera) {
+            rubikRenderer.render(rubikScene, rubikCamera);
+          }
+        }
+        renderLoop();
+      }
+
+      function updateCameraOrbit() {
+        if (!rubikCamera) return;
+        const r = 8.4;
+        rubikCamera.position.x = r * Math.cos(camPhi) * Math.sin(camTheta);
+        rubikCamera.position.y = r * Math.sin(camPhi);
+        rubikCamera.position.z = r * Math.cos(camPhi) * Math.cos(camTheta);
+        rubikCamera.lookAt(0, 0, 0);
+      }
+
+      function resizeRubik3D() {
+        const container = document.getElementById('rubik-3d-canvas');
+        if (!container || !rubikRenderer || !rubikCamera) return;
+        const w = Math.max(container.clientWidth, 300);
+        const h = Math.max(container.clientHeight, 300);
+        rubikCamera.aspect = w / h;
+        rubikCamera.updateProjectionMatrix();
+        rubikRenderer.setSize(w, h);
+      }
+
+      function buildSolvedCubeMesh() {
+        if (!rubikGroup) return;
+        while (rubikGroup.children.length > 0) {
+          rubikGroup.remove(rubikGroup.children[0]);
+        }
+        rubikCubies = [];
+
+        const palette = {
+          R: 0xEF4444, // Right - Red
+          L: 0xF97316, // Left - Orange
+          U: 0xFACC15, // Up - Yellow
+          D: 0xFFFFFF, // Down - White
+          F: 0x10B981, // Front - Green
+          B: 0x3B82F6, // Back - Blue
+          INNER: 0x0F172A
+        };
+
+        for (let x = -1; x <= 1; x++) {
+          for (let y = -1; y <= 1; y++) {
+            for (let z = -1; z <= 1; z++) {
+              const geom = new THREE.BoxGeometry(0.93, 0.93, 0.93);
+              const mats = [
+                new THREE.MeshStandardMaterial({ color: x === 1 ? palette.R : palette.INNER, roughness: 0.2 }),
+                new THREE.MeshStandardMaterial({ color: x === -1 ? palette.L : palette.INNER, roughness: 0.2 }),
+                new THREE.MeshStandardMaterial({ color: y === 1 ? palette.U : palette.INNER, roughness: 0.2 }),
+                new THREE.MeshStandardMaterial({ color: y === -1 ? palette.D : palette.INNER, roughness: 0.2 }),
+                new THREE.MeshStandardMaterial({ color: z === 1 ? palette.F : palette.INNER, roughness: 0.2 }),
+                new THREE.MeshStandardMaterial({ color: z === -1 ? palette.B : palette.INNER, roughness: 0.2 })
+              ];
+              const cubie = new THREE.Mesh(geom, mats);
+              cubie.position.set(x, y, z);
+
+              // Black wireframe border for crisp cubie look
+              const edges = new THREE.EdgesGeometry(geom);
+              const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x020617 }));
+              cubie.add(line);
+
+              rubikGroup.add(cubie);
+              rubikCubies.push(cubie);
+            }
+          }
+        }
+      }
+
+      function executeCubeMoveObject(moveObj) {
+        if (!moveObj || !rubikCubies.length) return;
+        const axisVec = moveObj.axis === 'x'
+          ? new THREE.Vector3(1, 0, 0)
+          : moveObj.axis === 'y'
+          ? new THREE.Vector3(0, 1, 0)
+          : new THREE.Vector3(0, 0, 1);
+        const rad = (moveObj.angle * Math.PI) / 2;
+
+        rubikCubies.forEach(function (cubie) {
+          const coord = Math.round(cubie.position[moveObj.axis]);
+          if (moveObj.layers.indexOf(coord) !== -1) {
+            cubie.position.applyAxisAngle(axisVec, rad);
+            cubie.position.set(
+              Math.round(cubie.position.x),
+              Math.round(cubie.position.y),
+              Math.round(cubie.position.z)
+            );
+            cubie.rotateOnWorldAxis(axisVec, rad);
+          }
+        });
+      }
+
+      function loadRubikFormula(formulaStr, titleStr, setupInverse) {
+        stopRubikAutoPlay();
+        const inputEl = document.getElementById('rubik-formula-input');
+        if (inputEl) inputEl.value = formulaStr;
+        const titleEl = document.getElementById('rubik-lab-title');
+        if (titleEl && titleStr) titleEl.textContent = titleStr;
+
+        rubikTokens = parseFormulaList(formulaStr);
+        rubikStepIdx = 0;
+        buildSolvedCubeMesh();
+
+        if (setupInverse) {
+          const inv = invertFormulaTokens(rubikTokens);
+          inv.forEach(executeCubeMoveObject);
+        }
+        renderRubikTokensUI();
+      }
+
+      function renderRubikTokensUI() {
+        const bar = document.getElementById('rubik-tokens-bar');
+        const badge = document.getElementById('rubik-step-badge');
+        if (badge) {
+          badge.textContent = 'Bước ' + rubikStepIdx + ' / ' + rubikTokens.length;
+        }
+        if (!bar) return;
+        bar.innerHTML = rubikTokens.map(function (t, i) {
+          const cls = i < rubikStepIdx
+            ? 'bg-[#00F5D4]/20 border-[#00F5D4] text-[#00F5D4]'
+            : i === rubikStepIdx
+            ? 'bg-[#FF6B35] border-[#FF6B35] text-slate-950 font-extrabold scale-105'
+            : 'bg-white/5 border-white/10 text-slate-400';
+          return '<span class="font-mono text-xs px-2.5 py-1 rounded-lg border transition ' + cls + '">' + t.raw + '</span>';
+        }).join('');
+      }
+
+      function stepRubikForward() {
+        if (rubikStepIdx >= rubikTokens.length) {
+          stopRubikAutoPlay();
+          return;
+        }
+        executeCubeMoveObject(rubikTokens[rubikStepIdx]);
+        rubikStepIdx++;
+        playTone(540 + rubikStepIdx * 18, 55, 'triangle');
+        renderRubikTokensUI();
+      }
+
+      function stepRubikBackward() {
+        if (rubikStepIdx <= 0) return;
+        rubikStepIdx--;
+        const m = rubikTokens[rubikStepIdx];
+        executeCubeMoveObject({ raw: m.raw, axis: m.axis, layers: m.layers, angle: -m.angle });
+        playTone(420, 55, 'triangle');
+        renderRubikTokensUI();
+      }
+
+      function stopRubikAutoPlay() {
+        if (rubikPlayTimer) {
+          clearInterval(rubikPlayTimer);
+          rubikPlayTimer = null;
+        }
+        const btn = document.getElementById('btn-rubik-play');
+        if (btn) btn.textContent = '▶ Chạy Tự Động';
+      }
+
+      function toggleRubikAutoPlay() {
+        if (rubikPlayTimer) {
+          stopRubikAutoPlay();
+          return;
+        }
+        if (rubikStepIdx >= rubikTokens.length) {
+          rubikStepIdx = 0;
+        }
+        const btn = document.getElementById('btn-rubik-play');
+        if (btn) btn.textContent = '⏸ Tạm Dừng';
+        rubikPlayTimer = setInterval(function () {
+          if (rubikStepIdx >= rubikTokens.length) {
+            stopRubikAutoPlay();
+          } else {
+            stepRubikForward();
+          }
+        }, 420);
+      }
+
+      // --- WCA SCRAMBLER, 2D NET & SPACEBAR SPEED TIMER ---
+      let currentScramble = '';
+      let timerState = 'IDLE'; // IDLE | HOLDING | READY | RUNNING
+      let holdTimeout = null;
+      let timerStartEpoch = 0;
+      let timerInterval = null;
+      let lastElapsedMs = 0;
+
+      function generateWcaScrambleString() {
+        const faces = ['U', 'D', 'R', 'L', 'F', 'B'];
+        const mods = ['', "'", '2'];
+        const axis = { U: 0, D: 0, R: 1, L: 1, F: 2, B: 2 };
+        const res = [];
+        let prevAxis = -1;
+        let prevPrevAxis = -1;
+        for (let i = 0; i < 20; i++) {
+          let f = faces[Math.floor(Math.random() * faces.length)];
+          while (
+            (res.length > 0 && res[res.length - 1][0] === f) ||
+            (res.length > 1 && axis[f] === prevAxis && axis[f] === prevPrevAxis)
+          ) {
+            f = faces[Math.floor(Math.random() * faces.length)];
+          }
+          const m = mods[Math.floor(Math.random() * mods.length)];
+          res.push(f + m);
+          prevPrevAxis = prevAxis;
+          prevAxis = axis[f];
+        }
+        return res.join(' ');
+      }
+
+      function draw2DScrambleNet(scrambleStr) {
+        const canvas = document.getElementById('rubik-2d-net');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Simple deterministic sticker hash from scramble to visualize 6 faces
+        const colors = ['#FACC15', '#F97316', '#10B981', '#EF4444', '#3B82F6', '#FFFFFF'];
+        const facesPos = [
+          { x: 42, y: 4, c: 0 },  // U
+          { x: 6, y: 40, c: 1 },  // L
+          { x: 42, y: 40, c: 2 }, // F
+          { x: 78, y: 40, c: 3 }, // R
+          { x: 114, y: 40, c: 4 },// B
+          { x: 42, y: 76, c: 5 }  // D
+        ];
+        let seed = 0;
+        for (let i = 0; i < scrambleStr.length; i++) {
+          seed = (seed * 31 + scrambleStr.charCodeAt(i)) % 9973;
+        }
+        facesPos.forEach(function (fp, fIdx) {
+          for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 3; c++) {
+              const isCenter = r === 1 && c === 1;
+              const colIdx = isCenter ? fp.c : (seed + fIdx * 7 + r * 3 + c * 5) % 6;
+              ctx.fillStyle = colors[colIdx];
+              ctx.fillRect(fp.x + c * 11, fp.y + r * 11, 10, 10);
+            }
+          }
+        });
+      }
+
+      function refreshScramble() {
+        currentScramble = generateWcaScrambleString();
+        const el = document.getElementById('wca-scramble-text');
+        if (el) el.textContent = currentScramble;
+        draw2DScrambleNet(currentScramble);
+      }
+
+      function renderTimerHistory() {
+        const listEl = document.getElementById('timer-history-list');
+        if (!listEl) return;
+        listEl.innerHTML = appState.timerSessions.slice(0, 12).map(function (s, idx) {
+          const label = s.penalty === 'DNF'
+            ? 'DNF'
+            : s.penalty === '+2'
+            ? ((s.ms + 2000) / 1000).toFixed(2) + 's+'
+            : (s.ms / 1000).toFixed(2) + 's';
+          return (
+            '<div class="flex items-center justify-between py-1 px-2 rounded bg-white/5">' +
+              '<span class="text-slate-400">#' + (appState.timerSessions.length - idx) + '</span>' +
+              '<span class="font-bold text-white">' + label + '</span>' +
+            '</div>'
+          );
+        }).join('');
+        refreshGlobalStatsUI();
+      }
+
+      function startHoldingTimer() {
+        if (timerState === 'RUNNING') {
+          stopRunningTimer();
+          return;
+        }
+        if (timerState !== 'IDLE') return;
+        timerState = 'HOLDING';
+        const pad = document.getElementById('wca-timer-pad');
+        const disp = document.getElementById('wca-timer-display');
+        const st = document.getElementById('wca-timer-status');
+        if (pad) pad.className = 'select-none cursor-pointer rounded-2xl p-6 text-center bg-rose-950/50 border-2 border-rose-500 transition-all flex flex-col items-center justify-center min-h-[168px]';
+        if (disp) disp.className = 'font-mono text-5xl sm:text-6xl font-extrabold text-rose-400 tracking-tight';
+        if (st) st.textContent = 'Giữ thêm một chút... (Chờ đèn Xanh lá)';
+
+        holdTimeout = setTimeout(function () {
+          if (timerState === 'HOLDING') {
+            timerState = 'READY';
+            playTone(660, 60, 'sine');
+            if (pad) pad.className = 'select-none cursor-pointer rounded-2xl p-6 text-center bg-emerald-950/50 border-2 border-emerald-400 transition-all flex flex-col items-center justify-center min-h-[168px]';
+            if (disp) {
+              disp.textContent = '0.00s';
+              disp.className = 'font-mono text-5xl sm:text-6xl font-extrabold text-emerald-400 tracking-tight';
+            }
+            if (st) st.textContent = 'SẴN SÀNG! Thả ra để bắt đầu tính giờ!';
+          }
+        }, 320);
+      }
+
+      function releaseTimerTrigger() {
+        clearTimeout(holdTimeout);
+        if (timerState === 'HOLDING') {
+          timerState = 'IDLE';
+          resetTimerPadVisual();
+          return;
+        }
+        if (timerState === 'READY') {
+          timerState = 'RUNNING';
+          timerStartEpoch = performance.now();
+          playTone(880, 80, 'sine');
+          const st = document.getElementById('wca-timer-status');
+          if (st) st.textContent = 'ĐANG CHẠY... Bấm phím bất kỳ hoặc chạm để dừng!';
+          timerInterval = setInterval(function () {
+            lastElapsedMs = Math.round(performance.now() - timerStartEpoch);
+            const disp = document.getElementById('wca-timer-display');
+            if (disp) disp.textContent = (lastElapsedMs / 1000).toFixed(2) + 's';
+          }, 16);
+        }
+      }
+
+      function stopRunningTimer() {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        lastElapsedMs = Math.max(120, Math.round(performance.now() - timerStartEpoch));
+        timerState = 'IDLE';
+        playTone(520, 110, 'triangle');
+
+        const disp = document.getElementById('wca-timer-display');
+        if (disp) disp.textContent = (lastElapsedMs / 1000).toFixed(2) + 's';
+        resetTimerPadVisual();
+
+        appState.timerSessions.unshift({
+          id: 'solve-' + Date.now(),
+          ms: lastElapsedMs,
+          penalty: 'NONE',
+          scramble: currentScramble
+        });
+        saveState();
+        renderTimerHistory();
+        refreshScramble();
+      }
+
+      function resetTimerPadVisual() {
+        const pad = document.getElementById('wca-timer-pad');
+        const disp = document.getElementById('wca-timer-display');
+        const st = document.getElementById('wca-timer-status');
+        if (pad) pad.className = 'select-none cursor-pointer rounded-2xl p-6 text-center bg-slate-950/90 border-2 border-white/15 transition-all flex flex-col items-center justify-center min-h-[168px]';
+        if (disp) disp.className = 'font-mono text-5xl sm:text-6xl font-extrabold text-[#00F5D4] tracking-tight';
+        if (st) st.textContent = 'Nhấn giữ SPACEBAR hoặc chạm giữ vào ô này (0.35s)';
+      }
+
+      // -----------------------------------------------------------------------
+      // 7. CHESS ENGINE & INTERACTIVE ARENA (CHESS.JS + MINIMAX ALPHA-BETA)
+      // -----------------------------------------------------------------------
+      const chessGame = new Chess();
+      let selectedChessSq = null;
+      let chessMode = 'bot';
+      let chessBotElo = 1200;
+      let chessFlipped = false;
+      let chessMoveList = [];
+      let chessWhiteSec = 600;
+      let chessBlackSec = 600;
+      let chessClockInterval = null;
+
+      const CHESS_GLYPHS = {
+        wp: '♙', wn: '♘', wb: '♗', wr: '♖', wq: '♕', wk: '♔',
+        bp: '♟', bn: '♞', bb: '♝', br: '♜', bq: '♛', bk: '♚'
+      };
+
+      const PIECE_VAL = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
+
+      function evaluateChessPosition(gameInstance) {
+        if (gameInstance.in_checkmate()) {
+          return gameInstance.turn() === 'w' ? -9999 : 9999;
+        }
+        if (gameInstance.in_draw() || gameInstance.in_stalemate() || gameInstance.in_threefold_repetition()) {
+          return 0;
+        }
+        const b = gameInstance.board();
+        let score = 0;
+        for (let r = 0; r < 8; r++) {
+          for (let c = 0; c < 8; c++) {
+            const p = b[r][c];
+            if (!p) continue;
+            let v = PIECE_VAL[p.type] || 0;
+            // Center control bonus
+            if (r >= 2 && r <= 5 && c >= 2 && c <= 5) v += 18;
+            if (p.type === 'p') v += (p.color === 'w' ? (7 - r) * 8 : r * 8);
+            score += p.color === 'w' ? v : -v;
+          }
+        }
+        return score;
+      }
+
+      function computeBestChessMove(gameInstance, elo) {
+        const moves = gameInstance.moves({ verbose: true });
+        if (!moves.length) return null;
+
+        if (elo === 600 && Math.random() < 0.45) {
+          return moves[Math.floor(Math.random() * moves.length)];
+        }
+
+        moves.sort(function (a, b) {
+          const sa = a.captured ? (PIECE_VAL[a.captured] || 100) : 0;
+          const sb = b.captured ? (PIECE_VAL[b.captured] || 100) : 0;
+          return sb - sa;
+        });
+
+        const depth = elo === 600 ? 1 : elo === 1200 ? 2 : 3;
+
+        function search(d, alpha, beta, isMax) {
+          if (d === 0 || gameInstance.game_over()) {
+            return evaluateChessPosition(gameInstance);
+          }
+          const legal = gameInstance.moves({ verbose: true });
+          if (isMax) {
+            let best = -999999;
+            for (let i = 0; i < legal.length; i++) {
+              gameInstance.move(legal[i]);
+              const val = search(d - 1, alpha, beta, false);
+              gameInstance.undo();
+              if (val > best) best = val;
+              if (val > alpha) alpha = val;
+              if (beta <= alpha) break;
+            }
+            return best;
+          } else {
+            let best = 999999;
+            for (let i = 0; i < legal.length; i++) {
+              gameInstance.move(legal[i]);
+              const val = search(d - 1, alpha, beta, true);
+              gameInstance.undo();
+              if (val < best) best = val;
+              if (val < beta) beta = val;
+              if (beta <= alpha) break;
+            }
+            return best;
+          }
+        }
+
+        const isWhite = gameInstance.turn() === 'w';
+        let bestMove = moves[0];
+        let bestScore = isWhite ? -999999 : 999999;
+
+        for (let i = 0; i < moves.length; i++) {
+          gameInstance.move(moves[i]);
+          const val = search(depth - 1, -999999, 999999, !isWhite);
+          gameInstance.undo();
+          const noise = elo === 1200 ? (Math.random() - 0.5) * 30 : 0;
+          const adj = val + noise;
+          if (isWhite && adj > bestScore) {
+            bestScore = adj;
+            bestMove = moves[i];
+          } else if (!isWhite && adj < bestScore) {
+            bestScore = adj;
+            bestMove = moves[i];
+          }
+        }
+        return bestMove;
+      }
+
+      function renderChessBoard() {
+        const grid = document.getElementById('chess-board-grid');
+        if (!grid) return;
+        const boardData = chessGame.board();
+        const legalTargets = {};
+        if (selectedChessSq) {
+          const ms = chessGame.moves({ square: selectedChessSq, verbose: true });
+          ms.forEach(function (m) { legalTargets[m.to] = m; });
+        }
+
+        const inCheck = chessGame.in_check();
+        const turnColor = chessGame.turn();
+
+        let html = '';
+        for (let r = 0; r < 8; r++) {
+          for (let c = 0; c < 8; c++) {
+            const br = chessFlipped ? 7 - r : r;
+            const bc = chessFlipped ? 7 - c : c;
+            const file = String.fromCharCode(97 + bc);
+            const rank = String(8 - br);
+            const sq = file + rank;
+            const piece = boardData[br][bc];
+            const isDark = (br + bc) % 2 === 1;
+            const isSelected = selectedChessSq === sq;
+            const isLegal = Boolean(legalTargets[sq]);
+            const isKingInCheck = inCheck && piece && piece.type === 'k' && piece.color === turnColor;
+
+            let bg = isDark ? 'bg-[#0F5132]' : 'bg-[#F8FAFC]';
+            if (isSelected) bg = 'bg-amber-400';
+            else if (isKingInCheck) bg = 'bg-rose-600 animate-pulse';
+
+            const glyph = piece ? CHESS_GLYPHS[piece.color + piece.type] : '';
+            const pieceColorClass = piece
+              ? piece.color === 'w'
+                ? 'text-amber-50 drop-shadow-[0_2px_3px_rgba(0,0,0,0.85)]'
+                : 'text-slate-950 drop-shadow-[0_1px_2px_rgba(255,255,255,0.6)]'
+              : '';
+
+            html +=
+              '<button type="button" data-chess-sq="' + sq + '" class="chess-square relative flex items-center justify-center text-3xl sm:text-4xl select-none ' + bg + '">' +
+                (c === 0 ? '<span class="absolute top-0.5 left-1 text-[9px] font-mono opacity-60 ' + (isDark ? 'text-white' : 'text-slate-800') + '">' + rank + '</span>' : '') +
+                (r === 7 ? '<span class="absolute bottom-0.5 right-1 text-[9px] font-mono opacity-60 ' + (isDark ? 'text-white' : 'text-slate-800') + '">' + file + '</span>' : '') +
+                (isLegal && !piece ? '<span class="w-3.5 h-3.5 rounded-full bg-emerald-400/80 shadow"></span>' : '') +
+                (isLegal && piece ? '<span class="absolute inset-1 rounded-lg ring-4 ring-rose-500/80"></span>' : '') +
+                '<span class="' + pieceColorClass + '">' + glyph + '</span>' +
+              '</button>';
+          }
+        }
+        grid.innerHTML = html;
+
+        // Update Evaluation Bar
+        const rawEval = evaluateChessPosition(chessGame) / 100;
+        const clamped = Math.max(-10, Math.min(10, rawEval));
+        const whitePct = Math.round(50 + (clamped / 10) * 45);
+        const blackBar = document.getElementById('chess-eval-black-bar');
+        const evalLabel = document.getElementById('chess-eval-label');
+        if (blackBar) blackBar.style.height = (100 - whitePct) + '%';
+        if (evalLabel) evalLabel.textContent = (rawEval >= 0 ? '+' : '') + rawEval.toFixed(1);
+
+        // Update Status Banner
+        const banner = document.getElementById('chess-status-banner');
+        if (banner) {
+          if (chessGame.in_checkmate()) {
+            const winner = chessGame.turn() === 'w' ? 'Đen' : 'Trắng';
+            banner.textContent = '🏆 CHIẾU BÍ (CHECKMATE)! Bên ' + winner + ' giành chiến thắng!';
+          } else if (chessGame.in_draw()) {
+            banner.textContent = '🤝 Ván cờ kết thúc HÒA!';
+          } else {
+            const sideTxt = chessGame.turn() === 'w' ? 'Trắng' : 'Đen';
+            const checkTxt = chessGame.in_check() ? ' (ĐANG BỊ CHIẾU!)' : '';
+            banner.textContent = 'Lượt ' + sideTxt + ' đi' + checkTxt + ' — ' +
+              (chessMode === 'bot' ? 'Đấu Bot AI (ELO ' + chessBotElo + ')' : 'Chế độ 2 Người');
+          }
+        }
+      }
+
+      function updateChessHistoryUI() {
+        const box = document.getElementById('chess-move-history');
+        const counter = document.getElementById('chess-move-counter');
+        if (counter) counter.textContent = chessMoveList.length + ' nước';
+        if (!box) return;
+        if (chessMoveList.length === 0) {
+          box.textContent = 'Hãy chọn quân cờ Trắng để bắt đầu ván đấu!';
+          return;
+        }
+        let formatted = '';
+        for (let i = 0; i < chessMoveList.length; i += 2) {
+          const moveNum = Math.floor(i / 2) + 1;
+          const wMove = chessMoveList[i] || '';
+          const bMove = chessMoveList[i + 1] || '';
+          formatted += '<div class="py-0.5"><span class="text-slate-500 mr-2">' + moveNum + '.</span><span class="text-emerald-300 mr-3">' + wMove + '</span><span class="text-amber-300">' + bMove + '</span></div>';
+        }
+        box.innerHTML = formatted;
+        box.scrollTop = box.scrollHeight;
+      }
+
+      function handleChessSquareClick(sq) {
+        if (chessGame.game_over()) return;
+        if (selectedChessSq) {
+          const moveAttempt = chessGame.move({
+            from: selectedChessSq,
+            to: sq,
+            promotion: 'q'
+          });
+          if (moveAttempt) {
+            playTone(moveAttempt.captured ? 320 : 600, 75, 'triangle');
+            chessMoveList.push(moveAttempt.san);
+            selectedChessSq = null;
+            document.getElementById('chess-hint-output').textContent = '';
+            renderChessBoard();
+            updateChessHistoryUI();
+
+            if (chessGame.in_checkmate()) {
+              appState.profile.chess_elo += 14;
+              saveState();
+              showToast('Chúc mừng! Bạn đã chiếu bí Bot AI (+14 ELO Cờ Vua)!');
+              return;
+            }
+
+            if (chessMode === 'bot' && !chessGame.game_over() && chessGame.turn() === 'b') {
+              setTimeout(function () {
+                const botReply = computeBestChessMove(chessGame, chessBotElo);
+                if (botReply) {
+                  const res = chessGame.move(botReply);
+                  if (res) {
+                    chessMoveList.push(res.san);
+                    playTone(res.captured ? 280 : 480, 75, 'sine');
+                    renderChessBoard();
+                    updateChessHistoryUI();
+                  }
+                }
+              }, 260);
+            }
+            return;
+          }
+        }
+
+        const p = chessGame.get(sq);
+        if (p && p.color === chessGame.turn()) {
+          selectedChessSq = sq;
+          renderChessBoard();
+        } else {
+          selectedChessSq = null;
+          renderChessBoard();
+        }
+      }
+
+      function startChessClock() {
+        clearInterval(chessClockInterval);
+        chessClockInterval = setInterval(function () {
+          if (currentView !== 'chess' || chessGame.game_over() || chessMoveList.length === 0) return;
+          if (chessGame.turn() === 'w') {
+            chessWhiteSec = Math.max(0, chessWhiteSec - 1);
+          } else {
+            chessBlackSec = Math.max(0, chessBlackSec - 1);
+          }
+          const fmt = function (s) {
+            const m = Math.floor(s / 60);
+            const r = s % 60;
+            return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
+          };
+          const wEl = document.getElementById('chess-clock-white');
+          const bEl = document.getElementById('chess-clock-black');
+          if (wEl) wEl.textContent = fmt(chessWhiteSec);
+          if (bEl) bEl.textContent = fmt(chessBlackSec);
+        }, 1000);
+      }
+
+      // -----------------------------------------------------------------------
+      // 8. XIANGQI ENGINE & CANVAS ARENA (100% LEGAL RULES + AI + SANDBOX)
+      // -----------------------------------------------------------------------
+      const INITIAL_XQ_FEN = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w';
+      const XQ_INFO = {
+        K: { hanzi: '帥', viet: 'Tướng', short: 'Tg', val: 10000 },
+        A: { hanzi: '仕', viet: 'Sĩ', short: 'S', val: 120 },
+        B: { hanzi: '相', viet: 'Tượng', short: 'T', val: 120 },
+        R: { hanzi: '車', viet: 'Xe', short: 'X', val: 600 },
+        N: { hanzi: '馬', viet: 'Mã', short: 'M', val: 270 },
+        C: { hanzi: '炮', viet: 'Pháo', short: 'P', val: 285 },
+        P: { hanzi: '兵', viet: 'Binh', short: 'B', val: 70 },
+        k: { hanzi: '將', viet: 'Tướng', short: 'Tg', val: 10000 },
+        a: { hanzi: '士', viet: 'Sĩ', short: 'S', val: 120 },
+        b: { hanzi: '象', viet: 'Tượng', short: 'T', val: 120 },
+        r: { hanzi: '車', viet: 'Xe', short: 'X', val: 600 },
+        n: { hanzi: '馬', viet: 'Mã', short: 'M', val: 270 },
+        c: { hanzi: '砲', viet: 'Pháo', short: 'P', val: 285 },
+        p: { hanzi: '卒', viet: 'Tốt', short: 'B', val: 70 }
+      };
+
+      let xqBoard = [];
+      let xqTurn = 'r'; // 'r' Red, 'b' Black
+      let xqUseHanzi = true;
+      let xqMode = 'bot'; // 'bot' | 'pvp' | 'sandbox'
+      let xqBotElo = 1200;
+      let xqSelected = null;
+      let xqHistory = [];
+      let xqSnapshots = [];
+
+      function getXqSide(p) {
+        if (!p) return null;
+        return p === p.toUpperCase() ? 'r' : 'b';
+      }
+
+      function cloneXqBoard(b) {
+        return b.map(function (row) { return row.slice(); });
+      }
+
+      function loadXiangqiPosition(fenStr) {
+        const parts = fenStr.trim().split(/\s+/);
+        const rows = parts[0].split('/');
+        xqBoard = [];
+        for (let r = 0; r < 10; r++) {
+          const rowArr = [];
+          const s = rows[r] || '9';
+          for (let i = 0; i < s.length; i++) {
+            const ch = s[i];
+            if (ch >= '1' && ch <= '9') {
+              const cnt = parseInt(ch, 10);
+              for (let k = 0; k < cnt; k++) rowArr.push(null);
+            } else {
+              rowArr.push(ch);
+            }
+          }
+          while (rowArr.length < 9) rowArr.push(null);
+          xqBoard.push(rowArr.slice(0, 9));
+        }
+        xqTurn = parts[1] === 'b' ? 'b' : 'r';
+        xqSelected = null;
+        xqHistory = [];
+        xqSnapshots = [];
+        drawXiangqiBoard();
+        updateXiangqiHistoryUI();
+      }
+
+      function inXqPalace(r, c, side) {
+        if (c < 3 || c > 5) return false;
+        return side === 'r' ? (r >= 7 && r <= 9) : (r >= 0 && r <= 2);
+      }
+
+      function generalsFaceEachOther(b) {
+        let rr = -1, rc = -1, br = -1, bc = -1;
+        for (let r = 0; r < 10; r++) {
+          for (let c = 3; c <= 5; c++) {
+            if (b[r][c] === 'K') { rr = r; rc = c; }
+            if (b[r][c] === 'k') { br = r; bc = c; }
+          }
+        }
+        if (rr === -1 || br === -1 || rc !== bc) return false;
+        for (let r = br + 1; r < rr; r++) {
+          if (b[r][rc] !== null) return false;
+        }
+        return true;
+      }
+
+      function generateXqPseudoMoves(b, r, c) {
+        const p = b[r][c];
+        if (!p) return [];
+        const side = getXqSide(p);
+        const type = p.toUpperCase();
+        const res = [];
+
+        function canStep(tr, tc) {
+          if (tr < 0 || tr > 9 || tc < 0 || tc > 8) return false;
+          return getXqSide(b[tr][tc]) !== side;
+        }
+
+        if (type === 'K') {
+          const dirs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+          dirs.forEach(function (d) {
+            const tr = r + d[0], tc = c + d[1];
+            if (inXqPalace(tr, tc, side) && canStep(tr, tc)) res.push({ toR: tr, toC: tc });
+          });
+        } else if (type === 'A') {
+          const dirs = [[-1, -1], [-1, 1], [1, -1], [1, 1]];
+          dirs.forEach(function (d) {
+            const tr = r + d[0], tc = c + d[1];
+            if (inXqPalace(tr, tc, side) && canStep(tr, tc)) res.push({ toR: tr, toC: tc });
+          });
+        } else if (type === 'B') {
+          const dirs = [[-2, -2], [-2, 2], [2, -2], [2, 2]];
+          dirs.forEach(function (d) {
+            const tr = r + d[0], tc = c + d[1];
+            const er = r + d[0] / 2, ec = c + d[1] / 2;
+            if (tr < 0 || tr > 9 || tc < 0 || tc > 8) return;
+            if (side === 'r' && tr < 5) return;
+            if (side === 'b' && tr > 4) return;
+            if (b[er][ec] === null && canStep(tr, tc)) res.push({ toR: tr, toC: tc });
+          });
+        } else if (type === 'N') {
+          const jumps = [
+            { l: [-1, 0], t: [-2, -1] }, { l: [-1, 0], t: [-2, 1] },
+            { l: [1, 0], t: [2, -1] },   { l: [1, 0], t: [2, 1] },
+            { l: [0, -1], t: [-1, -2] }, { l: [0, -1], t: [1, -2] },
+            { l: [0, 1], t: [-1, 2] },   { l: [0, 1], t: [1, 2] }
+          ];
+          jumps.forEach(function (j) {
+            const lr = r + j.l[0], lc = c + j.l[1];
+            const tr = r + j.t[0], tc = c + j.t[1];
+            if (tr < 0 || tr > 9 || tc < 0 || tc > 8) return;
+            if (b[lr][lc] === null && canStep(tr, tc)) res.push({ toR: tr, toC: tc });
+          });
+        } else if (type === 'R') {
+          const dirs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+          dirs.forEach(function (d) {
+            let tr = r + d[0], tc = c + d[1];
+            while (tr >= 0 && tr <= 9 && tc >= 0 && tc > -1 && tc <= 8) {
+              const occ = b[tr][tc];
+              if (!occ) {
+                res.push({ toR: tr, toC: tc });
+              } else {
+                if (getXqSide(occ) !== side) res.push({ toR: tr, toC: tc });
+                break;
+              }
+              tr += d[0];
+              tc += d[1];
+            }
+          });
+        } else if (type === 'C') {
+          const dirs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+          dirs.forEach(function (d) {
+            let tr = r + d[0], tc = c + d[1];
+            let screen = false;
+            while (tr >= 0 && tr <= 9 && tc >= 0 && tc <= 8) {
+              const occ = b[tr][tc];
+              if (!screen) {
+                if (!occ) res.push({ toR: tr, toC: tc });
+                else screen = true;
+              } else {
+                if (occ) {
+                  if (getXqSide(occ) !== side) res.push({ toR: tr, toC: tc });
+                  break;
+                }
+              }
+              tr += d[0];
+              tc += d[1];
+            }
+          });
+        } else if (type === 'P') {
+          const fwd = side === 'r' ? -1 : 1;
+          const crossed = side === 'r' ? r <= 4 : r >= 5;
+          if (canStep(r + fwd, c)) res.push({ toR: r + fwd, toC: c });
+          if (crossed) {
+            if (canStep(r, c - 1)) res.push({ toR: r, toC: c - 1 });
+            if (canStep(r, c + 1)) res.push({ toR: r, toC: c + 1 });
+          }
+        }
+        return res;
+      }
+
+      function isXqSideInCheck(b, side) {
+        if (generalsFaceEachOther(b)) return true;
+        const kChar = side === 'r' ? 'K' : 'k';
+        let kr = -1, kc = -1;
+        for (let r = 0; r < 10; r++) {
+          for (let c = 0; c < 9; c++) {
+            if (b[r][c] === kChar) { kr = r; kc = c; break; }
+          }
+        }
+        if (kr === -1) return true;
+        const opp = side === 'r' ? 'b' : 'r';
+        for (let r = 0; r < 10; r++) {
+          for (let c = 0; c < 9; c++) {
+            if (getXqSide(b[r][c]) === opp) {
+              const pm = generateXqPseudoMoves(b, r, c);
+              for (let i = 0; i < pm.length; i++) {
+                if (pm[i].toR === kr && pm[i].toC === kc) return true;
+              }
+            }
+          }
+        }
+        return false;
+      }
+
+      function formatXqNotation(piece, r1, c1, r2, c2) {
+        const side = getXqSide(piece);
+        const info = XQ_INFO[piece];
+        const f1 = side === 'r' ? 9 - c1 : c1 + 1;
+        const f2 = side === 'r' ? 9 - c2 : c2 + 1;
+        if (r1 === r2) return info.short + f1 + '-' + f2;
+        const adv = (side === 'r' && r2 < r1) || (side === 'b' && r2 > r1);
+        const sym = adv ? '.' : '/';
+        const t = piece.toUpperCase();
+        const dest = (t === 'N' || t === 'B' || t === 'A') ? f2 : Math.abs(r2 - r1);
+        return info.short + f1 + sym + dest;
+      }
+
+      function getAllLegalXqMoves(b, side) {
+        const list = [];
+        for (let r = 0; r < 10; r++) {
+          for (let c = 0; c < 9; c++) {
+            const p = b[r][c];
+            if (getXqSide(p) !== side) continue;
+            const pm = generateXqPseudoMoves(b, r, c);
+            pm.forEach(function (target) {
+              const nb = cloneXqBoard(b);
+              const cap = nb[target.toR][target.toC];
+              nb[target.toR][target.toC] = p;
+              nb[r][c] = null;
+              if (!isXqSideInCheck(nb, side)) {
+                list.push({
+                  fromR: r,
+                  fromC: c,
+                  toR: target.toR,
+                  toC: target.toC,
+                  piece: p,
+                  captured: cap,
+                  notation: formatXqNotation(p, r, c, target.toR, target.toC)
+                });
+              }
+            });
+          }
+        }
+        return list;
+      }
+
+      function evaluateXqBoard(b) {
+        let score = 0;
+        for (let r = 0; r < 10; r++) {
+          for (let c = 0; c < 9; c++) {
+            const p = b[r][c];
+            if (!p) continue;
+            const side = getXqSide(p);
+            let v = XQ_INFO[p] ? XQ_INFO[p].val : 0;
+            const t = p.toUpperCase();
+            if (t === 'P') {
+              const crossed = side === 'r' ? r <= 4 : r >= 5;
+              if (crossed) v += 65 + (c >= 3 && c <= 5 ? 25 : 0);
+            } else if (t === 'C' || t === 'R') {
+              if (c === 4) v += 25;
+            } else if (t === 'N') {
+              if (r >= 2 && r <= 7 && c >= 2 && c <= 6) v += 30;
+            }
+            score += side === 'r' ? v : -v;
+          }
+        }
+        return score;
+      }
+
+      function pickXqBotMove(b, side, elo) {
+        const moves = getAllLegalXqMoves(b, side);
+        if (!moves.length) return null;
+        if (elo === 800 && Math.random() < 0.4) {
+          return moves[Math.floor(Math.random() * moves.length)];
+        }
+        moves.sort(function (a, bMove) {
+          const va = a.captured ? XQ_INFO[a.captured].val : 0;
+          const vb = bMove.captured ? XQ_INFO[bMove.captured].val : 0;
+          return vb - va;
+        });
+
+        const depth = elo === 800 ? 1 : elo === 1200 ? 2 : 3;
+
+        function search(boardState, d, alpha, beta, turnSide) {
+          if (d === 0) return evaluateXqBoard(boardState);
+          const legal = getAllLegalXqMoves(boardState, turnSide);
+          if (!legal.length) return turnSide === 'r' ? -99999 : 99999;
+
+          if (turnSide === 'r') {
+            let best = -999999;
+            for (let i = 0; i < legal.length; i++) {
+              const m = legal[i];
+              const nb = cloneXqBoard(boardState);
+              nb[m.toR][m.toC] = m.piece;
+              nb[m.fromR][m.fromC] = null;
+              const val = search(nb, d - 1, alpha, beta, 'b');
+              if (val > best) best = val;
+              if (val > alpha) alpha = val;
+              if (beta <= alpha) break;
+            }
+            return best;
+          } else {
+            let best = 999999;
+            for (let i = 0; i < legal.length; i++) {
+              const m = legal[i];
+              const nb = cloneXqBoard(boardState);
+              nb[m.toR][m.toC] = m.piece;
+              nb[m.fromR][m.fromC] = null;
+              const val = search(nb, d - 1, alpha, beta, 'r');
+              if (val < best) best = val;
+              if (val < beta) beta = val;
+              if (beta <= alpha) break;
+            }
+            return best;
+          }
+        }
+
+        let bestMove = moves[0];
+        let bestVal = side === 'r' ? -999999 : 999999;
+        for (let i = 0; i < moves.length; i++) {
+          const m = moves[i];
+          const nb = cloneXqBoard(b);
+          nb[m.toR][m.toC] = m.piece;
+          nb[m.fromR][m.fromC] = null;
+          const val = search(nb, depth - 1, -999999, 999999, side === 'r' ? 'b' : 'r');
+          if (side === 'r' && val > bestVal) {
+            bestVal = val;
+            bestMove = m;
+          } else if (side === 'b' && val < bestVal) {
+            bestVal = val;
+            bestMove = m;
+          }
+        }
+        return bestMove;
+      }
+
+      function drawXiangqiBoard() {
+        const canvas = document.getElementById('xiangqi-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width;
+        const H = canvas.height;
+        const padX = 45;
+        const padY = 45;
+        const cellW = (W - padX * 2) / 8;
+        const cellH = (H - padY * 2) / 9;
+
+        // Warm parchment-obsidian wood background
+        const grad = ctx.createLinearGradient(0, 0, W, H);
+        grad.addColorStop(0, '#2B1D14');
+        grad.addColorStop(1, '#1A110B');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.strokeStyle = '#D97706';
+        ctx.lineWidth = 1.6;
+
+        // Horizontal rank lines (10 ranks)
+        for (let r = 0; r < 10; r++) {
+          const y = padY + r * cellH;
+          ctx.beginPath();
+          ctx.moveTo(padX, y);
+          ctx.lineTo(W - padX, y);
+          ctx.stroke();
+        }
+
+        // Vertical file lines (split across river except outer files 0 and 8)
+        for (let c = 0; c < 9; c++) {
+          const x = padX + c * cellW;
+          if (c === 0 || c === 8) {
+            ctx.beginPath();
+            ctx.moveTo(x, padY);
+            ctx.lineTo(x, H - padY);
+            ctx.stroke();
+          } else {
+            ctx.beginPath();
+            ctx.moveTo(x, padY);
+            ctx.lineTo(x, padY + 4 * cellH);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, padY + 5 * cellH);
+            ctx.lineTo(x, H - padY);
+            ctx.stroke();
+          }
+        }
+
+        // Palace diagonals (Cửu Cung)
+        ctx.beginPath();
+        ctx.moveTo(padX + 3 * cellW, padY);
+        ctx.lineTo(padX + 5 * cellW, padY + 2 * cellH);
+        ctx.moveTo(padX + 5 * cellW, padY);
+        ctx.lineTo(padX + 3 * cellW, padY + 2 * cellH);
+        ctx.moveTo(padX + 3 * cellW, padY + 7 * cellH);
+        ctx.lineTo(padX + 5 * cellW, padY + 9 * cellH);
+        ctx.moveTo(padX + 5 * cellW, padY + 7 * cellH);
+        ctx.lineTo(padX + 3 * cellW, padY + 9 * cellH);
+        ctx.stroke();
+
+        // River text: SỞ HÀ - HÁN GIỚI
+        ctx.fillStyle = '#F59E0B';
+        ctx.font = 'bold 16px "Playfair Display", serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        const riverY = padY + 4.5 * cellH;
+        ctx.fillText('楚 河 • SỞ HÀ', padX + 2 * cellW, riverY);
+        ctx.fillText('HÁN GIỚI • 漢 界', padX + 6 * cellW, riverY);
+
+        // Highlight legal targets if a piece is selected
+        const legalMoves = getAllLegalXqMoves(xqBoard, xqTurn);
+        if (xqSelected) {
+          legalMoves
+            .filter(function (m) { return m.fromR === xqSelected.r && m.fromC === xqSelected.c; })
+            .forEach(function (m) {
+              const tx = padX + m.toC * cellW;
+              const ty = padY + m.toR * cellH;
+              ctx.beginPath();
+              ctx.arc(tx, ty, m.captured ? 21 : 8, 0, Math.PI * 2);
+              ctx.fillStyle = m.captured ? 'rgba(225, 29, 72, 0.45)' : 'rgba(16, 185, 129, 0.85)';
+              ctx.fill();
+            });
+        }
+
+        // Draw 3D-styled pieces
+        for (let r = 0; r < 10; r++) {
+          for (let c = 0; c < 9; c++) {
+            const p = xqBoard[r][c];
+            if (!p) continue;
+            const x = padX + c * cellW;
+            const y = padY + r * cellH;
+            const isRed = getXqSide(p) === 'r';
+            const isSel = xqSelected && xqSelected.r === r && xqSelected.c === c;
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(x, y, 19.5, 0, Math.PI * 2);
+            ctx.fillStyle = isRed ? '#FFFBEB' : '#0F172A';
+            ctx.shadowColor = 'rgba(0,0,0,0.65)';
+            ctx.shadowBlur = 6;
+            ctx.shadowOffsetY = 3;
+            ctx.fill();
+
+            ctx.lineWidth = isSel ? 3.2 : 2;
+            ctx.strokeStyle = isSel ? '#00F5D4' : isRed ? '#E11D48' : '#F59E0B';
+            ctx.stroke();
+
+            const info = XQ_INFO[p];
+            ctx.fillStyle = isRed ? '#DC2626' : '#FBBF24';
+            ctx.font = xqUseHanzi
+              ? 'bold 18px "Noto Serif", serif'
+              : 'bold 11px "Plus Jakarta Sans", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(xqUseHanzi ? info.hanzi : info.viet, x, y + 1);
+            ctx.restore();
+          }
+        }
+
+        // Update status banner
+        const banner = document.getElementById('xiangqi-status-banner');
+        if (banner) {
+          if (legalMoves.length === 0) {
+            const winner = xqTurn === 'r' ? 'Đen (Hậu)' : 'Đỏ (Tiên)';
+            banner.textContent = '🏆 TUYỆT SÁT (CHIẾU BÍ)! Bên ' + winner + ' giành chiến thắng!';
+          } else {
+            const inChk = isXqSideInCheck(xqBoard, xqTurn);
+            const turnTxt = xqTurn === 'r' ? 'Đỏ (Tiên)' : 'Đen (Hậu)';
+            banner.textContent = 'Lượt ' + turnTxt + (inChk ? ' — ⚡ ĐANG BỊ CHIẾU TƯỚNG!' : '') +
+              (xqMode === 'bot' ? ' • Kỳ Đài AI (ELO ' + xqBotElo + ')' : xqMode === 'pvp' ? ' • 2 Người' : ' • Luyện Sát Pháp');
+          }
+        }
+      }
+
+      function updateXiangqiHistoryUI() {
+        const box = document.getElementById('xiangqi-move-history');
+        const cnt = document.getElementById('xiangqi-move-count');
+        if (cnt) cnt.textContent = xqHistory.length + ' nước';
+        if (!box) return;
+        if (!xqHistory.length) {
+          box.textContent = 'Nhấp vào quân Đỏ trên bàn cờ để xuất quân!';
+          return;
+        }
+        box.innerHTML = xqHistory.map(function (m, i) {
+          return '<span class="inline-block mr-3 mb-1 px-2 py-0.5 rounded bg-white/5">' + (i + 1) + '. ' + m + '</span>';
+        }).join('');
+        box.scrollTop = box.scrollHeight;
+      }
+
+      function handleXiangqiCanvasClick(evt) {
+        const canvas = document.getElementById('xiangqi-canvas');
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mx = (evt.clientX - rect.left) * scaleX;
+        const my = (evt.clientY - rect.top) * scaleY;
+
+        const padX = 45, padY = 45;
+        const cellW = (canvas.width - padX * 2) / 8;
+        const cellH = (canvas.height - padY * 2) / 9;
+
+        const c = Math.round((mx - padX) / cellW);
+        const r = Math.round((my - padY) / cellH);
+        if (r < 0 || r > 9 || c < 0 || c > 8) return;
+
+        const legalMoves = getAllLegalXqMoves(xqBoard, xqTurn);
+        if (xqSelected) {
+          const chosen = legalMoves.find(function (m) {
+            return m.fromR === xqSelected.r && m.fromC === xqSelected.c && m.toR === r && m.toC === c;
+          });
+          if (chosen) {
+            xqSnapshots.push({ board: cloneXqBoard(xqBoard), turn: xqTurn });
+            xqBoard[r][c] = chosen.piece;
+            xqBoard[xqSelected.r][xqSelected.c] = null;
+            xqTurn = xqTurn === 'r' ? 'b' : 'r';
+            xqSelected = null;
+            xqHistory.push(chosen.notation);
+            playTone(chosen.captured ? 290 : 520, 80, 'triangle');
+            drawXiangqiBoard();
+            updateXiangqiHistoryUI();
+
+            const oppLegal = getAllLegalXqMoves(xqBoard, xqTurn);
+            if (oppLegal.length === 0) {
+              appState.profile.xiangqi_elo += 15;
+              saveState();
+              showToast('Tuyệt sát! Bạn đã chiến thắng ván Cờ Tướng (+15 ELO)!');
+              return;
+            }
+
+            if (xqMode !== 'pvp' && xqTurn === 'b') {
+              setTimeout(function () {
+                const reply = pickXqBotMove(xqBoard, 'b', xqBotElo);
+                if (reply) {
+                  xqSnapshots.push({ board: cloneXqBoard(xqBoard), turn: xqTurn });
+                  xqBoard[reply.toR][reply.toC] = reply.piece;
+                  xqBoard[reply.fromR][reply.fromC] = null;
+                  xqTurn = 'r';
+                  xqHistory.push(reply.notation);
+                  playTone(reply.captured ? 260 : 440, 80, 'sine');
+                  drawXiangqiBoard();
+                  updateXiangqiHistoryUI();
+                }
+              }, 260);
+            }
+            return;
+          }
+        }
+
+        const clickedPiece = xqBoard[r][c];
+        if (clickedPiece && getXqSide(clickedPiece) === xqTurn) {
+          xqSelected = { r: r, c: c };
+          drawXiangqiBoard();
+        } else {
+          xqSelected = null;
+          drawXiangqiBoard();
+        }
+      }
+
+      // -----------------------------------------------------------------------
+      // 9. ARCHITECTURE, SQL SCHEMA & CI/CD VIEWER
+      // -----------------------------------------------------------------------
+      let currentCodeTab = 'tree';
+      const CODE_SNIPPETS = {
+        tree: [
+          'mindarena-hub/',
+          '├── .github/workflows/',
+          '│   └── deploy.yml              # GitHub Actions CI/CD tự động build & deploy lên Cloudflare Pages',
+          '├── supabase/',
+          '│   └── schema.sql              # PostgreSQL Schema (profiles, learning_progress, timer_sessions, match_history + RLS)',
+          '├── src/',
+          '│   ├── components/',
+          '│   │   ├── RubikArena.tsx      # Mô hình Rubik 3x3x3 3D (Three.js) + Formula Animator + WCA Speed Timer',
+          '│   │   ├── ChessArena.tsx      # Bàn cờ Vua tương tác + Bot AI Minimax Alpha-Beta (ELO 600 - 2000+)',
+          '│   │   ├── XiangqiArena.tsx    # Bàn cờ Tướng chuẩn + Kiểm tra luật 100% + Chữ Hán/Việt + Kỳ Đài AI',
+          '│   │   ├── CurriculumView.tsx  # Kho kiến thức CFOP, Gambit/Khai cuộc/Cờ tàn Cờ Vua & Cờ Tướng',
+          '│   │   └── Dashboard.tsx       # Thống kê PB, Ao5, ELO, Chuỗi ngày học & Biểu đồ hoạt động tuần',
+          '│   ├── data/',
+          '│   │   └── curriculum.ts       # Dữ liệu học tập chi tiết 3 bộ môn',
+          '│   ├── engines/',
+          '│   │   ├── rubikEngine.ts      # Bộ phân tích ký hiệu WCA, đảo công thức setup & tính Ao5/Ao12',
+          '│   │   ├── chessEngine.ts      # Minimax + Alpha-Beta Pruning + Piece-Square Tables',
+          '│   │   └── xiangqiEngine.ts    # Luật Cờ Tướng 100% (cản Mã, mắt Tượng, Lộ mặt Tướng, Pháo cách ngòi)',
+          '│   ├── lib/',
+          '│   │   └── supabase.ts         # Hybrid Storage: Supabase Auth/PostgreSQL + LocalStorage Guest Mode',
+          '│   ├── types/',
+          '│   │   └── index.ts            # TypeScript Interfaces',
+          '│   ├── App.tsx                 # Dynamic Theming & Layout Router',
+          '│   └── main.tsx                # Vite + React 18 Entry',
+          '├── .env.example                # Mẫu cấu hình biến môi trường Supabase',
+          '├── package.json                # Dependencies & Scripts',
+          '├── tailwind.config.js          # Bảng màu Cyber-Neon, Royal Emerald & Neo-Oriental',
+          '├── vite.config.ts              # Cấu hình Vite bundler',
+          '└── wrangler.toml               # Cấu hình Cloudflare Pages'
+        ].join('\n'),
+        sql: [
+          '-- supabase/schema.sql — MindArena Hub PostgreSQL Schema',
+          'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";',
+          '',
+          'CREATE TABLE IF NOT EXISTS public.profiles (',
+          '  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,',
+          '  email TEXT UNIQUE,',
+          '  display_name TEXT NOT NULL DEFAULT \'Kỳ Thủ MindArena\',',
+          '  rubik_pb_ms INTEGER DEFAULT NULL,',
+          '  rubik_ao5_ms INTEGER DEFAULT NULL,',
+          '  chess_elo INTEGER NOT NULL DEFAULT 1200,',
+          '  xiangqi_elo INTEGER NOT NULL DEFAULT 1200,',
+          '  streak_days INTEGER NOT NULL DEFAULT 1,',
+          '  last_active_date DATE NOT NULL DEFAULT CURRENT_DATE,',
+          '  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),',
+          '  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()',
+          ');',
+          '',
+          'CREATE TABLE IF NOT EXISTS public.learning_progress (',
+          '  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),',
+          '  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,',
+          '  discipline TEXT NOT NULL CHECK (discipline IN (\'rubik\', \'chess\', \'xiangqi\')),',
+          '  item_id TEXT NOT NULL,',
+          '  status TEXT NOT NULL DEFAULT \'learning\' CHECK (status IN (\'unstarted\', \'learning\', \'mastered\')),',
+          '  bookmarked BOOLEAN NOT NULL DEFAULT FALSE,',
+          '  practice_count INTEGER NOT NULL DEFAULT 0,',
+          '  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),',
+          '  UNIQUE(user_id, item_id)',
+          ');',
+          '',
+          'CREATE TABLE IF NOT EXISTS public.timer_sessions (',
+          '  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),',
+          '  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,',
+          '  solve_time_ms INTEGER NOT NULL,',
+          '  penalty TEXT NOT NULL DEFAULT \'NONE\' CHECK (penalty IN (\'NONE\', \'+2\', \'DNF\')),',
+          '  scramble TEXT NOT NULL,',
+          '  ao5_snapshot_ms INTEGER DEFAULT NULL,',
+          '  ao12_snapshot_ms INTEGER DEFAULT NULL,',
+          '  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()',
+          ');',
+          '',
+          'CREATE TABLE IF NOT EXISTS public.match_history (',
+          '  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),',
+          '  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,',
+          '  discipline TEXT NOT NULL CHECK (discipline IN (\'chess\', \'xiangqi\')),',
+          '  mode TEXT NOT NULL DEFAULT \'bot\' CHECK (mode IN (\'bot\', \'pvp\')),',
+          '  bot_elo INTEGER,',
+          '  result TEXT NOT NULL CHECK (result IN (\'win\', \'loss\', \'draw\')),',
+          '  elo_delta INTEGER NOT NULL DEFAULT 0,',
+          '  notation_record TEXT NOT NULL,',
+          '  final_position_fen TEXT,',
+          '  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()',
+          ');'
+        ].join('\n'),
+        workflow: [
+          '# .github/workflows/deploy.yml',
+          'name: Deploy MindArena Hub to Cloudflare Pages',
+          'on:',
+          '  push:',
+          '    branches: [main]',
+          '  workflow_dispatch:',
+          'jobs:',
+          '  build-and-deploy:',
+          '    runs-on: ubuntu-latest',
+          '    steps:',
+          '      - uses: actions/checkout@v4',
+          '      - uses: actions/setup-node@v4',
+          '        with:',
+          '          node-version: "20"',
+          '          cache: "npm"',
+          '      - run: npm ci',
+          '      - run: npm run build',
+          '        env:',
+          '          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}',
+          '          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}',
+          '      - uses: cloudflare/wrangler-action@v3',
+          '        with:',
+          '          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}',
+          '          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}',
+          '          command: pages deploy dist --project-name=mindarena-hub'
+        ].join('\n'),
+        wrangler: [
+          '# wrangler.toml',
+          'name = "mindarena-hub"',
+          'compatibility_date = "2026-01-01"',
+          'pages_build_output_dir = "dist"',
+          '',
+          '[vars]',
+          'NODE_VERSION = "20"',
+          '',
+          '# ----------------------------------------------------',
+          '# .env.example',
+          'VITE_SUPABASE_URL=https://your-project-id.supabase.co',
+          'VITE_SUPABASE_ANON_KEY=your-supabase-anon-public-key'
+        ].join('\n')
+      };
+
+      function renderCodeTab(tabKey) {
+        currentCodeTab = tabKey;
+        const viewer = document.getElementById('code-viewer-content');
+        if (viewer) viewer.textContent = CODE_SNIPPETS[tabKey] || '';
+        document.querySelectorAll('[data-code-tab]').forEach(function (btn) {
+          const k = btn.getAttribute('data-code-tab');
+          btn.className = k === tabKey
+            ? 'code-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-white text-slate-950'
+            : 'code-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-white/5 text-slate-300';
+        });
+      }
+
+      // -----------------------------------------------------------------------
+      // 10. EVENT DELEGATION & INITIALIZATION ON WINDOW.ONLOAD
+      // -----------------------------------------------------------------------
+      window.addEventListener('load', function () {
+        refreshGlobalStatsUI();
+        renderDashboardWidgets();
+        renderCurriculumGrid();
+        initRubik3D();
+        refreshScramble();
+        renderTimerHistory();
+        renderChessBoard();
+        startChessClock();
+        loadXiangqiPosition(INITIAL_XQ_FEN);
+        renderCodeTab('tree');
+
+        window.addEventListener('resize', resizeRubik3D);
+
+        // Sidebar collapse toggle
+        document.getElementById('btn-toggle-sidebar').addEventListener('click', function () {
+          const sb = document.getElementById('app-sidebar');
+          if (!sb) return;
+          sb.classList.toggle('w-64');
+          sb.classList.toggle('w-20');
+          document.querySelectorAll('.sidebar-text').forEach(function (el) {
+            el.classList.toggle('hidden');
+          });
+          setTimeout(resizeRubik3D, 220);
+        });
+
+        // Sound toggle
+        document.getElementById('btn-sound-toggle').addEventListener('click', function () {
+          soundEnabled = !soundEnabled;
+          document.getElementById('sound-icon').textContent = soundEnabled ? '🔊' : '🔇';
+          document.getElementById('sound-label').textContent = soundEnabled ? 'Âm thanh' : 'Đã tắt âm';
+          if (soundEnabled) playTone(600, 60, 'sine');
+        });
+
+        // Auth modal open/close/save
+        const authModal = document.getElementById('auth-modal');
+        document.getElementById('btn-open-auth').addEventListener('click', function () {
+          document.getElementById('auth-display-name').value = appState.profile.display_name;
+          authModal.classList.remove('hidden');
+          authModal.classList.add('flex');
+        });
+        document.getElementById('btn-close-auth').addEventListener('click', function () {
+          authModal.classList.add('hidden');
+          authModal.classList.remove('flex');
+        });
+        document.getElementById('btn-save-guest').addEventListener('click', function () {
+          const nameVal = document.getElementById('auth-display-name').value.trim() || 'Kỳ Thủ MindArena';
+          const emailVal = document.getElementById('auth-email').value.trim();
+          appState.profile.display_name = nameVal;
+          if (emailVal) {
+            appState.profile.email = emailVal;
+            appState.profile.is_guest = false;
+          }
+          saveState();
+          authModal.classList.add('hidden');
+          authModal.classList.remove('flex');
+          showToast('Đã lưu hồ sơ & đồng bộ Hybrid Storage!');
+        });
+        document.getElementById('btn-reset-progress').addEventListener('click', function () {
+          appState = JSON.parse(JSON.stringify(defaultState));
+          saveState();
+          renderDashboardWidgets();
+          renderCurriculumGrid();
+          renderTimerHistory();
+          authModal.classList.add('hidden');
+          authModal.classList.remove('flex');
+          showToast('Đã khôi phục dữ liệu mặc định!');
+        });
+
+        // Curriculum filters
+        document.getElementById('curriculum-filter-discipline').addEventListener('change', renderCurriculumGrid);
+        document.getElementById('curriculum-filter-status').addEventListener('change', renderCurriculumGrid);
+        document.getElementById('curriculum-search').addEventListener('input', renderCurriculumGrid);
+
+        // Rubik controls
+        document.getElementById('rubik-preset-select').addEventListener('change', function (e) {
+          const parts = e.target.value.split('|');
+          loadRubikFormula(parts[0], parts[1], true);
+        });
+        document.getElementById('btn-rubik-setup-case').addEventListener('click', function () {
+          const f = document.getElementById('rubik-formula-input').value;
+          loadRubikFormula(f, document.getElementById('rubik-lab-title').textContent, true);
+          showToast('Đã thiết lập trạng thái chuẩn bị giải (Inverse Setup)!');
+        });
+        document.getElementById('btn-rubik-play').addEventListener('click', toggleRubikAutoPlay);
+        document.getElementById('btn-rubik-next').addEventListener('click', stepRubikForward);
+        document.getElementById('btn-rubik-prev').addEventListener('click', stepRubikBackward);
+        document.getElementById('btn-rubik-reset').addEventListener('click', function () {
+          const f = document.getElementById('rubik-formula-input').value;
+          loadRubikFormula(f, document.getElementById('rubik-lab-title').textContent, false);
+        });
+
+        // WCA Timer controls
+        document.getElementById('btn-new-scramble').addEventListener('click', refreshScramble);
+        document.getElementById('btn-apply-scramble-3d').addEventListener('click', function () {
+          buildSolvedCubeMesh();
+          parseFormulaList(currentScramble).forEach(executeCubeMoveObject);
+          showToast('Đã áp dụng chuỗi Scramble lên khối Rubik 3D!');
+        });
+        document.getElementById('btn-penalty-plus2').addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (appState.timerSessions.length > 0) {
+            appState.timerSessions[0].penalty = '+2';
+            saveState();
+            renderTimerHistory();
+          }
+        });
+        document.getElementById('btn-penalty-dnf').addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (appState.timerSessions.length > 0) {
+            appState.timerSessions[0].penalty = 'DNF';
+            saveState();
+            renderTimerHistory();
+          }
+        });
+        document.getElementById('btn-delete-last-solve').addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (appState.timerSessions.length > 0) {
+            appState.timerSessions.shift();
+            saveState();
+            renderTimerHistory();
+          }
+        });
+
+        const timerPad = document.getElementById('wca-timer-pad');
+        timerPad.addEventListener('pointerdown', function (e) {
+          if (e.target.tagName === 'BUTTON') return;
+          startHoldingTimer();
+        });
+        timerPad.addEventListener('pointerup', function (e) {
+          if (e.target.tagName === 'BUTTON') return;
+          releaseTimerTrigger();
+        });
+
+        window.addEventListener('keydown', function (e) {
+          if (currentView !== 'rubik') return;
+          if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT')) return;
+          if (timerState === 'RUNNING') {
+            e.preventDefault();
+            stopRunningTimer();
+            return;
+          }
+          if (e.code === 'Space' && !e.repeat) {
+            e.preventDefault();
+            startHoldingTimer();
+          }
+        });
+        window.addEventListener('keyup', function (e) {
+          if (currentView !== 'rubik') return;
+          if (e.code === 'Space') {
+            e.preventDefault();
+            releaseTimerTrigger();
+          }
+        });
+
+        // Chess controls
+        document.getElementById('btn-chess-new').addEventListener('click', function () {
+          chessGame.reset();
+          selectedChessSq = null;
+          chessMoveList = [];
+          const sec = parseInt(document.getElementById('chess-time-control').value, 10) || 600;
+          chessWhiteSec = sec;
+          chessBlackSec = sec;
+          renderChessBoard();
+          updateChessHistoryUI();
+        });
+        document.getElementById('btn-chess-undo').addEventListener('click', function () {
+          chessGame.undo();
+          chessMoveList.pop();
+          if (chessMode === 'bot' && chessGame.turn() === 'b') {
+            chessGame.undo();
+            chessMoveList.pop();
+          }
+          selectedChessSq = null;
+          renderChessBoard();
+          updateChessHistoryUI();
+        });
+        document.getElementById('btn-chess-hint').addEventListener('click', function () {
+          const hint = computeBestChessMove(chessGame, 2000);
+          const out = document.getElementById('chess-hint-output');
+          if (hint && out) {
+            out.textContent = '💡 Gợi ý tối ưu: ' + hint.san + ' (' + hint.from + ' → ' + hint.to + ')';
+          }
+        });
+        document.getElementById('btn-chess-flip').addEventListener('click', function () {
+          chessFlipped = !chessFlipped;
+          renderChessBoard();
+        });
+        document.getElementById('chess-time-control').addEventListener('change', function (e) {
+          const sec = parseInt(e.target.value, 10) || 600;
+          chessWhiteSec = sec;
+          chessBlackSec = sec;
+        });
+        document.getElementById('chess-preset-fen').addEventListener('change', function (e) {
+          const val = e.target.value;
+          if (val === 'start') chessGame.reset();
+          else chessGame.load(val);
+          selectedChessSq = null;
+          chessMoveList = [];
+          renderChessBoard();
+          updateChessHistoryUI();
+        });
+
+        // Xiangqi controls
+        document.getElementById('xiangqi-canvas').addEventListener('click', handleXiangqiCanvasClick);
+        document.getElementById('btn-xiangqi-script-toggle').addEventListener('click', function () {
+          xqUseHanzi = !xqUseHanzi;
+          document.getElementById('xiangqi-script-label').textContent = xqUseHanzi ? 'Chữ Hán (帥/將)' : 'Tiếng Việt (Tướng/Sĩ)';
+          drawXiangqiBoard();
+        });
+        document.getElementById('btn-xiangqi-new').addEventListener('click', function () {
+          const preset = document.getElementById('xiangqi-preset-select').value;
+          loadXiangqiPosition(preset);
+        });
+        document.getElementById('btn-xiangqi-undo').addEventListener('click', function () {
+          if (!xqSnapshots.length) return;
+          const prev = xqSnapshots.pop();
+          xqBoard = prev.board;
+          xqTurn = prev.turn;
+          xqHistory.pop();
+          if (xqMode !== 'pvp' && xqTurn === 'b' && xqSnapshots.length > 0) {
+            const prev2 = xqSnapshots.pop();
+            xqBoard = prev2.board;
+            xqTurn = prev2.turn;
+            xqHistory.pop();
+          }
+          xqSelected = null;
+          drawXiangqiBoard();
+          updateXiangqiHistoryUI();
+        });
+        document.getElementById('btn-xiangqi-hint').addEventListener('click', function () {
+          const best = pickXqBotMove(xqBoard, xqTurn, 2000);
+          if (best) {
+            xqSelected = { r: best.fromR, c: best.fromC };
+            drawXiangqiBoard();
+            showToast('💡 Gợi ý nước đi: ' + best.notation);
+          }
+        });
+        document.getElementById('xiangqi-preset-select').addEventListener('change', function (e) {
+          loadXiangqiPosition(e.target.value);
+        });
+
+        // Copy code button
+        document.getElementById('btn-copy-code').addEventListener('click', function () {
+          const txt = CODE_SNIPPETS[currentCodeTab] || '';
+          try {
+            const ta = document.createElement('textarea');
+            ta.value = txt;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showToast('Đã sao chép mã nguồn vào Clipboard!');
+          } catch (err) {
+            showToast('Đã chọn nội dung mã nguồn!');
+          }
+        });
+
+        // Global delegated clicks
+        document.body.addEventListener('click', function (e) {
+          const navBtn = e.target.closest('[data-nav-view]');
+          if (navBtn) {
+            switchView(navBtn.getAttribute('data-nav-view'));
+            return;
+          }
+
+          const discBtn = e.target.closest('[data-switch-discipline]');
+          if (discBtn) {
+            const d = discBtn.getAttribute('data-switch-discipline');
+            setDisciplineTheme(d);
+            if (currentView === 'rubik' || currentView === 'chess' || currentView === 'xiangqi') {
+              switchView(d);
+            }
+            return;
+          }
+
+          const quickOpen = e.target.closest('[data-quick-open]');
+          if (quickOpen) {
+            const target = quickOpen.getAttribute('data-quick-open');
+            if (target === 'rubik-arena') switchView('rubik');
+            else if (target === 'chess-arena') switchView('chess');
+            else if (target === 'xiangqi-arena') switchView('xiangqi');
+            return;
+          }
+
+          const quickLearn = e.target.closest('[data-quick-learn]');
+          if (quickLearn) {
+            const d = quickLearn.getAttribute('data-quick-learn');
+            document.getElementById('curriculum-filter-discipline').value = d;
+            setDisciplineTheme(d);
+            switchView('curriculum');
+            return;
+          }
+
+          const launchBtn = e.target.closest('[data-launch-item]');
+          if (launchBtn) {
+            launchCurriculumItem(launchBtn.getAttribute('data-launch-item'));
+            return;
+          }
+
+          const bookmarkBtn = e.target.closest('[data-toggle-bookmark]');
+          if (bookmarkBtn) {
+            const id = bookmarkBtn.getAttribute('data-toggle-bookmark');
+            const cur = appState.progress[id] || { status: 'unstarted', bookmarked: false };
+            cur.bookmarked = !cur.bookmarked;
+            appState.progress[id] = cur;
+            saveState();
+            renderCurriculumGrid();
+            return;
+          }
+
+          const statusBtn = e.target.closest('[data-cycle-status]');
+          if (statusBtn) {
+            const id = statusBtn.getAttribute('data-cycle-status');
+            const cur = appState.progress[id] || { status: 'unstarted', bookmarked: false };
+            cur.status = cur.status === 'unstarted' ? 'learning' : cur.status === 'learning' ? 'mastered' : 'unstarted';
+            appState.progress[id] = cur;
+            saveState();
+            renderCurriculumGrid();
+            renderDashboardWidgets();
+            return;
+          }
+
+          const cubeMoveBtn = e.target.closest('[data-cube-move]');
+          if (cubeMoveBtn) {
+            const m = parseRubikMove(cubeMoveBtn.getAttribute('data-cube-move'));
+            if (m) {
+              executeCubeMoveObject(m);
+              playTone(500, 45, 'triangle');
+            }
+            return;
+          }
+
+          const chessSqBtn = e.target.closest('[data-chess-sq]');
+          if (chessSqBtn) {
+            handleChessSquareClick(chessSqBtn.getAttribute('data-chess-sq'));
+            return;
+          }
+
+          const chessModeBtn = e.target.closest('[data-chess-mode]');
+          if (chessModeBtn) {
+            chessMode = chessModeBtn.getAttribute('data-chess-mode');
+            document.querySelectorAll('[data-chess-mode]').forEach(function (b) {
+              b.className = b.getAttribute('data-chess-mode') === chessMode
+                ? 'chess-mode-btn py-2 px-3 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950'
+                : 'chess-mode-btn py-2 px-3 rounded-xl text-xs font-bold bg-white/5 text-slate-300 border border-white/10';
+            });
+            renderChessBoard();
+            return;
+          }
+
+          const chessEloBtn = e.target.closest('[data-chess-elo]');
+          if (chessEloBtn) {
+            chessBotElo = parseInt(chessEloBtn.getAttribute('data-chess-elo'), 10);
+            document.querySelectorAll('[data-chess-elo]').forEach(function (b) {
+              const active = parseInt(b.getAttribute('data-chess-elo'), 10) === chessBotElo;
+              b.className = active
+                ? 'chess-elo-btn p-2.5 rounded-xl border border-emerald-400 bg-emerald-500/20 text-left'
+                : 'chess-elo-btn p-2.5 rounded-xl border border-white/10 bg-white/5 text-left';
+            });
+            renderChessBoard();
+            return;
+          }
+
+          const xqModeBtn = e.target.closest('[data-xq-mode]');
+          if (xqModeBtn) {
+            xqMode = xqModeBtn.getAttribute('data-xq-mode');
+            document.querySelectorAll('[data-xq-mode]').forEach(function (b) {
+              b.className = b.getAttribute('data-xq-mode') === xqMode
+                ? 'xq-mode-btn py-2 px-2.5 rounded-xl text-xs font-bold bg-rose-600 text-white'
+                : 'xq-mode-btn py-2 px-2.5 rounded-xl text-xs font-bold bg-white/5 text-slate-300 border border-white/10';
+            });
+            drawXiangqiBoard();
+            return;
+          }
+
+          const xqEloBtn = e.target.closest('[data-xq-elo]');
+          if (xqEloBtn) {
+            xqBotElo = parseInt(xqEloBtn.getAttribute('data-xq-elo'), 10);
+            document.querySelectorAll('[data-xq-elo]').forEach(function (b) {
+              const active = parseInt(b.getAttribute('data-xq-elo'), 10) === xqBotElo;
+              b.className = active
+                ? 'xq-elo-btn p-2.5 rounded-xl border border-rose-500 bg-rose-500/20 text-left'
+                : 'xq-elo-btn p-2.5 rounded-xl border border-white/10 bg-white/5 text-left';
+            });
+            drawXiangqiBoard();
+            return;
+          }
+
+          const codeTabBtn = e.target.closest('[data-code-tab]');
+          if (codeTabBtn) {
+            renderCodeTab(codeTabBtn.getAttribute('data-code-tab'));
+          }
+        });
+      });
+    })();
   </script>
 </body>
 </html>
