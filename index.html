@@ -15,27 +15,63 @@
     <!-- Header -->
     <div class="text-center space-y-2">
       <h1 class="text-3xl font-bold text-indigo-400">Khoa Học D10</h1>
-      <p class="text-slate-400 text-sm">Gửi lời nhắn lưu trực tiếp vào cơ sở dữ liệu Supabase</p>
+      <p class="text-slate-400 text-sm">Hệ thống gửi lời nhắn kết nối tài khoản Supabase</p>
     </div>
 
-    <!-- Form gửi tin nhắn -->
-    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg space-y-4">
+    <!-- KHUNG ĐĂNG NHẬP / ĐĂNG KÝ (Hiển thị khi chưa đăng nhập) -->
+    <div id="authSection" class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg space-y-4">
+      <h2 id="authTitle" class="text-xl font-bold text-slate-100 text-center">Đăng Nhập Tài Khoản</h2>
+      
+      <div class="space-y-3">
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Email</label>
+          <input id="authEmail" type="email" placeholder="name@example.com" class="w-full px-4 py-2.5 rounded-lg bg-slate-700 border border-slate-600 focus:outline-none focus:border-indigo-400 text-white" />
+        </div>
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Mật khẩu</label>
+          <input id="authPassword" type="password" placeholder="Tối thiểu 6 ký tự" class="w-full px-4 py-2.5 rounded-lg bg-slate-700 border border-slate-600 focus:outline-none focus:border-indigo-400 text-white" />
+        </div>
+      </div>
+
+      <div class="flex gap-3 pt-2">
+        <button onclick="handleSignIn()" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-lg transition active:scale-95 shadow">
+          Đăng Nhập
+        </button>
+        <button onclick="handleSignUp()" class="flex-1 py-2.5 bg-slate-700 hover:bg-slate-600 border border-slate-600 font-semibold rounded-lg transition active:scale-95 shadow">
+          Đăng Ký
+        </button>
+      </div>
+      <p id="authError" class="text-xs text-red-400 text-center hidden"></p>
+    </div>
+
+    <!-- KHUNG GỬI LỜI NHẮN (Chỉ hiện khi ĐÃ đăng nhập) -->
+    <div id="messageSection" class="hidden bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg space-y-4">
+      <div class="flex justify-between items-center bg-slate-700/50 p-3 rounded-lg border border-slate-600">
+        <div>
+          <span class="text-xs text-slate-400 block">Đang đăng nhập bằng:</span>
+          <span id="userEmailBadge" class="text-sm font-semibold text-indigo-300"></span>
+        </div>
+        <button onclick="handleSignOut()" class="px-3 py-1 bg-rose-600/80 hover:bg-rose-500 text-xs font-medium rounded transition">
+          Đăng xuất
+        </button>
+      </div>
+
       <div>
-        <label class="block text-sm font-medium text-slate-300 mb-1">Tên của bạn</label>
+        <label class="block text-sm font-medium text-slate-300 mb-1">Tên hiển thị</label>
         <input 
           id="nameInput" 
           type="text" 
-          placeholder="Ví dụ: Hoàng Mạnh" 
+          placeholder="Nhập tên của bạn..." 
           class="w-full px-4 py-2.5 rounded-lg bg-slate-700 border border-slate-600 focus:outline-none focus:border-indigo-400 text-white"
         />
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-slate-300 mb-1">Lời nhắn / Ý kiến</label>
+        <label class="block text-sm font-medium text-slate-300 mb-1">Lời nhắn</label>
         <textarea 
           id="contentInput" 
           rows="3" 
-          placeholder="Nhập nội dung bạn muốn gửi..." 
+          placeholder="Nội dung bạn muốn chia sẻ..." 
           class="w-full px-4 py-2.5 rounded-lg bg-slate-700 border border-slate-600 focus:outline-none focus:border-indigo-400 text-white"
         ></textarea>
       </div>
@@ -45,14 +81,14 @@
         id="btnSend"
         class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-lg transition active:scale-95 shadow"
       >
-        Gửi lên Supabase
+        Gửi lời nhắn
       </button>
     </div>
 
-    <!-- Danh sách lời nhắn đã lưu -->
+    <!-- DANH SÁCH LỜI NHẮN -->
     <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg space-y-4">
       <div class="flex justify-between items-center border-b border-slate-700 pb-2">
-        <h2 class="text-lg font-semibold text-slate-200">Danh sách lời nhắn gần đây</h2>
+        <h2 class="text-lg font-semibold text-slate-200">Danh sách lời nhắn</h2>
         <button onclick="loadMessages()" class="text-xs text-indigo-400 hover:text-indigo-300">Làm mới ↻</button>
       </div>
       <div id="messagesList" class="space-y-3">
@@ -62,18 +98,83 @@
   </div>
 
   <script>
-    // THÔNG TIN KẾT NỐI SUPABASE
     const SUPABASE_URL = "https://oywcbdkwnaxwpnwqmnxq.supabase.co";
-    // Dán toàn bộ mã Publishable Key (sb_publishable_...) bạn vừa copy vào giữa hai dấu ngoặc kép bên dưới:
+    // Dán mã Publishable Key (sb_publishable_...) của bạn vào đây:
     const SUPABASE_KEY = "sb_publishable_YOfymVtA7ssGAYHZ8rQ2YQ__Vg898iw";
 
-    // Khởi tạo client
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const TABLE_NAME = "messages";
 
-    // TÊN BẢNG (Nếu bạn đặt là "massages" thì giữ nguyên, nếu đặt là "messages" thì sửa lại)
-    const TABLE_NAME = "messages"; 
+    let currentUser = null;
 
-    // Hàm lấy danh sách từ Supabase
+    // Quản lý trạng thái người dùng (Session Listener)
+    client.auth.onAuthStateChange((event, session) => {
+      currentUser = session?.user || null;
+      updateUI();
+    });
+
+    function updateUI() {
+      const authSection = document.getElementById('authSection');
+      const messageSection = document.getElementById('messageSection');
+      const userEmailBadge = document.getElementById('userEmailBadge');
+
+      if (currentUser) {
+        authSection.classList.add('hidden');
+        messageSection.classList.remove('hidden');
+        userEmailBadge.innerText = currentUser.email;
+      } else {
+        authSection.classList.remove('hidden');
+        messageSection.classList.add('hidden');
+      }
+    }
+
+    // Đăng ký tài khoản
+    async function handleSignUp() {
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value.trim();
+      const errorMsg = document.getElementById('authError');
+
+      if (!email || !password) {
+        showError("Vui lòng nhập đầy đủ Email và Mật khẩu!");
+        return;
+      }
+
+      const { data, error } = await client.auth.signUp({ email, password });
+      if (error) {
+        showError(error.message);
+      } else {
+        alert("Đăng ký thành công! Bạn đã được đăng nhập tự động.");
+      }
+    }
+
+    // Đăng nhập
+    async function handleSignIn() {
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value.trim();
+
+      if (!email || !password) {
+        showError("Vui lòng nhập đầy đủ Email và Mật khẩu!");
+        return;
+      }
+
+      const { data, error } = await client.auth.signInWithPassword({ email, password });
+      if (error) {
+        showError(error.message);
+      }
+    }
+
+    // Đăng xuất
+    async function handleSignOut() {
+      await client.auth.signOut();
+    }
+
+    function showError(msg) {
+      const errorDiv = document.getElementById('authError');
+      errorDiv.innerText = msg;
+      errorDiv.classList.remove('hidden');
+    }
+
+    // Tải lời nhắn
     async function loadMessages() {
       const listContainer = document.getElementById('messagesList');
       const { data, error } = await client
@@ -82,7 +183,7 @@
         .order('created_at', { ascending: false });
 
       if (error) {
-        listContainer.innerHTML = `<p class="text-red-400 text-sm">Lỗi kết nối: ${error.message}</p>`;
+        listContainer.innerHTML = `<p class="text-red-400 text-sm">Lỗi: ${error.message}</p>`;
         return;
       }
 
@@ -94,7 +195,7 @@
       listContainer.innerHTML = data.map(msg => `
         <div class="p-3 bg-slate-700/50 rounded-lg border border-slate-600/50">
           <div class="flex justify-between items-center mb-1">
-            <span class="font-semibold text-indigo-300">${msg.name || 'Ẩn danh'}</span>
+            <span class="font-semibold text-indigo-300">${msg.name || 'Thành viên'}</span>
             <span class="text-xs text-slate-400">${new Date(msg.created_at).toLocaleTimeString('vi-VN')}</span>
           </div>
           <p class="text-slate-200 text-sm">${msg.content}</p>
@@ -102,7 +203,7 @@
       `).join('');
     }
 
-    // Hàm gửi tin nhắn mới
+    // Gửi tin nhắn mới
     async function sendMessage() {
       const nameInput = document.getElementById('nameInput');
       const contentInput = document.getElementById('contentInput');
@@ -112,7 +213,7 @@
       const content = contentInput.value.trim();
 
       if (!content) {
-        alert("Vui lòng nhập nội dung lời nhắn!");
+        alert("Vui lòng nhập nội dung!");
         return;
       }
 
@@ -120,11 +221,11 @@
       btnSend.innerText = "Đang gửi...";
 
       const { error } = await client.from(TABLE_NAME).insert([
-        { name: name || "Ẩn danh", content: content }
+        { name: name || currentUser.email.split('@')[0], content: content }
       ]);
 
       btnSend.disabled = false;
-      btnSend.innerText = "Gửi lên Supabase";
+      btnSend.innerText = "Gửi lời nhắn";
 
       if (error) {
         alert("Lỗi khi gửi: " + error.message);
@@ -134,7 +235,7 @@
       }
     }
 
-    // Tự động load dữ liệu khi vào trang
+    // Khởi chạy khi load trang
     loadMessages();
   </script>
 </body>
