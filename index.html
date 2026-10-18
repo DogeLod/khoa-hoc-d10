@@ -995,16 +995,16 @@
         </select>
        </div>
       </div>
-      <!-- ONLINE MATCHMAKING LOBBY & FAIR ELO (+-100 ELO) PANEL -->
+      <!-- ONLINE MATCHMAKING LOBBY & FAIR ELO (+-100 ELO) PANEL (Removed SQL button!) -->
       <div id="chess-online-lobby-box" class="hidden p-3.5 rounded-2xl bg-gradient-to-br from-slate-900 via-emerald-950/35 to-slate-950 border-2 border-emerald-500/45 space-y-3 shadow-xl">
        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
         <div class="flex items-center gap-2">
          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
          <span class="text-xs sm:text-sm font-extrabold text-emerald-300">⚔️ Ghép Đấu Online Công Bằng (Chênh lệch 0 – 100 Elo)</span>
         </div>
-        <button id="open-supabase-sql-btn" type="button" class="px-2.5 py-1 rounded-lg bg-cyan-500/15 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 border border-cyan-500/40 text-[11px] font-extrabold transition">
-         🛠️ Mã SQL Supabase
-        </button>
+        <span id="online-sync-status-pill" class="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/35 text-emerald-300 font-mono-code text-[11px] font-bold">
+         ⚡ Tự lưu ván khi F5
+        </span>
        </div>
        <!-- Player Elo, Fair Range & Selected Time Info -->
        <div class="grid grid-cols-3 gap-2 text-center">
@@ -1045,11 +1045,11 @@
        <!-- Active Online Match Banner -->
        <div id="online-active-match-box" class="hidden p-3 rounded-xl bg-emerald-950/50 border border-emerald-400/50 space-y-1.5">
         <div class="flex items-center justify-between gap-2">
-         <span id="online-room-badge" class="text-xs font-mono-code font-extrabold text-emerald-300">🟢 Đang Thi Đấu Online</span>
+         <span id="online-room-badge" class="text-xs font-mono-code font-extrabold text-emerald-300">🟢 Đang Thi Đấu Online (Đồng bộ thời gian thực)</span>
          <span id="online-elo-diff-badge" class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono-code text-[11px] font-bold">Chênh lệch: 0 Elo</span>
         </div>
         <div id="online-matchup-names" class="text-xs sm:text-sm font-extrabold text-white"></div>
-        <div class="text-[11px] text-slate-300">Sử dụng nút <strong>🤝 Xin Hòa</strong> hoặc <strong>🏳️ Đầu Hàng</strong> bên dưới nếu muốn kết thúc sớm ván đấu.</div>
+        <div class="text-[11px] text-slate-300">Ván đấu được tự động lưu và đồng bộ hai chiều — nếu lỡ nhấn <strong>F5 hoặc tải lại trang</strong>, ván đấu sẽ tự động khôi phục ngay!</div>
        </div>
        <!-- Live Queue List of Online Players -->
        <div class="space-y-1.5">
@@ -1082,7 +1082,7 @@
         </div>
        </div>
        <p id="chess-coach-text" class="text-slate-200 leading-relaxed break-words">
-        Chọn màu quân Trắng hoặc Đen và đi nước đầu tiên để đồng hồ chạy. Lưu ý: Elo chỉ được cộng khi chiến thắng người chơi khác ở chế độ Ghép Trận Online (cập nhật sau).
+        Chọn màu quân Trắng hoặc Đen và đi nước đầu tiên để đồng hồ chạy. Ván đấu của bạn được tự động lưu liên tục để không bị mất khi F5 tải lại trang!
        </p>
       </div>
       <!-- Post-Game Analysis & Elo Change Summary Card -->
@@ -1507,86 +1507,6 @@
    </div>
   </div>
  </div>
- <!-- ==================== MODAL: SUPABASE SQL SETUP FOR ONLINE MATCHMAKING ==================== -->
- <div id="supabase-sql-modal" class="fixed inset-0 z-[70] bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
-  <div class="glass-card rounded-3xl max-w-2xl w-full p-6 border border-cyan-500/40 space-y-4 view-animate shadow-2xl max-h-[90vh] flex flex-col">
-   <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-    <div>
-     <h3 class="text-lg sm:text-xl font-extrabold text-white">🛠️ Mã SQL Cài Đặt Bảng Ghép Trận Online Trên Supabase</h3>
-     <p class="text-xs text-slate-300 mt-0.5">Chế độ Ghép Đấu Online hoạt động ngay qua Supabase Realtime WebSocket và lưu lịch sử phòng đấu vào bảng <code class="text-cyan-300">lm_chess_online_matches</code>.</p>
-    </div>
-    <button id="close-supabase-sql-btn" type="button" class="text-slate-400 hover:text-white text-xl font-bold">✕</button>
-   </div>
-   <div class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-    <div>• <strong>Bước 1:</strong> Mở <strong>Supabase Dashboard</strong> của bạn → chọn mục <strong>SQL Editor</strong> → bấm <strong>New Query</strong>.</div>
-    <div>• <strong>Bước 2:</strong> Bấm nút <strong>"📋 Sao Chép Mã SQL"</strong> bên dưới, dán vào SQL Editor và nhấn <strong>Run</strong>.</div>
-   </div>
-   <pre id="supabase-sql-code-block" class="flex-1 overflow-y-auto p-3.5 rounded-2xl bg-slate-950 border border-slate-800 font-mono-code text-[11px] text-emerald-300 leading-relaxed select-all whitespace-pre-wrap">-- BẢNG PHÒNG ĐẤU & HÀNG ĐỢI GHÉP TRẬN CỜ VUA ONLINE (CHÊNH LỆCH 0 - 100 ELO)
-CREATE TABLE IF NOT EXISTS public.lm_chess_online_matches (
- id TEXT PRIMARY KEY,
- status TEXT NOT NULL DEFAULT 'waiting',
- time_control INTEGER NOT NULL DEFAULT 600,
- host_client_id TEXT NOT NULL,
- host_email TEXT NOT NULL,
- host_name TEXT NOT NULL,
- host_elo INTEGER NOT NULL DEFAULT 1200,
- guest_client_id TEXT,
- guest_email TEXT,
- guest_name TEXT,
- guest_elo INTEGER,
- white_client_id TEXT,
- white_email TEXT,
- white_name TEXT,
- white_elo INTEGER,
- black_client_id TEXT,
- black_email TEXT,
- black_name TEXT,
- black_elo INTEGER,
- fen TEXT NOT NULL DEFAULT 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
- moves_json JSONB NOT NULL DEFAULT '[]'::jsonb,
- last_move JSONB,
- white_time INTEGER NOT NULL DEFAULT 600,
- black_time INTEGER NOT NULL DEFAULT 600,
- winner TEXT,
- end_reason TEXT,
- draw_offer_by TEXT,
- created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
- updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-ALTER TABLE public.lm_chess_online_matches ENABLE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS "Allow public read lm_chess_online_matches" ON public.lm_chess_online_matches;
-CREATE POLICY "Allow public read lm_chess_online_matches"
- ON public.lm_chess_online_matches FOR SELECT USING (true);
-
-DROP POLICY IF EXISTS "Allow public insert lm_chess_online_matches" ON public.lm_chess_online_matches;
-CREATE POLICY "Allow public insert lm_chess_online_matches"
- ON public.lm_chess_online_matches FOR INSERT WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Allow public update lm_chess_online_matches" ON public.lm_chess_online_matches;
-CREATE POLICY "Allow public update lm_chess_online_matches"
- ON public.lm_chess_online_matches FOR UPDATE USING (true) WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Allow public delete lm_chess_online_matches" ON public.lm_chess_online_matches;
-CREATE POLICY "Allow public delete lm_chess_online_matches"
- ON public.lm_chess_online_matches FOR DELETE USING (true);
-
-DO $$
-BEGIN
- ALTER PUBLICATION supabase_realtime ADD TABLE public.lm_chess_online_matches;
-EXCEPTION WHEN duplicate_object THEN NULL;
-END $$;</pre>
-   <div class="flex flex-wrap items-center justify-end gap-2.5 pt-1">
-    <button id="copy-supabase-sql-btn" type="button" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg transition">
-     📋 Sao Chép Mã SQL
-    </button>
-    <button id="close-supabase-sql-bottom-btn" type="button" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs sm:text-sm transition">
-     Đóng
-    </button>
-   </div>
-  </div>
- </div>
  <!-- ==================== MODAL: REGISTER FIRST THEN LOGIN ==================== -->
  <div id="auth-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
   <div class="glass-card rounded-3xl max-w-md w-full p-6 sm:p-7 border border-cyan-500/30 space-y-5 view-animate">
@@ -1671,6 +1591,8 @@ END $$;</pre>
   const ACTIVE_SESSION_STORAGE_KEY = 'lm_active_user_session_v6_blank';
   const USERS_REGISTRY_KEY = 'lm_real_registered_users_v6_blank';
   const IMMUTABLE_CREATED_TS_KEY = 'lm_immutable_created_ts_v1';
+  const CHESS_PERSISTED_MATCH_KEY = 'lm_chess_active_match_state_v2';
+  const CHESS_CLIENT_ID_STORAGE_KEY = 'lm_chess_persistent_client_id_v2';
   // ---------- 2. WEB AUDIO SYNTHESIZER (REALISTIC RUBIK & BOOSTED GAIN) ----------
   const SoundFX = {
    enabled: true,
@@ -1702,7 +1624,6 @@ END $$;</pre>
      if (!this.ctx) return;
      const now = this.ctx.currentTime;
      if (type === 'rubik_move') {
-      // Realistic Speedcube Plastic Friction + Dual Magnetic Corner-Cut Snap
       if (this.noiseBuffer) {
        const noise = this.ctx.createBufferSource();
        noise.buffer = this.noiseBuffer;
@@ -1721,7 +1642,6 @@ END $$;</pre>
        noise.start(now);
        noise.stop(now + 0.062);
       }
-      // 1st transient: initial plastic layer engagement thud
       const osc1 = this.ctx.createOscillator();
       const g1 = this.ctx.createGain();
       osc1.type = 'triangle';
@@ -1733,7 +1653,6 @@ END $$;</pre>
       g1.connect(this.ctx.destination);
       osc1.start(now);
       osc1.stop(now + 0.03);
-      // 2nd transient: magnetic lock-in click at end of turn (~28ms)
       const osc2 = this.ctx.createOscillator();
       const g2 = this.ctx.createGain();
       osc2.type = 'sine';
@@ -1883,11 +1802,9 @@ END $$;</pre>
    createdAt: 0,
    supabaseClient: null
   };
-  // Helper to extract or lock immutable creation timestamp (ms) so tied scores NEVER jump on Leaderboard
   function getOrLockCreatedTimestamp(email, passwordHashStr = '', rowCreatedAt = null, fallbackOrderIdx = 0) {
    const cleanEmail = (email || '').toLowerCase().trim();
    if (!cleanEmail) return Date.now();
-   // 1. Check if embedded in password_hash ("<hash>|ts:<ms>")
    if (typeof passwordHashStr === 'string' && passwordHashStr.includes('|ts:')) {
     const parts = passwordHashStr.split('|ts:');
     const parsed = Number(parts[1]);
@@ -1900,7 +1817,6 @@ END $$;</pre>
      return parsed;
     }
    }
-   // 2. Check if DB has created_at column
    if (rowCreatedAt) {
     const parsedDb = Date.parse(rowCreatedAt);
     if (Number.isFinite(parsedDb) && parsedDb > 1000000000000) {
@@ -1912,12 +1828,10 @@ END $$;</pre>
      return tsMap[cleanEmail];
     }
    }
-   // 3. Check local immutable timestamp registry
    const tsMap = StorageUtil.get(IMMUTABLE_CREATED_TS_KEY, {}) || {};
    if (typeof tsMap[cleanEmail] === 'number' && tsMap[cleanEmail] > 0) {
     return tsMap[cleanEmail];
    }
-   // 4. Check local user profile createdAt
    const localProf = StorageUtil.get(getUserStorageKey(cleanEmail), null);
    if (localProf && localProf.createdAt) {
     const t = typeof localProf.createdAt === 'number' ? localProf.createdAt : Date.parse(localProf.createdAt);
@@ -1927,7 +1841,6 @@ END $$;</pre>
      return t;
     }
    }
-   // 5. Lock a permanent timestamp the first time this account is observed
    const assigned = 1700000000000 + (fallbackOrderIdx * 1000);
    tsMap[cleanEmail] = assigned;
    StorageUtil.set(IMMUTABLE_CREATED_TS_KEY, tsMap);
@@ -2264,7 +2177,6 @@ END $$;</pre>
    } catch (e) {}
    return reg;
   }
-  // CLOUD-AUTHORITATIVE LEADERBOARD WITH DETERMINISTIC REGISTRATION-ORDER TIE-BREAKER
   async function fetchLeaderboardsData(pullCloud = true) {
    const mergedMap = new Map();
    const mergePlayerRecord = (em, nickname, solvesArr, chessEloVal, learnedArr, createdAtMs) => {
@@ -2304,9 +2216,6 @@ END $$;</pre>
     }
    };
    let cloudSuccess = false;
-   // 1. Read directly from Supabase WITHOUT re-uploading local cache first!
-   // This ensures that if you delete a user in Supabase Dashboard (Table Editor / SQL Editor),
-   // the deleted account will NOT be re-uploaded and will immediately disappear from the web!
    if (pullCloud && AppState.supabaseClient) {
     try {
      const { data, error } = await AppState.supabaseClient
@@ -2341,7 +2250,6 @@ END $$;</pre>
         StorageUtil.set(getUserStorageKey(em), syncedProfile);
        }
       });
-      // Remove any stale local profile keys that were deleted on Supabase!
       try {
        const staleKeys = [];
        for (const k of StorageUtil.keys()) {
@@ -2352,7 +2260,6 @@ END $$;</pre>
        }
        staleKeys.forEach(k => StorageUtil.remove(k));
       } catch (e) {}
-      // If currently logged-in user was deleted from Supabase Dashboard, log them out cleanly
       if (AppState.userEmail && !cloudEmailSet.has(AppState.userEmail.toLowerCase().trim())) {
        StorageUtil.remove(ACTIVE_SESSION_STORAGE_KEY);
        AppState.userEmail = '';
@@ -2369,7 +2276,6 @@ END $$;</pre>
      }
     } catch (e) {}
    }
-   // 2. Fallback to local registry ONLY when offline
    if (!cloudSuccess) {
     const reg = collectAllLocalProfilesIntoRegistry();
     Object.keys(reg).forEach((em, idx) => {
@@ -2393,14 +2299,12 @@ END $$;</pre>
    const allRealPlayers = Array.from(mergedMap.values());
    const pill = document.getElementById('leaderboard-count-pill');
    if (pill) pill.textContent = `${allRealPlayers.length} Người Chơi Thật`;
-   // Tie-breaker function: Whoever registered their account earlier (smaller createdAt) is ranked higher!
    const compareRegistrationOrder = (a, b) => {
     const tA = typeof a.createdAt === 'number' ? a.createdAt : Number.MAX_SAFE_INTEGER;
     const tB = typeof b.createdAt === 'number' ? b.createdAt : Number.MAX_SAFE_INTEGER;
     if (tA !== tB) return tA - tB;
     return (a.email || '').localeCompare(b.email || '');
    };
-   // Render Rubik Leaderboard (Sorted ascending by Best Time; ties broken by Registration Order)
    const rubikEl = document.getElementById('leaderboard-rubik-list');
    if (rubikEl) {
     const withTime = allRealPlayers
@@ -2446,7 +2350,6 @@ END $$;</pre>
      }).join('');
     }
    }
-   // Render Chess Elo Leaderboard (Sorted descending by Chess Elo; ties broken by Registration Order)
    const chessEl = document.getElementById('leaderboard-chess-list');
    if (chessEl) {
     const sortedChess = [...allRealPlayers].sort((a, b) => {
@@ -2622,7 +2525,6 @@ END $$;</pre>
        createdAt: createdAtMs
       };
      } else if (isAutoRestore) {
-      // If auto-restoring session and account no longer exists on Supabase (deleted by admin), abort restore!
       StorageUtil.remove(ACTIVE_SESSION_STORAGE_KEY);
       StorageUtil.remove(getUserStorageKey(cleanEmail));
       return false;
@@ -2792,7 +2694,7 @@ END $$;</pre>
     card.classList.toggle('border-slate-800', !isNowLearned);
    });
   }
-  // ---------- 5. FULL CFOP DATABASE (123 ALGORITHMS: 4 CROSS + 41 F2L + 57 OLL + 21 PLL) ----------
+  // ---------- 5. FULL CFOP DATABASE (144 ALGORITHMS: 9 CROSS + 16 2-LOOK + 41 F2L + 57 OLL + 21 PLL) ----------
   const CFOP_DATABASE = [
  {"id":"cfop_cross_1","step":"CROSS","order":1,"code":"Cross #01","name":"Cross 01: Daisy & White Cross (Dấu Cộng Trắng Chuẩn Ở Đáy D)","alg":"F2 D R' D' F'","desc":"Giữ tâm Vàng ở mặt Trên (U), tâm Trắng ở mặt Đáy (D). Đưa 4 viên cạnh Trắng về quanh tâm Trắng ở đáy sao cho màu bên hông khớp với 4 viên tâm Xanh lá, Đỏ, Xanh dương, Cam.","diagram":{"type":"cross","grid":["X","W","X","W","W","W","X","W","X"],"sideColors":["B","G","O","R"]}},
  {"id":"cfop_cross_2","step":"CROSS","order":2,"code":"Cross #02","name":"Cross 02: Lật Cạnh Cross Bị Ngược Chiều Không Làm Hỏng Đáy","alg":"R' U' F' U R","desc":"Khi viên cạnh Trắng nằm ở tầng trên hoặc đúng khe nhưng bị lật ngược màu: Dùng chuỗi 5 nước này để chèn cạnh Trắng xuống đáy mà không làm lệch các viên Cross đã giải.","diagram":{"type":"cross","grid":["X","W","X","W","W","R","X","W","X"],"sideColors":["B","G","O","W"]}},
@@ -3335,7 +3237,6 @@ END $$;</pre>
     this.stepTitle = '';
     this.autoPlaying = false;
     this.solvingModeActive = false;
-    // Track if current state was loaded from the CFOP formula bank
     this.loadedFromFormulaBank = false;
     this.formulaBankAlg = '';
     this.formulaBankTitle = '';
@@ -3393,7 +3294,6 @@ END $$;</pre>
      ) {
       return false;
      }
-     // Core (0,0,0) and 6 single-sticker center cubies (|x|+|y|+|z| <= 1) only need correct position
      if (Math.abs(init.x) + Math.abs(init.y) + Math.abs(init.z) <= 1) continue;
      if (Math.abs(c.quaternion.x) > 0.1 || Math.abs(c.quaternion.y) > 0.1 || Math.abs(c.quaternion.z) > 0.1) {
       return false;
@@ -3409,7 +3309,6 @@ END $$;</pre>
     const mod = tok.slice(1);
     const normMod = mod.includes('2') ? '2' : (mod.includes("'") ? "'" : '');
     const normTok = face + normMod;
-    // O(1) tail compression so even 10,000+ rotations never slow down!
     const tailLen = Math.min(this.moveHistory.length, 4);
     const head = this.moveHistory.slice(0, this.moveHistory.length - tailLen);
     const tailTokens = this.moveHistory.slice(this.moveHistory.length - tailLen).map(m => m.token);
@@ -3417,9 +3316,6 @@ END $$;</pre>
     const compressedTail = this.compressMovesOptimal(tailTokens).map(t => ({ token: t }));
     this.moveHistory = head.concat(compressedTail);
    }
-   // Optimal Algebraic Axis-Layer Reducer:
-   // Combines ANY sequence of same-axis moves (including R, L, M, r, l, x on X; U, D, E, u, d, y on Y; F, B, S, f, b, z on Z)
-   // into the minimum possible number of moves!
    compressMovesOptimal(rawTokens) {
     const axisMap = this.getAxisMap();
     const axisVocab = {
@@ -3443,14 +3339,12 @@ END $$;</pre>
      const k0 = d['-1'] % 4, k1 = d['0'] % 4, k2 = d['1'] % 4;
      if (k0 === 0 && k1 === 0 && k2 === 0) return [];
      const vocab = axisVocab[axis] || [];
-     // 1. Check 1-move exact match
      for (const cand of vocab) {
       const cd = tokenDelta(cand).d;
       if (cd['-1'] === k0 && cd['0'] === k1 && cd['1'] === k2) {
        return [cand];
       }
      }
-     // 2. Check 2-move exact match
      for (const c1 of vocab) {
       const d1 = tokenDelta(c1).d;
       for (const c2 of vocab) {
@@ -3465,7 +3359,6 @@ END $$;</pre>
        }
       }
      }
-     // 3. Fallback 3-move
      for (const c1 of vocab) {
       const d1 = tokenDelta(c1).d;
       for (const c2 of vocab) {
@@ -3484,7 +3377,6 @@ END $$;</pre>
      }
      return [];
     };
-    // Group consecutive tokens on the same axis and reduce
     const blocks = [];
     for (const tok of rawTokens) {
      if (!tok) continue;
@@ -3510,9 +3402,6 @@ END $$;</pre>
     });
     return out;
    }
-   // AI Shortest-Move Solver (True 3D State Thistlethwaite/Kociemba + IDA*):
-   // Solves the cube in ~18-28 moves directly from the 3D cubie positions & orientations,
-   // even if the user has rotated the cube thousands of times!
    computeOptimalAISolution() {
     if (this.isCubeCurrentlySolved()) return [];
     let bestSolution = [];
@@ -3526,7 +3415,6 @@ END $$;</pre>
       }
      } catch (e) {}
     } else {
-     // When cube has been rotated many times (even thousands of turns), solve directly from 3D cubie state!
      const stateSol = this.solveFrom3DCubieState();
      if (stateSol && stateSol.length > 0 && this.verifyCandidateSolvesCube(stateSol)) {
       return stateSol;
@@ -3534,7 +3422,6 @@ END $$;</pre>
      const rawInv = [...this.moveHistory].reverse().map(m => this.invertToken(m.token));
      bestSolution = this.compressMovesOptimal(rawInv);
     }
-    // If history is short (<= 7 moves), check direct IDA* for exact global optimum
     try {
      if (bestSolution.length > 1 && bestSolution.length <= 10) {
       const maxDirectDepth = Math.min(bestSolution.length - 1, 6);
@@ -3546,7 +3433,6 @@ END $$;</pre>
       }
      }
     } catch (e) {}
-    // Always run the 4-Phase 3D Cubie State Solver when bestSolution > 14 moves (or thousands of moves!)
     try {
      if (bestSolution.length > 14) {
       const stateSol = this.solveFrom3DCubieState();
@@ -3745,7 +3631,6 @@ END $$;</pre>
      }
      return true;
     };
-    // Step 1: Align the 6 center cubies using at most 2 whole-cube rotations (x, y, z)
     let centerMoves = [];
     let alignedVState = vState;
     if (!centersAligned(vState)) {
@@ -3779,7 +3664,6 @@ END $$;</pre>
       }
      }
     }
-    // Step 2: Extract (cp, cAxis, ep, eAxis) from alignedVState
     const cp = new Int8Array(8), cAxis = new Int8Array(8);
     const ep = new Int8Array(12), eAxis = new Int8Array(12);
     const vecAxis = v => {
@@ -3826,7 +3710,6 @@ END $$;</pre>
      return { cp: ncp, cAxis: ncAxis, ep: nep, eAxis: neAxis };
     };
     const fullPath = [...centerMoves];
-    // Phase 1: G0 -> G1
     let eo = T.getEOKey(st.eAxis);
     while (eo !== 0) {
      const d = T.eoDist[eo];
@@ -3840,7 +3723,6 @@ END $$;</pre>
       }
      }
     }
-    // Phase 2: G1 -> G2
     {
      const startCA = T.getCAKey(st.cAxis), startES = T.getESKey(st.ep);
      for (let bound = Math.max(T.cAxisDist[startCA], T.eSliceDist[startES]); bound <= 12; bound++) {
@@ -3864,7 +3746,6 @@ END $$;</pre>
       }
      }
     }
-    // Phase 3: G2 -> G3
     {
      const startCP = T.perm8Key(st.cp), startUD = T.perm8Key(st.ep);
      for (let bound = Math.max(T.g2CornerDist.get(startCP) ?? 0, T.g2EdgeUDDist.get(startUD) ?? 0); bound <= 15; bound++) {
@@ -3888,7 +3769,6 @@ END $$;</pre>
       }
      }
     }
-    // Phase 4: G3 -> Solved
     {
      const startCP = T.perm8Key(st.cp), startUD = T.perm8Key(st.ep), startE = T.perm4EKey(st.ep);
      for (let bound = Math.max(T.g3CornerDist.get(startCP) ?? 0, T.g3EdgeDist.get(startUD * 256 + startE) ?? 0); bound <= 15; bound++) {
@@ -3914,7 +3794,6 @@ END $$;</pre>
     }
     return this.compressMovesOptimal(fullPath);
    }
-   // Virtual 3D Cubie State Simulator to verify any candidate solution 100% accurately without touching WebGL scene
    captureVirtualCubieState() {
     return this.cubies.map(c => ({
      init: c.userData.initPos,
@@ -3959,7 +3838,6 @@ END $$;</pre>
       return false;
      }
      if (Math.abs(item.init.x) + Math.abs(item.init.y) + Math.abs(item.init.z) <= 1) continue;
-     // Check identity quaternion (w ≈ ±1, x=y=z ≈ 0)
      if (Math.abs(item.quat.x) > 0.1 || Math.abs(item.quat.y) > 0.1 || Math.abs(item.quat.z) > 0.1) {
       return false;
      }
@@ -3973,11 +3851,7 @@ END $$;</pre>
     }
     return this.isVirtualStateSolved(vState);
    }
-   // Normalize wide/slice/rotation moves by pushing whole-cube rotations to the end
    computeRotationNormalizedCandidate(tokens) {
-    // Decompose wide & slice moves into outer face + whole-cube rotation:
-    // r = L x, l = R x', u = D y, d = U y', f = B z, b = F z'
-    // M = R L' x', E = U D' y', S = F' B z
     const expandMap = {
      'r': ['L', 'x'], "r'": ["L'", "x'"], 'r2': ['L2', 'x2'],
      'l': ['R', "x'"], "l'": ["R'", 'x'], 'l2': ['R2', 'x2'],
@@ -3994,12 +3868,6 @@ END $$;</pre>
      if (expandMap[t]) expanded.push(...expandMap[t]);
      else expanded.push(t);
     });
-    // Push whole-cube rotations (x, y, z) to the right by remapping subsequent outer face moves
-    // If we have Rot followed by Face, Rot * Face = (Rot(Face)) * Rot
-    // Wait: if we move Rot to the right: Rot * Face -> MappedFace * Rot
-    // When x (+90 around R, so U->B, B->D, D->F, F->U) is pushed past a face move F_after:
-    // Executing x then F_after is equivalent to executing x(F_after) BEFORE x!
-    // Specifically: if x brings Front to Up, then turning Up AFTER x is the same as turning Front BEFORE x!
     const rotPreMap = {
      'x':  { U: 'F', F: 'D', D: 'B', B: 'U', R: 'R', L: 'L' },
      "x'": { U: 'B', B: 'D', D: 'F', F: 'U', R: 'R', L: 'L' },
@@ -4012,7 +3880,7 @@ END $$;</pre>
      'z2': { U: 'D', D: 'U', L: 'R', R: 'L', F: 'F', B: 'B' }
     };
     const outerMoves = [];
-    const pendingRots = []; // applied in order from left to right
+    const pendingRots = [];
     for (const tok of expanded) {
      const base = tok[0];
      const mod = tok.slice(1);
@@ -4020,7 +3888,6 @@ END $$;</pre>
       pendingRots.push(tok);
      } else if (['U', 'D', 'R', 'L', 'F', 'B'].includes(base)) {
       let mappedFace = base;
-      // Apply pending rotations from right to left to pull the face move before all pendingRots
       for (let i = pendingRots.length - 1; i >= 0; i--) {
        const rTok = pendingRots[i];
        if (rotPreMap[rTok] && rotPreMap[rTok][mappedFace]) {
@@ -4078,7 +3945,6 @@ END $$;</pre>
       const face = move[0];
       const axis = axisMap[face].axis;
       if (face === lastFace) continue;
-      // Prune redundant commuting orders
       if (axis === lastAxis && face < lastFace) continue;
       const nextSt = cloneState(st);
       this.applyTokenToVirtualState(nextSt, move);
@@ -4238,8 +4104,6 @@ END $$;</pre>
     if (isManualUserTurn) {
      this.loadedFromFormulaBank = false;
      this.autoPlaying = false;
-     // Zero-latency instant response: if a previous manual animation is still running,
-     // snap it to completion immediately so the new button/key press starts on this exact frame!
      if (this.isAnimating) {
       this.finishCurrentAnimationInstantly();
      }
@@ -4513,7 +4377,6 @@ END $$;</pre>
     this.stepIndex = 0;
     this.stepTitle = '';
     this.renderStepBadges();
-    // Keep 3D state intact across unlimited scrambles so AI solver always solves the true 3D state
     const faces = ['U', 'D', 'R', 'L', 'F', 'B'];
     const mods = ['', "'", '2'];
     const seq = [];
@@ -4535,14 +4398,12 @@ END $$;</pre>
     if (expDisp) expDisp.textContent = s;
     this.enqueueNotation(s, true, null, false);
    }
-   // AI Optimal Solve (Uses CFOP Table Formula if loaded from CFOP Bank, otherwise runs AI Shortest-Move Solver!)
    solveAnimated() {
     this.stopAllAnimationsSafely(true);
     const formulaBox = document.getElementById('rubik-solve-formula-text');
     const expFormulaBox = document.getElementById('exp-rubik-solve-formula-text');
     const stepProg = document.getElementById('rubik-solve-step-progress');
     const expStepProg = document.getElementById('exp-rubik-solve-step-progress');
-    // Exception 1: If currently practicing a formula from the CFOP Table, run the remaining steps of that CFOP formula!
     if (this.loadedFromFormulaBank && this.stepTokens.length > 0 && this.stepIndex < this.stepTokens.length) {
      this.autoPlaying = true;
      this.renderStepBadges();
@@ -4550,7 +4411,6 @@ END $$;</pre>
      showToast(`📚 Đang chạy công thức chuẩn từ Bảng CFOP (${this.stepTokens.length - this.stepIndex} bước còn lại)!`, 'cyan');
      return;
     }
-    // Check if already solved
     if (this.isCubeCurrentlySolved()) {
      this.buildCubies();
      const msg = `<span class="text-cyan-300">Khối Rubik hiện đã ở trạng thái hoàn chỉnh! Hãy bấm <strong>"🔀 Trộn"</strong> hoặc xoay vài nước rồi bấm <strong>🤖 Giải AI Ít Bước</strong>.</span>`;
@@ -4561,7 +4421,6 @@ END $$;</pre>
      showToast('Khối Rubik đang ở trạng thái đã giải!', 'cyan');
      return;
     }
-    // Compute Optimal AI Shortest-Path Solution
     const optimalSteps = this.computeOptimalAISolution();
     if (!optimalSteps || optimalSteps.length === 0) {
      this.buildCubies();
@@ -4612,7 +4471,6 @@ END $$;</pre>
     }
    }
   }
-  // Expanded Fullscreen Rubik 3D Modal Controller + Keyboard Shortcut Chord Engine (R, R + ', R + 2, Shift+R -> r)
   const RubikExpandedArena = {
    isOpen: false,
    keyboardWideMode: false,
@@ -4647,7 +4505,7 @@ END $$;</pre>
     const normalSlot = document.getElementById('normal-rubik-viewport-slot');
     if (modal && canvasWrap && normalSlot) {
      normalSlot.appendChild(canvasWrap);
-     canvasWrap.className = 'cube-canvas-touch w-full h-64 sm:h-72 rounded-2xl bg-gradient-to-b from-slate-900 via-slate-950 to-black border border-slate-800 relative overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing shadow-inner';
+     canvasWrap.className = 'cube-canvas-touch w-full h-52 sm:h-64 rounded-2xl bg-gradient-to-b from-slate-900 via-slate-950 to-black border border-slate-800 relative overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing shadow-inner';
      modal.classList.add('hidden');
      modal.classList.remove('flex');
      setTimeout(() => {
@@ -4871,7 +4729,6 @@ END $$;</pre>
     }).join('');
    }
   };
-  // Camera AI Scanner Module
   const CameraScanner = {
    stream: null,
    activeBrush: '#facc15',
@@ -5005,7 +4862,7 @@ END $$;</pre>
     showToast(`🔍 Đã phân tích mặt Rubik: ${matched.title}`, 'emerald');
    }
   };
-  // ---------- 9. INTERNATIONAL CHESS ARENA (CUSTOM SVG PIECES, 42 RANDOM PUZZLES, STRICT ELO RULE) ----------
+  // ---------- 9. INTERNATIONAL CHESS ARENA (MULTI-CHANNEL ONLINE SYNC, F5 PERSISTENCE, DYNAMIC ELO) ----------
   function renderChessPieceSVG(type, color, sizeClass = 'chess-svg-piece') {
    const isWhite = color === 'w';
    const fill = isWhite ? '#ffffff' : '#0f172a';
@@ -5064,6 +4921,24 @@ END $$;</pre>
    }
    return `<svg viewBox="0 0 45 45" class="${sizeClass}" style="${shadowStyle}" aria-hidden="true">${shape}</svg>`;
   }
+
+  function getOrCreatePersistentChessClientId() {
+   try {
+    let cid = window.sessionStorage ? window.sessionStorage.getItem(CHESS_CLIENT_ID_STORAGE_KEY) : null;
+    if (!cid) {
+     cid = StorageUtil.getRaw(CHESS_CLIENT_ID_STORAGE_KEY);
+    }
+    if (!cid) {
+     cid = 'cli_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+    }
+    if (window.sessionStorage) window.sessionStorage.setItem(CHESS_CLIENT_ID_STORAGE_KEY, cid);
+    StorageUtil.setRaw(CHESS_CLIENT_ID_STORAGE_KEY, cid);
+    return cid;
+   } catch (e) {
+    return 'cli_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+   }
+  }
+
   const ChessArena = {
    game: null,
    selectedSq: null,
@@ -5093,14 +4968,17 @@ END $$;</pre>
    puzzleDeck: [],
    solvedRandomCount: 0,
    onlineMatch: {
-    clientId: 'cli_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7),
-    status: 'idle', // 'idle' | 'searching' | 'playing' | 'finished'
+    clientId: getOrCreatePersistentChessClientId(),
+    status: 'idle',
     queuedAt: 0,
     searchSeconds: 0,
     searchTimerId: null,
     pingIntervalId: null,
+    syncHeartbeatId: null,
     lobbyChannel: null,
+    lobbySubscribed: false,
     roomChannel: null,
+    roomSubscribed: false,
     localBus: null,
     waitingPeers: new Map(),
     matchId: null,
@@ -5111,9 +4989,9 @@ END $$;</pre>
     opponentElo: 1200,
     eloDiff: 0,
     eloAlreadySettled: false,
-    pendingDrawOfferFrom: null
+    pendingDrawOfferFrom: null,
+    matchStartedAt: 0
    },
-   // 42 Verified Tactical Chess Puzzles (100% Legal, Unambiguous & Validated!)
    puzzles: [
     { title: 'Đòn Chiếu Hết Hàng Ngang Cuối (Back-Rank Mate)', fen: '6k1/5ppp/8/8/8/8/5PPP/3R2K1 w - - 0 1', solutionFrom: 'd1', solutionTo: 'd8', hint: 'Vua Đen bị 3 tốt f7, g7, h7 chặn kín lối thoát. Hãy đưa Xe Trắng xuống hàng thứ 8 (d8)!' },
     { title: "Phối Hợp Hậu + Tượng Chiếu Bí Ô f7 (Scholar's Mate)", fen: 'r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 3', solutionFrom: 'h5', solutionTo: 'f7', hint: 'Hậu Trắng h5 và Tượng c4 đang cùng hội tụ vào điểm yếu f7 cạnh Vua Đen!' },
@@ -5127,7 +5005,7 @@ END $$;</pre>
     { title: 'Đòn Chiếu Bí Epaulette (Vua Kẹt Giữa Hai Xe)', fen: '3rkr2/8/8/8/2Q5/8/5PPP/6K1 w - - 0 1', solutionFrom: 'c4', solutionTo: 'e6', hint: 'Hai Xe Đen ở d8 và f8 tự chặn đường thoát của Vua. Đưa Hậu từ c4 lên e6 chiếu bí!' },
     { title: 'Phối Hợp Xe & Tượng Chiếu Bí Hàng Tám', fen: '6k1/5p1p/5Bp1/8/8/8/5PPP/4R1K1 w - - 0 1', solutionFrom: 'e1', solutionTo: 'e8', hint: 'Tượng Trắng ở f6 đã khóa ô h8 và g7. Hãy đưa Xe từ e1 lên e8 chiếu bí!' },
     { title: 'Đòn Tấn Công Trực Diện Bắt Hậu Ô e7 (Xe + Tượng)', fen: '4k3/4qppp/8/2B5/8/8/5PPP/4R1K1 w - - 0 1', solutionFrom: 'e1', solutionTo: 'e7', hint: 'Tượng c5 đang bảo vệ ô e7 và ghim Hậu Đen. Hãy dùng Xe e1 ăn thẳng Hậu Đen tại e7!' },
-    { title: 'Đòn Xiên Cột Dọc Bắt Hậu (Rook Skewer)', fen: '4q3/4kppp/8/8/8/8/5PPP/3R2K1 w - - 0 1', solutionFrom: 'd1', 'solutionTo': 'e1', hint: 'Kéo Xe từ d1 sang e1 chiếu thẳng Vua Đen ở e7, buộc Vua chạy và lộ Hậu Đen ở e8 phía sau!' },
+    { title: 'Đòn Xiên Cột Dọc Bắt Hậu (Rook Skewer)', fen: '4q3/4kppp/8/8/8/8/5PPP/3R2K1 w - - 0 1', solutionFrom: 'd1', solutionTo: 'e1', hint: 'Kéo Xe từ d1 sang e1 chiếu thẳng Vua Đen ở e7, buộc Vua chạy và lộ Hậu Đen ở e8 phía sau!' },
     { title: 'Đòn Chiếu Bí Lưỡi Câu (Hook Mate - Xe, Mã & Tốt)', fen: '6k1/5ppp/4N3/8/8/8/5PPP/2R3K1 w - - 0 1', solutionFrom: 'c1', solutionTo: 'c8', hint: 'Mã Trắng ở e6 kiểm soát ô f8 và g7. Đưa Xe từ c1 lên c8 chiếu hết!' },
     { title: "Đòn Chiếu Bí Đuôi Én (Swallow's Tail Mate)", fen: '8/3r1r2/4k3/7Q/3P4/8/5PPP/6K1 w - - 0 1', solutionFrom: 'h5', solutionTo: 'e5', hint: 'Tốt d4 bảo vệ vững chắc ô e5, trong khi 2 Xe Đen ở d7, f7 tự chặn đường lùi của Vua. Đưa Hậu từ h5 vào e5 chiếu bí!' },
     { title: "Đòn Chiếu Bí Hai Tượng Đan Chéo (Boden's Mate)", fen: '2kr4/p2p4/2p5/8/5B2/8/PPP3PP/2KR1B2 w - - 0 1', solutionFrom: 'f1', solutionTo: 'a6', hint: 'Tượng f4 đã khóa đường chéo h2-b8, còn Xe d8 và tốt d7, c6 tự chặn Vua. Đưa Tượng từ f1 lên a6 cắt chéo chiếu bí Vua Đen ở c8!' },
@@ -5165,17 +5043,185 @@ END $$;</pre>
     this.game = new Chess();
     this.refillShuffledPuzzleDeck();
     this.initOnlineMatchmakingChannels();
-    this.resetGameAndState(false);
+    const restored = this.restoreActiveGameSnapshotOnLoad();
+    if (!restored) {
+     this.resetGameAndState(false, false);
+    }
     this.renderHeroMiniBoard(['d4', 'd5', 'c4'], "Thế cờ Queen's Gambit: 1. d4 d5 2. c4");
    },
-   // Fisher-Yates Non-Repeating Random Puzzle Deck
+   // ---------- PERSISTENT MATCH SNAPSHOT (PREVENTS LOSING MATCH ON F5 / PAGE RELOAD) ----------
+   saveActiveGameSnapshot() {
+    if (!this.game) return;
+    try {
+     if (this.isMatchOver()) {
+      StorageUtil.remove(CHESS_PERSISTED_MATCH_KEY);
+      return;
+     }
+     const verboseHist = this.game.history({ verbose: true }).map(m => ({
+      from: m.from,
+      to: m.to,
+      promotion: m.promotion || 'q',
+      san: m.san,
+      color: m.color
+     }));
+     const isOnlineActive = (this.mode === 'matchmaking' && this.onlineMatch.status === 'playing' && this.onlineMatch.matchId);
+     if (!isOnlineActive && verboseHist.length === 0) {
+      StorageUtil.remove(CHESS_PERSISTED_MATCH_KEY);
+      return;
+     }
+     const snapshot = {
+      savedAt: Date.now(),
+      mode: this.mode,
+      level: this.level,
+      playerColor: this.playerColor,
+      flipped: this.flipped,
+      initialTimeSec: this.initialTimeSec,
+      whiteTime: this.whiteTime,
+      blackTime: this.blackTime,
+      fen: this.game.fen(),
+      history: verboseHist,
+      lastMoveSquares: this.lastMoveSquares,
+      moveEvaluations: this.moveEvaluations,
+      puzzleIdx: this.puzzleIdx,
+      onlineMatch: isOnlineActive ? {
+       clientId: this.onlineMatch.clientId,
+       matchId: this.onlineMatch.matchId,
+       whitePlayer: this.onlineMatch.whitePlayer,
+       blackPlayer: this.onlineMatch.blackPlayer,
+       opponentName: this.onlineMatch.opponentName,
+       opponentEmail: this.onlineMatch.opponentEmail,
+       opponentElo: this.onlineMatch.opponentElo,
+       eloDiff: this.onlineMatch.eloDiff,
+       matchStartedAt: this.onlineMatch.matchStartedAt
+      } : null
+     };
+     StorageUtil.set(CHESS_PERSISTED_MATCH_KEY, snapshot);
+    } catch (e) {}
+   },
+   clearSavedGameSnapshot() {
+    StorageUtil.remove(CHESS_PERSISTED_MATCH_KEY);
+   },
+   restoreActiveGameSnapshotOnLoad() {
+    try {
+     const snap = StorageUtil.get(CHESS_PERSISTED_MATCH_KEY, null);
+     if (!snap || !snap.savedAt) return false;
+     // Expire snapshots older than 45 minutes
+     const ageSec = Math.max(0, Math.floor((Date.now() - snap.savedAt) / 1000));
+     if (ageSec > 2700) {
+      this.clearSavedGameSnapshot();
+      return false;
+     }
+     this.mode = snap.mode || 'bot';
+     this.level = Number(snap.level) || 4;
+     this.playerColor = snap.playerColor || 'w';
+     this.flipped = !!snap.flipped;
+     this.initialTimeSec = Number(snap.initialTimeSec) || 600;
+     const modeSel = document.getElementById('chess-mode-select');
+     const lvlSel = document.getElementById('chess-level-select');
+     const timeSel = document.getElementById('chess-time-select');
+     if (modeSel) modeSel.value = this.mode;
+     if (lvlSel) lvlSel.value = String(this.level);
+     if (timeSel) timeSel.value = String(this.initialTimeSec);
+     this.game.reset();
+     if (this.mode === 'puzzle' && typeof snap.puzzleIdx === 'number' && this.puzzles[snap.puzzleIdx]) {
+      this.puzzleIdx = snap.puzzleIdx;
+      this.game.load(this.puzzles[this.puzzleIdx].fen);
+     }
+     if (Array.isArray(snap.history) && snap.history.length > 0) {
+      for (const m of snap.history) {
+       this.game.move({ from: m.from, to: m.to, promotion: m.promotion || 'q' });
+      }
+     } else if (snap.fen) {
+      this.game.load(snap.fen);
+     }
+     this.lastMoveSquares = Array.isArray(snap.lastMoveSquares) ? snap.lastMoveSquares : [];
+     this.moveEvaluations = Array.isArray(snap.moveEvaluations) ? snap.moveEvaluations : [];
+     // Deduct elapsed time while reloading page for the active turn player
+     let wTime = typeof snap.whiteTime === 'number' ? snap.whiteTime : this.initialTimeSec;
+     let bTime = typeof snap.blackTime === 'number' ? snap.blackTime : this.initialTimeSec;
+     if (this.mode !== 'puzzle' && (snap.history?.length > 0 || snap.onlineMatch)) {
+      const turnCol = this.game.turn();
+      const deduct = Math.min(ageSec, 30);
+      if (turnCol === 'w') wTime = Math.max(5, wTime - deduct);
+      else bTime = Math.max(5, bTime - deduct);
+     }
+     this.whiteTime = wTime;
+     this.blackTime = bTime;
+     // Configure UI visibility for mode
+     const onlineBox = document.getElementById('chess-online-lobby-box');
+     const colorWrap = document.getElementById('chess-color-picker-wrap');
+     const levelWrap = document.getElementById('chess-level-select-wrap');
+     const puzNavWrap = document.getElementById('chess-puzzle-nav-wrap');
+     const expRandBtn = document.getElementById('exp-chess-random-puzzle-btn');
+     const undoBtn = document.getElementById('chess-undo-btn');
+     const hintBtn = document.getElementById('chess-hint-btn');
+     if (onlineBox) onlineBox.classList.toggle('hidden', this.mode !== 'matchmaking');
+     if (colorWrap) colorWrap.classList.toggle('hidden', this.mode === 'matchmaking' || this.mode === 'puzzle');
+     if (levelWrap) levelWrap.classList.toggle('opacity-40', this.mode === 'matchmaking' || this.mode === 'pvp' || this.mode === 'puzzle');
+     if (puzNavWrap) puzNavWrap.classList.toggle('hidden', this.mode !== 'puzzle');
+     if (expRandBtn) expRandBtn.classList.toggle('hidden', this.mode !== 'puzzle');
+     if (snap.onlineMatch && snap.onlineMatch.matchId) {
+      this.mode = 'matchmaking';
+      if (modeSel) modeSel.value = 'matchmaking';
+      if (onlineBox) onlineBox.classList.remove('hidden');
+      if (colorWrap) colorWrap.classList.add('hidden');
+      if (undoBtn) {
+       undoBtn.disabled = true;
+       undoBtn.className = 'py-2 px-2 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60';
+      }
+      if (hintBtn) {
+       hintBtn.disabled = true;
+       hintBtn.className = 'py-2 px-2 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60';
+      }
+      this.onlineMatch.clientId = snap.onlineMatch.clientId || this.onlineMatch.clientId;
+      this.onlineMatch.status = 'playing';
+      this.onlineMatch.matchId = snap.onlineMatch.matchId;
+      this.onlineMatch.whitePlayer = snap.onlineMatch.whitePlayer;
+      this.onlineMatch.blackPlayer = snap.onlineMatch.blackPlayer;
+      this.onlineMatch.opponentName = snap.onlineMatch.opponentName || 'Kỳ thủ Online';
+      this.onlineMatch.opponentEmail = snap.onlineMatch.opponentEmail || '';
+      this.onlineMatch.opponentElo = Number(snap.onlineMatch.opponentElo) || 1200;
+      this.onlineMatch.eloDiff = Number(snap.onlineMatch.eloDiff) || 0;
+      this.onlineMatch.matchStartedAt = snap.onlineMatch.matchStartedAt || Date.now();
+      this.onlineMatch.eloAlreadySettled = false;
+      this.subscribeToOnlineMatchRoom(this.onlineMatch.matchId);
+      this.startOnlineMatchSyncLoop();
+      this.startClockIfNeeded();
+      this.updateOnlineLobbyUI();
+      // Request latest board state from opponent / Supabase immediately after reload
+      setTimeout(() => {
+       this.broadcastOnlineRoomEvent('ONLINE_SYNC_REQUEST', {
+        matchId: this.onlineMatch.matchId,
+        requesterClientId: this.onlineMatch.clientId,
+        knownMoveCount: this.game.history().length
+       });
+       this.pullOnlineMatchStateFromSupabase();
+      }, 350);
+      setTimeout(() => {
+       switchMainView('chess');
+       showToast(`♟️ Đã khôi phục ván đấu Online với ${this.onlineMatch.opponentName} sau khi tải lại trang!`, 'emerald');
+      }, 250);
+     } else {
+      if (this.game.history().length > 0 && this.mode !== 'puzzle') {
+       this.startClockIfNeeded();
+      }
+      if (this.mode === 'bot' && this.game.turn() !== this.playerColor && !this.isMatchOver()) {
+       this.scheduleBotMoveWithDelay();
+      }
+     }
+     this.renderBoard();
+     this.updateUI();
+     return true;
+    } catch (e) {
+     return false;
+    }
+   },
    refillShuffledPuzzleDeck() {
     const indices = this.puzzles.map((_, i) => i);
     for (let i = indices.length - 1; i > 0; i--) {
      const j = Math.floor(Math.random() * (i + 1));
      [indices[i], indices[j]] = [indices[j], indices[i]];
     }
-    // Avoid repeating the current puzzle at the boundary of a new deck
     if (indices.length > 1 && indices[indices.length - 1] === this.puzzleIdx) {
      [indices[0], indices[indices.length - 1]] = [indices[indices.length - 1], indices[0]];
     }
@@ -5214,10 +5260,13 @@ END $$;</pre>
     if (postBox) postBox.classList.add('hidden');
     this.renderClocksAndPlayers();
    },
-   resetGameAndState(announce = true) {
+   resetGameAndState(announce = true, clearSnapshot = true) {
     if (this.mode === 'matchmaking' && this.onlineMatch.status === 'playing' && !this.isMatchOver()) {
      showToast('⚠️ Bạn đang trong trận đấu Online! Hãy thi đấu hết ván hoặc bấm "🏳️ Đầu Hàng" trước khi tạo ván mới.', 'amber');
      return;
+    }
+    if (clearSnapshot) {
+     this.clearSavedGameSnapshot();
     }
     this.closePromotionModal();
     this.closeResignModal();
@@ -5226,6 +5275,7 @@ END $$;</pre>
      this.cancelOnlineMatchSearch(false);
     }
     if (this.mode !== 'matchmaking') {
+     this.stopOnlineMatchSyncLoop();
      this.onlineMatch.status = 'idle';
      this.onlineMatch.matchId = null;
     }
@@ -5261,7 +5311,7 @@ END $$;</pre>
      this.updateOnlineLobbyUI();
      if (openingEl) openingEl.textContent = '⚔️ Đấu Trường Ghép Trận Online Công Bằng (±100 Elo)';
      if (coachEl) {
-      coachEl.innerHTML = `Chọn <strong>Thời gian mỗi bên</strong> (3, 5, 10 hoặc 15 phút) rồi bấm <strong>"⚔️ Tìm Đối Thủ Online"</strong>. Hệ thống chỉ ghép 2 người chơi cùng mức thời gian và có điểm Elo bằng nhau hoặc chênh lệch từ <strong>1 đến 100 Elo</strong> (${Math.max(100, AppState.chessElo - 100)} – ${AppState.chessElo + 100} Elo).`;
+      coachEl.innerHTML = `Chọn <strong>Thời gian mỗi bên</strong> (3, 5, 10 hoặc 15 phút) rồi bấm <strong>"⚔️ Tìm Đối Thủ Online"</strong>. Hệ thống chỉ ghép 2 người chơi cùng mức thời gian và có điểm Elo chênh lệch từ <strong>0 đến 100 Elo</strong> (${Math.max(100, AppState.chessElo - 100)} – ${AppState.chessElo + 100} Elo).`;
      }
      this.flipped = false;
      this.renderBoard();
@@ -5313,11 +5363,13 @@ END $$;</pre>
     if (this.clockRunning || this.isMatchOver()) return;
     this.clockRunning = true;
     clearInterval(this.clockInterval);
+    let tickCounter = 0;
     this.clockInterval = setInterval(() => {
      if (this.isMatchOver()) {
       this.stopClock();
       return;
      }
+     tickCounter++;
      if (this.game.turn() === 'w') {
       this.whiteTime = Math.max(0, this.whiteTime - 1);
       if (this.whiteTime === 0) {
@@ -5325,6 +5377,7 @@ END $$;</pre>
         this.broadcastOnlineRoomEvent('ONLINE_TIMEOUT', { matchId: this.onlineMatch.matchId, timeoutColor: 'w' });
        }
        this.finishGame('timeout', 'b', '⏰ Quân Trắng hết thời gian (Time Out) — Quân Đen thắng!');
+       return;
       }
      } else {
       this.blackTime = Math.max(0, this.blackTime - 1);
@@ -5333,7 +5386,11 @@ END $$;</pre>
         this.broadcastOnlineRoomEvent('ONLINE_TIMEOUT', { matchId: this.onlineMatch.matchId, timeoutColor: 'b' });
        }
        this.finishGame('timeout', 'w', '⏰ Quân Đen hết thời gian (Time Out) — Quân Trắng thắng!');
+       return;
       }
+     }
+     if (tickCounter % 2 === 0) {
+      this.saveActiveGameSnapshot();
      }
      this.renderClocksAndPlayers();
     }, 1000);
@@ -5377,7 +5434,7 @@ END $$;</pre>
       if (this.onlineMatch.status === 'playing' || this.onlineMatch.status === 'finished') {
        const pInfo = col === 'w' ? this.onlineMatch.whitePlayer : this.onlineMatch.blackPlayer;
        if (pInfo) {
-        const isMe = pInfo.clientId === this.onlineMatch.clientId;
+        const isMe = pInfo.clientId === this.onlineMatch.clientId || (AppState.userEmail && pInfo.email === AppState.userEmail);
         return `${pInfo.nickname} (${col === 'w' ? 'Trắng' : 'Đen'} • ${pInfo.elo} Elo)${isMe ? ' [BẠN]' : ''}`;
        }
       }
@@ -5725,23 +5782,103 @@ END $$;</pre>
     }
     return false;
    },
+   // ---------- DYNAMIC PERFORMANCE ELO ENGINE (BASED ON MATCH DATA, GOOD MOVES, SPEED & ELO DIFF) ----------
+   calculateOnlineMatchEloBreakdown(winnerColor, reason) {
+    const oldElo = Number(AppState.chessElo) || 1200;
+    const oppElo = Number(this.onlineMatch.opponentElo) || oldElo;
+    const signedEloGap = oppElo - oldElo; // >0 if opponent is higher rated
+    const absEloDiff = Math.abs(signedEloGap);
+    const expectedScore = 1 / (1 + Math.pow(10, signedEloGap / 400));
+    let actualScore = 0.5;
+    if (winnerColor === this.playerColor) actualScore = 1.0;
+    else if (winnerColor !== 'draw') actualScore = 0.0;
+
+    // 1. Base FIDE Elo + Elo Difference Factor
+    const baseFide = Math.round(28 * (actualScore - expectedScore));
+    let eloDiffBonus = 0;
+    if (actualScore === 1.0) {
+     // Bonus for beating higher-rated opponent, or scaled base if beating lower-rated opponent
+     eloDiffBonus = signedEloGap >= 0
+      ? Math.round(signedEloGap / 14) + 2
+      : Math.max(-3, Math.round(signedEloGap / 30));
+    } else if (actualScore === 0.0) {
+     eloDiffBonus = signedEloGap >= 0
+      ? Math.min(3, Math.round(signedEloGap / 30))
+      : Math.round(signedEloGap / 18);
+    }
+
+    // 2. Analyze Player's Tactical & Good Moves from Match Data
+    const myMoves = this.moveEvaluations.filter(m => m.color === this.playerColor);
+    const goodMovesList = myMoves.filter(m =>
+     m.delta >= 0.35 || m.captured || m.san.includes('+') || m.san.includes('#')
+    );
+    const brilliantMovesCount = myMoves.filter(m => m.delta >= 1.2 || m.san.includes('#')).length;
+    const goodMovesCount = goodMovesList.length;
+    let tacticalBonus = 0;
+    if (actualScore === 1.0) {
+     tacticalBonus = Math.min(12, Math.max(2, goodMovesCount * 2 + brilliantMovesCount * 2));
+     if (reason === 'checkmate') tacticalBonus += 3;
+    } else if (actualScore === 0.5) {
+     tacticalBonus = Math.min(4, Math.floor(goodMovesCount / 2));
+    } else {
+     // Even in a loss, strong tactical play cushions Elo loss slightly
+     tacticalBonus = Math.min(4, Math.floor(goodMovesCount / 3));
+    }
+
+    // 3. Time Taken to Defeat Opponent (Speed Efficiency Bonus)
+    const myRemainingSec = this.playerColor === 'w' ? this.whiteTime : this.blackTime;
+    const timeLimitSec = Math.max(60, this.initialTimeSec || 600);
+    const timeUsedSec = Math.max(1, timeLimitSec - myRemainingSec);
+    const remainingRatio = Math.max(0, Math.min(1, myRemainingSec / timeLimitSec));
+    let speedBonus = 0;
+    if (actualScore === 1.0) {
+     if (remainingRatio >= 0.75) speedBonus = 10;
+     else if (remainingRatio >= 0.55) speedBonus = 7;
+     else if (remainingRatio >= 0.35) speedBonus = 5;
+     else if (remainingRatio >= 0.15) speedBonus = 3;
+     else speedBonus = 1;
+    }
+
+    let totalDelta = baseFide + eloDiffBonus + tacticalBonus + speedBonus;
+    if (actualScore === 1.0) {
+     totalDelta = Math.max(12, Math.min(55, totalDelta));
+    } else if (actualScore === 0.0) {
+     totalDelta = Math.min(-8, Math.max(-36, totalDelta));
+    } else {
+     totalDelta = Math.max(-6, Math.min(8, totalDelta));
+    }
+
+    return {
+     totalDelta,
+     baseFide,
+     eloDiffBonus,
+     tacticalBonus,
+     speedBonus,
+     goodMovesCount,
+     brilliantMovesCount,
+     timeUsedSec,
+     myRemainingSec,
+     timeLimitSec,
+     absEloDiff,
+     signedEloGap,
+     oldElo,
+     oppElo
+    };
+   },
    finishGame(reason, winnerColor, toastMessage) {
     this.stopClock();
+    this.stopOnlineMatchSyncLoop();
+    this.clearSavedGameSnapshot();
     this.closeResignModal();
     this.closeOnlineDrawOfferModal();
     let eloDelta = 0;
+    let eloBreakdown = null;
     const oldElo = AppState.chessElo || 1200;
     if (this.mode === 'matchmaking' && (this.onlineMatch.status === 'playing' || this.onlineMatch.status === 'finished') && !this.onlineMatch.eloAlreadySettled) {
      this.onlineMatch.eloAlreadySettled = true;
      this.onlineMatch.status = 'finished';
-     const oppElo = this.onlineMatch.opponentElo || oldElo;
-     const expectedScore = 1 / (1 + Math.pow(10, (oppElo - oldElo) / 400));
-     let actualScore = 0.5;
-     if (winnerColor === this.playerColor) actualScore = 1.0;
-     else if (winnerColor !== 'draw') actualScore = 0.0;
-     eloDelta = Math.round(32 * (actualScore - expectedScore));
-     if (actualScore === 1.0 && eloDelta < 8) eloDelta = 8;
-     if (actualScore === 0.0 && eloDelta > -8) eloDelta = -8;
+     eloBreakdown = this.calculateOnlineMatchEloBreakdown(winnerColor, reason);
+     eloDelta = eloBreakdown.totalDelta;
      AppState.chessElo = Math.max(100, oldElo + eloDelta);
      if (AppState.userEmail) {
       saveUserProgress(true);
@@ -5756,14 +5893,14 @@ END $$;</pre>
      });
      this.updateOnlineLobbyUI();
     }
-    this.customGameOver = { reason, winnerColor, eloDelta, oldElo, newElo: AppState.chessElo };
+    this.customGameOver = { reason, winnerColor, eloDelta, oldElo, newElo: AppState.chessElo, eloBreakdown };
     updateDashboardProgressUI();
     SoundFX.play(winnerColor === this.playerColor || winnerColor === 'draw' ? 'success' : 'beep');
     showToast(toastMessage, winnerColor === this.playerColor ? 'emerald' : (winnerColor === 'draw' ? 'cyan' : 'rose'));
-    this.renderPostGameAnalysis(reason, winnerColor, eloDelta, oldElo);
+    this.renderPostGameAnalysis(reason, winnerColor, eloDelta, oldElo, eloBreakdown);
     this.updateUI();
    },
-   renderPostGameAnalysis(reason, winnerColor, eloDelta, oldElo = AppState.chessElo) {
+   renderPostGameAnalysis(reason, winnerColor, eloDelta, oldElo = AppState.chessElo, eloBreakdown = null) {
     const box = document.getElementById('chess-postgame-box');
     const titleEl = document.getElementById('postgame-title');
     const badgeEl = document.getElementById('postgame-elo-badge');
@@ -5816,9 +5953,38 @@ END $$;</pre>
       </div>
      `;
     }
-    const eloDescHtml = this.mode === 'matchmaking'
-     ? `<div>• <strong>Biến động Elo Online (Chuẩn FIDE K=32):</strong> <span class="font-mono-code font-extrabold ${eloDelta >= 0 ? 'text-emerald-300' : 'text-rose-300'}">${signStr} Elo (${oldElo} → ${AppState.chessElo} Elo)</span> trước đối thủ <strong>${this.onlineMatch.opponentName || 'Online'} (${this.onlineMatch.opponentElo} Elo • Chênh lệch ${this.onlineMatch.eloDiff} Elo)</strong>. Đã đồng bộ trực tiếp lên BXH!</div>`
-     : `<div>• <strong>Hệ số Elo:</strong> <span class="font-mono-code font-bold text-amber-300">+0 Elo (Giữ nguyên ${AppState.chessElo} Elo)</span> — <em>Chuyển sang chế độ <strong>⚔️ Ghép Đấu Online (±100 Elo)</strong> để thi đấu tính điểm Elo thật với người chơi khác!</em></div>`;
+    let eloDescHtml = '';
+    if (this.mode === 'matchmaking' && eloBreakdown) {
+     const b = eloBreakdown;
+     const baseCombined = b.baseFide + b.eloDiffBonus;
+     const baseSign = baseCombined >= 0 ? `+${baseCombined}` : `${baseCombined}`;
+     const tacSign = b.tacticalBonus >= 0 ? `+${b.tacticalBonus}` : `${b.tacticalBonus}`;
+     const spdSign = b.speedBonus >= 0 ? `+${b.speedBonus}` : `${b.speedBonus}`;
+     eloDescHtml = `
+      <div class="p-3 rounded-xl bg-slate-950/95 border border-cyan-500/40 space-y-1.5">
+       <div class="font-extrabold text-cyan-300 text-xs sm:text-sm">📊 Chi Tiết Tính Điểm Elo Ván Đấu Online:</div>
+       <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 text-[11px]">
+        <div class="p-2 rounded-lg bg-slate-900 border border-slate-800">
+         <div class="text-slate-400">1. Chênh lệch Elo (${b.absEloDiff})</div>
+         <div class="font-mono-code font-extrabold text-amber-300 mt-0.5">${baseSign} Elo</div>
+        </div>
+        <div class="p-2 rounded-lg bg-slate-900 border border-slate-800">
+         <div class="text-slate-400">2. Nước cờ tốt (${b.goodMovesCount} nước)</div>
+         <div class="font-mono-code font-extrabold text-emerald-300 mt-0.5">${tacSign} Elo</div>
+        </div>
+        <div class="p-2 rounded-lg bg-slate-900 border border-slate-800">
+         <div class="text-slate-400">3. Tốc độ hạ (${this.formatClock(b.timeUsedSec)})</div>
+         <div class="font-mono-code font-extrabold text-cyan-300 mt-0.5">${spdSign} Elo</div>
+        </div>
+       </div>
+       <div class="text-xs pt-1 border-t border-slate-800">
+        Tổng cộng: <span class="font-mono-code font-extrabold ${eloDelta >= 0 ? 'text-emerald-300' : 'text-rose-300'}">${signStr} Elo (${oldElo} → ${AppState.chessElo} Elo)</span> trước đối thủ <strong>${this.onlineMatch.opponentName || 'Online'} (${b.oppElo} Elo)</strong>.
+       </div>
+      </div>
+     `;
+    } else {
+     eloDescHtml = `<div>• <strong>Hệ số Elo:</strong> <span class="font-mono-code font-bold text-amber-300">+0 Elo (Giữ nguyên ${AppState.chessElo} Elo)</span> — <em>Chuyển sang chế độ <strong>⚔️ Ghép Đấu Online (±100 Elo)</strong> để thi đấu tính điểm Elo thật dựa trên chất lượng nước đi, thời gian hạ đối thủ và độ chênh lệch Elo!</em></div>`;
+    }
     sumEl.innerHTML = `
      <div>• <strong>Lý do kết thúc:</strong> ${reasonMap[reason] || reason} (${totalFullMoves} hiệp / ${totalHalfMoves} nước đi).</div>
      ${eloDescHtml}
@@ -5841,6 +6007,12 @@ END $$;</pre>
       showToast(`👑 Đã phong cấp Tốt thành ${roleNames[promoType] || 'Hậu'}!`, 'emerald');
      }
      if (this.mode === 'matchmaking' && this.onlineMatch.status === 'playing' && !isRemoteOnlineMove) {
+      const fullHist = this.game.history({ verbose: true }).map(m => ({
+       from: m.from,
+       to: m.to,
+       promotion: m.promotion || 'q',
+       san: m.san
+      }));
       const movePayload = {
        matchId: this.onlineMatch.matchId,
        senderClientId: this.onlineMatch.clientId,
@@ -5850,24 +6022,84 @@ END $$;</pre>
        promotion: promoType || 'q',
        san: moveObj.san,
        fen: this.game.fen(),
-       history: this.game.history({ verbose: true }).map(m => ({ from: m.from, to: m.to, promotion: m.promotion || 'q' })),
+       history: fullHist,
        whiteTime: this.whiteTime,
        blackTime: this.blackTime,
-       moveCount: this.game.history().length
+       moveCount: fullHist.length
       };
       this.broadcastOnlineRoomEvent('ONLINE_MOVE', movePayload);
       this.updateOnlineMatchRowInSupabase({
        fen: movePayload.fen,
-       moves_json: movePayload.history,
-       last_move: { from: moveObj.from, to: moveObj.to, promotion: promoType || 'q', san: moveObj.san, moveCount: movePayload.moveCount },
+       moves_json: fullHist,
+       last_move: {
+        from: moveObj.from,
+        to: moveObj.to,
+        promotion: promoType || 'q',
+        san: moveObj.san,
+        moveCount: movePayload.moveCount
+       },
        white_time: this.whiteTime,
        black_time: this.blackTime
       });
      }
+     this.saveActiveGameSnapshot();
      this.renderBoard();
      this.updateUI();
      this.checkPostMove(moveObj);
     }
+   },
+   // Reconstruct or advance local board from opponent's authoritative move list / FEN so no move is ever missed
+   syncBoardFromRemoteState(historyArr, fenStr, whiteTimeVal, blackTimeVal, lastMoveObj) {
+    if (this.isMatchOver() || !this.game) return false;
+    const localCount = this.game.history().length;
+    let applied = false;
+    if (Array.isArray(historyArr) && historyArr.length > localCount) {
+     for (let i = localCount; i < historyArr.length; i++) {
+      const step = historyArr[i];
+      if (!step || !step.from || !step.to) continue;
+      const prevEval = this.evaluateBoard();
+      const mv = this.game.move({ from: step.from, to: step.to, promotion: step.promotion || 'q' });
+      if (mv) {
+       this.lastMoveSquares = [mv.from, mv.to];
+       this.recordMoveEvaluation(mv, prevEval);
+       applied = true;
+       if (i === historyArr.length - 1) {
+        SoundFX.play(mv.captured ? 'capture' : 'move');
+        this.checkPostMove(mv);
+       }
+      }
+     }
+    } else if (lastMoveObj && lastMoveObj.moveCount === localCount + 1 && lastMoveObj.from && lastMoveObj.to) {
+     const prevEval = this.evaluateBoard();
+     const mv = this.game.move({ from: lastMoveObj.from, to: lastMoveObj.to, promotion: lastMoveObj.promotion || 'q' });
+     if (mv) {
+      this.lastMoveSquares = [mv.from, mv.to];
+      this.recordMoveEvaluation(mv, prevEval);
+      applied = true;
+      SoundFX.play(mv.captured ? 'capture' : 'move');
+      this.checkPostMove(mv);
+     }
+    } else if (fenStr && fenStr !== this.game.fen() && (!historyArr || historyArr.length > localCount)) {
+     const ok = this.game.load(fenStr);
+     if (ok) {
+      if (lastMoveObj && lastMoveObj.from && lastMoveObj.to) {
+       this.lastMoveSquares = [lastMoveObj.from, lastMoveObj.to];
+      }
+      applied = true;
+      SoundFX.play('move');
+     }
+    }
+    if (applied) {
+     if (typeof whiteTimeVal === 'number') this.whiteTime = whiteTimeVal;
+     if (typeof blackTimeVal === 'number') this.blackTime = blackTimeVal;
+     this.selectedSq = null;
+     this.legalTargets = [];
+     this.startClockIfNeeded();
+     this.saveActiveGameSnapshot();
+     this.renderBoard();
+     this.updateUI();
+    }
+    return applied;
    },
    onSquareClick(sq) {
     if (this.isMatchOver()) return;
@@ -5951,22 +6183,18 @@ END $$;</pre>
    },
    scheduleBotMoveWithDelay() {
     if (this.botTimerId) clearTimeout(this.botTimerId);
-    // Natural human-like random thinking delay (varies by game phase, forced moves, and tactical complexity)
     const plyCount = this.game ? this.game.history().length : 0;
     const legalCount = this.game ? this.game.moves().length : 10;
     const inCheck = this.game ? this.game.in_check() : false;
     let minDelay = 1150;
     let maxDelay = 2650;
     if (legalCount <= 2 || inCheck) {
-     // Forced response or escaping check: faster human reaction (0.9s - 1.75s)
      minDelay = 900;
      maxDelay = 1750;
     } else if (plyCount < 6) {
-     // Early opening book moves: natural rhythm (1.0s - 2.1s)
      minDelay = 1000;
      maxDelay = 2100;
     } else if (legalCount >= 22) {
-     // Complex middle-game position: deeper human contemplation (1.4s - 3.1s)
      minDelay = 1400;
      maxDelay = 3100;
     }
@@ -6089,6 +6317,7 @@ END $$;</pre>
      this.recordMoveEvaluation(m, prevEval);
      this.startClockIfNeeded();
      SoundFX.play(m.captured ? 'capture' : 'move');
+     this.saveActiveGameSnapshot();
      this.renderBoard();
      this.updateUI();
      this.checkPostMove(m);
@@ -6139,7 +6368,6 @@ END $$;</pre>
      showToast('🤖 LM StockBot AI từ chối Xin Hòa vì đang có ưu thế lớn! Hãy tiếp tục chiến đấu.', 'amber');
     }
    },
-   // ---------- RESIGN (ĐẦU HÀNG) MODAL & EXECUTION ----------
    openResignModal() {
     if (this.mode === 'puzzle') {
      showToast('Chế độ Giải Thế Cờ không áp dụng Đầu Hàng! Bấm "🎲 Tạo Bài Ngẫu Nhiên Mới" để đổi bài.', 'amber');
@@ -6156,7 +6384,7 @@ END $$;</pre>
     const descEl = document.getElementById('chess-resign-modal-desc');
     if (descEl) {
      if (this.mode === 'matchmaking') {
-      descEl.innerHTML = `Bạn có chắc chắn muốn <strong>🏳️ Đầu Hàng</strong> trước đối thủ <strong class="text-emerald-300">${this.onlineMatch.opponentName || 'Online'} (${this.onlineMatch.opponentElo} Elo)</strong> không? Bạn sẽ bị xử thua ván này và bị trừ điểm Elo theo chuẩn FIDE.`;
+      descEl.innerHTML = `Bạn có chắc chắn muốn <strong>🏳️ Đầu Hàng</strong> trước đối thủ <strong class="text-emerald-300">${this.onlineMatch.opponentName || 'Online'} (${this.onlineMatch.opponentElo} Elo)</strong> không? Bạn sẽ bị xử thua ván này và bị trừ điểm Elo.`;
      } else if (this.mode === 'pvp') {
       const turnSide = this.game.turn() === 'w' ? 'Quân Trắng' : 'Quân Đen';
       descEl.innerHTML = `Đang là lượt của <strong>${turnSide}</strong>. Bạn có chắc chắn <strong>${turnSide}</strong> muốn nhận thua (Đầu Hàng) ván cờ này không?`;
@@ -6235,9 +6463,8 @@ END $$;</pre>
      showToast('Bạn đã từ chối lời đề nghị Hòa cờ của đối thủ.', 'amber');
     }
    },
-   // ---------- REAL-TIME ONLINE MATCHMAKING ENGINE (0 - 100 ELO FAIR RANGE + TIME CONTROL) ----------
+   // ---------- REAL-TIME MULTI-CHANNEL ONLINE MATCHMAKING & MOVE SYNC ENGINE ----------
    initOnlineMatchmakingChannels() {
-    // 1. Local BroadcastChannel for instant multi-tab / same-machine testing
     try {
      if (typeof BroadcastChannel !== 'undefined' && !this.onlineMatch.localBus) {
       this.onlineMatch.localBus = new BroadcastChannel('lm_chess_online_bus_v2');
@@ -6246,7 +6473,14 @@ END $$;</pre>
       };
      }
     } catch (e) {}
-    // 2. Supabase Realtime Lobby Channel for cross-device / cross-network matchmaking
+    window.addEventListener('storage', ev => {
+     if (ev.key === 'lm_chess_online_storage_packet_v2' && ev.newValue) {
+      try {
+       const pkt = JSON.parse(ev.newValue);
+       if (pkt) this.handleIncomingOnlinePacket(pkt);
+      } catch (e) {}
+     }
+    });
     this.ensureSupabaseLobbyChannel();
    },
    ensureSupabaseLobbyChannel() {
@@ -6254,11 +6488,16 @@ END $$;</pre>
     try {
      const ch = AppState.supabaseClient.channel('lm_chess_matchmaking_lobby_v2', {
       config: {
-       broadcast: { self: false },
+       broadcast: { self: false, ack: false },
        presence: { key: this.onlineMatch.clientId }
       }
      });
      ch.on('broadcast', { event: 'LOBBY_EVENT' }, payload => {
+      if (payload && payload.payload) {
+       this.handleIncomingOnlinePacket(payload.payload);
+      }
+     });
+     ch.on('broadcast', { event: 'ROOM_EVENT' }, payload => {
       if (payload && payload.payload) {
        this.handleIncomingOnlinePacket(payload.payload);
       }
@@ -6269,8 +6508,13 @@ END $$;</pre>
        Object.values(st).forEach(arr => {
         if (Array.isArray(arr)) {
          arr.forEach(p => {
-          if (p && p.clientId && p.clientId !== this.onlineMatch.clientId && p.status === 'searching') {
+          if (!p || !p.clientId) return;
+          if (p.clientId !== this.onlineMatch.clientId && p.status === 'searching') {
            this.onlineMatch.waitingPeers.set(p.clientId, { ...p, lastSeen: Date.now() });
+          }
+          // Also check if a peer in presence has an active match update for our current matchId!
+          if (this.onlineMatch.status === 'playing' && p.activeMatchId && p.activeMatchId === this.onlineMatch.matchId && p.clientId !== this.onlineMatch.clientId) {
+           this.syncBoardFromRemoteState(p.history, p.fen, p.whiteTime, p.blackTime, p.lastMove);
           }
          });
         }
@@ -6278,7 +6522,6 @@ END $$;</pre>
        this.renderWaitingPeersList();
       } catch (e) {}
      });
-     // Also listen to postgres_changes on lm_chess_online_matches if the user created the table
      ch.on(
       'postgres_changes',
       { event: '*', schema: 'public', table: 'lm_chess_online_matches' },
@@ -6288,6 +6531,7 @@ END $$;</pre>
      );
      ch.subscribe(status => {
       if (status === 'SUBSCRIBED') {
+       this.onlineMatch.lobbySubscribed = true;
        this.updateOnlineLobbyUI();
       }
      });
@@ -6304,6 +6548,9 @@ END $$;</pre>
     if (this.onlineMatch.localBus) {
      try { this.onlineMatch.localBus.postMessage(packet); } catch (e) {}
     }
+    try {
+     StorageUtil.set('lm_chess_online_storage_packet_v2', packet);
+    } catch (e) {}
     this.ensureSupabaseLobbyChannel();
     if (this.onlineMatch.lobbyChannel) {
      try {
@@ -6316,23 +6563,80 @@ END $$;</pre>
     }
    },
    subscribeToOnlineMatchRoom(matchId) {
+    if (!matchId) return;
+    if (this.onlineMatch.roomChannel && this.onlineMatch.roomChannel._matchId === matchId && this.onlineMatch.roomSubscribed) {
+     return;
+    }
     if (this.onlineMatch.roomChannel && AppState.supabaseClient) {
      try { AppState.supabaseClient.removeChannel(this.onlineMatch.roomChannel); } catch (e) {}
      this.onlineMatch.roomChannel = null;
+     this.onlineMatch.roomSubscribed = false;
     }
-    if (!AppState.supabaseClient || !matchId) return;
+    if (!AppState.supabaseClient) return;
     try {
      const rch = AppState.supabaseClient.channel(`lm_chess_room_${matchId}`, {
-      config: { broadcast: { self: false } }
+      config: {
+       broadcast: { self: false, ack: false },
+       presence: { key: this.onlineMatch.clientId }
+      }
      });
+     rch._matchId = matchId;
      rch.on('broadcast', { event: 'ROOM_EVENT' }, payload => {
       if (payload && payload.payload) {
        this.handleIncomingOnlinePacket(payload.payload);
       }
      });
-     rch.subscribe();
+     rch.on('presence', { event: 'sync' }, () => {
+      try {
+       const st = rch.presenceState() || {};
+       Object.values(st).forEach(arr => {
+        if (Array.isArray(arr)) {
+         arr.forEach(p => {
+          if (p && p.clientId !== this.onlineMatch.clientId && p.matchId === this.onlineMatch.matchId) {
+           this.syncBoardFromRemoteState(p.history, p.fen, p.whiteTime, p.blackTime, p.lastMove);
+          }
+         });
+        }
+       });
+      } catch (e) {}
+     });
+     rch.subscribe(status => {
+      if (status === 'SUBSCRIBED') {
+       this.onlineMatch.roomSubscribed = true;
+       this.trackRoomPresenceState();
+      }
+     });
      this.onlineMatch.roomChannel = rch;
     } catch (e) {}
+   },
+   trackRoomPresenceState() {
+    if (this.onlineMatch.status !== 'playing' || !this.onlineMatch.matchId || !this.game) return;
+    const hist = this.game.history({ verbose: true }).map(m => ({
+     from: m.from,
+     to: m.to,
+     promotion: m.promotion || 'q',
+     san: m.san
+    }));
+    const lastM = hist.length ? { ...hist[hist.length - 1], moveCount: hist.length } : null;
+    const statePayload = {
+     clientId: this.onlineMatch.clientId,
+     status: 'playing',
+     activeMatchId: this.onlineMatch.matchId,
+     matchId: this.onlineMatch.matchId,
+     fen: this.game.fen(),
+     moveCount: hist.length,
+     history: hist,
+     lastMove: lastM,
+     whiteTime: this.whiteTime,
+     blackTime: this.blackTime,
+     ts: Date.now()
+    };
+    if (this.onlineMatch.roomChannel && this.onlineMatch.roomSubscribed) {
+     try { this.onlineMatch.roomChannel.track(statePayload); } catch (e) {}
+    }
+    if (this.onlineMatch.lobbyChannel && this.onlineMatch.lobbySubscribed) {
+     try { this.onlineMatch.lobbyChannel.track(statePayload); } catch (e) {}
+    }
    },
    broadcastOnlineRoomEvent(type, data) {
     const packet = {
@@ -6341,18 +6645,15 @@ END $$;</pre>
      senderClientId: this.onlineMatch.clientId,
      ts: Date.now()
     };
+    // 1. Local BroadcastChannel & Storage event (instant cross-tab)
     if (this.onlineMatch.localBus) {
      try { this.onlineMatch.localBus.postMessage(packet); } catch (e) {}
     }
-    if (this.onlineMatch.roomChannel) {
-     try {
-      this.onlineMatch.roomChannel.send({
-       type: 'broadcast',
-       event: 'ROOM_EVENT',
-       payload: packet
-      });
-     } catch (e) {}
-    }
+    try {
+     StorageUtil.set('lm_chess_online_storage_packet_v2', packet);
+    } catch (e) {}
+    // 2. Always broadcast on ALREADY-SUBSCRIBED lobbyChannel so there is zero subscription race delay!
+    this.ensureSupabaseLobbyChannel();
     if (this.onlineMatch.lobbyChannel) {
      try {
       this.onlineMatch.lobbyChannel.send({
@@ -6362,6 +6663,86 @@ END $$;</pre>
       });
      } catch (e) {}
     }
+    // 3. Also broadcast on dedicated roomChannel
+    if (this.onlineMatch.roomChannel && this.onlineMatch.roomSubscribed) {
+     try {
+      this.onlineMatch.roomChannel.send({
+       type: 'broadcast',
+       event: 'ROOM_EVENT',
+       payload: packet
+      });
+     } catch (e) {}
+    }
+    // 4. Also update Realtime Presence state so any client automatically syncs
+    if (type === 'ONLINE_MOVE') {
+     this.trackRoomPresenceState();
+     // Retry sending move packet 350ms later to guarantee delivery over lossy mobile networks
+     setTimeout(() => {
+      if (this.onlineMatch.status === 'playing' && !this.isMatchOver()) {
+       if (this.onlineMatch.lobbyChannel) {
+        try {
+         this.onlineMatch.lobbyChannel.send({
+          type: 'broadcast',
+          event: 'LOBBY_EVENT',
+          payload: packet
+         });
+        } catch (e) {}
+       }
+      }
+     }, 350);
+    }
+   },
+   startOnlineMatchSyncLoop() {
+    this.stopOnlineMatchSyncLoop();
+    this.onlineMatch.syncHeartbeatId = setInterval(() => {
+     if (this.mode !== 'matchmaking' || this.onlineMatch.status !== 'playing' || this.isMatchOver()) {
+      this.stopOnlineMatchSyncLoop();
+      return;
+     }
+     const fullHist = this.game.history({ verbose: true }).map(m => ({
+      from: m.from,
+      to: m.to,
+      promotion: m.promotion || 'q',
+      san: m.san
+     }));
+     if (fullHist.length > 0) {
+      const lastM = fullHist[fullHist.length - 1];
+      this.broadcastOnlineRoomEvent('ONLINE_STATE_HEARTBEAT', {
+       matchId: this.onlineMatch.matchId,
+       fen: this.game.fen(),
+       history: fullHist,
+       lastMove: { ...lastM, moveCount: fullHist.length },
+       moveCount: fullHist.length,
+       whiteTime: this.whiteTime,
+       blackTime: this.blackTime
+      });
+     }
+     this.pullOnlineMatchStateFromSupabase();
+    }, 1800);
+   },
+   stopOnlineMatchSyncLoop() {
+    if (this.onlineMatch.syncHeartbeatId) {
+     clearInterval(this.onlineMatch.syncHeartbeatId);
+     this.onlineMatch.syncHeartbeatId = null;
+    }
+   },
+   async pullOnlineMatchStateFromSupabase() {
+    if (!AppState.supabaseClient || !this.onlineMatch.matchId || this.onlineMatch.status !== 'playing') return;
+    try {
+     const { data: rows, error } = await AppState.supabaseClient
+      .from('lm_chess_online_matches')
+      .select('*')
+      .eq('id', this.onlineMatch.matchId)
+      .limit(1);
+     if (error || !Array.isArray(rows) || !rows.length) return;
+     const row = rows[0];
+     if (row.status === 'finished' && !this.isMatchOver() && row.winner) {
+      this.finishGame(row.end_reason || 'resign', row.winner, '🏁 Ván đấu Online đã kết thúc!');
+      return;
+     }
+     const remoteHistory = Array.isArray(row.moves_json) ? row.moves_json : null;
+     this.syncBoardFromRemoteState(remoteHistory, row.fen, row.white_time, row.black_time, row.last_move);
+    } catch (e) {}
    },
    isPeerFairMatch(peer) {
     if (!peer || peer.clientId === this.onlineMatch.clientId) return false;
@@ -6391,7 +6772,6 @@ END $$;</pre>
     const minElo = Math.max(100, AppState.chessElo - 100);
     const maxElo = AppState.chessElo + 100;
     showToast(`⚔️ Đang tìm đối thủ mức ${minElo}–${maxElo} Elo (Thời gian: ${this.initialTimeSec / 60} phút)...`, 'emerald');
-    // Track presence in Supabase channel
     if (this.onlineMatch.lobbyChannel) {
      try {
       await this.onlineMatch.lobbyChannel.track({
@@ -6405,9 +6785,7 @@ END $$;</pre>
       });
      } catch (e) {}
     }
-    // Also check / insert into Supabase table lm_chess_online_matches if table exists
     this.tryMatchOrInsertInSupabaseTable();
-    // Broadcast queue ping immediately and every 1.5s
     const sendQueuePing = () => {
      if (this.onlineMatch.status !== 'searching') return;
      this.broadcastLobbyPacket('QUEUE_PING', {
@@ -6422,7 +6800,7 @@ END $$;</pre>
     };
     sendQueuePing();
     clearInterval(this.onlineMatch.pingIntervalId);
-    this.onlineMatch.pingIntervalId = setInterval(sendQueuePing, 1400);
+    this.onlineMatch.pingIntervalId = setInterval(sendQueuePing, 1300);
     clearInterval(this.onlineMatch.searchTimerId);
     this.onlineMatch.searchTimerId = setInterval(() => {
      if (this.onlineMatch.status !== 'searching') {
@@ -6434,7 +6812,7 @@ END $$;</pre>
      if (timerTxt) {
       timerTxt.textContent = `Đang tìm đối thủ (${minElo}–${maxElo} Elo • ${this.initialTimeSec / 60} phút)... (${this.onlineMatch.searchSeconds}s)`;
      }
-     if (this.onlineMatch.searchSeconds % 3 === 0) {
+     if (this.onlineMatch.searchSeconds % 2 === 0) {
       this.tryMatchOrInsertInSupabaseTable();
      }
     }, 1000);
@@ -6475,7 +6853,6 @@ END $$;</pre>
     }
     this.renderWaitingPeersList();
     if (this.onlineMatch.status !== 'searching') return;
-    // Find all waiting peers with exact same timeControl and Elo difference 0..100
     const candidates = Array.from(this.onlineMatch.waitingPeers.values())
      .filter(p => this.isPeerFairMatch(p))
      .sort((a, b) => {
@@ -6486,11 +6863,10 @@ END $$;</pre>
      });
     if (!candidates.length) return;
     const bestPeer = candidates[0];
-    // Deterministic initiator rule (or fallback after 2s wait) so both clients agree on the exact same matchId
     const iAmInitiator =
      this.onlineMatch.queuedAt < bestPeer.queuedAt ||
      (this.onlineMatch.queuedAt === bestPeer.queuedAt && this.onlineMatch.clientId < bestPeer.clientId) ||
-     (now - this.onlineMatch.queuedAt > 2200);
+     (now - this.onlineMatch.queuedAt > 2000);
     if (iAmInitiator) {
      this.proposeMatchWithPeer(bestPeer);
     }
@@ -6498,7 +6874,7 @@ END $$;</pre>
    proposeMatchWithPeer(peer) {
     if (this.onlineMatch.status !== 'searching' || !peer) return;
     const pairKey = [this.onlineMatch.clientId, peer.clientId].sort().join('_');
-    const matchId = 'm_' + pairKey + '_' + Math.floor(Date.now() / 4000).toString(36);
+    const matchId = 'm_' + pairKey;
     const meObj = {
      clientId: this.onlineMatch.clientId,
      email: AppState.userEmail,
@@ -6511,8 +6887,7 @@ END $$;</pre>
      nickname: peer.nickname || 'Kỳ thủ Online',
      elo: Number(peer.elo) || 1200
     };
-    // Deterministic color assignment based on queuedAt
-    const meIsWhite = (this.onlineMatch.queuedAt <= peer.queuedAt);
+    const meIsWhite = (this.onlineMatch.clientId < peer.clientId);
     const proposal = {
      matchId,
      timeControl: Number(this.initialTimeSec),
@@ -6548,7 +6923,6 @@ END $$;</pre>
     }
     if (type === 'MATCH_PROPOSAL') {
      if (this.onlineMatch.status === 'searching' && pkt.targetClientId === this.onlineMatch.clientId) {
-      // Verify fair Elo (0-100) and same timeControl
       const opp = pkt.white.clientId === this.onlineMatch.clientId ? pkt.black : pkt.white;
       if (Number(pkt.timeControl) === Number(this.initialTimeSec) && Math.abs(opp.elo - AppState.chessElo) <= 100) {
        this.broadcastLobbyPacket('MATCH_ACCEPT', {
@@ -6567,28 +6941,45 @@ END $$;</pre>
      const isParticipant =
       (pkt.white && pkt.white.clientId === this.onlineMatch.clientId) ||
       (pkt.black && pkt.black.clientId === this.onlineMatch.clientId);
-     if (isParticipant && this.onlineMatch.status === 'searching') {
+     if (isParticipant && (this.onlineMatch.status === 'searching' || this.onlineMatch.matchId !== pkt.matchId)) {
       this.beginActiveOnlineMatch(pkt);
      }
      return;
     }
-    // In-game room events
+    // Check if packet belongs to our active match
     if (!this.onlineMatch.matchId || pkt.matchId !== this.onlineMatch.matchId) return;
-    if (type === 'ONLINE_MOVE') {
+    if (type === 'ONLINE_MOVE' || type === 'ONLINE_STATE_HEARTBEAT' || type === 'ONLINE_SYNC_RESPONSE') {
      if (this.isMatchOver()) return;
-     const currentLen = this.game.history().length;
-     if (pkt.moveCount === currentLen + 1) {
-      this.whiteTime = typeof pkt.whiteTime === 'number' ? pkt.whiteTime : this.whiteTime;
-      this.blackTime = typeof pkt.blackTime === 'number' ? pkt.blackTime : this.blackTime;
-      this.executePlayerMove(pkt.from, pkt.to, pkt.promotion || 'q', true);
-     } else if (Array.isArray(pkt.history) && pkt.history.length > currentLen) {
-      for (let i = currentLen; i < pkt.history.length; i++) {
-       const st = pkt.history[i];
-       this.executePlayerMove(st.from, st.to, st.promotion || 'q', true);
+     const lastMoveObj = pkt.lastMove || (pkt.from && pkt.to ? {
+      from: pkt.from,
+      to: pkt.to,
+      promotion: pkt.promotion || 'q',
+      san: pkt.san,
+      moveCount: pkt.moveCount
+     } : null);
+     this.syncBoardFromRemoteState(pkt.history, pkt.fen, pkt.whiteTime, pkt.blackTime, lastMoveObj);
+     return;
+    }
+    if (type === 'ONLINE_SYNC_REQUEST') {
+     if (this.onlineMatch.status === 'playing' && this.game) {
+      const fullHist = this.game.history({ verbose: true }).map(m => ({
+       from: m.from,
+       to: m.to,
+       promotion: m.promotion || 'q',
+       san: m.san
+      }));
+      if (fullHist.length >= (pkt.knownMoveCount || 0)) {
+       const lastM = fullHist.length ? { ...fullHist[fullHist.length - 1], moveCount: fullHist.length } : null;
+       this.broadcastOnlineRoomEvent('ONLINE_SYNC_RESPONSE', {
+        matchId: this.onlineMatch.matchId,
+        fen: this.game.fen(),
+        history: fullHist,
+        lastMove: lastM,
+        moveCount: fullHist.length,
+        whiteTime: this.whiteTime,
+        blackTime: this.blackTime
+       });
       }
-      if (typeof pkt.whiteTime === 'number') this.whiteTime = pkt.whiteTime;
-      if (typeof pkt.blackTime === 'number') this.blackTime = pkt.blackTime;
-      this.renderClocksAndPlayers();
      }
      return;
     }
@@ -6638,7 +7029,7 @@ END $$;</pre>
       .gte('updated_at', freshCutoff)
       .neq('host_client_id', this.onlineMatch.clientId)
       .limit(10);
-     if (error) return; // Table not created yet -> Realtime WebSocket handles everything seamlessly
+     if (error) return;
      if (Array.isArray(waitingRows) && waitingRows.length > 0) {
       waitingRows.sort((a, b) => Math.abs(a.host_elo - myElo) - Math.abs(b.host_elo - myElo));
       const room = waitingRows[0];
@@ -6687,7 +7078,6 @@ END $$;</pre>
        return;
       }
      }
-     // Otherwise upsert our own waiting room row
      const myRoomId = 'room_' + this.onlineMatch.clientId;
      await AppState.supabaseClient
       .from('lm_chess_online_matches')
@@ -6732,12 +7122,8 @@ END $$;</pre>
      return;
     }
     if (this.onlineMatch.status === 'playing' && row.id === this.onlineMatch.matchId) {
-     if (row.last_move && row.last_move.moveCount === this.game.history().length + 1) {
-      const lm = row.last_move;
-      this.whiteTime = typeof row.white_time === 'number' ? row.white_time : this.whiteTime;
-      this.blackTime = typeof row.black_time === 'number' ? row.black_time : this.blackTime;
-      this.executePlayerMove(lm.from, lm.to, lm.promotion || 'q', true);
-     }
+     const remoteHistory = Array.isArray(row.moves_json) ? row.moves_json : null;
+     this.syncBoardFromRemoteState(remoteHistory, row.fen, row.white_time, row.black_time, row.last_move);
      if (row.status === 'finished' && !this.isMatchOver() && row.winner) {
       this.finishGame(row.end_reason || 'resign', row.winner, '🏁 Ván đấu Online đã kết thúc!');
      }
@@ -6761,15 +7147,15 @@ END $$;</pre>
     this.onlineMatch.searchTimerId = null;
     this.onlineMatch.waitingPeers.delete(matchInfo.white.clientId);
     this.onlineMatch.waitingPeers.delete(matchInfo.black.clientId);
-    if (this.onlineMatch.lobbyChannel) {
-     try { this.onlineMatch.lobbyChannel.untrack(); } catch (e) {}
-    }
     this.onlineMatch.status = 'playing';
     this.onlineMatch.matchId = matchInfo.matchId;
     this.onlineMatch.whitePlayer = matchInfo.white;
     this.onlineMatch.blackPlayer = matchInfo.black;
     this.onlineMatch.eloAlreadySettled = false;
-    const iAmWhite = matchInfo.white.clientId === this.onlineMatch.clientId;
+    this.onlineMatch.matchStartedAt = Date.now();
+    const iAmWhite =
+     matchInfo.white.clientId === this.onlineMatch.clientId ||
+     (AppState.userEmail && matchInfo.white.email === AppState.userEmail && matchInfo.black.clientId !== this.onlineMatch.clientId);
     this.playerColor = iAmWhite ? 'w' : 'b';
     const opp = iAmWhite ? matchInfo.black : matchInfo.white;
     this.onlineMatch.opponentName = opp.nickname || 'Kỳ thủ Online';
@@ -6787,6 +7173,9 @@ END $$;</pre>
     this.resetClocks();
     this.flipped = (this.playerColor === 'b');
     this.startClockIfNeeded();
+    this.startOnlineMatchSyncLoop();
+    this.trackRoomPresenceState();
+    this.saveActiveGameSnapshot();
     this.updateOnlineLobbyUI();
     this.renderBoard();
     this.updateUI();
@@ -6894,6 +7283,7 @@ END $$;</pre>
     this.selectedSq = null;
     this.legalTargets = [];
     this.lastMoveSquares = lastM ? [lastM.from, lastM.to] : [];
+    this.saveActiveGameSnapshot();
     this.renderBoard();
     this.updateUI();
     document.getElementById('chess-opening-name').textContent = `📌 Đang bày: ${gambitObj.name}`;
@@ -6903,7 +7293,6 @@ END $$;</pre>
      this.scheduleBotMoveWithDelay();
     }
    },
-   // Random Non-Sequential Puzzle Loader
    loadRandomPuzzle() {
     this.stopClock();
     this.customGameOver = null;
@@ -7336,7 +7725,6 @@ END $$;</pre>
      fireMove();
     });
    });
-   // Mobile-Friendly Move Pad Category Switcher (1 Tầng / 2 Tầng / M,E,S • x,y,z / Tất Cả)
    document.querySelectorAll('.move-pad-tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
      const tab = btn.getAttribute('data-move-pad-tab');
@@ -7364,14 +7752,12 @@ END $$;</pre>
     showToast('🎯 Đã quay lại góc nhìn chuẩn CFOP (Vàng trên • Xanh lá trước • Đỏ phải)!', 'cyan');
    });
    document.getElementById('rubik-reset-btn').addEventListener('click', () => window.MainCube?.reset());
-   // Step-by-step buttons (Normal + Expanded)
    document.getElementById('rubik-step-prev-btn')?.addEventListener('click', () => window.MainCube?.stepBackward());
    document.getElementById('rubik-step-next-btn')?.addEventListener('click', () => window.MainCube?.stepForward());
    document.getElementById('rubik-step-play-btn')?.addEventListener('click', () => window.MainCube?.toggleAutoPlay());
    document.getElementById('exp-rubik-step-prev-btn')?.addEventListener('click', () => window.MainCube?.stepBackward());
    document.getElementById('exp-rubik-step-next-btn')?.addEventListener('click', () => window.MainCube?.stepForward());
    document.getElementById('exp-rubik-step-play-btn')?.addEventListener('click', () => window.MainCube?.toggleAutoPlay());
-   // Expanded Fullscreen Rubik Modal Buttons
    document.getElementById('rubik-expand-open-btn')?.addEventListener('click', () => RubikExpandedArena.openModal());
    document.getElementById('rubik-expand-inline-btn')?.addEventListener('click', () => RubikExpandedArena.openModal());
    document.getElementById('rubik-expand-close-btn')?.addEventListener('click', () => RubikExpandedArena.closeModal());
@@ -7395,7 +7781,6 @@ END $$;</pre>
      showToast('⌨️ Đã chuyển về chế độ phím xoay 1 tầng chuẩn (R, U, F, L, D, B)!', 'cyan');
     }
    });
-   // Rotation speed buttons
    document.querySelectorAll('.cube-speed-btn').forEach(btn => {
     btn.addEventListener('click', () => {
      const ms = Number(btn.getAttribute('data-cube-speed')) || 110;
@@ -7410,7 +7795,6 @@ END $$;</pre>
      showToast(`⚡ Đã chỉnh tốc độ xoay Rubik: ${btn.textContent}`, 'cyan');
     });
    });
-   // Dedicated Timer Scramble Generator
    document.getElementById('timer-new-scramble-btn')?.addEventListener('click', () => {
     const faces = ['U', 'D', 'R', 'L', 'F', 'B'];
     const mods = ['', "'", '2'];
@@ -7424,7 +7808,6 @@ END $$;</pre>
     }
     document.getElementById('timer-tab-scramble').textContent = seq.join(' ');
    });
-   // WCA Timer 0.5s Hold Handler
    const HOLD_DURATION_MS = 500;
    let holdProgressRaf = null;
    let holdBeginTime = 0;
@@ -7520,7 +7903,6 @@ END $$;</pre>
     updateDashboardProgressUI();
     showToast('Đã xóa lịch sử bấm giờ Rubik', 'cyan');
    });
-   // KEYBOARD CONTROLS FOR BOTH WCA TIMER AND RUBIK 3D ROTATION (R, R + ', R + 2, Shift+R -> r)
    const VALID_CUBE_KEY_CODES = {
     KeyR: 'R', KeyL: 'L', KeyU: 'U', KeyD: 'D', KeyF: 'F', KeyB: 'B',
     KeyM: 'M', KeyE: 'E', KeyS: 'S', KeyX: 'x', KeyY: 'y', KeyZ: 'z'
@@ -7528,7 +7910,6 @@ END $$;</pre>
    window.addEventListener('keydown', e => {
     const activeTag = document.activeElement ? document.activeElement.tagName : '';
     if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') return;
-    // Escape closes expanded modals
     if (e.code === 'Escape') {
      if (RubikExpandedArena.isOpen) {
       RubikExpandedArena.closeModal();
@@ -7542,20 +7923,16 @@ END $$;</pre>
     const rubikVisible = !document.getElementById('view-rubik').classList.contains('hidden');
     const timerVisible = !document.getElementById('rubik-panel-timer').classList.contains('hidden');
     const simVisible = !document.getElementById('rubik-panel-sim').classList.contains('hidden');
-    // 1. Spacebar for WCA Timer when Timer subtab is visible
     if (e.code === 'Space' && rubikVisible && timerVisible && !RubikExpandedArena.isOpen) {
      e.preventDefault();
      if (!e.repeat) beginTimerHold();
      return;
     }
-    // 2. Rubik 3D Keyboard Rotation Controls (Active in Expanded Rubik Modal OR in Rubik 3D Simulator tab)
     if (RubikExpandedArena.isOpen || (rubikVisible && simVisible)) {
      if (e.ctrlKey || e.altKey || e.metaKey) return;
-     // Track Quote (') or Digit2 (2) with zero-latency instant upgrade
      if (e.code === 'Quote' || e.key === "'" || e.key === '"') {
       e.preventDefault();
       RubikExpandedArena.heldQuote = true;
-      // If a letter key was just pressed within 95ms, invert that move + fire another inverse to make net R'!
       if (RubikExpandedArena.lastInstantMove && (performance.now() - RubikExpandedArena.lastInstantMoveTs <= 95)) {
        const base = RubikExpandedArena.lastInstantMove;
        RubikExpandedArena.lastInstantMove = null;
@@ -7592,7 +7969,6 @@ END $$;</pre>
        RubikExpandedArena.fireKeyboardMove(baseLetter, '2');
        return;
       }
-      // Fire immediately with 0ms delay!
       RubikExpandedArena.lastInstantMove = baseLetter;
       RubikExpandedArena.lastInstantMoveTs = performance.now();
       RubikExpandedArena.fireKeyboardMove(baseLetter, '');
@@ -7649,7 +8025,6 @@ END $$;</pre>
     if (demoBtn && window.MainCube) {
      const alg = demoBtn.getAttribute('data-demo-alg');
      const name = demoBtn.getAttribute('data-demo-name') || 'CFOP';
-     // Pass fromFormulaBank = true so clicking Solve preserves this exact CFOP formula!
      window.MainCube.loadAlgorithmSteps(alg, name, true, false, false, true);
      showToast(`🧊 Đã nạp thế "${name}" từ bảng CFOP! Bấm "Đi Bước ⏭" hoặc "🤖 Giải AI Ít Bước / Tự Chạy" để giải theo đúng công thức chuẩn.`, 'cyan');
     }
@@ -7776,6 +8151,7 @@ END $$;</pre>
     ChessArena.selectedSq = null;
     ChessArena.legalTargets = [];
     ChessArena.lastMoveSquares = [];
+    ChessArena.saveActiveGameSnapshot();
     ChessArena.renderBoard();
     ChessArena.updateUI();
    });
@@ -7820,41 +8196,9 @@ END $$;</pre>
      }
     }
    });
-   const sqlModal = document.getElementById('supabase-sql-modal');
-   document.getElementById('open-supabase-sql-btn')?.addEventListener('click', () => {
-    if (sqlModal) {
-     sqlModal.classList.remove('hidden');
-     sqlModal.classList.add('flex');
-    }
-   });
-   const closeSqlModal = () => {
-    if (sqlModal) {
-     sqlModal.classList.add('hidden');
-     sqlModal.classList.remove('flex');
-    }
-   };
-   document.getElementById('close-supabase-sql-btn')?.addEventListener('click', closeSqlModal);
-   document.getElementById('close-supabase-sql-bottom-btn')?.addEventListener('click', closeSqlModal);
-   document.getElementById('copy-supabase-sql-btn')?.addEventListener('click', async () => {
-    const codeText = document.getElementById('supabase-sql-code-block')?.textContent || '';
-    try {
-     if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(codeText);
-     } else {
-      const ta = document.createElement('textarea');
-      ta.value = codeText;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      ta.remove();
-     }
-     showToast('📋 Đã sao chép mã SQL cài đặt bảng Ghép Trận Online! Hãy dán vào Supabase SQL Editor và bấm Run.', 'emerald');
-    } catch (e) {
-     showToast('Hãy bôi đen đoạn mã SQL trong khung và nhấn Ctrl+C!', 'cyan');
-    }
-   });
    document.getElementById('chess-flip-btn').addEventListener('click', () => {
     ChessArena.flipped = !ChessArena.flipped;
+    ChessArena.saveActiveGameSnapshot();
     ChessArena.renderBoard();
     ChessArena.renderClocksAndPlayers();
    });
@@ -7957,11 +8301,13 @@ END $$;</pre>
    });
    document.getElementById('exp-chess-flip-top-btn')?.addEventListener('click', () => {
     ChessArena.flipped = !ChessArena.flipped;
+    ChessArena.saveActiveGameSnapshot();
     ChessArena.renderBoard();
     ChessArena.renderClocksAndPlayers();
    });
    document.getElementById('exp-chess-flip-btn')?.addEventListener('click', () => {
     ChessArena.flipped = !ChessArena.flipped;
+    ChessArena.saveActiveGameSnapshot();
     ChessArena.renderBoard();
     ChessArena.renderClocksAndPlayers();
    });
@@ -8021,10 +8367,16 @@ END $$;</pre>
    }, 7000);
    window.addEventListener('focus', () => {
     fetchLeaderboardsData(true);
+    if (ChessArena && ChessArena.mode === 'matchmaking' && ChessArena.onlineMatch.status === 'playing') {
+     ChessArena.pullOnlineMatchStateFromSupabase();
+    }
    });
    window.addEventListener('beforeunload', () => {
-    if (ChessArena && ChessArena.onlineMatch && ChessArena.onlineMatch.status === 'searching') {
-     ChessArena.cancelOnlineMatchSearch(false);
+    if (ChessArena) {
+     ChessArena.saveActiveGameSnapshot();
+     if (ChessArena.onlineMatch && ChessArena.onlineMatch.status === 'searching') {
+      ChessArena.cancelOnlineMatchSearch(false);
+     }
     }
    });
   });
