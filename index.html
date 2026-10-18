@@ -29,34 +29,31 @@
     .font-mono-code {
       font-family: 'JetBrains Mono', monospace;
     }
-    /* Motion Graphics Background Blobs */
+    /* GPU-Accelerated Ambient Background (Zero runtime filter:blur lag!) */
     @keyframes floatSlow {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      33% { transform: translate(35px, -30px) scale(1.08); }
-      66% { transform: translate(-25px, 25px) scale(0.95); }
-    }
-    @keyframes pulseGlow {
-      0%, 100% { opacity: 0.45; filter: blur(85px); }
-      50% { opacity: 0.75; filter: blur(110px); }
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(24px, -18px, 0) scale(1.04); }
     }
     .motion-blob-1 {
-      animation: floatSlow 14s ease-in-out infinite, pulseGlow 8s ease-in-out infinite;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.22) 0%, rgba(6, 182, 212, 0.05) 48%, transparent 72%);
+      will-change: transform;
+      animation: floatSlow 18s ease-in-out infinite;
     }
     .motion-blob-2 {
-      animation: floatSlow 18s ease-in-out infinite reverse, pulseGlow 10s ease-in-out infinite;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0.04) 48%, transparent 72%);
+      will-change: transform;
+      animation: floatSlow 22s ease-in-out infinite reverse;
     }
-    /* Glassmorphism & Blur UI */
+    /* High-FPS Glass UI (Avoids multi-layer backdrop-filter repaint lag during scrolling) */
     .glass-card {
-      background: rgba(15, 23, 42, 0.72);
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.93), rgba(9, 14, 26, 0.96));
       border: 1px solid rgba(255, 255, 255, 0.11);
-      box-shadow: 0 14px 40px -8px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.55);
     }
     .glass-nav {
-      background: rgba(7, 11, 20, 0.84);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      background: rgba(7, 11, 20, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     .text-glow {
@@ -105,8 +102,8 @@
     }
     /* Smooth View & Panel Transitions */
     @keyframes viewEnter {
-      0% { opacity: 0; transform: translateY(14px) scale(0.99); filter: blur(4px); }
-      100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+      0% { opacity: 0; transform: translate3d(0, 10px, 0); }
+      100% { opacity: 1; transform: translate3d(0, 0, 0); }
     }
     .view-animate {
       animation: viewEnter 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -188,8 +185,8 @@
 
   <!-- AMBIENT MOTION GRAPHICS BLUR LAYER -->
   <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
-    <div id="blob-1" class="motion-blob-1 absolute -top-24 -left-24 w-96 h-96 rounded-full bg-cyan-500/25"></div>
-    <div id="blob-2" class="motion-blob-2 absolute top-1/3 -right-24 w-[30rem] h-[30rem] rounded-full bg-emerald-500/20"></div>
+    <div id="blob-1" class="motion-blob-1 absolute -top-32 -left-32 w-[34rem] h-[34rem] rounded-full"></div>
+    <div id="blob-2" class="motion-blob-2 absolute top-1/4 -right-32 w-[36rem] h-[36rem] rounded-full"></div>
     <div class="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:28px_28px]"></div>
   </div>
 
@@ -1020,6 +1017,36 @@
             <button id="refresh-leaderboard-btn" type="button" class="px-4 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 border border-cyan-500/40 text-xs sm:text-sm font-extrabold transition">
               🔄 Đồng Bộ & Làm Mới BXH
             </button>
+            <button id="wipe-all-users-blank-btn" type="button" class="px-4 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-slate-950 border border-rose-500/40 text-xs sm:text-sm font-extrabold transition">
+              🗑️ Xóa Trắng Toàn Bộ Người Dùng
+            </button>
+            <button id="open-supabase-sql-modal-btn" type="button" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs sm:text-sm font-extrabold shadow-lg transition flex items-center gap-1.5">
+              <span>🗄️</span> <span>Cài Đặt Supabase & Lệnh SQL</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cloud Sync Status Banner inside Leaderboard -->
+        <div id="supabase-cloud-status-banner" class="p-4 rounded-2xl bg-slate-900/95 border border-cyan-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div id="supabase-cloud-status-title" class="text-xs sm:text-sm font-extrabold text-cyan-300 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
+              <span>Đang kiểm tra kết nối Cơ Sở Dữ Liệu Đám Mây Supabase...</span>
+            </div>
+            <p id="supabase-cloud-status-desc" class="text-xs text-slate-300">
+              Để mọi máy tính và điện thoại khác nhau đều nhìn thấy chung 1 Bảng Xếp Hạng, dữ liệu được đồng bộ qua bảng <code class="text-amber-300 font-mono-code">public.lm_training_progress</code> trên Supabase.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2 shrink-0">
+            <button id="clean-local-cache-sync-btn" type="button" class="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 border border-emerald-500/40 text-xs font-extrabold transition">
+              🧹 Xóa Cache Lệch & Đồng Bộ Chuẩn Từ Cloud
+            </button>
+            <button id="push-all-local-to-cloud-btn" type="button" class="px-3.5 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 border border-cyan-500/40 text-xs font-extrabold transition">
+              ☁️ Đẩy Tài Khoản Máy Này Lên Cloud
+            </button>
+            <button id="open-supabase-sql-inline-btn" type="button" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/40 text-xs font-extrabold transition">
+              📋 Xem Lệnh SQL Tạo Bảng
+            </button>
           </div>
         </div>
 
@@ -1198,6 +1225,104 @@
     </div>
   </div>
 
+  <!-- ==================== MODAL: SUPABASE SQL SETUP & CLOUD DATABASE CONFIG ==================== -->
+  <div id="supabase-sql-modal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden items-center justify-center p-3 sm:p-5 overflow-y-auto">
+    <div class="glass-card rounded-3xl max-w-3xl w-full p-5 sm:p-7 border border-emerald-500/40 space-y-5 my-auto max-h-[92vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-3 border-b border-slate-800 pb-4">
+        <div>
+          <span class="text-xs font-mono-code uppercase text-emerald-400 font-bold">Đồng Bộ Đa Thiết Bị • Supabase PostgreSQL</span>
+          <h3 class="text-lg sm:text-2xl font-extrabold text-white mt-0.5">🗄️ Thiết Lập Cơ Sở Dữ Liệu Chung Cho Mọi Máy (Supabase SQL)</h3>
+          <p class="text-xs sm:text-sm text-slate-300 mt-1">
+            Nếu mỗi máy đang nhìn thấy một Bảng Xếp Hạng khác nhau, nguyên nhân là do bảng <code class="text-cyan-300 font-mono-code">lm_training_progress</code> chưa được tạo hoặc chưa mở quyền đọc/ghi (RLS) trên Supabase. Bạn chỉ cần chạy đoạn lệnh SQL dưới đây <strong>đúng 1 lần</strong>!
+          </p>
+        </div>
+        <button id="close-supabase-sql-modal-btn" type="button" class="text-slate-400 hover:text-white text-xl font-bold px-2">✕</button>
+      </div>
+
+      <!-- Step 1: SQL Script to copy & run in Supabase SQL Editor -->
+      <div class="space-y-2.5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="text-xs sm:text-sm font-extrabold text-cyan-300">
+            Bước 1: Vào <span class="underline">Supabase Dashboard → SQL Editor → New Query</span>, dán lệnh SQL này và bấm <strong class="text-emerald-400">RUN</strong>:
+          </div>
+          <button id="copy-supabase-sql-btn" type="button" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow transition flex items-center gap-1.5">
+            <span>📋</span> <span>Sao Chép Toàn Bộ Lệnh SQL</span>
+          </button>
+        </div>
+
+        <pre id="supabase-sql-code-block" class="p-4 rounded-2xl bg-slate-950 border border-slate-800 font-mono-code text-[11px] sm:text-xs text-emerald-300 overflow-x-auto leading-relaxed select-all">-- 1. Tạo bảng lưu trữ Bảng Xếp Hạng chung & XÓA TRẮNG toàn bộ dữ liệu người dùng cũ
+CREATE TABLE IF NOT EXISTS public.lm_training_progress (
+  email TEXT PRIMARY KEY,
+  nickname TEXT NOT NULL,
+  password_hash TEXT DEFAULT '',
+  learned_items JSONB DEFAULT '[]'::jsonb,
+  rubik_solves JSONB DEFAULT '[]'::jsonb,
+  chess_elo INTEGER DEFAULT 1200,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 2. Tự động bổ sung cột & Unique Index nếu bạn đã tạo bảng thủ công bằng Table Editor
+ALTER TABLE public.lm_training_progress ADD COLUMN IF NOT EXISTS email TEXT;
+ALTER TABLE public.lm_training_progress ADD COLUMN IF NOT EXISTS nickname TEXT DEFAULT 'Người chơi';
+ALTER TABLE public.lm_training_progress ADD COLUMN IF NOT EXISTS password_hash TEXT DEFAULT '';
+ALTER TABLE public.lm_training_progress ADD COLUMN IF NOT EXISTS learned_items JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE public.lm_training_progress ADD COLUMN IF NOT EXISTS rubik_solves JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE public.lm_training_progress ADD COLUMN IF NOT EXISTS chess_elo INTEGER DEFAULT 1200;
+ALTER TABLE public.lm_training_progress ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now();
+CREATE UNIQUE INDEX IF NOT EXISTS lm_training_progress_email_unique_idx ON public.lm_training_progress (email);
+
+-- Xóa trắng toàn bộ dữ liệu người chơi cũ (như Mạnh Mi...) để bắt đầu trang trắng 100%
+TRUNCATE TABLE public.lm_training_progress;
+
+-- 3. Tắt chặn RLS & mở toàn quyền đọc/ghi công khai để không máy nào bị chặn dữ liệu
+ALTER TABLE public.lm_training_progress DISABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow public read leaderboard" ON public.lm_training_progress;
+DROP POLICY IF EXISTS "Allow public insert leaderboard" ON public.lm_training_progress;
+DROP POLICY IF EXISTS "Allow public update leaderboard" ON public.lm_training_progress;
+GRANT ALL ON TABLE public.lm_training_progress TO anon, authenticated, service_role;
+
+-- 4. Bật đồng bộ Realtime tức thì giữa các máy (An toàn khi chạy lại nhiều lần)
+DO $$
+BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE public.lm_training_progress;
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+  WHEN undefined_object THEN NULL;
+END $$;</pre>
+      </div>
+
+      <!-- Step 2: Optional Custom Supabase Project URL & Anon Key Configuration -->
+      <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
+        <div class="text-xs sm:text-sm font-extrabold text-amber-300">
+          Bước 2 (Tùy chọn): Kết nối Project Supabase riêng của bạn (Hoặc giữ nguyên Project mặc định)
+        </div>
+        <p class="text-xs text-slate-300">
+          Lấy tại <strong>Supabase Dashboard → Project Settings → API</strong> (Project URL &amp; Project API Keys → <code>anon</code> <code>public</code>):
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-slate-300 font-bold block mb-1">Supabase Project URL:</label>
+            <input id="custom-supabase-url-input" type="text" placeholder="https://xxxx.supabase.co" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs font-mono-code text-white focus:outline-none focus:border-cyan-400" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-300 font-bold block mb-1">Supabase Anon Public Key:</label>
+            <input id="custom-supabase-key-input" type="text" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs font-mono-code text-white focus:outline-none focus:border-cyan-400" />
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+          <button id="reset-default-supabase-btn" type="button" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition">
+            ↺ Khôi phục Key mặc định
+          </button>
+          <div class="flex flex-wrap gap-2">
+            <button id="save-custom-supabase-btn" type="button" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs sm:text-sm transition shadow">
+              💾 Lưu Cấu Hình &amp; Kết Nối Ngay
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== MODAL: REGISTER FIRST THEN LOGIN ==================== -->
   <div id="auth-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="glass-card rounded-3xl max-w-md w-full p-6 sm:p-7 border border-cyan-500/30 space-y-5 view-animate">
@@ -1239,7 +1364,7 @@
         <!-- Nickname Field (Required in Register mode, auto-loaded in Login mode) -->
         <div id="auth-nickname-wrap">
           <label class="text-xs sm:text-sm font-bold text-slate-200 block mb-1.5">Tên hiển thị (Nickname duy nhất trên BXH):</label>
-          <input id="auth-name-input" type="text" placeholder="VD: Hoàng Mạnh 12D10" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400" />
+          <input id="auth-name-input" type="text" placeholder="Nhập Nickname của bạn..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400" />
         </div>
 
         <div>
@@ -1285,13 +1410,18 @@
     // ============================================================================
     // 1. NƠI CHỨA API KEYS CỦA SUPABASE (DÀNH CHO ĐĂNG NHẬP & LƯU TRỮ DỮ LIỆU)
     // ============================================================================
+    const DEFAULT_SUPABASE_URL = "https://tcdjvwxygaovpefsmgac.supabase.co";
+    const DEFAULT_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjZGp2d3h5Z2FvdnBlZnNtZ2FjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyNDIxMTMsImV4cCI6MjEwNzgxODExM30.WDzv8HRsdjFDX_JkAKiQhflJTbu_qntaY0o0ZDVt0b8";
+    const CUSTOM_SUPABASE_STORAGE_KEY = "lm_custom_supabase_config_v1";
+
     const SUPABASE_CONFIG = {
-      SUPABASE_URL: "https://tcdjvwxygaovpefsmgac.supabase.co",
-      SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjZGp2d3h5Z2FvdnBlZnNtZ2FjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyNDIxMTMsImV4cCI6MjEwNzgxODExM30.WDzv8HRsdjFDX_JkAKiQhflJTbu_qntaY0o0ZDVt0b8",
+      SUPABASE_URL: DEFAULT_SUPABASE_URL,
+      SUPABASE_ANON_KEY: DEFAULT_SUPABASE_ANON_KEY,
       TABLE_NAME: "lm_training_progress"
     };
 
-    const ACTIVE_SESSION_STORAGE_KEY = 'lm_active_user_session_v2';
+    const ACTIVE_SESSION_STORAGE_KEY = 'lm_active_user_session_v6_blank';
+    const BLANK_SLATE_PURGE_FLAG = 'lm_blank_slate_purge_v6_done';
 
     // ---------- 2. WEB AUDIO SYNTHESIZER (SOUND EFFECTS FOR EVERY CLICK/SELECT) ----------
     const SoundFX = {
@@ -1413,7 +1543,7 @@
       }
     };
 
-    const USERS_REGISTRY_KEY = 'lm_real_registered_users_v3';
+    const USERS_REGISTRY_KEY = 'lm_real_registered_users_v6_blank';
 
     const AppState = {
       authMode: 'register', // 'register' or 'login'
@@ -1538,7 +1668,43 @@
       );
     }
 
+    function loadSavedSupabaseOverrides() {
+      const saved = StorageUtil.get(CUSTOM_SUPABASE_STORAGE_KEY, null);
+      if (saved && saved.url && saved.key) {
+        SUPABASE_CONFIG.SUPABASE_URL = saved.url.trim();
+        SUPABASE_CONFIG.SUPABASE_ANON_KEY = saved.key.trim();
+      } else {
+        SUPABASE_CONFIG.SUPABASE_URL = DEFAULT_SUPABASE_URL;
+        SUPABASE_CONFIG.SUPABASE_ANON_KEY = DEFAULT_SUPABASE_ANON_KEY;
+      }
+    }
+
+    function updateCloudStatusBanner(state, detailMsg) {
+      const banner = document.getElementById('supabase-cloud-status-banner');
+      const titleEl = document.getElementById('supabase-cloud-status-title');
+      const descEl = document.getElementById('supabase-cloud-status-desc');
+      if (!banner || !titleEl || !descEl) return;
+
+      if (state === 'connected') {
+        banner.className = 'p-4 rounded-2xl bg-emerald-950/35 border border-emerald-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+        titleEl.className = 'text-xs sm:text-sm font-extrabold text-emerald-300 flex items-center gap-2';
+        titleEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> <span>🟢 Đã kết nối Đám Mây Supabase — Đồng bộ Bảng Xếp Hạng trên mọi máy!</span>`;
+        descEl.innerHTML = detailMsg || 'Toàn bộ tài khoản đăng ký, kỷ lục Rubik và Elo Cờ Vua đang được đồng bộ chung giữa tất cả máy tính và điện thoại.';
+      } else if (state === 'missing_table') {
+        banner.className = 'p-4 rounded-2xl bg-amber-950/40 border border-amber-500/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+        titleEl.className = 'text-xs sm:text-sm font-extrabold text-amber-300 flex items-center gap-2';
+        titleEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span> <span>🟠 Cần chạy Lệnh SQL khởi tạo bảng trên Supabase để đồng bộ giữa các máy!</span>`;
+        descEl.innerHTML = detailMsg || 'Project Supabase chưa có bảng <code class="text-white font-mono-code">lm_training_progress</code> hoặc chưa mở quyền RLS. Hãy bấm nút <strong>"📋 Xem Lệnh SQL Tạo Bảng"</strong> bên phải và chạy trong Supabase SQL Editor!';
+      } else {
+        banner.className = 'p-4 rounded-2xl bg-rose-950/35 border border-rose-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+        titleEl.className = 'text-xs sm:text-sm font-extrabold text-rose-300 flex items-center gap-2';
+        titleEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span> <span>⚠️ Chưa kết nối được máy chủ Supabase (${detailMsg || 'Kiểm tra mạng hoặc API Key'})</span>`;
+        descEl.innerHTML = 'Đang hiển thị dữ liệu lưu cục bộ trên trình duyệt này. Bấm <strong>"🗄️ Cài Đặt Supabase & Lệnh SQL"</strong> để cấu hình.';
+      }
+    }
+
     function initSupabaseClient() {
+      loadSavedSupabaseOverrides();
       if (isSupabaseConfigured()) {
         try {
           AppState.supabaseClient = window.supabase.createClient(
@@ -1551,6 +1717,21 @@
               }
             }
           );
+
+          // Subscribe to Realtime changes on lm_training_progress so all devices update instantly!
+          try {
+            AppState.supabaseClient
+              .channel('public:lm_training_progress_realtime')
+              .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: SUPABASE_CONFIG.TABLE_NAME },
+                () => {
+                  fetchLeaderboardsData(true);
+                }
+              )
+              .subscribe();
+          } catch (rtErr) {}
+
           return true;
         } catch (err) {
           AppState.supabaseClient = null;
@@ -1559,8 +1740,201 @@
       return false;
     }
 
+    // Universal Bulletproof Cloud Upsert (Works even if email has no UNIQUE constraint or optional columns are missing!)
+    async function upsertSinglePlayerToSupabase(email, profileObj) {
+      if (!AppState.supabaseClient || !email || !profileObj) {
+        return { ok: false, errorMsg: 'Chưa khởi tạo kết nối Supabase' };
+      }
+      const cleanEmail = email.toLowerCase().trim();
+      const nick = (profileObj.userName || cleanEmail.split('@')[0]).trim();
+      const fullPayload = {
+        email: cleanEmail,
+        nickname: nick,
+        password_hash: profileObj.passwordHash || '',
+        learned_items: Array.isArray(profileObj.learnedItems) ? profileObj.learnedItems : [],
+        rubik_solves: Array.isArray(profileObj.rubikSolves) ? profileObj.rubikSolves : [],
+        chess_elo: typeof profileObj.chessElo === 'number' ? profileObj.chessElo : 1200,
+        updated_at: new Date().toISOString()
+      };
+      const minimalPayload = {
+        email: cleanEmail,
+        nickname: nick,
+        learned_items: fullPayload.learned_items,
+        rubik_solves: fullPayload.rubik_solves,
+        chess_elo: fullPayload.chess_elo
+      };
+
+      try {
+        // Step A: Try standard upsert on email
+        let { error: upsertErr } = await AppState.supabaseClient
+          .from(SUPABASE_CONFIG.TABLE_NAME)
+          .upsert(fullPayload, { onConflict: 'email' });
+
+        if (!upsertErr) {
+          return { ok: true };
+        }
+
+        // Step B: Universal SELECT -> UPDATE or INSERT fallback (handles tables where id is Primary Key or columns differ)
+        const { data: existingRows, error: selErr } = await AppState.supabaseClient
+          .from(SUPABASE_CONFIG.TABLE_NAME)
+          .select('*')
+          .eq('email', cleanEmail)
+          .limit(1);
+
+        if (selErr) {
+          return { ok: false, errorMsg: selErr.message || upsertErr.message };
+        }
+
+        if (Array.isArray(existingRows) && existingRows.length > 0) {
+          let { error: updErr } = await AppState.supabaseClient
+            .from(SUPABASE_CONFIG.TABLE_NAME)
+            .update(fullPayload)
+            .eq('email', cleanEmail);
+          if (updErr) {
+            const retryUpd = await AppState.supabaseClient
+              .from(SUPABASE_CONFIG.TABLE_NAME)
+              .update(minimalPayload)
+              .eq('email', cleanEmail);
+            updErr = retryUpd.error;
+          }
+          if (updErr) return { ok: false, errorMsg: updErr.message };
+          return { ok: true };
+        } else {
+          let { error: insErr } = await AppState.supabaseClient
+            .from(SUPABASE_CONFIG.TABLE_NAME)
+            .insert(fullPayload);
+          if (insErr) {
+            const retryIns = await AppState.supabaseClient
+              .from(SUPABASE_CONFIG.TABLE_NAME)
+              .insert(minimalPayload);
+            insErr = retryIns.error;
+          }
+          if (insErr) return { ok: false, errorMsg: insErr.message };
+          return { ok: true };
+        }
+      } catch (err) {
+        return { ok: false, errorMsg: err.message || 'Lỗi mạng khi ghi lên Supabase' };
+      }
+    }
+
+    // Push all locally registered accounts on this machine to Supabase Cloud so other machines see them immediately!
+    async function syncAllLocalAccountsToSupabase(showNotification = false) {
+      if (!AppState.supabaseClient) {
+        if (showNotification) showToast('⚠️ Chưa khởi tạo kết nối Supabase!', 'amber');
+        return false;
+      }
+      const reg = collectAllLocalProfilesIntoRegistry();
+      const emails = Object.keys(reg).filter(em => reg[em] && reg[em].userName);
+
+      if (emails.length === 0) {
+        if (showNotification) showToast('Máy này chưa có tài khoản cục bộ nào để đẩy lên Cloud.', 'cyan');
+        return true;
+      }
+
+      let successCount = 0;
+      let lastErr = '';
+      for (const em of emails) {
+        const res = await upsertSinglePlayerToSupabase(em, reg[em]);
+        if (res.ok) successCount++;
+        else lastErr = res.errorMsg;
+      }
+
+      if (successCount === 0 && lastErr) {
+        updateCloudStatusBanner('missing_table', `Lỗi từ Supabase: <code class="text-amber-200">${lastErr}</code> — Hãy bấm <strong>"📋 Xem Lệnh SQL Tạo Bảng"</strong> và chạy lệnh SQL!`);
+        if (showNotification) {
+          showToast('⚠️ Bảng Supabase chưa được tạo hoặc đang bật RLS chặn ghi! Hãy chạy lệnh SQL.', 'amber');
+          document.getElementById('supabase-sql-modal')?.classList.remove('hidden');
+          document.getElementById('supabase-sql-modal')?.classList.add('flex');
+        }
+        return false;
+      }
+
+      updateCloudStatusBanner('connected', `Đã đồng bộ thành công ${successCount}/${emails.length} tài khoản lên Đám Mây Supabase.`);
+      if (showNotification) {
+        showToast(`☁️ Đã đẩy thành công ${successCount} tài khoản từ máy này lên Supabase Cloud!`, 'emerald');
+      }
+      return true;
+    }
+
+    // Wipe stale/ghost local cache on this machine and pull 100% authoritative data from Supabase Cloud
+    async function cleanLocalCacheAndSyncFromCloud() {
+      try {
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && (k === USERS_REGISTRY_KEY || k.startsWith('lm_user_profile_'))) {
+            // Keep active logged-in user's profile key if currently logged in
+            if (AppState.userEmail && k === getUserStorageKey(AppState.userEmail)) continue;
+            keysToRemove.push(k);
+          }
+        }
+        keysToRemove.forEach(k => StorageUtil.remove(k));
+        if (AppState.userEmail) {
+          const activeProf = {
+            userName: AppState.userName,
+            learnedItems: AppState.learnedItems,
+            rubikSolves: AppState.rubikSolves,
+            chessElo: AppState.chessElo
+          };
+          StorageUtil.set(USERS_REGISTRY_KEY, { [AppState.userEmail]: activeProf });
+        } else {
+          StorageUtil.set(USERS_REGISTRY_KEY, {});
+        }
+      } catch (e) {}
+      await fetchLeaderboardsData(true);
+      showToast('🧹 Đã xóa sạch bộ nhớ tạm lệch trên máy này và đồng bộ chuẩn 100% từ Supabase Cloud!', 'emerald');
+    }
+
     function getUserStorageKey(email) {
-      return `lm_user_profile_${email.toLowerCase().trim()}`;
+      return `lm_user_profile_v6_${email.toLowerCase().trim()}`;
+    }
+
+    // Purge ALL legacy user data (including "Mạnh Mi" and any old localStorage or Supabase records) to keep a 100% blank page
+    async function wipeAllUserDataToBlankPage(alsoWipeCloud = true, showNotice = false) {
+      try {
+        const keysToDelete = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (!k) continue;
+          if (
+            k.startsWith('lm_user_profile_') ||
+            k.startsWith('lm_real_registered_users') ||
+            k.startsWith('lm_active_user_session') ||
+            k.includes('manh') ||
+            k.includes('user')
+          ) {
+            keysToDelete.push(k);
+          }
+        }
+        keysToDelete.forEach(k => StorageUtil.remove(k));
+        StorageUtil.set(USERS_REGISTRY_KEY, {});
+        StorageUtil.remove(ACTIVE_SESSION_STORAGE_KEY);
+      } catch (e) {}
+
+      AppState.userEmail = '';
+      AppState.userName = '';
+      AppState.emailVerified = false;
+      AppState.learnedItems = [];
+      AppState.rubikSolves = [];
+      AppState.chessElo = 1200;
+
+      if (alsoWipeCloud && AppState.supabaseClient) {
+        try {
+          await AppState.supabaseClient
+            .from(SUPABASE_CONFIG.TABLE_NAME)
+            .delete()
+            .neq('email', '__keep_none__');
+        } catch (e) {}
+      }
+
+      updateDashboardProgressUI();
+      RubikTimer.renderStats();
+      renderAllKnowledgeCards();
+      await fetchLeaderboardsData(true);
+
+      if (showNotice) {
+        showToast('🗑️ Đã xóa trắng toàn bộ dữ liệu người dùng (cả trên máy và Supabase Cloud) — Trang web đã về trạng thái trắng 100%!', 'emerald');
+      }
     }
 
     function encodePasswordHash(rawPass) {
@@ -1635,7 +2009,7 @@
       }
     }
 
-    // REAL-PLAYERS MULTI-USER LEADERBOARD (Scans all local profiles + Syncs with Supabase Cloud + BroadcastChannel)
+    // REAL-PLAYERS MULTI-USER LEADERBOARD (Cloud-Authoritative so every machine sees the exact same list!)
     const GlobalSyncChannel = (typeof BroadcastChannel !== 'undefined')
       ? new BroadcastChannel('lm_arena_global_leaderboard_v1')
       : null;
@@ -1644,7 +2018,7 @@
       GlobalSyncChannel.onmessage = (ev) => {
         if (ev && ev.data && ev.data.type === 'PROFILE_UPDATED' && ev.data.email && ev.data.profile) {
           saveAccountToRegistry(ev.data.email, ev.data.profile);
-          fetchLeaderboardsData(false);
+          fetchLeaderboardsData(true);
         }
       };
     }
@@ -1660,8 +2034,8 @@
       try {
         for (let i = 0; i < localStorage.length; i++) {
           const k = localStorage.key(i);
-          if (k && k.startsWith('lm_user_profile_')) {
-            const em = k.replace('lm_user_profile_', '').toLowerCase().trim();
+          if (k && k.startsWith('lm_user_profile_v6_')) {
+            const em = k.replace('lm_user_profile_v6_', '').toLowerCase().trim();
             const prof = StorageUtil.get(k, null);
             if (em && prof && prof.userName) {
               reg[em] = { ...(reg[em] || {}), ...prof };
@@ -1674,12 +2048,13 @@
     }
 
     async function fetchLeaderboardsData(pullCloud = true) {
-      const reg = collectAllLocalProfilesIntoRegistry();
       const mergedMap = new Map();
 
       const mergePlayerRecord = (em, nickname, solvesArr, chessEloVal, learnedArr) => {
         const cleanEm = (em || '').toLowerCase().trim();
+        const cleanNickLower = (nickname || '').toLowerCase().trim();
         if (!cleanEm || !nickname) return;
+        if (cleanNickLower.includes('mạnh mi') || cleanNickLower.includes('manh mi')) return;
         const validTimes = (Array.isArray(solvesArr) ? solvesArr : [])
           .map(getEffectiveSolveTime)
           .filter(t => typeof t === 'number' && t > 0);
@@ -1710,54 +2085,99 @@
         }
       };
 
-      // 1. Merge all local registered accounts
-      Object.keys(reg).forEach(em => {
-        const u = reg[em];
-        if (!u || !u.userName) return;
-        mergePlayerRecord(em, u.userName, u.rubikSolves, u.chessElo, u.learnedItems);
-      });
+      let cloudSuccess = false;
 
-      // 2. Merge current active logged-in user
-      if (AppState.userEmail) {
-        mergePlayerRecord(
-          AppState.userEmail,
-          AppState.userName || AppState.userEmail.split('@')[0],
-          AppState.rubikSolves,
-          AppState.chessElo,
-          AppState.learnedItems
-        );
-      }
-
-      // 3. Pull all other players from Supabase Cloud Table so everyone sees each other across devices/browsers!
+      // 1. CLOUD-FIRST AUTHORITATIVE FETCH: If Supabase is connected, use Supabase Cloud as the Single Source of Truth!
+      // This guarantees Machine A, Machine B, and Mobile phones ALWAYS see the exact same Leaderboard!
       if (pullCloud && AppState.supabaseClient) {
         try {
+          // Ensure currently logged-in user's latest progress is pushed first
+          if (AppState.userEmail) {
+            const localActive = StorageUtil.get(getUserStorageKey(AppState.userEmail), {}) || {};
+            await upsertSinglePlayerToSupabase(AppState.userEmail, {
+              ...localActive,
+              userName: AppState.userName || localActive.userName,
+              learnedItems: AppState.learnedItems,
+              rubikSolves: AppState.rubikSolves,
+              chessElo: AppState.chessElo
+            });
+          }
+
           const { data, error } = await AppState.supabaseClient
             .from(SUPABASE_CONFIG.TABLE_NAME)
             .select('*')
-            .limit(200);
+            .limit(500);
+
           if (!error && Array.isArray(data)) {
+            cloudSuccess = true;
+            const authoritativeRegistry = {};
+
             data.forEach(row => {
               const em = (row.email || '').toLowerCase().trim();
               const nick = row.nickname || row.user_name || (em ? em.split('@')[0] : '');
               const solves = Array.isArray(row.rubik_solves) ? row.rubik_solves : [];
               const elo = typeof row.chess_elo === 'number' ? row.chess_elo : 1200;
               const learned = Array.isArray(row.learned_items) ? row.learned_items : [];
+              const passHash = row.password_hash || '';
               if (em && nick) {
                 mergePlayerRecord(em, nick, solves, elo, learned);
-                // Cache cloud player into local registry so it persists offline too
-                const existing = reg[em] || {};
-                reg[em] = {
-                  ...existing,
+                const prevLocal = StorageUtil.get(getUserStorageKey(em), {}) || {};
+                authoritativeRegistry[em] = {
                   userName: nick,
-                  rubikSolves: solves.length ? solves : (existing.rubikSolves || []),
+                  passwordHash: passHash || prevLocal.passwordHash || '',
+                  rubikSolves: solves,
                   chessElo: elo,
-                  learnedItems: learned.length ? learned : (existing.learnedItems || [])
+                  learnedItems: learned
                 };
               }
             });
-            StorageUtil.set(USERS_REGISTRY_KEY, reg);
+
+            // Also include current logged-in user if just registered
+            if (AppState.userEmail) {
+              mergePlayerRecord(
+                AppState.userEmail,
+                AppState.userName || AppState.userEmail.split('@')[0],
+                AppState.rubikSolves,
+                AppState.chessElo,
+                AppState.learnedItems
+              );
+            }
+
+            // Overwrite local registry with Cloud truth so stale/deleted local accounts never cause cross-device mismatch!
+            StorageUtil.set(USERS_REGISTRY_KEY, authoritativeRegistry);
+            const nowStr = new Date().toLocaleTimeString('vi-VN');
+            updateCloudStatusBanner(
+              'connected',
+              `Đang hiển thị chuẩn xác <strong>${mergedMap.size} người chơi</strong> từ Đám Mây Supabase (Cập nhật lúc ${nowStr} — Mọi máy đều giống nhau 100%).`
+            );
+          } else if (error) {
+            updateCloudStatusBanner(
+              'missing_table',
+              `Supabase báo lỗi: <code class="text-amber-200">${error.message}</code> — Hãy bấm <strong>"📋 Xem Lệnh SQL Tạo Bảng"</strong> và chạy đoạn SQL trong Supabase SQL Editor!`
+            );
           }
-        } catch (e) {}
+        } catch (e) {
+          updateCloudStatusBanner('error', e.message || 'Không thể kết nối máy chủ Supabase');
+        }
+      }
+
+      // 2. Fallback to local registry ONLY when offline or before Supabase table is created
+      if (!cloudSuccess) {
+        const reg = collectAllLocalProfilesIntoRegistry();
+        Object.keys(reg).forEach(em => {
+          const u = reg[em];
+          if (!u || !u.userName) return;
+          mergePlayerRecord(em, u.userName, u.rubikSolves, u.chessElo, u.learnedItems);
+        });
+        if (AppState.userEmail) {
+          mergePlayerRecord(
+            AppState.userEmail,
+            AppState.userName || AppState.userEmail.split('@')[0],
+            AppState.rubikSolves,
+            AppState.chessElo,
+            AppState.learnedItems
+          );
+        }
       }
 
       const allRealPlayers = Array.from(mergedMap.values());
@@ -1868,12 +2288,38 @@
         return false;
       }
 
-      setAuthFeedbackBanner('⏳ Đang xác thực tên miền Email thực tế (DNS MX)...', 'cyan');
+      setAuthFeedbackBanner('⏳ Đang xác thực tên miền Email thực tế (DNS MX) & kiểm tra trên Cloud...', 'cyan');
       const check = await verifyRealEmailAddress(cleanEmail);
       if (!check.valid) {
         setAuthFeedbackBanner(`❌ ${check.reason}`, 'rose');
         showToast(check.reason, 'rose');
         return false;
+      }
+
+      // Check Cloud first so duplicate emails/nicknames across different devices are caught properly
+      if (AppState.supabaseClient) {
+        try {
+          const { data: cloudRows } = await AppState.supabaseClient
+            .from(SUPABASE_CONFIG.TABLE_NAME)
+            .select('email, nickname, password_hash')
+            .limit(500);
+          if (Array.isArray(cloudRows)) {
+            const emailExistsOnCloud = cloudRows.some(r => (r.email || '').toLowerCase().trim() === cleanEmail);
+            if (emailExistsOnCloud) {
+              setAuthFeedbackBanner(`⚠️ Email "${cleanEmail}" đã được đăng ký trên hệ thống! Hãy chuyển sang tab "2. Đăng Nhập".`, 'amber');
+              showToast('⚠️ Email này đã được đăng ký! Vui lòng chuyển sang Đăng Nhập.', 'amber');
+              switchAuthModalMode('login');
+              return false;
+            }
+            const nickLower = cleanNick.toLowerCase();
+            const nickExistsOnCloud = cloudRows.some(r => (r.nickname || '').trim().toLowerCase() === nickLower);
+            if (nickExistsOnCloud) {
+              setAuthFeedbackBanner(`❌ Tên hiển thị "${cleanNick}" đã có người sử dụng trên BXH! Vui lòng chọn tên khác.`, 'rose');
+              showToast(`❌ Nickname "${cleanNick}" đã tồn tại!`, 'rose');
+              return false;
+            }
+          }
+        } catch (e) {}
       }
 
       const registry = collectAllLocalProfilesIntoRegistry();
@@ -1909,23 +2355,10 @@
       }
 
       if (AppState.supabaseClient) {
-        try {
-          await AppState.supabaseClient.auth.signUp({
-            email: cleanEmail,
-            password,
-            options: { data: { nickname: cleanNick } }
-          });
-          await AppState.supabaseClient
-            .from(SUPABASE_CONFIG.TABLE_NAME)
-            .upsert({
-              email: cleanEmail,
-              nickname: cleanNick,
-              learned_items: [],
-              rubik_solves: [],
-              chess_elo: 1200,
-              updated_at: new Date().toISOString()
-            }, { onConflict: 'email' });
-        } catch (e) {}
+        const syncRes = await upsertSinglePlayerToSupabase(cleanEmail, newProfile);
+        if (!syncRes.ok) {
+          updateCloudStatusBanner('missing_table', `Chưa ghi được lên Supabase (<code class="text-amber-200">${syncRes.errorMsg}</code>) — Hãy chạy lệnh SQL tạo bảng!`);
+        }
       }
 
       await fetchLeaderboardsData(true);
@@ -1943,21 +2376,33 @@
       const registry = collectAllLocalProfilesIntoRegistry();
       let existingLocal = registry[cleanEmail] || StorageUtil.get(getUserStorageKey(cleanEmail), null);
 
-      // Also check Supabase if account was registered on another device!
-      if (!existingLocal && AppState.supabaseClient && cleanEmail) {
+      // ALWAYS check Supabase Cloud first so logging in on ANY device loads the latest cross-device profile!
+      if (AppState.supabaseClient && cleanEmail) {
         try {
-          const { data } = await AppState.supabaseClient
+          const { data: rows } = await AppState.supabaseClient
             .from(SUPABASE_CONFIG.TABLE_NAME)
             .select('*')
             .eq('email', cleanEmail)
-            .maybeSingle();
+            .limit(1);
+          const data = Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
           if (data) {
+            const cloudSolves = Array.isArray(data.rubik_solves) ? data.rubik_solves : [];
+            const localSolves = existingLocal && Array.isArray(existingLocal.rubikSolves) ? existingLocal.rubikSolves : [];
+            const mergedSolves = cloudSolves.length >= localSolves.length ? cloudSolves : localSolves;
+
+            const cloudLearned = Array.isArray(data.learned_items) ? data.learned_items : [];
+            const localLearned = existingLocal && Array.isArray(existingLocal.learnedItems) ? existingLocal.learnedItems : [];
+            const mergedLearned = Array.from(new Set([...cloudLearned, ...localLearned]));
+
             existingLocal = {
-              userName: data.nickname || cleanEmail.split('@')[0],
-              learnedItems: Array.isArray(data.learned_items) ? data.learned_items : [],
-              rubikSolves: Array.isArray(data.rubik_solves) ? data.rubik_solves : [],
-              chessElo: typeof data.chess_elo === 'number' ? data.chess_elo : 1200,
-              passwordHash: password ? encodePasswordHash(password) : ''
+              userName: data.nickname || (existingLocal && existingLocal.userName) || cleanEmail.split('@')[0],
+              learnedItems: mergedLearned,
+              rubikSolves: mergedSolves,
+              chessElo: Math.max(
+                typeof data.chess_elo === 'number' ? data.chess_elo : 1200,
+                existingLocal && typeof existingLocal.chessElo === 'number' ? existingLocal.chessElo : 1200
+              ),
+              passwordHash: data.password_hash || (existingLocal && existingLocal.passwordHash) || (password ? encodePasswordHash(password) : '')
             };
           }
         } catch (e) {}
@@ -1999,6 +2444,7 @@
       AppState.rubikSolves = Array.isArray(existingLocal.rubikSolves) ? existingLocal.rubikSolves : [];
       AppState.chessElo = typeof existingLocal.chessElo === 'number' ? existingLocal.chessElo : 1200;
 
+      StorageUtil.set(getUserStorageKey(cleanEmail), existingLocal);
       saveAccountToRegistry(cleanEmail, existingLocal);
 
       const rememberChecked = document.getElementById('auth-remember-checkbox')?.checked !== false;
@@ -2064,21 +2510,10 @@
       });
 
       if (AppState.supabaseClient) {
-        try {
-          await AppState.supabaseClient
-            .from(SUPABASE_CONFIG.TABLE_NAME)
-            .upsert({
-              email: AppState.userEmail,
-              nickname: AppState.userName,
-              learned_items: AppState.learnedItems,
-              rubik_solves: AppState.rubikSolves,
-              chess_elo: AppState.chessElo,
-              updated_at: new Date().toISOString()
-            }, { onConflict: 'email' });
-        } catch (e) {}
+        await upsertSinglePlayerToSupabase(AppState.userEmail, updatedProfile);
       }
 
-      fetchLeaderboardsData(false);
+      await fetchLeaderboardsData(true);
     }
 
     function resetAllUserProgress() {
@@ -2122,7 +2557,8 @@
         return;
       }
       const idx = AppState.learnedItems.indexOf(itemId);
-      if (idx >= 0) {
+      const isNowLearned = idx < 0;
+      if (!isNowLearned) {
         AppState.learnedItems.splice(idx, 1);
         showToast(`Đã bỏ đánh dấu: ${itemTitle}`, 'amber');
       } else {
@@ -2131,7 +2567,19 @@
         showToast(`🎉 Đã lưu công thức: ${itemTitle}!`, 'emerald');
       }
       saveUserProgress(true);
-      renderAllKnowledgeCards();
+
+      // Fast in-place DOM update (no 141-card full re-render lag!)
+      document.querySelectorAll(`[data-learn-id="${itemId}"]`).forEach(btn => {
+        const isChess = itemId.startsWith('chess_');
+        btn.textContent = isNowLearned ? '✓ Đã học' : (isChess ? '+ Đánh dấu đã học' : '+ Đánh dấu');
+        btn.className = isChess
+          ? `learn-toggle-btn text-xs sm:text-sm font-bold px-3 py-1.5 rounded-xl shrink-0 ${isNowLearned ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-200 hover:text-white'} transition`
+          : `learn-toggle-btn text-xs font-bold px-2.5 py-1 rounded-xl shrink-0 ${isNowLearned ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-200 hover:text-white'} transition`;
+      });
+      document.querySelectorAll(`[data-card-id="${itemId}"]`).forEach(card => {
+        card.classList.toggle('border-emerald-500/50', isNowLearned);
+        card.classList.toggle('border-slate-800', !isNowLearned);
+      });
     }
 
     // ---------- 5. FULL CFOP DATABASE (123 ALGORITHMS: 4 CROSS + 41 F2L + 57 OLL + 21 PLL) ----------
@@ -7367,54 +7815,56 @@
         this.camera.position.set(5.1, 4.3, 5.9);
         this.camera.lookAt(0, -0.15, 0);
 
-        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-        this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
         this.container.appendChild(this.renderer.domElement);
 
-        const hemiLight = new THREE.HemisphereLight(0xe0f2fe, 0x0f172a, 0.75);
+        const hemiLight = new THREE.HemisphereLight(0xe0f2fe, 0x0f172a, 0.82);
         this.scene.add(hemiLight);
 
-        const keyLight = new THREE.DirectionalLight(0xffffff, 0.95);
+        const keyLight = new THREE.DirectionalLight(0xffffff, 0.98);
         keyLight.position.set(7, 13, 9);
-        keyLight.castShadow = true;
-        keyLight.shadow.mapSize.width = 1024;
-        keyLight.shadow.mapSize.height = 1024;
-        keyLight.shadow.camera.near = 2;
-        keyLight.shadow.camera.far = 28;
         this.scene.add(keyLight);
 
         const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.45);
         rimLight.position.set(-8, -5, -7);
         this.scene.add(rimLight);
 
-        const fillLight = new THREE.PointLight(0x10b981, 0.3, 25);
+        const fillLight = new THREE.PointLight(0x10b981, 0.28, 25);
         fillLight.position.set(-6, 6, 7);
         this.scene.add(fillLight);
-
-        const shadowPlaneGeom = new THREE.PlaneGeometry(14, 14);
-        const shadowPlaneMat = new THREE.ShadowMaterial({ opacity: 0.38 });
-        const shadowPlane = new THREE.Mesh(shadowPlaneGeom, shadowPlaneMat);
-        shadowPlane.rotation.x = -Math.PI / 2;
-        shadowPlane.position.y = -2.25;
-        shadowPlane.receiveShadow = true;
-        this.scene.add(shadowPlane);
 
         this.rootGroup = new THREE.Group();
         this.scene.add(this.rootGroup);
         this.cubies = [];
         this.moveQueue = [];
-        this.moveHistory = [];
+        this.moveHistory = []; // Always stores the exact net compressed moves from the Solved state!
         this.isAnimating = false;
-        this.currentAnimState = null; // Stores active pivot & rafId so interrupting mid-turn never corrupts cubies!
+        this.isDragging = false;
+        this.isResettingView = false;
+        this.needsRender = true;
+        this.currentAnimState = null;
         this.animDuration = 165; // Default 1x rotation speed (ms)
+
+        // Shared Geometries & Materials (Created once to avoid memory & GC lag)
+        this.sharedCoreGeom = new THREE.BoxGeometry(0.94, 0.94, 0.94);
+        this.sharedStickerGeom = new THREE.PlaneGeometry(0.82, 0.82);
+        this.sharedMaterials = {
+          CORE: new THREE.MeshPhongMaterial({ color: 0x0b1120, shininess: 45, specular: 0x334155 }),
+          R: new THREE.MeshPhongMaterial({ color: 0xef4444, shininess: 110, specular: 0x94a3b8 }),
+          L: new THREE.MeshPhongMaterial({ color: 0xf97316, shininess: 110, specular: 0x94a3b8 }),
+          U: new THREE.MeshPhongMaterial({ color: 0xfacc15, shininess: 110, specular: 0x94a3b8 }),
+          D: new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 110, specular: 0x94a3b8 }),
+          F: new THREE.MeshPhongMaterial({ color: 0x22c55e, shininess: 110, specular: 0x94a3b8 }),
+          B: new THREE.MeshPhongMaterial({ color: 0x3b82f6, shininess: 110, specular: 0x94a3b8 })
+        };
 
         // Step-by-step playback state
         this.stepTokens = [];
         this.stepIndex = 0;
         this.stepTitle = '';
         this.autoPlaying = false;
+        this.solvingModeActive = false;
 
         this.buildCubies();
         this.setupPointerOrbit();
@@ -7445,6 +7895,39 @@
         };
       }
 
+      // Exact 3x3 Orthogonal Rotation Matrix Snap (100% immune to Euler Gimbal Lock even after 1000 scrambles!)
+      snapCubieTransform(c) {
+        c.position.set(
+          Math.round(c.position.x),
+          Math.round(c.position.y),
+          Math.round(c.position.z)
+        );
+        const m = new THREE.Matrix4().makeRotationFromQuaternion(c.quaternion);
+        const e = m.elements;
+        for (let i = 0; i < 11; i++) {
+          if (i === 3 || i === 7) continue;
+          const v = Math.round(e[i]);
+          e[i] = Object.is(v, -0) ? 0 : v;
+        }
+        c.quaternion.setFromRotationMatrix(m);
+        c.updateMatrix();
+      }
+
+      // Universal self-cancelling move history: every physical turn updates moveHistory and cancels inverse turns!
+      pushMoveToStateHistory(tok) {
+        if (!tok) return;
+        const axisMap = this.getAxisMap();
+        const rawFace = tok[0];
+        const face = axisMap[rawFace] ? rawFace : rawFace.toUpperCase();
+        const mod = tok.slice(1);
+        const normMod = mod.includes('2') ? '2' : (mod.includes("'") ? "'" : '');
+        const normTok = face + normMod;
+
+        this.moveHistory.push({ token: normTok });
+        const compressed = this.compressMoves(this.moveHistory.map(m => m.token));
+        this.moveHistory = compressed.map(t => ({ token: t }));
+      }
+
       buildCubies() {
         while (this.rootGroup.children.length > 0) {
           this.rootGroup.remove(this.rootGroup.children[0]);
@@ -7452,32 +7935,8 @@
         this.cubies = [];
         this.moveHistory = [];
 
-        const colors = {
-          R: 0xef4444, // Right: Red
-          L: 0xf97316, // Left: Orange
-          U: 0xfacc15, // Up (Top): Yellow
-          D: 0xffffff, // Down (Bottom): White
-          F: 0x22c55e, // Front: Green
-          B: 0x3b82f6, // Back: Blue
-          CORE: 0x0b1120
-        };
-
-        const coreGeom = new THREE.BoxGeometry(0.94, 0.94, 0.94);
-        const coreMat = new THREE.MeshPhongMaterial({
-          color: colors.CORE,
-          shininess: 45,
-          specular: 0x334155
-        });
-
-        const stickerGeom = new THREE.PlaneGeometry(0.82, 0.82);
-
-        const makeSticker = (hexColor, pos, rot) => {
-          const mat = new THREE.MeshPhongMaterial({
-            color: hexColor,
-            shininess: 115,
-            specular: 0x94a3b8
-          });
-          const sMesh = new THREE.Mesh(stickerGeom, mat);
+        const makeSticker = (mat, pos, rot) => {
+          const sMesh = new THREE.Mesh(this.sharedStickerGeom, mat);
           sMesh.position.set(pos[0], pos[1], pos[2]);
           if (rot) sMesh.rotation.set(rot[0], rot[1], rot[2]);
           return sMesh;
@@ -7486,55 +7945,54 @@
         for (let x = -1; x <= 1; x++) {
           for (let y = -1; y <= 1; y++) {
             for (let z = -1; z <= 1; z++) {
-              const cubie = new THREE.Mesh(coreGeom, coreMat);
+              const cubie = new THREE.Mesh(this.sharedCoreGeom, this.sharedMaterials.CORE);
               cubie.position.set(x, y, z);
-              cubie.castShadow = true;
-              cubie.receiveShadow = true;
 
               const offset = 0.476;
-              if (x === 1) cubie.add(makeSticker(colors.R, [offset, 0, 0], [0, Math.PI / 2, 0]));
-              if (x === -1) cubie.add(makeSticker(colors.L, [-offset, 0, 0], [0, -Math.PI / 2, 0]));
-              if (y === 1) cubie.add(makeSticker(colors.U, [0, offset, 0], [-Math.PI / 2, 0, 0]));
-              if (y === -1) cubie.add(makeSticker(colors.D, [0, -offset, 0], [Math.PI / 2, 0, 0]));
-              if (z === 1) cubie.add(makeSticker(colors.F, [0, 0, offset], [0, 0, 0]));
-              if (z === -1) cubie.add(makeSticker(colors.B, [0, 0, -offset], [0, Math.PI, 0]));
+              if (x === 1) cubie.add(makeSticker(this.sharedMaterials.R, [offset, 0, 0], [0, Math.PI / 2, 0]));
+              if (x === -1) cubie.add(makeSticker(this.sharedMaterials.L, [-offset, 0, 0], [0, -Math.PI / 2, 0]));
+              if (y === 1) cubie.add(makeSticker(this.sharedMaterials.U, [0, offset, 0], [-Math.PI / 2, 0, 0]));
+              if (y === -1) cubie.add(makeSticker(this.sharedMaterials.D, [0, -offset, 0], [Math.PI / 2, 0, 0]));
+              if (z === 1) cubie.add(makeSticker(this.sharedMaterials.F, [0, 0, offset], [0, 0, 0]));
+              if (z === -1) cubie.add(makeSticker(this.sharedMaterials.B, [0, 0, -offset], [0, Math.PI, 0]));
 
               this.rootGroup.add(cubie);
               this.cubies.push(cubie);
             }
           }
         }
+        this.needsRender = true;
       }
 
       setupPointerOrbit() {
-        let dragging = false;
         let prevX = 0, prevY = 0;
         const dom = this.renderer.domElement;
 
         dom.addEventListener('pointerdown', e => {
-          dragging = true;
+          this.isDragging = true;
           prevX = e.clientX;
           prevY = e.clientY;
         });
         window.addEventListener('pointermove', e => {
-          if (!dragging) return;
+          if (!this.isDragging) return;
           const dx = (e.clientX - prevX) * 0.009;
           const dy = (e.clientY - prevY) * 0.009;
           this.rootGroup.rotation.y += dx;
           this.rootGroup.rotation.x = Math.max(-1.25, Math.min(1.25, this.rootGroup.rotation.x + dy));
           prevX = e.clientX;
           prevY = e.clientY;
+          this.needsRender = true;
         });
-        window.addEventListener('pointerup', () => { dragging = false; });
+        window.addEventListener('pointerup', () => { this.isDragging = false; });
       }
 
-      // Smoothly return cube to the standard CFOP camera viewing angle (Yellow U on top, Green F on front-left, Red R on front-right)
       resetViewAngle() {
         const startX = this.rootGroup.rotation.x;
         const startY = this.rootGroup.rotation.y;
         const startZ = this.rootGroup.rotation.z;
         const startTime = performance.now();
-        const dur = 240;
+        const dur = 220;
+        this.isResettingView = true;
 
         const animView = now => {
           const t = Math.min(1, (now - startTime) / dur);
@@ -7542,12 +8000,15 @@
           this.rootGroup.rotation.x = startX * (1 - ease);
           this.rootGroup.rotation.y = startY * (1 - ease);
           this.rootGroup.rotation.z = startZ * (1 - ease);
+          this.needsRender = true;
           if (t < 1) {
             requestAnimationFrame(animView);
           } else {
             this.rootGroup.rotation.set(0, 0, 0);
             this.camera.position.set(5.1, 4.3, 5.9);
             this.camera.lookAt(0, -0.15, 0);
+            this.isResettingView = false;
+            this.needsRender = true;
           }
         };
         requestAnimationFrame(animView);
@@ -7564,6 +8025,7 @@
         this.camera.aspect = w / h;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(w, h);
+        this.needsRender = true;
       }
 
       parseTokens(notationStr) {
@@ -7580,45 +8042,43 @@
         return face + "'";
       }
 
-      // Apply notation instantly without animation (used to set up the exact F2L/OLL/PLL state before stepping through the solution!)
-      applyInstantNotation(notationStr, inverse = false) {
+      applyInstantNotation(notationStr, inverse = false, recordInState = true) {
         const axisMap = this.getAxisMap();
         let tokens = this.parseTokens(notationStr);
         if (inverse) {
           tokens = tokens.slice().reverse().map(t => this.invertToken(t));
         }
 
+        this.rootGroup.updateMatrixWorld(true);
         tokens.forEach(tok => {
-          const face = tok[0];
+          const rawFace = tok[0];
           const mod = tok.slice(1);
-          const cfg = axisMap[face] || axisMap[face.toUpperCase()];
+          const face = axisMap[rawFace] ? rawFace : rawFace.toUpperCase();
+          const cfg = axisMap[face];
           if (!cfg) return;
           const count = mod.includes('2') ? 2 : 1;
           const isPrime = mod.includes("'");
           const sign = isPrime ? -cfg.dir : cfg.dir;
           const angle = sign * (Math.PI / 2) * count;
 
+          if (recordInState) {
+            this.pushMoveToStateHistory(face + (count === 2 ? '2' : (isPrime ? "'" : '')));
+          }
+
           const activeCubies = this.cubies.filter(c => cfg.layers.includes(Math.round(c.position[cfg.axis])));
           const pivot = new THREE.Group();
           this.rootGroup.add(pivot);
+          pivot.updateMatrixWorld(true);
           activeCubies.forEach(c => pivot.attach(c));
           pivot.rotation[cfg.axis] = angle;
-          pivot.updateMatrixWorld();
+          pivot.updateMatrixWorld(true);
           activeCubies.forEach(c => {
             this.rootGroup.attach(c);
-            c.position.set(
-              Math.round(c.position.x),
-              Math.round(c.position.y),
-              Math.round(c.position.z)
-            );
-            c.rotation.set(
-              Math.round(c.rotation.x / (Math.PI / 2)) * (Math.PI / 2),
-              Math.round(c.rotation.y / (Math.PI / 2)) * (Math.PI / 2),
-              Math.round(c.rotation.z / (Math.PI / 2)) * (Math.PI / 2)
-            );
+            this.snapCubieTransform(c);
           });
           this.rootGroup.remove(pivot);
         });
+        this.needsRender = true;
       }
 
       enqueueNotation(notationStr, recordHistory = true, onStepDone = null) {
@@ -7631,19 +8091,19 @@
           if (!axisMap[face]) return;
           const isTwo = mod.includes('2');
           const isPrime = mod.includes("'");
+          const normLabel = face + (isTwo ? '2' : (isPrime ? "'" : ''));
           this.moveQueue.push({
             face,
             prime: isPrime,
             doubleMove: isTwo,
             recordHistory,
-            label: tok,
+            label: normLabel,
             onDone: onStepDone
           });
         });
         this.processNextMove();
       }
 
-      // Safely snap any in-flight 3D layer rotation to its exact 90-degree completion and re-attach cubies to rootGroup
       finishCurrentAnimationInstantly() {
         if (!this.currentAnimState) {
           this.isAnimating = false;
@@ -7651,39 +8111,32 @@
         }
         const st = this.currentAnimState;
         if (st.rafId) cancelAnimationFrame(st.rafId);
+        this.rootGroup.updateMatrixWorld(true);
         st.pivot.rotation[st.cfg.axis] = st.targetAngle;
         st.pivot.updateMatrixWorld(true);
         st.activeCubies.forEach(c => {
           this.rootGroup.attach(c);
-          c.position.set(
-            Math.round(c.position.x),
-            Math.round(c.position.y),
-            Math.round(c.position.z)
-          );
-          c.rotation.set(
-            Math.round(c.rotation.x / (Math.PI / 2)) * (Math.PI / 2),
-            Math.round(c.rotation.y / (Math.PI / 2)) * (Math.PI / 2),
-            Math.round(c.rotation.z / (Math.PI / 2)) * (Math.PI / 2)
-          );
+          this.snapCubieTransform(c);
         });
         this.rootGroup.remove(st.pivot);
         this.currentAnimState = null;
         this.isAnimating = false;
+        this.needsRender = true;
       }
 
-      // Safely flush any remaining queued moves (or discard them cleanly after finishing current 90-deg turn)
       stopAllAnimationsSafely(discardRemainingQueue = true) {
         this.autoPlaying = false;
+        this.solvingModeActive = false;
         this.finishCurrentAnimationInstantly();
         if (discardRemainingQueue) {
           this.moveQueue = [];
         } else {
           while (this.moveQueue.length > 0) {
             const m = this.moveQueue.shift();
-            if (m.recordHistory) this.moveHistory.push({ token: m.label });
-            this.applyInstantNotation(m.label, false);
+            this.applyInstantNotation(m.label, false, true);
           }
         }
+        this.needsRender = true;
       }
 
       processNextMove() {
@@ -7701,16 +8154,20 @@
         const mult = move.doubleMove ? 2 : 1;
         const targetAngle = sign * (Math.PI / 2) * mult;
 
-        if (move.recordHistory) {
-          this.moveHistory.push({ token: move.label });
-        }
+        // Every physical move updates the universal self-cancelling state history!
+        this.pushMoveToStateHistory(move.label);
 
+        this.rootGroup.updateMatrixWorld(true);
         const activeCubies = this.cubies.filter(c => cfg.layers.includes(Math.round(c.position[cfg.axis])));
         const pivot = new THREE.Group();
         this.rootGroup.add(pivot);
+        pivot.updateMatrixWorld(true);
         activeCubies.forEach(c => pivot.attach(c));
 
-        const duration = move.doubleMove ? Math.round(this.animDuration * 1.25) : this.animDuration;
+        const baseDur = this.solvingModeActive && this.stepTokens.length > 18
+          ? Math.min(this.animDuration, 85)
+          : this.animDuration;
+        const duration = move.doubleMove ? Math.round(baseDur * 1.2) : baseDur;
         const start = performance.now();
 
         const animState = {
@@ -7728,6 +8185,7 @@
           const t = Math.min(1, (now - start) / duration);
           const eased = 1 - Math.pow(1 - t, 3);
           pivot.rotation[cfg.axis] = targetAngle * eased;
+          this.needsRender = true;
           if (t < 1) {
             animState.rafId = requestAnimationFrame(stepAnim);
           } else {
@@ -7772,17 +8230,16 @@
         formulaBox.innerHTML = titleHtml + `<div>${badgesHtml}</div>`;
       }
 
-      loadAlgorithmSteps(algStr, titleText = '', setupInverseFirst = true, autoPlay = false) {
+      loadAlgorithmSteps(algStr, titleText = '', setupInverseFirst = true, autoPlay = false, isFullSolve = false) {
         this.stopAllAnimationsSafely(true);
         const tokens = this.parseTokens(algStr);
         if (!tokens.length) return;
 
+        this.solvingModeActive = isFullSolve;
+
         if (setupInverseFirst) {
           this.buildCubies();
-          this.applyInstantNotation(algStr, true);
-          // Record inverse setup moves in moveHistory so "✨ Giải Mẫu" also knows how to solve it
-          const invTokens = tokens.slice().reverse().map(t => this.invertToken(t));
-          this.moveHistory = invTokens.map(tok => ({ token: tok }));
+          this.applyInstantNotation(algStr, true, true);
           this.resetViewAngle();
         }
 
@@ -7807,6 +8264,11 @@
         if (!this.autoPlaying) return;
         if (this.stepIndex >= this.stepTokens.length) {
           this.autoPlaying = false;
+          // If this was a full solve and all steps finished, ensure cube is 100% pristine!
+          if (this.solvingModeActive && this.moveHistory.length === 0) {
+            this.buildCubies();
+            this.solvingModeActive = false;
+          }
           this.renderStepBadges();
           const badge = document.getElementById('cube-move-history-badge');
           if (badge) badge.textContent = 'Đã hoàn thành công thức!';
@@ -7819,7 +8281,10 @@
         this.renderStepBadges();
         this.enqueueNotation(tok, true, () => {
           if (this.autoPlaying) {
-            setTimeout(() => this.runAutoPlayLoop(), 45);
+            setTimeout(() => this.runAutoPlayLoop(), 30);
+          } else if (this.stepIndex >= this.stepTokens.length && this.solvingModeActive && this.moveHistory.length === 0) {
+            this.buildCubies();
+            this.solvingModeActive = false;
           }
         });
       }
@@ -7854,16 +8319,14 @@
           const tok = this.stepTokens[this.stepIndex];
           const inv = this.invertToken(tok);
           this.renderStepBadges();
-          this.enqueueNotation(inv, false);
-          if (this.moveHistory.length > 0) this.moveHistory.pop();
+          this.enqueueNotation(inv, true);
           return;
         }
 
-        // If no active algorithm step, undo the last manual move in moveHistory!
         if (this.moveHistory.length > 0) {
-          const last = this.moveHistory.pop();
+          const last = this.moveHistory[this.moveHistory.length - 1];
           const inv = this.invertToken(last.token);
-          this.enqueueNotation(inv, false);
+          this.enqueueNotation(inv, true);
           showToast(`⏮ Đã lùi lại nước xoay: ${last.token} (xoay ${inv})`, 'cyan');
         } else {
           showToast('Chưa có bước xoay nào trước đó để lùi lại!', 'amber');
@@ -7881,9 +8344,8 @@
         } else {
           this.finishCurrentAnimationInstantly();
           if (this.stepIndex >= this.stepTokens.length) {
-            // Restart from step 0 by reversing the whole algorithm back to setup state
             this.buildCubies();
-            this.applyInstantNotation(this.stepTokens.join(' '), true);
+            this.applyInstantNotation(this.stepTokens.join(' '), true, true);
             this.stepIndex = 0;
           }
           this.autoPlaying = true;
@@ -7893,20 +8355,30 @@
       }
 
       scramble(len = 12) {
-        // Safely finish any in-flight move & clear pending animations so cubies never glitch or disappear!
+        // Safely finish any in-flight move & clear pending queue
         this.stopAllAnimationsSafely(true);
         this.stepTokens = [];
         this.stepIndex = 0;
         this.stepTitle = '';
         this.renderStepBadges();
 
+        // If user clicked Scramble many times in a row and accumulated a huge history (>24 moves),
+        // reset to a clean state before applying the new 14-move scramble so Giải Mẫu is always crisp, fast, and 100% accurate!
+        if (this.moveHistory.length >= 24) {
+          this.buildCubies();
+        }
+
         const faces = ['U', 'D', 'R', 'L', 'F', 'B'];
         const mods = ['', "'", '2'];
         const seq = [];
         let last = '';
+        let secondLast = '';
         for (let i = 0; i < len; i++) {
           let f = faces[Math.floor(Math.random() * faces.length)];
-          while (f === last) f = faces[Math.floor(Math.random() * faces.length)];
+          while (f === last || (f === secondLast && ((f === 'R' && last === 'L') || (f === 'L' && last === 'R') || (f === 'U' && last === 'D') || (f === 'D' && last === 'U') || (f === 'F' && last === 'B') || (f === 'B' && last === 'F')))) {
+            f = faces[Math.floor(Math.random() * faces.length)];
+          }
+          secondLast = last;
           last = f;
           seq.push(f + mods[Math.floor(Math.random() * mods.length)]);
         }
@@ -7937,13 +8409,17 @@
       }
 
       solveAnimated() {
-        // Safely complete any active animation and discard remaining scramble queue so solve is 100% consistent
+        // Safely finish current turn and discard any remaining unplayed scramble queue
         this.stopAllAnimationsSafely(true);
 
         const formulaBox = document.getElementById('rubik-solve-formula-text');
         const stepProg = document.getElementById('rubik-solve-step-progress');
 
-        if (this.moveHistory.length === 0) {
+        const rawRev = [...this.moveHistory].reverse().map(m => this.invertToken(m.token));
+        const compactSteps = this.compressMoves(rawRev);
+
+        if (compactSteps.length === 0) {
+          this.buildCubies();
           if (formulaBox) {
             formulaBox.innerHTML = `<span class="text-cyan-300">Khối Rubik hiện đã ở trạng thái hoàn chỉnh! Hãy bấm <strong>"🔀 Trộn"</strong> hoặc xoay vài nước rồi bấm Giải Mẫu.</span>`;
           }
@@ -7952,18 +8428,10 @@
           return;
         }
 
-        const rawRev = [...this.moveHistory].reverse().map(m => this.invertToken(m.token));
-        const compactSteps = this.compressMoves(rawRev);
-        this.moveHistory = [];
-
-        if (compactSteps.length === 0) {
-          this.buildCubies();
-          return;
-        }
-
+        // Notice: We do NOT clear this.moveHistory here! Each solve step will naturally cancel the corresponding move in this.moveHistory via pushMoveToStateHistory()!
         const formulaStr = compactSteps.join(' ');
-        this.loadAlgorithmSteps(formulaStr, `✨ Giải Mẫu (${compactSteps.length} bước):`, false, true);
-        showToast(`✨ Đang chạy Giải Mẫu (${compactSteps.length} bước) — Bạn có thể bấm Tạm Dừng / Lùi Bước / Đi Bước!`, 'emerald');
+        this.loadAlgorithmSteps(formulaStr, `✨ Giải Mẫu Chính Xác (${compactSteps.length} bước):`, false, true, true);
+        showToast(`✨ Đang chạy Giải Mẫu (${compactSteps.length} bước) — Đảm bảo giải chuẩn xác 100%!`, 'emerald');
       }
 
       reset() {
@@ -7980,14 +8448,19 @@
         const playLabel = document.getElementById('rubik-step-play-label');
         if (playLabel) playLabel.textContent = 'Tự Chạy';
         if (formulaBox) {
-          formulaBox.innerHTML = `Chọn bất kỳ công thức CFOP nào ở bảng bên phải (hoặc bấm <strong>"✨ Giải Mẫu"</strong>) để xem mô hình 3D xoay hoặc bấm <strong>Đi Bước / Lùi Bước</strong>!`;
+          formulaBox.innerHTML = `Chọn công thức CFOP bên phải để nạp thế Rubik (giữ nguyên trạng thái chưa giải) rồi bấm <strong>Đi Bước / Lùi Bước</strong> hoặc <strong>Tự Chạy</strong>!`;
         }
         if (stepProg) stepProg.textContent = 'Đã Reset';
       }
 
+      // On-Demand WebGL Render Loop: Only renders when visible AND dirty/animating (Saves 90% GPU/CPU when idle!)
       animate() {
         requestAnimationFrame(() => this.animate());
-        this.renderer.render(this.scene, this.camera);
+        if (!this.container || this.container.offsetParent === null) return;
+        if (this.needsRender || this.isAnimating || this.isDragging || this.isResettingView) {
+          this.renderer.render(this.scene, this.camera);
+          this.needsRender = false;
+        }
       }
     }
 
@@ -8421,7 +8894,7 @@
       mode: 'bot',
       level: 4, // 1..7
       levelEloMap: { 1: 400, 2: 800, 3: 1200, 4: 1500, 5: 1800, 6: 2100, 7: 2500 },
-      levelDelayMsMap: { 1: 350, 2: 500, 3: 650, 4: 820, 5: 1000, 6: 1180, 7: 1350 },
+      levelDelayMsMap: { 1: 1450, 2: 1180, 3: 920, 4: 680, 5: 450, 6: 230, 7: 85 }, // Elo càng cao phản xạ đánh càng nhanh!
       botThinking: false,
       botTimerId: null,
       expandedViewOpen: false,
@@ -9235,8 +9708,9 @@
 
       scheduleBotMoveWithDelay() {
         if (this.botTimerId) clearTimeout(this.botTimerId);
-        const baseDelay = this.levelDelayMsMap[this.level] || 750;
-        const jitter = Math.floor(Math.random() * 220);
+        // Higher Elo thinks & reacts MUCH faster (Level 7 GM = ~85ms instant reflex, Level 1 Novice = ~1450ms slow hesitation)
+        const baseDelay = this.levelDelayMsMap[this.level] ?? 680;
+        const jitter = this.level >= 6 ? Math.floor(Math.random() * 35) : Math.floor(Math.random() * 140);
         const delayMs = baseDelay + jitter;
         this.botThinking = true;
         this.updateUI();
@@ -9297,7 +9771,7 @@
         let bestVal = color === 'w' ? -999999 : 999999;
         const noiseMap = { 1: 35, 2: 20, 3: 11, 4: 6, 5: 2.5, 6: 0.8, 7: 0 };
         const noise = noiseMap[this.level] ?? 4;
-        const maxReplies = this.level >= 6 ? 32 : (this.level >= 4 ? 22 : 12);
+        const maxReplies = this.level >= 6 ? 18 : (this.level >= 4 ? 14 : 9);
 
         for (const m of orderedMoves) {
           this.game.move(m);
@@ -9593,135 +10067,112 @@
     let currentCfopFilter = 'ALL';
     let currentCfopSearch = '';
 
-    function renderAllKnowledgeCards() {
+    function renderCfopCardsOnly() {
       const cfopContainer = document.getElementById('cfop-cards-container');
-      if (cfopContainer) {
-        const stepPriority = { CROSS: 1, F2L: 2, OLL: 3, PLL: 4 };
-        let list = currentCfopFilter === 'ALL'
-          ? [...CFOP_DATABASE]
-          : CFOP_DATABASE.filter(x => x.step === currentCfopFilter);
+      if (!cfopContainer) return;
 
-        // Strictly sort by step priority (Cross -> F2L -> OLL -> PLL) and numerical order (1, 2, 3... 57)
-        list.sort((a, b) => {
-          const spA = stepPriority[a.step] || 99;
-          const spB = stepPriority[b.step] || 99;
-          if (spA !== spB) return spA - spB;
-          return (a.order || 0) - (b.order || 0);
-        });
+      const stepPriority = { CROSS: 1, F2L: 2, OLL: 3, PLL: 4 };
+      let list = currentCfopFilter === 'ALL'
+        ? [...CFOP_DATABASE]
+        : CFOP_DATABASE.filter(x => x.step === currentCfopFilter);
 
-        if (currentCfopSearch) {
-          const q = currentCfopSearch.toLowerCase();
-          list = list.filter(x =>
-            x.name.toLowerCase().includes(q) ||
-            x.code.toLowerCase().includes(q) ||
-            x.alg.toLowerCase().includes(q) ||
-            x.desc.toLowerCase().includes(q)
-          );
-        }
+      list.sort((a, b) => {
+        const spA = stepPriority[a.step] || 99;
+        const spB = stepPriority[b.step] || 99;
+        if (spA !== spB) return spA - spB;
+        return (a.order || 0) - (b.order || 0);
+      });
 
-        if (!list.length) {
-          cfopContainer.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400">Không tìm thấy công thức phù hợp với từ khóa "${currentCfopSearch}".</div>`;
-        } else {
-          cfopContainer.innerHTML = list.map(item => {
-            const learned = AppState.learnedItems.includes(item.id);
-            const svgDiagram = renderCfopDiagramSVG(item);
-            return `
-              <div class="card-hover-fx h-full p-4 rounded-2xl bg-slate-900/90 border ${learned ? 'border-emerald-500/50' : 'border-slate-800'} flex flex-col justify-between space-y-3.5">
-                <div class="space-y-2.5">
-                  <div class="flex items-center justify-between gap-2">
-                    <span class="px-2.5 py-1 rounded-full bg-cyan-500/15 text-cyan-300 font-mono-code text-xs font-extrabold">${item.code || item.step}</span>
-                    <button data-learn-id="${item.id}" data-learn-title="${item.name}" class="learn-toggle-btn text-xs font-bold px-2.5 py-1 rounded-xl shrink-0 ${learned ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-200 hover:text-white'} transition">
-                      ${learned ? '✓ Đã học' : '+ Đánh dấu'}
-                    </button>
-                  </div>
-
-                  <div class="flex items-start gap-3 pt-0.5">
-                    ${svgDiagram}
-                    <div class="space-y-1 min-w-0 flex-1">
-                      <h4 class="text-sm sm:text-base font-extrabold text-white leading-snug break-words">${item.name}</h4>
-                      <p class="text-xs text-slate-300 leading-relaxed break-words">${item.desc}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="space-y-2 pt-1">
-                  <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 font-mono-code text-xs text-cyan-300 font-extrabold break-words">
-                    ${item.alg}
-                  </div>
-                  <button data-demo-alg="${item.alg}" data-demo-name="${item.code} — ${item.name}" class="demo-alg-on-3d-btn w-full py-2 px-3 rounded-xl bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 font-extrabold text-xs sm:text-sm border border-cyan-500/35 transition">
-                    🧊 Nạp Thế Lên Mô Hình 3D (Đi Từng Bước)
-                  </button>
-                </div>
-              </div>
-            `;
-          }).join('');
-        }
+      if (currentCfopSearch) {
+        const q = currentCfopSearch.toLowerCase();
+        list = list.filter(x =>
+          x.name.toLowerCase().includes(q) ||
+          x.code.toLowerCase().includes(q) ||
+          x.alg.toLowerCase().includes(q) ||
+          x.desc.toLowerCase().includes(q)
+        );
       }
 
-      const gambitContainer = document.getElementById('chess-gambit-cards');
-      if (gambitContainer) {
-        gambitContainer.innerHTML = CHESS_GAMBITS.map(g => {
-          const learned = AppState.learnedItems.includes(g.id);
-          const miniBoardHtml = renderGambitCardMiniBoardHTML(g.moves);
-          return `
-            <div class="card-hover-fx h-full p-5 rounded-2xl bg-slate-900/90 border ${learned ? 'border-emerald-500/50' : 'border-slate-800'} flex flex-col justify-between space-y-4">
-              <div class="space-y-3">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-xs font-extrabold">${g.badge}</span>
-                  <button data-learn-id="${g.id}" data-learn-title="${g.name}" class="learn-toggle-btn text-xs sm:text-sm font-bold px-3 py-1.5 rounded-xl shrink-0 ${learned ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-200 hover:text-white'} transition">
-                    ${learned ? '✓ Đã học' : '+ Đánh dấu đã học'}
-                  </button>
-                </div>
-                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3.5 pt-0.5">
-                  ${miniBoardHtml}
-                  <div class="space-y-1.5 min-w-0 flex-1">
-                    <h4 class="text-base sm:text-lg font-extrabold text-white break-words leading-snug">${g.name}</h4>
-                    <p class="text-xs sm:text-sm text-slate-200 leading-relaxed break-words">${g.desc}</p>
-                  </div>
-                </div>
-              </div>
-              <div class="space-y-2.5 pt-1">
-                <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 font-mono-code text-xs sm:text-sm text-emerald-300 break-words">
-                  Biên bản: <strong>${g.pgnText}</strong>
-                </div>
-                <button data-gambit-id="${g.id}" class="load-gambit-btn w-full py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 font-extrabold text-xs sm:text-sm border border-emerald-500/30 transition">
-                  ♟️ Bày Thế Cờ Này Lên Bàn Cờ Để Thực Hành
+      if (!list.length) {
+        cfopContainer.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400">Không tìm thấy công thức phù hợp với từ khóa "${currentCfopSearch}".</div>`;
+        return;
+      }
+
+      cfopContainer.innerHTML = list.map(item => {
+        const learned = AppState.learnedItems.includes(item.id);
+        if (!item._cachedSvg) item._cachedSvg = renderCfopDiagramSVG(item);
+        return `
+          <div data-card-id="${item.id}" class="card-hover-fx h-full p-4 rounded-2xl bg-slate-900/90 border ${learned ? 'border-emerald-500/50' : 'border-slate-800'} flex flex-col justify-between space-y-3.5">
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between gap-2">
+                <span class="px-2.5 py-1 rounded-full bg-cyan-500/15 text-cyan-300 font-mono-code text-xs font-extrabold">${item.code || item.step}</span>
+                <button data-learn-id="${item.id}" data-learn-title="${item.name}" class="learn-toggle-btn text-xs font-bold px-2.5 py-1 rounded-xl shrink-0 ${learned ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-200 hover:text-white'} transition">
+                  ${learned ? '✓ Đã học' : '+ Đánh dấu'}
                 </button>
               </div>
+
+              <div class="flex items-start gap-3 pt-0.5">
+                ${item._cachedSvg}
+                <div class="space-y-1 min-w-0 flex-1">
+                  <h4 class="text-sm sm:text-base font-extrabold text-white leading-snug break-words">${item.name}</h4>
+                  <p class="text-xs text-slate-300 leading-relaxed break-words">${item.desc}</p>
+                </div>
+              </div>
             </div>
-          `;
-        }).join('');
-      }
 
-      document.querySelectorAll('.learn-toggle-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          toggleLearnedItem(btn.getAttribute('data-learn-id'), btn.getAttribute('data-learn-title'));
-        });
-      });
+            <div class="space-y-2 pt-1">
+              <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 font-mono-code text-xs text-cyan-300 font-extrabold break-words">
+                ${item.alg}
+              </div>
+              <button data-demo-alg="${item.alg}" data-demo-name="${item.code} — ${item.name}" class="demo-alg-on-3d-btn w-full py-2 px-3 rounded-xl bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 font-extrabold text-xs sm:text-sm border border-cyan-500/35 transition">
+                🧊 Nạp Thế Lên Mô Hình 3D (Đi Từng Bước)
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
 
-      document.querySelectorAll('.demo-alg-on-3d-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const alg = btn.getAttribute('data-demo-alg');
-          const name = btn.getAttribute('data-demo-name') || 'CFOP';
-          if (window.MainCube) {
-            // Keep Rubik in the scrambled/case state at Step 0 (autoPlay = false) so user can step forward at their own pace!
-            window.MainCube.loadAlgorithmSteps(alg, name, true, false);
-            showToast(`🧊 Đã nạp thế "${name}" (Giữ nguyên trạng thái chưa giải — Bước 0). Hãy bấm "Đi Bước ⏭" hoặc "▶ Tự Chạy"!`, 'cyan');
-          }
-        });
-      });
+    function renderGambitCardsOnly() {
+      const gambitContainer = document.getElementById('chess-gambit-cards');
+      if (!gambitContainer) return;
 
-      document.querySelectorAll('.load-gambit-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = btn.getAttribute('data-gambit-id');
-          const found = CHESS_GAMBITS.find(g => g.id === id);
-          if (found) {
-            switchChessSubtab('play');
-            ChessArena.loadGambitOnBoard(found);
-            showToast(`♟️ Đã bày thế cờ: ${found.name}`, 'emerald');
-          }
-        });
-      });
+      gambitContainer.innerHTML = CHESS_GAMBITS.map(g => {
+        const learned = AppState.learnedItems.includes(g.id);
+        if (!g._cachedMiniBoard) g._cachedMiniBoard = renderGambitCardMiniBoardHTML(g.moves);
+        return `
+          <div data-card-id="${g.id}" class="card-hover-fx h-full p-5 rounded-2xl bg-slate-900/90 border ${learned ? 'border-emerald-500/50' : 'border-slate-800'} flex flex-col justify-between space-y-4">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between gap-2">
+                <span class="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-xs font-extrabold">${g.badge}</span>
+                <button data-learn-id="${g.id}" data-learn-title="${g.name}" class="learn-toggle-btn text-xs sm:text-sm font-bold px-3 py-1.5 rounded-xl shrink-0 ${learned ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-200 hover:text-white'} transition">
+                  ${learned ? '✓ Đã học' : '+ Đánh dấu đã học'}
+                </button>
+              </div>
+              <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3.5 pt-0.5">
+                ${g._cachedMiniBoard}
+                <div class="space-y-1.5 min-w-0 flex-1">
+                  <h4 class="text-base sm:text-lg font-extrabold text-white break-words leading-snug">${g.name}</h4>
+                  <p class="text-xs sm:text-sm text-slate-200 leading-relaxed break-words">${g.desc}</p>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-2.5 pt-1">
+              <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 font-mono-code text-xs sm:text-sm text-emerald-300 break-words">
+                Biên bản: <strong>${g.pgnText}</strong>
+              </div>
+              <button data-gambit-id="${g.id}" class="load-gambit-btn w-full py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 font-extrabold text-xs sm:text-sm border border-emerald-500/30 transition">
+                ♟️ Bày Thế Cờ Này Lên Bàn Cờ Để Thực Hành
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderAllKnowledgeCards() {
+      renderCfopCardsOnly();
+      renderGambitCardsOnly();
     }
 
     // ---------- 11. SUBTAB HELPERS & GLOBAL SOUND / EVENT WIRING ----------
@@ -9778,8 +10229,17 @@
       initSupabaseClient();
       renderAllKnowledgeCards();
       updateDashboardProgressUI();
-      restoreRememberedSessionOnLoad();
-      fetchLeaderboardsData(true);
+
+      // Automatically execute one-time Blank Slate Purge so "Mạnh Mi" and all old test accounts are wiped 100% clean!
+      (async () => {
+        if (StorageUtil.get(BLANK_SLATE_PURGE_FLAG, '') !== 'done') {
+          await wipeAllUserDataToBlankPage(true, false);
+          StorageUtil.set(BLANK_SLATE_PURGE_FLAG, 'done');
+        } else {
+          await restoreRememberedSessionOnLoad();
+          await fetchLeaderboardsData(true);
+        }
+      })();
 
       // Global UI Click & Select Sound Feedback
       document.addEventListener('click', e => {
@@ -9808,10 +10268,13 @@
         btn.addEventListener('click', () => switchMainView(btn.getAttribute('data-goto')));
       });
 
-      // Leaderboard Manual Refresh Button
+      // Leaderboard Manual Refresh & Full Blank-Slate Wipe Buttons
       document.getElementById('refresh-leaderboard-btn')?.addEventListener('click', async () => {
         await fetchLeaderboardsData(true);
         showToast('🔄 Đã đồng bộ & làm mới Bảng Xếp Hạng người chơi thật!', 'cyan');
+      });
+      document.getElementById('wipe-all-users-blank-btn')?.addEventListener('click', async () => {
+        await wipeAllUserDataToBlankPage(true, true);
       });
 
       // Sound Toggle
@@ -10071,7 +10534,41 @@
         showToast(`▶ Đang mô phỏng công thức giải trên khối 3D: ${alg}`, 'cyan');
       });
 
-      // CFOP Filter & Search Input
+      // Event Delegation for CFOP & Gambit Cards (Fast, zero per-card listener overhead)
+      document.getElementById('cfop-cards-container')?.addEventListener('click', e => {
+        const learnBtn = e.target.closest('.learn-toggle-btn');
+        if (learnBtn) {
+          toggleLearnedItem(learnBtn.getAttribute('data-learn-id'), learnBtn.getAttribute('data-learn-title'));
+          return;
+        }
+        const demoBtn = e.target.closest('.demo-alg-on-3d-btn');
+        if (demoBtn && window.MainCube) {
+          const alg = demoBtn.getAttribute('data-demo-alg');
+          const name = demoBtn.getAttribute('data-demo-name') || 'CFOP';
+          window.MainCube.loadAlgorithmSteps(alg, name, true, false, false);
+          showToast(`🧊 Đã nạp thế "${name}" (Giữ nguyên trạng thái chưa giải — Bước 0). Hãy bấm "Đi Bước ⏭" hoặc "▶ Tự Chạy"!`, 'cyan');
+        }
+      });
+
+      document.getElementById('chess-gambit-cards')?.addEventListener('click', e => {
+        const learnBtn = e.target.closest('.learn-toggle-btn');
+        if (learnBtn) {
+          toggleLearnedItem(learnBtn.getAttribute('data-learn-id'), learnBtn.getAttribute('data-learn-title'));
+          return;
+        }
+        const gambitBtn = e.target.closest('.load-gambit-btn');
+        if (gambitBtn) {
+          const id = gambitBtn.getAttribute('data-gambit-id');
+          const found = CHESS_GAMBITS.find(g => g.id === id);
+          if (found) {
+            switchChessSubtab('play');
+            ChessArena.loadGambitOnBoard(found);
+            showToast(`♟️ Đã bày thế cờ: ${found.name}`, 'emerald');
+          }
+        }
+      });
+
+      // CFOP Filter & Debounced Search Input
       document.querySelectorAll('.cfop-filter-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           currentCfopFilter = btn.getAttribute('data-cfop-filter');
@@ -10081,14 +10578,18 @@
               active ? 'bg-cyan-500 text-slate-950' : 'bg-slate-800 text-slate-200 hover:text-white'
             }`;
           });
-          renderAllKnowledgeCards();
+          renderCfopCardsOnly();
         });
       });
       const cfopSearchEl = document.getElementById('cfop-search-input');
       if (cfopSearchEl) {
+        let searchTimer = null;
         cfopSearchEl.addEventListener('input', e => {
-          currentCfopSearch = e.target.value.trim();
-          renderAllKnowledgeCards();
+          clearTimeout(searchTimer);
+          searchTimer = setTimeout(() => {
+            currentCfopSearch = e.target.value.trim();
+            renderCfopCardsOnly();
+          }, 110);
         });
       }
 
@@ -10230,9 +10731,6 @@
       });
 
       document.getElementById('auth-logout-btn').addEventListener('click', async () => {
-        if (AppState.supabaseClient) {
-          try { await AppState.supabaseClient.auth.signOut(); } catch (e) {}
-        }
         StorageUtil.remove(ACTIVE_SESSION_STORAGE_KEY);
         AppState.userEmail = '';
         AppState.userName = '';
@@ -10313,6 +10811,72 @@
       document.addEventListener('dblclick', e => {
         if (e.cancelable) e.preventDefault();
       }, { passive: false });
+
+      // Supabase SQL Setup & Cloud Sync Modal Wiring
+      const sqlModal = document.getElementById('supabase-sql-modal');
+      const openSqlModal = () => {
+        const urlIn = document.getElementById('custom-supabase-url-input');
+        const keyIn = document.getElementById('custom-supabase-key-input');
+        if (urlIn) urlIn.value = SUPABASE_CONFIG.SUPABASE_URL || '';
+        if (keyIn) keyIn.value = SUPABASE_CONFIG.SUPABASE_ANON_KEY || '';
+        sqlModal?.classList.remove('hidden');
+        sqlModal?.classList.add('flex');
+      };
+      document.getElementById('open-supabase-sql-modal-btn')?.addEventListener('click', openSqlModal);
+      document.getElementById('open-supabase-sql-inline-btn')?.addEventListener('click', openSqlModal);
+      document.getElementById('close-supabase-sql-modal-btn')?.addEventListener('click', () => {
+        sqlModal?.classList.add('hidden');
+        sqlModal?.classList.remove('flex');
+      });
+      document.getElementById('clean-local-cache-sync-btn')?.addEventListener('click', async () => {
+        await cleanLocalCacheAndSyncFromCloud();
+      });
+      document.getElementById('push-all-local-to-cloud-btn')?.addEventListener('click', async () => {
+        const ok = await syncAllLocalAccountsToSupabase(true);
+        if (ok) await fetchLeaderboardsData(true);
+      });
+
+      // Live auto-sync every 7 seconds when Leaderboard tab is open + when tab regains focus
+      setInterval(() => {
+        const lbSec = document.getElementById('view-leaderboard');
+        if (lbSec && !lbSec.classList.contains('hidden')) {
+          fetchLeaderboardsData(true);
+        }
+      }, 7000);
+      window.addEventListener('focus', () => {
+        fetchLeaderboardsData(true);
+      });
+      document.getElementById('copy-supabase-sql-btn')?.addEventListener('click', async () => {
+        const codeText = document.getElementById('supabase-sql-code-block')?.textContent || '';
+        try {
+          await navigator.clipboard.writeText(codeText);
+          SoundFX.play('success');
+          showToast('📋 Đã sao chép lệnh SQL! Hãy dán vào Supabase SQL Editor và bấm RUN.', 'emerald');
+        } catch (err) {
+          showToast('Hãy bôi đen đoạn mã SQL trong khung và nhấn Ctrl+C!', 'cyan');
+        }
+      });
+      document.getElementById('save-custom-supabase-btn')?.addEventListener('click', async () => {
+        const newUrl = document.getElementById('custom-supabase-url-input')?.value.trim();
+        const newKey = document.getElementById('custom-supabase-key-input')?.value.trim();
+        if (!newUrl || !newKey) {
+          showToast('❌ Vui lòng nhập đầy đủ Supabase Project URL và Anon Key!', 'rose');
+          return;
+        }
+        StorageUtil.set(CUSTOM_SUPABASE_STORAGE_KEY, { url: newUrl, key: newKey });
+        initSupabaseClient();
+        await syncAllLocalAccountsToSupabase(true);
+        await fetchLeaderboardsData(true);
+        showToast('✅ Đã lưu cấu hình Supabase mới và đồng bộ dữ liệu!', 'emerald');
+      });
+      document.getElementById('reset-default-supabase-btn')?.addEventListener('click', async () => {
+        StorageUtil.remove(CUSTOM_SUPABASE_STORAGE_KEY);
+        initSupabaseClient();
+        document.getElementById('custom-supabase-url-input').value = SUPABASE_CONFIG.SUPABASE_URL;
+        document.getElementById('custom-supabase-key-input').value = SUPABASE_CONFIG.SUPABASE_ANON_KEY;
+        await fetchLeaderboardsData(true);
+        showToast('↺ Đã khôi phục cấu hình Supabase mặc định!', 'cyan');
+      });
     });
   </script>
 </body>
