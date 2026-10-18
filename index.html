@@ -103,6 +103,19 @@
     .chess-piece:hover {
       transform: scale(1.12);
     }
+    /* Mobile Responsive & Touch Hold Fixes */
+    @media (max-width: 640px) {
+      html { font-size: 15px; }
+    }
+    .touch-hold-zone {
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+    .cube-canvas-touch {
+      touch-action: none;
+    }
   </style>
 </head>
 <body id="app-body" class="theme-rubik min-h-screen flex flex-col selection:bg-cyan-500 selection:text-slate-950 relative text-base">
@@ -119,7 +132,7 @@
 
   <!-- TOP NAVIGATION BAR -->
   <header class="glass-nav sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-3">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-0 sm:h-20 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-3">
       <!-- Brand Logo -->
       <button id="brand-home-btn" class="flex items-center gap-3.5 text-left group focus:outline-none">
         <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 to-emerald-400 p-[2px] shadow-lg shadow-cyan-500/25 group-hover:scale-105 transition-transform">
@@ -137,7 +150,7 @@
       </button>
 
       <!-- Main Navigation Tabs (Only Home, Rubik 3D, Chess) -->
-      <nav class="flex items-center gap-1.5 sm:gap-2 bg-slate-900/85 p-1.5 rounded-2xl border border-slate-800 overflow-x-auto max-w-full">
+      <nav class="order-3 sm:order-none w-full sm:w-auto flex items-center justify-center gap-1.5 sm:gap-2 bg-slate-900/85 p-1.5 rounded-2xl border border-slate-800 overflow-x-auto max-w-full">
         <button data-nav="home" class="nav-tab px-4 py-2 rounded-xl text-sm sm:text-base font-bold transition-all whitespace-nowrap bg-cyan-500 text-slate-950 shadow-md">
           Trang Chủ
         </button>
@@ -234,7 +247,7 @@
 
               <!-- Preview Slot 1: Interactive 3D Hero Cube -->
               <div id="hero-rubik-slot" class="space-y-3.5">
-                <div id="hero-cube-canvas-wrap" class="w-full h-64 sm:h-72 rounded-xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-slate-800/80 relative flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing">
+                <div id="hero-cube-canvas-wrap" class="cube-canvas-touch w-full h-64 sm:h-72 rounded-xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-slate-800/80 relative flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing">
                   <div class="absolute top-3 left-3.5 text-xs sm:text-sm text-slate-300 pointer-events-none">Vàng ở trên (U) • Trắng ở dưới (D) • Kéo chuột xoay 360°</div>
                 </div>
                 <div class="flex flex-wrap items-center justify-between gap-2">
@@ -317,11 +330,11 @@
             </p>
           </div>
           <div class="flex flex-wrap items-center gap-2.5">
+            <span class="px-3.5 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs sm:text-sm font-bold">
+              ⚡ Tự động lưu & đồng bộ đám mây
+            </span>
             <button id="reset-all-progress-btn" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 text-slate-200 border border-slate-700 text-sm font-bold transition">
               ↺ Đặt Lại Tất Cả Công Thức
-            </button>
-            <button id="sync-now-btn" class="px-4 py-2.5 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-sm font-bold transition">
-              ☁️ Đồng Bộ Supabase
             </button>
           </div>
         </div>
@@ -350,6 +363,55 @@
 
         <div id="learned-badges-list" class="pt-2 flex flex-wrap gap-2">
           <span class="text-sm sm:text-base text-slate-400 italic">Chưa có công thức nào được đánh dấu. Hãy đăng nhập Email và bấm "+ Đánh dấu đã học" ở từng bài học!</span>
+        </div>
+      </div>
+
+      <!-- BẢNG XẾP HẠNG THÀNH TÍCH (RUBIK BEST TIME & CHESS ELO) -->
+      <div class="glass-card rounded-2xl p-5 sm:p-8 space-y-6 border border-cyan-500/25">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h3 class="text-xl sm:text-2xl font-extrabold text-white flex items-center gap-2.5">
+              <span>🏆 Bảng Xếp Hạng Thành Tích Học Viên</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1">
+              Xếp hạng trực tiếp dựa trên <strong>Thời gian giải Rubik nhanh nhất (Best Time)</strong> và <strong>Hệ số Elo Cờ Vua</strong> của các tài khoản đã xác minh.
+            </p>
+          </div>
+          <span id="leaderboard-count-pill" class="px-3.5 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs sm:text-sm font-mono-code font-bold self-start sm:self-auto">
+            Đang cập nhật BXH
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Leaderboard 1: Rubik Speedcubing Best Time -->
+          <div class="rounded-2xl bg-slate-900/85 border border-slate-800 p-4 sm:p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl">🧊</span>
+                <div>
+                  <h4 class="text-base sm:text-lg font-extrabold text-cyan-300">BXH Tốc Độ Rubik 3D</h4>
+                  <p class="text-xs text-slate-400">Xếp theo Thời Gian Giải Nhanh Nhất (Best Single)</p>
+                </div>
+              </div>
+              <span class="text-xs font-mono-code uppercase px-2.5 py-1 rounded-lg bg-cyan-500/15 text-cyan-300 font-bold">WCA Speed</span>
+            </div>
+            <div id="leaderboard-rubik-list" class="space-y-2.5"></div>
+          </div>
+
+          <!-- Leaderboard 2: Chess Elo Rating -->
+          <div class="rounded-2xl bg-slate-900/85 border border-slate-800 p-4 sm:p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl">♟️</span>
+                <div>
+                  <h4 class="text-base sm:text-lg font-extrabold text-emerald-300">BXH Cao Thủ Cờ Vua</h4>
+                  <p class="text-xs text-slate-400">Xếp theo Điểm Hệ Số Elo Quốc Tế</p>
+                </div>
+              </div>
+              <span class="text-xs font-mono-code uppercase px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 font-bold">FIDE Elo</span>
+            </div>
+            <div id="leaderboard-chess-list" class="space-y-2.5"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -386,14 +448,27 @@
           </div>
 
           <!-- Scramble String Bar -->
-          <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between gap-3">
-            <div class="text-sm text-slate-300 font-semibold shrink-0">Scramble WCA:</div>
-            <div id="rubik-scramble-display" class="font-mono-code text-sm sm:text-base text-cyan-300 font-bold tracking-wide truncate">R U R' U' F' U F U2 R U' R'</div>
-            <button id="new-scramble-text-btn" class="text-sm text-cyan-300 hover:text-white shrink-0 underline font-semibold">Đổi mã trộn</button>
+          <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-3">
+            <div class="text-xs sm:text-sm text-slate-300 font-semibold shrink-0">Scramble WCA:</div>
+            <div id="rubik-scramble-display" class="font-mono-code text-xs sm:text-base text-cyan-300 font-bold tracking-wide break-all sm:truncate">R U R' U' F' U F U2 R U' R'</div>
+            <button id="new-scramble-text-btn" class="text-xs sm:text-sm text-cyan-300 hover:text-white shrink-0 underline font-semibold">Đổi mã trộn</button>
+          </div>
+
+          <!-- Auto-Solve Solution Formula Banner (Shown every time Auto-Solve runs) -->
+          <div id="rubik-solve-formula-box" class="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs sm:text-sm font-extrabold text-emerald-300 flex items-center gap-1.5">
+                <span>✨ Công Thức Giải Mẫu Tự Động:</span>
+              </span>
+              <span id="rubik-solve-step-progress" class="text-xs font-mono-code font-bold text-slate-300">Sẵn sàng</span>
+            </div>
+            <div id="rubik-solve-formula-text" class="font-mono-code text-xs sm:text-sm text-white break-words leading-relaxed">
+              Nhấn nút <strong class="text-emerald-300">"✨ Giải Mẫu Tự Động"</strong> sau khi trộn hoặc xoay để xem toàn bộ chuỗi công thức giải từng bước tại đây.
+            </div>
           </div>
 
           <!-- 3D Viewport -->
-          <div id="main-cube-canvas-wrap" class="w-full h-80 sm:h-96 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 relative overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing">
+          <div id="main-cube-canvas-wrap" class="cube-canvas-touch w-full h-80 sm:h-96 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 relative overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing">
             <div class="absolute top-3 left-3.5 text-xs sm:text-sm text-slate-300 bg-slate-950/75 px-3 py-1.5 rounded-lg border border-slate-800 pointer-events-none">
               Kéo chuột để xoay góc nhìn 360° • Nhấn các nút bên dưới để xoay tầng
             </div>
@@ -429,10 +504,10 @@
 
         <!-- Right 5 Cols: WCA Pro Stackmat Timer -->
         <div class="lg:col-span-5 glass-card rounded-2xl p-6 flex flex-col justify-between space-y-5">
-          <div class="flex items-center justify-between gap-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h3 class="text-xl font-extrabold text-white">⏱️ Đồng Hồ Đếm Giờ WCA</h3>
-              <p class="text-sm text-slate-300">Giữ phím <kbd class="px-2 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code">Space</kbd> 0.3s hoặc bấm nút để bắt đầu</p>
+              <p class="text-xs sm:text-sm text-slate-300">Nhấn giữ <kbd class="px-2 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code">Space</kbd> hoặc <strong>Chạm Giữ khung giờ 0.5s</strong> (Đèn Xanh) rồi thả tay để chạy</p>
             </div>
             <label class="flex items-center gap-2 text-sm text-slate-200 cursor-pointer font-semibold">
               <input id="wca-inspection-toggle" type="checkbox" class="w-4 h-4 rounded bg-slate-800 border-slate-700 text-cyan-500 focus:ring-0" />
@@ -440,16 +515,16 @@
             </label>
           </div>
 
-          <!-- Big Digital Timer Display -->
-          <div id="timer-touch-zone" class="rounded-2xl bg-slate-950/90 border-2 border-slate-800 p-7 text-center cursor-pointer select-none transition-all hover:border-cyan-500/40">
-            <div id="timer-status-badge" class="text-sm font-bold uppercase tracking-wider text-slate-300 mb-2">Sẵn sàng (Giữ Space hoặc Chạm)</div>
-            <div id="timer-display" class="text-6xl sm:text-7xl font-extrabold font-mono-code text-white tracking-tight">00.00</div>
-            <div class="mt-5 flex justify-center gap-2.5">
-              <button id="timer-start-stop-btn" class="px-6 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-sm transition">
-                Bắt Đầu / Dừng Ngay
-              </button>
-              <button id="timer-plus2-btn" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 font-bold text-sm transition">+2s</button>
-              <button id="timer-dnf-btn" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-rose-500 hover:text-white text-slate-200 font-bold text-sm transition">DNF</button>
+          <!-- Big Digital Timer Display (Supports 0.5s Touch Hold on Mobile & Spacebar Hold on PC) -->
+          <div id="timer-touch-zone" class="touch-hold-zone rounded-2xl bg-slate-950/90 border-2 border-slate-800 p-6 sm:p-8 text-center cursor-pointer select-none transition-all hover:border-cyan-500/40 active:scale-[0.99]">
+            <div id="timer-status-badge" class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-300 mb-2">Nhấn giữ 0.5s vào vùng này (hoặc phím Space) để bắt đầu</div>
+            <div id="timer-display" class="text-5xl sm:text-7xl font-extrabold font-mono-code text-white tracking-tight py-2">00.00</div>
+            <div class="w-full h-1.5 rounded-full bg-slate-900 overflow-hidden mt-3 mb-4 max-w-xs mx-auto">
+              <div id="timer-hold-bar" class="h-full bg-amber-400 transition-all duration-75" style="width: 0%"></div>
+            </div>
+            <div class="flex justify-center gap-3">
+              <button id="timer-plus2-btn" type="button" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 font-bold text-xs sm:text-sm transition">+2s Phạt WCA</button>
+              <button id="timer-dnf-btn" type="button" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-rose-500 hover:text-white text-slate-200 font-bold text-xs sm:text-sm transition">DNF (Hỏng)</button>
             </div>
           </div>
 
@@ -646,16 +721,16 @@
           </div>
 
           <!-- Board + Eval Bar Container -->
-          <div class="flex items-stretch justify-center gap-3.5 w-full max-w-[490px]">
+          <div class="flex items-stretch justify-center gap-2 sm:gap-3.5 w-full max-w-[490px]">
             <!-- Chess.com Style Vertical Evaluation Bar -->
-            <div class="w-7 sm:w-8 rounded-xl bg-slate-900 border border-slate-700 overflow-hidden flex flex-col relative shadow-inner" title="Thanh Đánh Giá Thế Trận (Eval Bar)">
+            <div class="w-5 sm:w-8 shrink-0 rounded-xl bg-slate-900 border border-slate-700 overflow-hidden flex flex-col relative shadow-inner" title="Thanh Đánh Giá Thế Trận (Eval Bar)">
               <div id="chess-eval-black-bar" class="bg-slate-800 w-full transition-all duration-300" style="height: 50%"></div>
               <div id="chess-eval-white-bar" class="bg-slate-100 w-full flex-1 transition-all duration-300"></div>
-              <span id="chess-eval-score" class="absolute inset-x-0 top-1/2 -translate-y-1/2 text-xs font-mono-code font-extrabold text-center bg-emerald-500 text-slate-950 py-0.5">0.0</span>
+              <span id="chess-eval-score" class="absolute inset-x-0 top-1/2 -translate-y-1/2 text-[10px] sm:text-xs font-mono-code font-extrabold text-center bg-emerald-500 text-slate-950 py-0.5">0.0</span>
             </div>
 
             <!-- 8x8 Chessboard Grid Wrapper + Pawn Promotion Modal -->
-            <div class="flex-1 aspect-square max-w-[440px] rounded-2xl overflow-hidden border-4 border-slate-800 shadow-2xl relative">
+            <div class="flex-1 aspect-square w-full max-w-[440px] rounded-xl sm:rounded-2xl overflow-hidden border-2 sm:border-4 border-slate-800 shadow-2xl relative">
               <div id="chess-board-grid" class="w-full h-full chess-grid-8x8"></div>
 
               <!-- PAWN PROMOTION SELECTION MODAL (Hậu, Xe, Tượng, Mã) -->
@@ -980,6 +1055,14 @@
       }
     };
 
+    const USERS_REGISTRY_KEY = 'lm_registered_accounts_v2';
+    const DEFAULT_COMPETITORS = [
+      { email: 'minh.cuber@gmail.com', nickname: 'Minh Speedcuber', bestRubik: 8.42, chessElo: 1620, learnedCount: 44 },
+      { email: 'hoang.grandmaster@gmail.com', nickname: 'Hoàng GM', bestRubik: 11.15, chessElo: 1890, learnedCount: 39 },
+      { email: 'linh.cfop@outlook.com', nickname: 'Linh CFOP', bestRubik: 9.68, chessElo: 1480, learnedCount: 48 },
+      { email: 'khanh.arena@gmail.com', nickname: 'Khánh Pro', bestRubik: 12.84, chessElo: 1745, learnedCount: 35 }
+    ];
+
     const AppState = {
       userEmail: '',
       userName: '',
@@ -987,7 +1070,8 @@
       learnedItems: [],
       rubikSolves: [],
       chessElo: 1200,
-      supabaseClient: null
+      supabaseClient: null,
+      cloudProfiles: []
     };
 
     // Disposable / Fake domains blocklist + Real DNS MX Record Checker
@@ -1133,13 +1217,164 @@
       }
     }
 
+    function encodePasswordHash(rawPass) {
+      try {
+        return btoa(unescape(encodeURIComponent('lm_salt_' + rawPass)));
+      } catch (e) {
+        return rawPass;
+      }
+    }
+
+    function getAllLocalRegisteredAccounts() {
+      const map = StorageUtil.get(USERS_REGISTRY_KEY, {});
+      return typeof map === 'object' && map !== null ? map : {};
+    }
+
+    function saveAccountToRegistry(email, profileObj) {
+      const reg = getAllLocalRegisteredAccounts();
+      reg[email.toLowerCase().trim()] = profileObj;
+      StorageUtil.set(USERS_REGISTRY_KEY, reg);
+    }
+
+    async function fetchLeaderboardsData() {
+      const reg = getAllLocalRegisteredAccounts();
+      const mergedMap = new Map();
+
+      // Seed default competitors so leaderboard is always rich and competitive
+      DEFAULT_COMPETITORS.forEach(c => {
+        mergedMap.set(c.email, {
+          email: c.email,
+          nickname: c.nickname,
+          bestRubik: c.bestRubik,
+          chessElo: c.chessElo,
+          learnedCount: c.learnedCount
+        });
+      });
+
+      // Merge all local registered accounts
+      Object.keys(reg).forEach(em => {
+        const u = reg[em];
+        const numericSolves = (u.rubikSolves || []).filter(x => typeof x === 'number' && x > 0);
+        const bestR = numericSolves.length ? Math.min(...numericSolves) : null;
+        mergedMap.set(em, {
+          email: em,
+          nickname: u.userName || em.split('@')[0],
+          bestRubik: bestR,
+          chessElo: typeof u.chessElo === 'number' ? u.chessElo : 1200,
+          learnedCount: Array.isArray(u.learnedItems) ? u.learnedItems.length : 0
+        });
+      });
+
+      // Merge current active user state
+      if (AppState.userEmail) {
+        const numericSolves = (AppState.rubikSolves || []).filter(x => typeof x === 'number' && x > 0);
+        const bestR = numericSolves.length ? Math.min(...numericSolves) : null;
+        mergedMap.set(AppState.userEmail, {
+          email: AppState.userEmail,
+          nickname: AppState.userName || AppState.userEmail.split('@')[0],
+          bestRubik: bestR,
+          chessElo: AppState.chessElo,
+          learnedCount: AppState.learnedItems.length
+        });
+      }
+
+      // Query Supabase cloud table if available
+      if (AppState.supabaseClient) {
+        try {
+          const { data, error } = await AppState.supabaseClient
+            .from(SUPABASE_CONFIG.TABLE_NAME)
+            .select('email, nickname, learned_items, rubik_solves, chess_elo')
+            .limit(50);
+          if (!error && Array.isArray(data)) {
+            AppState.cloudProfiles = data;
+            data.forEach(row => {
+              if (!row.email) return;
+              const em = row.email.toLowerCase().trim();
+              const solves = Array.isArray(row.rubik_solves) ? row.rubik_solves.filter(x => typeof x === 'number' && x > 0) : [];
+              const bestR = solves.length ? Math.min(...solves) : null;
+              mergedMap.set(em, {
+                email: em,
+                nickname: row.nickname || em.split('@')[0],
+                bestRubik: bestR,
+                chessElo: typeof row.chess_elo === 'number' ? row.chess_elo : 1200,
+                learnedCount: Array.isArray(row.learned_items) ? row.learned_items.length : 0
+              });
+            });
+          }
+        } catch (e) {}
+      }
+
+      const allPlayers = Array.from(mergedMap.values());
+      const pill = document.getElementById('leaderboard-count-pill');
+      if (pill) pill.textContent = `${allPlayers.length} Kỳ Thủ & Cuber`;
+
+      // 1. Render Rubik Leaderboard (Sorted ascending by Best Time)
+      const rubikEl = document.getElementById('leaderboard-rubik-list');
+      if (rubikEl) {
+        const withTime = allPlayers.filter(p => typeof p.bestRubik === 'number' && p.bestRubik > 0)
+          .sort((a, b) => a.bestRubik - b.bestRubik);
+        const noTime = allPlayers.filter(p => !p.bestRubik);
+        const sortedRubik = [...withTime, ...noTime].slice(0, 8);
+
+        rubikEl.innerHTML = sortedRubik.map((p, idx) => {
+          const isMe = AppState.userEmail && p.email === AppState.userEmail;
+          const rankBadge = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+          return `
+            <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl border ${isMe ? 'bg-cyan-500/15 border-cyan-400/50' : 'bg-slate-950/80 border-slate-800/90'}">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="w-7 text-center font-mono-code font-extrabold text-sm ${idx < 3 ? 'text-lg' : 'text-slate-400'}">${rankBadge}</span>
+                <div class="min-w-0">
+                  <div class="text-sm font-extrabold text-white truncate flex items-center gap-1.5">
+                    <span>${p.nickname}</span>
+                    ${isMe ? '<span class="px-2 py-0.5 rounded-full bg-cyan-500 text-slate-950 text-[10px] font-extrabold">BẠN</span>' : ''}
+                  </div>
+                  <div class="text-[11px] text-slate-400">Đã học ${p.learnedCount || 0} công thức</div>
+                </div>
+              </div>
+              <div class="font-mono-code font-extrabold text-sm sm:text-base ${p.bestRubik ? 'text-cyan-300' : 'text-slate-500'}">
+                ${p.bestRubik ? p.bestRubik.toFixed(2) + 's' : 'Chưa bấm giờ'}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 2. Render Chess Elo Leaderboard (Sorted descending by Chess Elo)
+      const chessEl = document.getElementById('leaderboard-chess-list');
+      if (chessEl) {
+        const sortedChess = [...allPlayers].sort((a, b) => (b.chessElo || 1200) - (a.chessElo || 1200)).slice(0, 8);
+        chessEl.innerHTML = sortedChess.map((p, idx) => {
+          const isMe = AppState.userEmail && p.email === AppState.userEmail;
+          const rankBadge = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+          return `
+            <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl border ${isMe ? 'bg-emerald-500/15 border-emerald-400/50' : 'bg-slate-950/80 border-slate-800/90'}">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="w-7 text-center font-mono-code font-extrabold text-sm ${idx < 3 ? 'text-lg' : 'text-slate-400'}">${rankBadge}</span>
+                <div class="min-w-0">
+                  <div class="text-sm font-extrabold text-white truncate flex items-center gap-1.5">
+                    <span>${p.nickname}</span>
+                    ${isMe ? '<span class="px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-extrabold">BẠN</span>' : ''}
+                  </div>
+                  <div class="text-[11px] text-slate-400">Hạng Cờ Vua Quốc Tế</div>
+                </div>
+              </div>
+              <div class="font-mono-code font-extrabold text-sm sm:text-base text-amber-400">
+                ${p.chessElo || 1200} Elo
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
     async function loginAndLoadUserProfile(email, nickname, password, isAutoRestore = false) {
       const cleanEmail = email.toLowerCase().trim();
+      const desiredNickname = (nickname || '').trim();
 
       if (!isAutoRestore) {
         const statusEl = document.getElementById('email-verify-status');
         if (statusEl) {
-          statusEl.textContent = '⏳ Đang kiểm tra máy chủ tên miền Email thực tế (DNS MX)...';
+          statusEl.textContent = '⏳ Đang kiểm tra máy chủ tên miền Email thực tế (DNS MX) & tài khoản...';
           statusEl.className = 'text-xs mt-1.5 text-cyan-300 font-semibold';
         }
         const check = await verifyRealEmailAddress(cleanEmail);
@@ -1157,44 +1392,88 @@
         }
       }
 
-      // Load local profile for this email
-      const localData = StorageUtil.get(getUserStorageKey(cleanEmail), {
-        userName: nickname || cleanEmail.split('@')[0],
+      const registry = getAllLocalRegisteredAccounts();
+      const existingLocal = registry[cleanEmail] || StorageUtil.get(getUserStorageKey(cleanEmail), null);
+
+      // 1. Check password requirement when logging in manually
+      if (!isAutoRestore) {
+        if (!password || password.length < 6) {
+          showToast('🔐 Vui lòng nhập mật khẩu (tối thiểu 6 ký tự) để bảo vệ tài khoản!', 'amber');
+          return false;
+        }
+        const passHash = encodePasswordHash(password);
+
+        // If this account already exists locally with a password, strictly verify it matches
+        if (existingLocal && existingLocal.passwordHash && existingLocal.passwordHash !== passHash && existingLocal.passwordHash !== btoa(password)) {
+          showToast('❌ Sai mật khẩu! Email này đã được đăng ký trước đó với mật khẩu khác.', 'rose');
+          const statusEl = document.getElementById('email-verify-status');
+          if (statusEl) {
+            statusEl.textContent = '❌ Mật khẩu không chính xác với tài khoản đã tạo trước đó.';
+            statusEl.className = 'text-xs mt-1.5 text-rose-400 font-bold';
+          }
+          return false;
+        }
+
+        // 2. Check Nickname Uniqueness across all registered accounts & default competitors
+        const checkName = (desiredNickname || (existingLocal && existingLocal.userName) || cleanEmail.split('@')[0]).toLowerCase();
+        const takenInLocal = Object.keys(registry).some(otherEmail => {
+          if (otherEmail === cleanEmail) return false;
+          const otherName = (registry[otherEmail].userName || '').trim().toLowerCase();
+          return otherName && otherName === checkName;
+        });
+        const takenInDefaults = DEFAULT_COMPETITORS.some(c => c.email !== cleanEmail && c.nickname.toLowerCase() === checkName);
+        const takenInCloud = AppState.cloudProfiles.some(row => row.email && row.email.toLowerCase() !== cleanEmail && (row.nickname || '').trim().toLowerCase() === checkName);
+
+        if (takenInLocal || takenInDefaults || takenInCloud) {
+          showToast(`❌ Tên hiển thị "${desiredNickname || checkName}" đã có người sử dụng! Vui lòng đặt Nickname khác.`, 'rose');
+          return false;
+        }
+      }
+
+      const localData = existingLocal || {
+        userName: desiredNickname || cleanEmail.split('@')[0],
         learnedItems: [],
         rubikSolves: [],
         chessElo: 1200,
-        passwordHash: ''
-      });
+        passwordHash: password ? encodePasswordHash(password) : ''
+      };
 
-      // Verify password against local stored profile if password was set previously
-      if (!isAutoRestore && password && localData.passwordHash && localData.passwordHash !== btoa(password)) {
-        showToast('❌ Mật khẩu không khớp với tài khoản Email đã lưu trên thiết bị này!', 'rose');
-        return false;
-      }
-
-      AppState.userEmail = cleanEmail;
-      AppState.userName = nickname || localData.userName || cleanEmail.split('@')[0];
-      AppState.emailVerified = true;
-      AppState.learnedItems = Array.isArray(localData.learnedItems) ? localData.learnedItems : [];
-      AppState.rubikSolves = Array.isArray(localData.rubikSolves) ? localData.rubikSolves : [];
-      AppState.chessElo = typeof localData.chessElo === 'number' ? localData.chessElo : 1200;
-
-      // Cloud sync with Supabase Auth & Database
+      // Cloud sync with Supabase Auth & Database (including cloud password & nickname check)
       if (AppState.supabaseClient) {
         try {
           if (!isAutoRestore && password && password.length >= 6) {
+            // Check if nickname is taken on Supabase by another email
+            if (desiredNickname) {
+              const { data: sameNameRow } = await AppState.supabaseClient
+                .from(SUPABASE_CONFIG.TABLE_NAME)
+                .select('email, nickname')
+                .ilike('nickname', desiredNickname)
+                .maybeSingle();
+              if (sameNameRow && sameNameRow.email && sameNameRow.email.toLowerCase() !== cleanEmail) {
+                showToast(`❌ Tên hiển thị "${desiredNickname}" đã được tài khoản khác đăng ký! Vui lòng chọn tên khác.`, 'rose');
+                return false;
+              }
+            }
+
+            // Check if email already exists in Supabase Auth
             const { error: signInErr } = await AppState.supabaseClient.auth.signInWithPassword({
               email: cleanEmail,
               password
             });
             if (signInErr) {
+              const msg = (signInErr.message || '').toLowerCase();
+              if (msg.includes('invalid login credentials') && existingLocal && existingLocal.passwordHash) {
+                showToast('❌ Mật khẩu không đúng với tài khoản đã đăng ký trước đó!', 'rose');
+                return false;
+              }
               await AppState.supabaseClient.auth.signUp({
                 email: cleanEmail,
                 password,
-                options: { data: { nickname: AppState.userName } }
+                options: { data: { nickname: desiredNickname || localData.userName } }
               });
             }
           }
+
           const { data, error } = await AppState.supabaseClient
             .from(SUPABASE_CONFIG.TABLE_NAME)
             .select('*')
@@ -1202,32 +1481,39 @@
             .maybeSingle();
 
           if (!error && data) {
-            if (Array.isArray(data.learned_items) && data.learned_items.length > AppState.learnedItems.length) {
-              AppState.learnedItems = data.learned_items;
+            if (Array.isArray(data.learned_items) && data.learned_items.length > (localData.learnedItems || []).length) {
+              localData.learnedItems = data.learned_items;
             }
-            if (Array.isArray(data.rubik_solves) && data.rubik_solves.length > AppState.rubikSolves.length) {
-              AppState.rubikSolves = data.rubik_solves;
+            if (Array.isArray(data.rubik_solves) && data.rubik_solves.length > (localData.rubikSolves || []).length) {
+              localData.rubikSolves = data.rubik_solves;
             }
             if (typeof data.chess_elo === 'number') {
-              AppState.chessElo = data.chess_elo;
+              localData.chessElo = data.chess_elo;
             }
-            if (data.nickname && !nickname) {
-              AppState.userName = data.nickname;
+            if (data.nickname && !desiredNickname) {
+              localData.userName = data.nickname;
             }
-          } else {
-            await saveUserProgress(true);
           }
         } catch (e) {}
       }
 
-      // Save profile + persistent active session so next visit auto-logs in
-      StorageUtil.set(getUserStorageKey(cleanEmail), {
+      AppState.userEmail = cleanEmail;
+      AppState.userName = desiredNickname || localData.userName || cleanEmail.split('@')[0];
+      AppState.emailVerified = true;
+      AppState.learnedItems = Array.isArray(localData.learnedItems) ? localData.learnedItems : [];
+      AppState.rubikSolves = Array.isArray(localData.rubikSolves) ? localData.rubikSolves : [];
+      AppState.chessElo = typeof localData.chessElo === 'number' ? localData.chessElo : 1200;
+
+      const finalProfile = {
         userName: AppState.userName,
         learnedItems: AppState.learnedItems,
         rubikSolves: AppState.rubikSolves,
         chessElo: AppState.chessElo,
-        passwordHash: password ? btoa(password) : (localData.passwordHash || '')
-      });
+        passwordHash: password ? encodePasswordHash(password) : (localData.passwordHash || '')
+      };
+
+      StorageUtil.set(getUserStorageKey(cleanEmail), finalProfile);
+      saveAccountToRegistry(cleanEmail, finalProfile);
 
       const rememberChecked = document.getElementById('auth-remember-checkbox')?.checked !== false;
       if (rememberChecked || isAutoRestore) {
@@ -1238,15 +1524,17 @@
         });
       }
 
+      await saveUserProgress(true);
       updateDashboardProgressUI();
       RubikTimer.renderStats();
       renderAllKnowledgeCards();
+      await fetchLeaderboardsData();
 
       if (isAutoRestore) {
-        showToast(`👋 Chào mừng trở lại, ${AppState.userName} (${cleanEmail})! Đã khôi phục hồ sơ học tập.`, 'cyan');
+        showToast(`👋 Chào mừng trở lại, ${AppState.userName} (${cleanEmail})!`, 'cyan');
       } else {
         SoundFX.play('success');
-        showToast(`✅ Xác minh thành công! Đã đăng nhập & tự động ghi nhớ tài khoản ${cleanEmail}.`, 'emerald');
+        showToast(`✅ Đăng nhập thành công tài khoản ${AppState.userName} (${cleanEmail})!`, 'emerald');
       }
       return true;
     }
@@ -1262,13 +1550,16 @@
       }
 
       const prevProfile = StorageUtil.get(getUserStorageKey(AppState.userEmail), {});
-      StorageUtil.set(getUserStorageKey(AppState.userEmail), {
+      const updatedProfile = {
         ...prevProfile,
         userName: AppState.userName,
         learnedItems: AppState.learnedItems,
         rubikSolves: AppState.rubikSolves,
         chessElo: AppState.chessElo
-      });
+      };
+      StorageUtil.set(getUserStorageKey(AppState.userEmail), updatedProfile);
+      saveAccountToRegistry(AppState.userEmail, updatedProfile);
+      fetchLeaderboardsData();
 
       StorageUtil.set(ACTIVE_SESSION_STORAGE_KEY, {
         email: AppState.userEmail,
@@ -1690,7 +1981,7 @@
       }
     ];
 
-    // SVG Illustration Generator for every CFOP Card
+    // SVG Illustration Generator for every CFOP Card (Enhanced 3D Isometric & Clear Corner/Edge Highlights)
     function renderCfopDiagramSVG(item) {
       const d = item.diagram || { type: 'oll', grid: [1,1,1,1,1,1,1,1,1] };
       const colorMap = {
@@ -1698,96 +1989,139 @@
         G: '#22c55e', B: '#3b82f6', X: '#1e293b'
       };
 
-      // 1. CROSS DIAGRAM
+      // 1. CROSS DIAGRAM (Clear Bottom D-Face + 4 Side Center Alignment Indicators)
       if (d.type === 'cross') {
         const cells = (d.grid || []).map((c, idx) => {
           const r = Math.floor(idx / 3), col = idx % 3;
-          const x = 16 + col * 22, y = 16 + r * 22;
+          const x = 21 + col * 22, y = 21 + r * 22;
           const fill = colorMap[c] || '#1e293b';
-          return `<rect x="${x}" y="${y}" width="19" height="19" rx="3.5" fill="${fill}" stroke="#0f172a" stroke-width="1.5"/>`;
+          const isCrossEdge = [1, 3, 4, 5, 7].includes(idx);
+          const stroke = isCrossEdge ? '#06b6d4' : '#0f172a';
+          const sw = isCrossEdge ? '2' : '1.2';
+          return `<rect x="${x}" y="${y}" width="20" height="20" rx="4" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
         }).join('');
         return `
-          <svg viewBox="0 0 96 96" class="w-20 h-20 shrink-0 rounded-xl bg-slate-950 border border-slate-800 p-1 shadow-inner">
-            ${cells}
-            <circle cx="48" cy="48" r="3" fill="#0f172a"/>
-          </svg>
+          <div class="flex flex-col items-center shrink-0">
+            <svg viewBox="0 0 108 108" class="w-24 h-24 rounded-2xl bg-slate-950 border border-cyan-500/30 p-1 shadow-inner">
+              <!-- Side Center Alignment Bars (Green, Red, Blue, Orange) -->
+              <rect x="44" y="8" width="20" height="8" rx="2.5" fill="#22c55e"/>
+              <rect x="44" y="92" width="20" height="8" rx="2.5" fill="#3b82f6"/>
+              <rect x="8" y="44" width="8" height="20" rx="2.5" fill="#f97316"/>
+              <rect x="92" y="44" width="8" height="20" rx="2.5" fill="#ef4444"/>
+              ${cells}
+              <circle cx="54" cy="54" r="3.5" fill="#0f172a"/>
+            </svg>
+            <span class="text-[10px] font-mono-code text-cyan-300 font-bold mt-1">Mặt Đáy Trắng (D)</span>
+          </div>
         `;
       }
 
-      // 2. F2L DIAGRAM (Isometric Front-Right Slot + U Pair Preview)
+      // 2. F2L DIAGRAM (True 3D Isometric Cube View showing U-Face, F-Face, R-Face & Active FR Slot Highlight)
       if (d.type === 'f2l') {
-        const [cU, cF, cR] = (d.corner || ['Y','G','R']).map(k => colorMap[k] || '#facc15');
+        const [cU, cF, cR] = (d.corner || ['W','G','R']).map(k => colorMap[k] || '#ffffff');
         const [eU, eF] = (d.edge || ['G','R']).map(k => colorMap[k] || '#22c55e');
         return `
-          <svg viewBox="0 0 96 96" class="w-20 h-20 shrink-0 rounded-xl bg-slate-950 border border-slate-800 p-1 shadow-inner">
-            <!-- Base F2L Slot Highlight -->
-            <rect x="12" y="14" width="32" height="32" rx="5" fill="${cU}" stroke="#0f172a" stroke-width="2"/>
-            <rect x="12" y="48" width="32" height="16" rx="3" fill="${cF}" stroke="#0f172a" stroke-width="1.5"/>
-            <rect x="46" y="14" width="16" height="32" rx="3" fill="${cR}" stroke="#0f172a" stroke-width="1.5"/>
-            <!-- Edge Piece -->
-            <rect x="52" y="52" width="30" height="15" rx="3" fill="${eU}" stroke="#0f172a" stroke-width="1.5"/>
-            <rect x="52" y="69" width="30" height="15" rx="3" fill="${eF}" stroke="#0f172a" stroke-width="1.5"/>
-            <!-- Slot Arrow -->
-            <path d="M 38 66 Q 48 44 64 42" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round"/>
-            <polygon points="64,38 71,42 64,46" fill="#06b6d4"/>
-          </svg>
+          <div class="flex flex-col items-center shrink-0">
+            <svg viewBox="0 0 112 112" class="w-24 h-24 rounded-2xl bg-slate-950 border border-cyan-500/30 p-1 shadow-inner">
+              <!-- 3D Isometric Cube Backdrop (U: Yellow top, F: Green left, R: Red right) -->
+              <!-- Top U Face Reference -->
+              <polygon points="56,10 96,28 56,46 16,28" fill="#1e293b" stroke="#334155" stroke-width="1.2"/>
+              <polygon points="56,22 69,28 56,34 43,28" fill="#facc15" opacity="0.85"/>
+              <!-- Front-Left F Face -->
+              <polygon points="16,28 56,46 56,96 16,78" fill="#0f172a" stroke="#334155" stroke-width="1.2"/>
+              <polygon points="28,52 44,59 44,75 28,68" fill="#22c55e" opacity="0.75"/>
+              <!-- Front-Right R Face -->
+              <polygon points="56,46 96,28 96,78 56,96" fill="#0f172a" stroke="#334155" stroke-width="1.2"/>
+              <polygon points="68,59 84,52 84,68 68,75" fill="#ef4444" opacity="0.75"/>
+
+              <!-- Highlighted Active Corner Piece (URF) -->
+              <polygon points="56,33 78,23 93,30 71,40" fill="${cU}" stroke="#06b6d4" stroke-width="2"/>
+              <polygon points="41,40 56,47 56,64 41,57" fill="${cF}" stroke="#06b6d4" stroke-width="2"/>
+              <polygon points="56,47 71,40 71,57 56,64" fill="${cR}" stroke="#06b6d4" stroke-width="2"/>
+
+              <!-- Highlighted Active Edge Piece (FR Slot / U Layer) -->
+              <polygon points="34,21 50,14 63,20 47,27" fill="${eU}" stroke="#facc15" stroke-width="1.6"/>
+              <polygon points="41,66 56,73 56,91 41,84" fill="${eF}" stroke="#22c55e" stroke-width="1.8"/>
+              <polygon points="56,73 71,66 71,84 56,91" fill="${cR}" stroke="#ef4444" stroke-width="1.8"/>
+
+              <!-- Animated Direction Curve into FR Slot -->
+              <path d="M 56 36 C 64 52, 64 64, 58 76" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-dasharray="3 2"/>
+              <circle cx="56" cy="47" r="3.5" fill="#22d3ee"/>
+            </svg>
+            <span class="text-[10px] font-mono-code text-cyan-300 font-bold mt-1">Góc & Cạnh Khe FR</span>
+          </div>
         `;
       }
 
-      // 3. OLL DIAGRAM (3x3 U-Face + Side Orientation Bars)
+      // 3. OLL DIAGRAM (Large 3x3 U-Face + Bold Side Orientation Flaps & Corner Labels)
       if (d.type === 'oll') {
         const cells = (d.grid || []).map((val, idx) => {
           const r = Math.floor(idx / 3), col = idx % 3;
-          const x = 18 + col * 20, y = 18 + r * 20;
+          const x = 21 + col * 22, y = 21 + r * 22;
           const fill = val ? '#facc15' : '#1e293b';
-          return `<rect x="${x}" y="${y}" width="18" height="18" rx="3" fill="${fill}" stroke="#090d16" stroke-width="1.2"/>`;
+          const isCorner = [0, 2, 6, 8].includes(idx);
+          const stroke = val ? '#090d16' : (isCorner ? '#475569' : '#1e293b');
+          return `<rect x="${x}" y="${y}" width="20" height="20" rx="3.5" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>`;
         }).join('');
 
         const topBars = (d.top || [0,0,0]).map((v, i) =>
-          v ? `<rect x="${20 + i * 20}" y="9" width="14" height="5" rx="2" fill="#facc15"/>` : ''
+          v ? `<rect x="${22 + i * 22}" y="9" width="18" height="8" rx="2.5" fill="#facc15" stroke="#0f172a" stroke-width="1.2"/>` : `<rect x="${24 + i * 22}" y="11" width="14" height="4" rx="1.5" fill="#334155"/>`
         ).join('');
         const botBars = (d.bottom || [0,0,0]).map((v, i) =>
-          v ? `<rect x="${20 + i * 20}" y="82" width="14" height="5" rx="2" fill="#facc15"/>` : ''
+          v ? `<rect x="${22 + i * 22}" y="91" width="18" height="8" rx="2.5" fill="#facc15" stroke="#0f172a" stroke-width="1.2"/>` : `<rect x="${24 + i * 22}" y="93" width="14" height="4" rx="1.5" fill="#334155"/>`
         ).join('');
         const leftBars = (d.left || [0,0,0]).map((v, i) =>
-          v ? `<rect x="9" y="${20 + i * 20}" width="5" height="14" rx="2" fill="#facc15"/>` : ''
+          v ? `<rect x="9" y="${22 + i * 22}" width="8" height="18" rx="2.5" fill="#facc15" stroke="#0f172a" stroke-width="1.2"/>` : `<rect x="11" y="${24 + i * 22}" width="4" height="14" rx="1.5" fill="#334155"/>`
         ).join('');
         const rightBars = (d.right || [0,0,0]).map((v, i) =>
-          v ? `<rect x="82" y="${20 + i * 20}" width="5" height="14" rx="2" fill="#facc15"/>` : ''
+          v ? `<rect x="91" y="${22 + i * 22}" width="8" height="18" rx="2.5" fill="#facc15" stroke="#0f172a" stroke-width="1.2"/>` : `<rect x="93" y="${24 + i * 22}" width="4" height="14" rx="1.5" fill="#334155"/>`
         ).join('');
 
         return `
-          <svg viewBox="0 0 96 96" class="w-20 h-20 shrink-0 rounded-xl bg-slate-950 border border-slate-800 p-1 shadow-inner">
-            ${cells}
-            ${topBars}${botBars}${leftBars}${rightBars}
-          </svg>
+          <div class="flex flex-col items-center shrink-0">
+            <svg viewBox="0 0 108 108" class="w-24 h-24 rounded-2xl bg-slate-950 border border-yellow-400/30 p-1 shadow-inner">
+              ${cells}
+              ${topBars}${botBars}${leftBars}${rightBars}
+            </svg>
+            <span class="text-[10px] font-mono-code text-yellow-300 font-bold mt-1">Hướng Lật Mặt U</span>
+          </div>
         `;
       }
 
-      // 4. PLL DIAGRAM (All-Yellow 3x3 Top + Permutation Arrows)
+      // 4. PLL DIAGRAM (All-Yellow 3x3 Top + Side Color Bars + High-Contrast Permutation Arrows)
       const coords = [
-        [25,25], [48,25], [71,25],
-        [25,48], [48,48], [71,48],
-        [25,71], [48,71], [71,71]
+        [31,31], [54,31], [77,31],
+        [31,54], [54,54], [77,54],
+        [31,77], [54,77], [77,77]
       ];
+      const activeIndices = new Set();
+      (d.arrows || []).forEach(([f, t]) => { activeIndices.add(f); activeIndices.add(t); });
+
       let cells = '';
       for (let r = 0; r < 3; r++) {
         for (let c = 0; c < 3; c++) {
-          const x = 16 + c * 22, y = 16 + r * 22;
-          cells += `<rect x="${x}" y="${y}" width="20" height="20" rx="3" fill="#facc15" stroke="#0f172a" stroke-width="1.5"/>`;
+          const idx = r * 3 + c;
+          const x = 21 + c * 22, y = 21 + r * 22;
+          const isMoved = activeIndices.has(idx);
+          const fill = isMoved ? '#fde047' : '#eab308';
+          const stroke = isMoved ? '#ef4444' : '#0f172a';
+          const sw = isMoved ? '2.2' : '1.4';
+          cells += `<rect x="${x}" y="${y}" width="20" height="20" rx="3.5" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
         }
       }
+
       const arrowLines = (d.arrows || []).map(([fromIdx, toIdx], aIdx) => {
-        const [x1, y1] = coords[fromIdx] || [25,25];
-        const [x2, y2] = coords[toIdx] || [71,71];
+        const [x1, y1] = coords[fromIdx] || [31,31];
+        const [x2, y2] = coords[toIdx] || [77,77];
         const dx = x2 - x1, dy = y2 - y1;
         const len = Math.hypot(dx, dy) || 1;
         const ux = dx / len, uy = dy / len;
         const sx = x1 + ux * 4, sy = y1 + uy * 4;
-        const ex = x2 - ux * 5, ey = y2 - uy * 5;
+        const ex = x2 - ux * 5.5, ey = y2 - uy * 5.5;
         return `
-          <line x1="${sx}" y1="${sy}" x2="${ex}" y2="${ey}" stroke="#0f172a" stroke-width="4.2" stroke-linecap="round"/>
-          <line x1="${sx}" y1="${sy}" x2="${ex}" y2="${ey}" stroke="#ef4444" stroke-width="2.4" stroke-linecap="round" marker-end="url(#pll-arrow-${item.id}-${aIdx})"/>
+          <line x1="${sx}" y1="${sy}" x2="${ex}" y2="${ey}" stroke="#0f172a" stroke-width="4.8" stroke-linecap="round"/>
+          <line x1="${sx}" y1="${sy}" x2="${ex}" y2="${ey}" stroke="#ef4444" stroke-width="2.6" stroke-linecap="round" marker-end="url(#pll-arrow-${item.id}-${aIdx})"/>
+          <circle cx="${x1}" cy="${y1}" r="2.8" fill="#0f172a" stroke="#ef4444" stroke-width="1.5"/>
         `;
       }).join('');
 
@@ -1798,11 +2132,19 @@
       `).join('');
 
       return `
-        <svg viewBox="0 0 96 96" class="w-20 h-20 shrink-0 rounded-xl bg-slate-950 border border-slate-800 p-1 shadow-inner">
-          <defs>${defs}</defs>
-          ${cells}
-          ${arrowLines}
-        </svg>
+        <div class="flex flex-col items-center shrink-0">
+          <svg viewBox="0 0 108 108" class="w-24 h-24 rounded-2xl bg-slate-950 border border-rose-500/30 p-1 shadow-inner">
+            <defs>${defs}</defs>
+            <!-- Side Reference Color Strips (B=Blue, F=Green, L=Orange, R=Red) -->
+            <rect x="22" y="9" width="64" height="6" rx="2" fill="#3b82f6"/>
+            <rect x="22" y="93" width="64" height="6" rx="2" fill="#22c55e"/>
+            <rect x="9" y="22" width="6" height="64" rx="2" fill="#f97316"/>
+            <rect x="93" y="22" width="6" height="64" rx="2" fill="#ef4444"/>
+            ${cells}
+            ${arrowLines}
+          </svg>
+          <span class="text-[10px] font-mono-code text-rose-300 font-bold mt-1">Hoán Vị Góc/Cạnh</span>
+        </div>
       `;
     }
 
@@ -2181,15 +2523,54 @@
         this.enqueueNotation(s, true);
       }
 
+      compressMoves(rawMoves) {
+        const result = [];
+        for (const m of rawMoves) {
+          const prev = result[result.length - 1];
+          if (prev && prev.face === m.face) {
+            if (prev.mod === '2') {
+              prev.mod = m.prime ? '' : "'";
+            } else if ((prev.mod === "'" && m.prime) || (prev.mod === '' && !m.prime)) {
+              prev.mod = '2';
+            } else {
+              result.pop();
+            }
+          } else {
+            result.push({ face: m.face, mod: m.prime ? "'" : '' });
+          }
+        }
+        return result.map(x => x.face + x.mod);
+      }
+
       solveAnimated() {
+        const formulaBox = document.getElementById('rubik-solve-formula-text');
+        const stepProg = document.getElementById('rubik-solve-step-progress');
+
         if (this.moveHistory.length === 0) {
+          if (formulaBox) {
+            formulaBox.innerHTML = `<span class="text-cyan-300">Khối Rubik hiện đã ở trạng thái hoàn chỉnh! Hãy bấm <strong>"🔀 Trộn (Scramble)"</strong> hoặc xoay vài nước rồi bấm Giải Mẫu Tự Động.</span>`;
+          }
+          if (stepProg) stepProg.textContent = 'Đã hoàn chỉnh';
           showToast('Khối Rubik đang ở trạng thái đã giải!', 'cyan');
           return;
         }
-        const rev = [...this.moveHistory].reverse().map(m => m.face + (m.prime ? '' : "'"));
+
+        const rawRev = [...this.moveHistory].reverse().map(m => ({ face: m.face, prime: !m.prime }));
+        const compactSteps = this.compressMoves(rawRev);
+        const formulaStr = compactSteps.join(' ');
         this.moveHistory = [];
-        this.enqueueNotation(rev.join(' '), false);
-        showToast('✨ Đang giải khối Rubik 3D từng bước...', 'emerald');
+
+        if (formulaBox) {
+          formulaBox.innerHTML = compactSteps.map((st, idx) =>
+            `<span id="solve-token-${idx}" class="inline-block px-2 py-0.5 mr-1 mb-1 rounded-md bg-slate-900 border border-emerald-500/40 text-emerald-300 font-extrabold">${idx + 1}. ${st}</span>`
+          ).join('');
+        }
+        if (stepProg) {
+          stepProg.textContent = `Tổng ${compactSteps.length} bước giải: ${formulaStr}`;
+        }
+
+        this.enqueueNotation(formulaStr, false);
+        showToast(`✨ Công thức giải (${compactSteps.length} bước): ${formulaStr}`, 'emerald');
       }
 
       reset() {
@@ -2198,6 +2579,12 @@
         this.buildCubies();
         const badge = document.getElementById('cube-move-history-badge');
         if (badge) badge.textContent = 'Nước xoay: Đã Reset';
+        const formulaBox = document.getElementById('rubik-solve-formula-text');
+        const stepProg = document.getElementById('rubik-solve-step-progress');
+        if (formulaBox) {
+          formulaBox.innerHTML = `Nhấn nút <strong class="text-emerald-300">"✨ Giải Mẫu Tự Động"</strong> sau khi trộn hoặc xoay để xem toàn bộ chuỗi công thức giải từng bước tại đây.`;
+        }
+        if (stepProg) stepProg.textContent = 'Đã Reset';
       }
 
       animate() {
@@ -3261,14 +3648,94 @@
         window.MainCube?.enqueueNotation(val, true);
       });
 
-      // WCA Timer Events + Spacebar Handler
-      document.getElementById('timer-start-stop-btn').addEventListener('click', e => {
-        e.stopPropagation();
-        RubikTimer.toggleStartStop();
+      // WCA Timer 0.5s Hold Handler (Works on both Mobile Touch & Desktop Spacebar/Mouse)
+      const HOLD_DURATION_MS = 500;
+      let holdProgressRaf = null;
+      let holdBeginTime = 0;
+
+      function beginTimerHold() {
+        const disp = document.getElementById('timer-display');
+        const badge = document.getElementById('timer-status-badge');
+        const bar = document.getElementById('timer-hold-bar');
+
+        if (RubikTimer.running) {
+          RubikTimer.stop();
+          if (bar) bar.style.width = '0%';
+          return;
+        }
+        if (RubikTimer.holdTimeout) return;
+
+        RubikTimer.readyToStart = false;
+        holdBeginTime = performance.now();
+        disp.className = 'text-5xl sm:text-7xl font-extrabold font-mono-code text-amber-400 tracking-tight py-2';
+        badge.textContent = 'Đang giữ... (Giữ đủ 0.5s đến khi chuyển màu Xanh)';
+        badge.className = 'text-xs sm:text-sm font-bold uppercase tracking-wider text-amber-400 mb-2';
+
+        const updateBar = now => {
+          if (!RubikTimer.holdTimeout) return;
+          const pct = Math.min(100, ((now - holdBeginTime) / HOLD_DURATION_MS) * 100);
+          if (bar) {
+            bar.style.width = `${pct}%`;
+            bar.className = pct >= 100 ? 'h-full bg-emerald-400' : 'h-full bg-amber-400';
+          }
+          if (pct < 100) {
+            holdProgressRaf = requestAnimationFrame(updateBar);
+          }
+        };
+        holdProgressRaf = requestAnimationFrame(updateBar);
+
+        RubikTimer.holdTimeout = setTimeout(() => {
+          RubikTimer.readyToStart = true;
+          SoundFX.play('beep');
+          disp.className = 'text-5xl sm:text-7xl font-extrabold font-mono-code text-emerald-400 tracking-tight py-2';
+          badge.textContent = '🟢 SẴN SÀNG! Thả tay ra để bắt đầu tính giờ!';
+          badge.className = 'text-xs sm:text-sm font-bold uppercase tracking-wider text-emerald-400 mb-2';
+          if (bar) {
+            bar.style.width = '100%';
+            bar.className = 'h-full bg-emerald-400';
+          }
+        }, HOLD_DURATION_MS);
+      }
+
+      function releaseTimerHold() {
+        const disp = document.getElementById('timer-display');
+        const badge = document.getElementById('timer-status-badge');
+        const bar = document.getElementById('timer-hold-bar');
+
+        if (holdProgressRaf) {
+          cancelAnimationFrame(holdProgressRaf);
+          holdProgressRaf = null;
+        }
+        if (!RubikTimer.holdTimeout) return;
+
+        clearTimeout(RubikTimer.holdTimeout);
+        RubikTimer.holdTimeout = null;
+        if (bar) bar.style.width = '0%';
+
+        if (RubikTimer.readyToStart) {
+          RubikTimer.readyToStart = false;
+          RubikTimer.toggleStartStop();
+        } else {
+          disp.className = 'text-5xl sm:text-7xl font-extrabold font-mono-code text-white tracking-tight py-2';
+          badge.textContent = 'Bạn thả tay quá sớm (< 0.5s)! Hãy nhấn giữ đủ 0.5s';
+          badge.className = 'text-xs sm:text-sm font-bold uppercase tracking-wider text-rose-400 mb-2';
+        }
+      }
+
+      const touchZone = document.getElementById('timer-touch-zone');
+      touchZone.addEventListener('pointerdown', e => {
+        if (e.target.closest('button')) return;
+        e.preventDefault();
+        beginTimerHold();
       });
-      document.getElementById('timer-touch-zone').addEventListener('click', () => {
-        RubikTimer.toggleStartStop();
+      window.addEventListener('pointerup', () => {
+        if (RubikTimer.holdTimeout) releaseTimerHold();
       });
+      window.addEventListener('pointercancel', () => {
+        if (RubikTimer.holdTimeout) releaseTimerHold();
+      });
+      touchZone.addEventListener('contextmenu', e => e.preventDefault());
+
       document.getElementById('timer-plus2-btn').addEventListener('click', e => {
         e.stopPropagation();
         if (typeof AppState.rubikSolves[0] === 'number') {
@@ -3300,27 +3767,13 @@
         const simVisible = !document.getElementById('rubik-panel-sim').classList.contains('hidden');
         if (e.code === 'Space' && rubikVisible && simVisible && document.activeElement.tagName !== 'INPUT') {
           e.preventDefault();
-          if (RubikTimer.running) {
-            RubikTimer.stop();
-          } else if (!RubikTimer.holdTimeout) {
-            document.getElementById('timer-display').className = 'text-6xl sm:text-7xl font-extrabold font-mono-code text-amber-400 tracking-tight';
-            RubikTimer.holdTimeout = setTimeout(() => {
-              RubikTimer.readyToStart = true;
-              document.getElementById('timer-display').className = 'text-6xl sm:text-7xl font-extrabold font-mono-code text-emerald-400 tracking-tight';
-            }, 300);
-          }
+          if (!e.repeat) beginTimerHold();
         }
       });
       window.addEventListener('keyup', e => {
         if (e.code === 'Space' && RubikTimer.holdTimeout) {
-          clearTimeout(RubikTimer.holdTimeout);
-          RubikTimer.holdTimeout = null;
-          if (RubikTimer.readyToStart) {
-            RubikTimer.readyToStart = false;
-            RubikTimer.toggleStartStop();
-          } else {
-            document.getElementById('timer-display').className = 'text-6xl sm:text-7xl font-extrabold font-mono-code text-white tracking-tight';
-          }
+          e.preventDefault();
+          releaseTimerHold();
         }
       });
 
@@ -3523,9 +3976,8 @@
       document.getElementById('reset-all-progress-btn').addEventListener('click', () => {
         resetAllUserProgress();
       });
-      document.getElementById('sync-now-btn').addEventListener('click', () => {
-        saveUserProgress(false);
-      });
+
+      fetchLeaderboardsData();
     });
   </script>
 </body>
