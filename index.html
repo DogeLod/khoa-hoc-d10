@@ -968,12 +968,12 @@
         <label class="text-xs text-slate-300 font-semibold block mb-1">Chế độ chơi:</label>
         <select id="chess-mode-select" class="w-full px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-400">
          <option value="bot">Đấu với Bot AI (Luyện tập)</option>
+         <option value="matchmaking">⚔️ Ghép Đấu Online (±100 Elo • Tính Elo)</option>
          <option value="pvp">2 Người Chơi (Cùng máy)</option>
          <option value="puzzle">🎲 Giải Thế Cờ Ngẫu Nhiên (42 Bài)</option>
-         <option value="matchmaking">⚔️ Ghép Trận Online (Sắp ra mắt - Tính Elo)</option>
         </select>
        </div>
-       <div>
+       <div id="chess-level-select-wrap">
         <label class="text-xs text-slate-300 font-semibold block mb-1">Mức độ AI Elo:</label>
         <select id="chess-level-select" class="w-full px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-400">
          <option value="1">Tập Sự (Elo 400)</option>
@@ -995,13 +995,81 @@
         </select>
        </div>
       </div>
-      <!-- Action Buttons -->
-      <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
-       <button id="chess-new-btn" class="py-2 px-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs sm:text-sm transition">🔄 Ván Mới</button>
-       <button id="chess-undo-btn" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs sm:text-sm transition">↩ Đi Lại</button>
-       <button id="chess-draw-btn" class="py-2 px-2.5 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 font-bold text-xs sm:text-sm transition">🤝 Xin Hòa</button>
-       <button id="chess-flip-btn" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs sm:text-sm transition">🔃 Xoay Bàn</button>
-       <button id="chess-hint-btn" class="col-span-2 sm:col-span-1 py-2 px-2.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs sm:text-sm transition">💡 Gợi Ý</button>
+      <!-- ONLINE MATCHMAKING LOBBY & FAIR ELO (+-100 ELO) PANEL -->
+      <div id="chess-online-lobby-box" class="hidden p-3.5 rounded-2xl bg-gradient-to-br from-slate-900 via-emerald-950/35 to-slate-950 border-2 border-emerald-500/45 space-y-3 shadow-xl">
+       <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+        <div class="flex items-center gap-2">
+         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+         <span class="text-xs sm:text-sm font-extrabold text-emerald-300">⚔️ Ghép Đấu Online Công Bằng (Chênh lệch 0 – 100 Elo)</span>
+        </div>
+        <button id="open-supabase-sql-btn" type="button" class="px-2.5 py-1 rounded-lg bg-cyan-500/15 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 border border-cyan-500/40 text-[11px] font-extrabold transition">
+         🛠️ Mã SQL Supabase
+        </button>
+       </div>
+       <!-- Player Elo, Fair Range & Selected Time Info -->
+       <div class="grid grid-cols-3 gap-2 text-center">
+        <div class="p-2 rounded-xl bg-slate-950/90 border border-slate-800">
+         <div class="text-[10px] text-slate-400 font-semibold">Elo Của Bạn</div>
+         <div id="online-my-elo-label" class="text-xs sm:text-sm font-mono-code font-extrabold text-amber-400 mt-0.5">1200 Elo</div>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-950/90 border border-emerald-500/30">
+         <div class="text-[10px] text-slate-400 font-semibold">Khoảng Ghép (±100)</div>
+         <div id="online-elo-range-label" class="text-xs sm:text-sm font-mono-code font-extrabold text-emerald-300 mt-0.5">1100 – 1300</div>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-950/90 border border-cyan-500/30">
+         <div class="text-[10px] text-slate-400 font-semibold">Thời Gian Đấu</div>
+         <div id="online-time-control-label" class="text-xs sm:text-sm font-mono-code font-extrabold text-cyan-300 mt-0.5">10 phút</div>
+        </div>
+       </div>
+       <!-- Search / Cancel / Active Match Controls -->
+       <div id="online-lobby-idle-controls" class="flex flex-wrap gap-2">
+        <button id="online-find-match-btn" type="button" class="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-95 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg shadow-emerald-500/20 transition flex items-center justify-center gap-2">
+         <span>⚔️</span> <span>Tìm Đối Thủ Online (Cùng Thời Gian & ±100 Elo)</span>
+        </button>
+       </div>
+       <!-- Searching Status Box -->
+       <div id="online-searching-box" class="hidden p-3 rounded-xl bg-slate-950/95 border border-amber-400/40 space-y-2.5">
+        <div class="flex items-center justify-between gap-2">
+         <div class="flex items-center gap-2 text-xs sm:text-sm font-extrabold text-amber-300">
+          <span class="inline-block w-3 h-3 rounded-full border-2 border-amber-300 border-t-transparent animate-spin"></span>
+          <span id="online-search-timer-text">Đang quét tìm đối thủ cùng mức Elo... (0s)</span>
+         </div>
+         <button id="online-cancel-search-btn" type="button" class="px-3 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-slate-950 border border-rose-500/40 text-xs font-extrabold transition">
+          ✕ Hủy Tìm
+         </button>
+        </div>
+        <p class="text-[11px] text-slate-300 leading-relaxed">
+         Hệ thống tự động ghép khi có người chơi khác máy chọn cùng mức thời gian và có điểm Elo chênh lệch từ <strong>0 đến 100 Elo</strong>.
+        </p>
+       </div>
+       <!-- Active Online Match Banner -->
+       <div id="online-active-match-box" class="hidden p-3 rounded-xl bg-emerald-950/50 border border-emerald-400/50 space-y-1.5">
+        <div class="flex items-center justify-between gap-2">
+         <span id="online-room-badge" class="text-xs font-mono-code font-extrabold text-emerald-300">🟢 Đang Thi Đấu Online</span>
+         <span id="online-elo-diff-badge" class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono-code text-[11px] font-bold">Chênh lệch: 0 Elo</span>
+        </div>
+        <div id="online-matchup-names" class="text-xs sm:text-sm font-extrabold text-white"></div>
+        <div class="text-[11px] text-slate-300">Sử dụng nút <strong>🤝 Xin Hòa</strong> hoặc <strong>🏳️ Đầu Hàng</strong> bên dưới nếu muốn kết thúc sớm ván đấu.</div>
+       </div>
+       <!-- Live Queue List of Online Players -->
+       <div class="space-y-1.5">
+        <div class="flex items-center justify-between text-[11px] text-slate-300 font-bold">
+         <span>🌐 Kỳ thủ đang trực tuyến tại sảnh chờ:</span>
+         <span id="online-lobby-count-badge" class="font-mono-code text-cyan-300">Đang đồng bộ...</span>
+        </div>
+        <div id="online-waiting-players-list" class="max-h-28 overflow-y-auto space-y-1.5 pr-1 text-xs">
+         <div class="text-slate-400 italic text-[11px]">Bấm "Tìm Đối Thủ Online" để phát tín hiệu ghép trận liên máy.</div>
+        </div>
+       </div>
+      </div>
+      <!-- Action Buttons (Includes 🏳️ Đầu Hàng) -->
+      <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2">
+       <button id="chess-new-btn" class="py-2 px-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs sm:text-sm transition">🔄 Ván Mới</button>
+       <button id="chess-undo-btn" class="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs sm:text-sm transition">↩ Đi Lại</button>
+       <button id="chess-draw-btn" class="py-2 px-2 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 font-bold text-xs sm:text-sm transition">🤝 Xin Hòa</button>
+       <button id="chess-resign-btn" type="button" class="py-2 px-2 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 hover:bg-rose-500 hover:text-slate-950 font-extrabold text-xs sm:text-sm transition">🏳️ Đầu Hàng</button>
+       <button id="chess-flip-btn" class="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs sm:text-sm transition">🔃 Xoay Bàn</button>
+       <button id="chess-hint-btn" class="py-2 px-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs sm:text-sm transition">💡 Gợi Ý</button>
       </div>
       <!-- Random Puzzle / Opening Coach Banner -->
       <div id="chess-coach-box" class="p-3.5 rounded-xl bg-slate-900/95 border border-emerald-500/30 text-xs sm:text-sm space-y-2">
@@ -1347,6 +1415,7 @@
         <label class="text-xs text-slate-300 font-semibold block mb-1">Chế độ đấu:</label>
         <select id="exp-chess-mode-select" class="w-full px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-400">
          <option value="bot">Đấu với Bot AI</option>
+         <option value="matchmaking">⚔️ Ghép Đấu Online (±100 Elo)</option>
          <option value="pvp">2 Người Chơi</option>
          <option value="puzzle">🎲 Giải Thế Cờ Ngẫu Nhiên (42 Bài)</option>
         </select>
@@ -1371,12 +1440,13 @@
         <button id="exp-pick-black-btn" type="button" class="px-3 py-1 rounded-lg bg-slate-800 text-slate-200 font-bold text-xs border border-slate-700">♚ Đen</button>
        </div>
       </div>
-      <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+      <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
        <button id="exp-chess-new-btn" type="button" class="py-2.5 px-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs transition">🔄 Ván Mới</button>
        <button id="exp-chess-undo-btn" type="button" class="py-2.5 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs transition">↩ Đi Lại</button>
        <button id="exp-chess-draw-btn" type="button" class="py-2.5 px-2 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 font-bold text-xs transition">🤝 Xin Hòa</button>
+       <button id="exp-chess-resign-btn" type="button" class="py-2.5 px-2 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 hover:bg-rose-500 hover:text-slate-950 font-extrabold text-xs transition">🏳️ Đầu Hàng</button>
        <button id="exp-chess-flip-btn" type="button" class="py-2.5 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs transition">🔃 Xoay Bàn</button>
-       <button id="exp-chess-hint-btn" type="button" class="col-span-3 sm:col-span-1 py-2.5 px-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs transition">💡 Gợi Ý</button>
+       <button id="exp-chess-hint-btn" type="button" class="py-2.5 px-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs transition">💡 Gợi Ý</button>
       </div>
       <div class="p-3 rounded-xl bg-slate-900/95 border border-emerald-500/30 text-xs space-y-2">
        <div class="flex items-center justify-between gap-2">
@@ -1398,6 +1468,122 @@
       </div>
      </div>
     </div>
+   </div>
+  </div>
+ </div>
+ <!-- ==================== MODAL: RESIGN CONFIRMATION (ĐẦU HÀNG) ==================== -->
+ <div id="chess-resign-modal" class="fixed inset-0 z-[70] bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
+  <div class="glass-card rounded-3xl max-w-sm w-full p-6 border border-rose-500/40 space-y-4 text-center view-animate shadow-2xl">
+   <div class="w-12 h-12 rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-2xl mx-auto">🏳️</div>
+   <h3 class="text-lg sm:text-xl font-extrabold text-white">Xác Nhận Đầu Hàng?</h3>
+   <p id="chess-resign-modal-desc" class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+    Bạn có chắc chắn muốn nhận thua (Đầu Hàng) ván cờ hiện tại không?
+   </p>
+   <div class="grid grid-cols-2 gap-2.5 pt-2">
+    <button id="cancel-resign-btn" type="button" class="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs sm:text-sm transition">
+     Hủy Bỏ
+    </button>
+    <button id="confirm-resign-btn" type="button" class="py-2.5 px-4 rounded-xl bg-rose-500 hover:bg-rose-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg shadow-rose-500/25 transition">
+     🏳️ Đầu Hàng Ngay
+    </button>
+   </div>
+  </div>
+ </div>
+ <!-- ==================== MODAL: ONLINE DRAW OFFER RECEIVED ==================== -->
+ <div id="chess-draw-offer-modal" class="fixed inset-0 z-[70] bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
+  <div class="glass-card rounded-3xl max-w-sm w-full p-6 border border-cyan-500/40 space-y-4 text-center view-animate shadow-2xl">
+   <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-2xl mx-auto">🤝</div>
+   <h3 class="text-lg sm:text-xl font-extrabold text-white">Lời Đề Nghị Hòa Cờ Online</h3>
+   <p id="chess-draw-offer-desc" class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+    Đối thủ gửi lời đề nghị Hòa ván cờ này. Bạn có đồng ý Hòa không?
+   </p>
+   <div class="grid grid-cols-2 gap-2.5 pt-2">
+    <button id="decline-online-draw-btn" type="button" class="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 text-slate-200 font-bold text-xs sm:text-sm transition">
+     ✕ Từ Chối
+    </button>
+    <button id="accept-online-draw-btn" type="button" class="py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg transition">
+     ✓ Đồng Ý Hòa
+    </button>
+   </div>
+  </div>
+ </div>
+ <!-- ==================== MODAL: SUPABASE SQL SETUP FOR ONLINE MATCHMAKING ==================== -->
+ <div id="supabase-sql-modal" class="fixed inset-0 z-[70] bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
+  <div class="glass-card rounded-3xl max-w-2xl w-full p-6 border border-cyan-500/40 space-y-4 view-animate shadow-2xl max-h-[90vh] flex flex-col">
+   <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+    <div>
+     <h3 class="text-lg sm:text-xl font-extrabold text-white">🛠️ Mã SQL Cài Đặt Bảng Ghép Trận Online Trên Supabase</h3>
+     <p class="text-xs text-slate-300 mt-0.5">Chế độ Ghép Đấu Online hoạt động ngay qua Supabase Realtime WebSocket và lưu lịch sử phòng đấu vào bảng <code class="text-cyan-300">lm_chess_online_matches</code>.</p>
+    </div>
+    <button id="close-supabase-sql-btn" type="button" class="text-slate-400 hover:text-white text-xl font-bold">✕</button>
+   </div>
+   <div class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
+    <div>• <strong>Bước 1:</strong> Mở <strong>Supabase Dashboard</strong> của bạn → chọn mục <strong>SQL Editor</strong> → bấm <strong>New Query</strong>.</div>
+    <div>• <strong>Bước 2:</strong> Bấm nút <strong>"📋 Sao Chép Mã SQL"</strong> bên dưới, dán vào SQL Editor và nhấn <strong>Run</strong>.</div>
+   </div>
+   <pre id="supabase-sql-code-block" class="flex-1 overflow-y-auto p-3.5 rounded-2xl bg-slate-950 border border-slate-800 font-mono-code text-[11px] text-emerald-300 leading-relaxed select-all whitespace-pre-wrap">-- BẢNG PHÒNG ĐẤU & HÀNG ĐỢI GHÉP TRẬN CỜ VUA ONLINE (CHÊNH LỆCH 0 - 100 ELO)
+CREATE TABLE IF NOT EXISTS public.lm_chess_online_matches (
+ id TEXT PRIMARY KEY,
+ status TEXT NOT NULL DEFAULT 'waiting',
+ time_control INTEGER NOT NULL DEFAULT 600,
+ host_client_id TEXT NOT NULL,
+ host_email TEXT NOT NULL,
+ host_name TEXT NOT NULL,
+ host_elo INTEGER NOT NULL DEFAULT 1200,
+ guest_client_id TEXT,
+ guest_email TEXT,
+ guest_name TEXT,
+ guest_elo INTEGER,
+ white_client_id TEXT,
+ white_email TEXT,
+ white_name TEXT,
+ white_elo INTEGER,
+ black_client_id TEXT,
+ black_email TEXT,
+ black_name TEXT,
+ black_elo INTEGER,
+ fen TEXT NOT NULL DEFAULT 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+ moves_json JSONB NOT NULL DEFAULT '[]'::jsonb,
+ last_move JSONB,
+ white_time INTEGER NOT NULL DEFAULT 600,
+ black_time INTEGER NOT NULL DEFAULT 600,
+ winner TEXT,
+ end_reason TEXT,
+ draw_offer_by TEXT,
+ created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE public.lm_chess_online_matches ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public read lm_chess_online_matches" ON public.lm_chess_online_matches;
+CREATE POLICY "Allow public read lm_chess_online_matches"
+ ON public.lm_chess_online_matches FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow public insert lm_chess_online_matches" ON public.lm_chess_online_matches;
+CREATE POLICY "Allow public insert lm_chess_online_matches"
+ ON public.lm_chess_online_matches FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public update lm_chess_online_matches" ON public.lm_chess_online_matches;
+CREATE POLICY "Allow public update lm_chess_online_matches"
+ ON public.lm_chess_online_matches FOR UPDATE USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public delete lm_chess_online_matches" ON public.lm_chess_online_matches;
+CREATE POLICY "Allow public delete lm_chess_online_matches"
+ ON public.lm_chess_online_matches FOR DELETE USING (true);
+
+DO $$
+BEGIN
+ ALTER PUBLICATION supabase_realtime ADD TABLE public.lm_chess_online_matches;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;</pre>
+   <div class="flex flex-wrap items-center justify-end gap-2.5 pt-1">
+    <button id="copy-supabase-sql-btn" type="button" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg transition">
+     📋 Sao Chép Mã SQL
+    </button>
+    <button id="close-supabase-sql-bottom-btn" type="button" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs sm:text-sm transition">
+     Đóng
+    </button>
    </div>
   </div>
  </div>
@@ -4906,6 +5092,27 @@
    puzzleIdx: 0,
    puzzleDeck: [],
    solvedRandomCount: 0,
+   onlineMatch: {
+    clientId: 'cli_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7),
+    status: 'idle', // 'idle' | 'searching' | 'playing' | 'finished'
+    queuedAt: 0,
+    searchSeconds: 0,
+    searchTimerId: null,
+    pingIntervalId: null,
+    lobbyChannel: null,
+    roomChannel: null,
+    localBus: null,
+    waitingPeers: new Map(),
+    matchId: null,
+    whitePlayer: null,
+    blackPlayer: null,
+    opponentName: '',
+    opponentEmail: '',
+    opponentElo: 1200,
+    eloDiff: 0,
+    eloAlreadySettled: false,
+    pendingDrawOfferFrom: null
+   },
    // 42 Verified Tactical Chess Puzzles (100% Legal, Unambiguous & Validated!)
    puzzles: [
     { title: 'Đòn Chiếu Hết Hàng Ngang Cuối (Back-Rank Mate)', fen: '6k1/5ppp/8/8/8/8/5PPP/3R2K1 w - - 0 1', solutionFrom: 'd1', solutionTo: 'd8', hint: 'Vua Đen bị 3 tốt f7, g7, h7 chặn kín lối thoát. Hãy đưa Xe Trắng xuống hàng thứ 8 (d8)!' },
@@ -4957,6 +5164,7 @@
     if (!window.Chess) return;
     this.game = new Chess();
     this.refillShuffledPuzzleDeck();
+    this.initOnlineMatchmakingChannels();
     this.resetGameAndState(false);
     this.renderHeroMiniBoard(['d4', 'd5', 'c4'], "Thế cờ Queen's Gambit: 1. d4 d5 2. c4");
    },
@@ -5007,7 +5215,20 @@
     this.renderClocksAndPlayers();
    },
    resetGameAndState(announce = true) {
+    if (this.mode === 'matchmaking' && this.onlineMatch.status === 'playing' && !this.isMatchOver()) {
+     showToast('⚠️ Bạn đang trong trận đấu Online! Hãy thi đấu hết ván hoặc bấm "🏳️ Đầu Hàng" trước khi tạo ván mới.', 'amber');
+     return;
+    }
     this.closePromotionModal();
+    this.closeResignModal();
+    this.closeOnlineDrawOfferModal();
+    if (this.mode !== 'matchmaking' && this.onlineMatch.status === 'searching') {
+     this.cancelOnlineMatchSearch(false);
+    }
+    if (this.mode !== 'matchmaking') {
+     this.onlineMatch.status = 'idle';
+     this.onlineMatch.matchId = null;
+    }
     this.game.reset();
     this.selectedSq = null;
     this.legalTargets = [];
@@ -5018,24 +5239,45 @@
     const openingEl = document.getElementById('chess-opening-name');
     const coachEl = document.getElementById('chess-coach-text');
     const undoBtn = document.getElementById('chess-undo-btn');
+    const hintBtn = document.getElementById('chess-hint-btn');
+    const colorWrap = document.getElementById('chess-color-picker-wrap');
+    const levelWrap = document.getElementById('chess-level-select-wrap');
+    const onlineBox = document.getElementById('chess-online-lobby-box');
+    if (onlineBox) onlineBox.classList.toggle('hidden', this.mode !== 'matchmaking');
+    if (colorWrap) colorWrap.classList.toggle('hidden', this.mode === 'matchmaking' || this.mode === 'puzzle');
+    if (levelWrap) levelWrap.classList.toggle('opacity-40', this.mode === 'matchmaking' || this.mode === 'pvp' || this.mode === 'puzzle');
     if (this.mode === 'matchmaking') {
+     this.ensureSupabaseLobbyChannel();
      if (puzNavWrap) puzNavWrap.classList.add('hidden');
      if (expRandBtn) expRandBtn.classList.add('hidden');
-     if (openingEl) openingEl.textContent = '⚔️ Chế Độ Ghép Trận Online (Tính Hệ Số Elo Quốc Tế)';
-     if (coachEl) {
-      coachEl.innerHTML = `Hệ thống <strong>Ghép Trận Online Trực Tuyến giữa các người chơi</strong> đang được cập nhật máy chủ phòng đấu. Hiện tại điểm Elo của bạn được bảo toàn ở mức <strong>${AppState.chessElo} Elo</strong>. Hãy luyện tập trước với Bot AI hoặc Giải Thế Cờ Ngẫu Nhiên!`;
+     if (undoBtn) {
+      undoBtn.disabled = true;
+      undoBtn.className = 'py-2 px-2 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60';
      }
-     showToast('⚔️ Chế độ Ghép Trận Online (Tính Elo) sẽ sớm ra mắt! Hiện tại bạn có thể đấu luyện với AI hoặc Giải Thế Cờ Ngẫu Nhiên.', 'cyan');
-     this.mode = 'bot';
-     const modeSel = document.getElementById('chess-mode-select');
-     if (modeSel) modeSel.value = 'bot';
+     if (hintBtn) {
+      hintBtn.disabled = true;
+      hintBtn.className = 'py-2 px-2 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60';
+     }
+     this.updateOnlineLobbyUI();
+     if (openingEl) openingEl.textContent = '⚔️ Đấu Trường Ghép Trận Online Công Bằng (±100 Elo)';
+     if (coachEl) {
+      coachEl.innerHTML = `Chọn <strong>Thời gian mỗi bên</strong> (3, 5, 10 hoặc 15 phút) rồi bấm <strong>"⚔️ Tìm Đối Thủ Online"</strong>. Hệ thống chỉ ghép 2 người chơi cùng mức thời gian và có điểm Elo bằng nhau hoặc chênh lệch từ <strong>1 đến 100 Elo</strong> (${Math.max(100, AppState.chessElo - 100)} – ${AppState.chessElo + 100} Elo).`;
+     }
+     this.flipped = false;
+     this.renderBoard();
+     this.updateUI();
+     return;
+    }
+    if (hintBtn) {
+     hintBtn.disabled = false;
+     hintBtn.className = 'py-2 px-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs sm:text-sm transition';
     }
     if (this.mode === 'puzzle') {
      if (puzNavWrap) puzNavWrap.classList.remove('hidden');
      if (expRandBtn) expRandBtn.classList.remove('hidden');
      if (undoBtn) {
       undoBtn.disabled = true;
-      undoBtn.className = 'py-2 px-2.5 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60';
+      undoBtn.className = 'py-2 px-2 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60';
      }
      this.loadRandomPuzzle();
      return;
@@ -5045,15 +5287,15 @@
      if (openingEl) openingEl.textContent = '📌 Khai cuộc: Khởi đầu tiêu chuẩn';
      if (coachEl) {
       coachEl.innerHTML = this.mode === 'pvp'
-       ? 'Chế độ <strong>2 Người Chơi</strong>: Nút Đi Lại bị khóa để công bằng. <em>Lưu ý: Chơi 2 người không cộng/trừ Elo (Elo chỉ tính ở chế độ Ghép Trận Online).</em>'
-       : `Đang đấu luyện với <strong>Bot AI (Elo ${this.levelEloMap[this.level] || 1500})</strong>. <em>Lưu ý: Đấu với AI là chế độ luyện tập (0 Elo) — Elo chỉ được cộng khi thắng người chơi khác ở chế độ Ghép Trận Online.</em>`;
+       ? 'Chế độ <strong>2 Người Chơi (Cùng máy)</strong>: Nút Đi Lại bị khóa để công bằng. Có thể dùng nút <strong>🤝 Xin Hòa</strong> hoặc <strong>🏳️ Đầu Hàng</strong>.'
+       : `Đang đấu luyện với <strong>Bot AI (Elo ${this.levelEloMap[this.level] || 1500})</strong>. Bạn có thể bấm <strong>🏳️ Đầu Hàng</strong> nếu muốn nhận thua sớm, hoặc chuyển sang <strong>⚔️ Ghép Đấu Online</strong> để thi đấu tính điểm Elo thật!`;
      }
      if (undoBtn) {
       const allowUndo = this.mode === 'bot';
       undoBtn.disabled = !allowUndo;
       undoBtn.className = allowUndo
-       ? 'py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs sm:text-sm transition'
-       : 'py-2 px-2.5 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60';
+       ? 'py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs sm:text-sm transition'
+       : 'py-2 px-2 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60';
      }
     }
     this.flipped = (this.mode === 'bot' && this.playerColor === 'b');
@@ -5079,11 +5321,17 @@
      if (this.game.turn() === 'w') {
       this.whiteTime = Math.max(0, this.whiteTime - 1);
       if (this.whiteTime === 0) {
+       if (this.mode === 'matchmaking' && this.onlineMatch.status === 'playing') {
+        this.broadcastOnlineRoomEvent('ONLINE_TIMEOUT', { matchId: this.onlineMatch.matchId, timeoutColor: 'w' });
+       }
        this.finishGame('timeout', 'b', '⏰ Quân Trắng hết thời gian (Time Out) — Quân Đen thắng!');
       }
      } else {
       this.blackTime = Math.max(0, this.blackTime - 1);
       if (this.blackTime === 0) {
+       if (this.mode === 'matchmaking' && this.onlineMatch.status === 'playing') {
+        this.broadcastOnlineRoomEvent('ONLINE_TIMEOUT', { matchId: this.onlineMatch.matchId, timeoutColor: 'b' });
+       }
        this.finishGame('timeout', 'w', '⏰ Quân Đen hết thời gian (Time Out) — Quân Trắng thắng!');
       }
      }
@@ -5125,6 +5373,19 @@
     const botColor = topIsBlack ? 'w' : 'b';
     const botElo = this.levelEloMap[this.level] || 1500;
     const labelForColor = col => {
+     if (this.mode === 'matchmaking') {
+      if (this.onlineMatch.status === 'playing' || this.onlineMatch.status === 'finished') {
+       const pInfo = col === 'w' ? this.onlineMatch.whitePlayer : this.onlineMatch.blackPlayer;
+       if (pInfo) {
+        const isMe = pInfo.clientId === this.onlineMatch.clientId;
+        return `${pInfo.nickname} (${col === 'w' ? 'Trắng' : 'Đen'} • ${pInfo.elo} Elo)${isMe ? ' [BẠN]' : ''}`;
+       }
+      }
+      const myName = AppState.userName || 'Bạn';
+      return col === 'w'
+       ? `${myName} (${AppState.chessElo} Elo)`
+       : `Đang chờ đối thủ Online (${Math.max(100, AppState.chessElo - 100)}–${AppState.chessElo + 100} Elo)...`;
+     }
      if (this.mode === 'pvp') {
       return col === 'w' ? 'Kỳ Thủ 1 (Quân Trắng)' : 'Kỳ Thủ 2 (Quân Đen)';
      }
@@ -5132,13 +5393,13 @@
       return col === 'w' ? 'Bạn (Giải Thế Cờ - Quân Trắng)' : 'Thế Cờ Đối Phương (Quân Đen)';
      }
      if (col === this.playerColor) {
-      return `Bạn (${col === 'w' ? 'Quân Trắng' : 'Quân Đen'})`;
+      return `${AppState.userName || 'Bạn'} (${col === 'w' ? 'Quân Trắng' : 'Quân Đen'} • ${AppState.chessElo} Elo)`;
      }
      return `LM StockBot AI (${col === 'w' ? 'Trắng' : 'Đen'} • Elo ${botElo})`;
     };
     document.getElementById('chess-top-player-name').textContent = labelForColor(topColor);
     document.getElementById('chess-bottom-player-name').textContent = labelForColor(botColor);
-    document.getElementById('chess-top-avatar').textContent = (this.mode === 'bot' && topColor !== this.playerColor) ? '🤖' : '👤';
+    document.getElementById('chess-top-avatar').textContent = (this.mode === 'bot' && topColor !== this.playerColor) ? '🤖' : (this.mode === 'matchmaking' && topColor !== this.playerColor ? '⚔️' : '👤');
     document.getElementById('chess-bottom-avatar').textContent = (this.mode === 'bot' && botColor !== this.playerColor) ? '🤖' : '👤';
     const topSec = topColor === 'b' ? this.blackTime : this.whiteTime;
     const botSec = botColor === 'w' ? this.whiteTime : this.blackTime;
@@ -5466,22 +5727,70 @@
    },
    finishGame(reason, winnerColor, toastMessage) {
     this.stopClock();
-    const eloDelta = 0;
-    this.customGameOver = { reason, winnerColor, eloDelta };
+    this.closeResignModal();
+    this.closeOnlineDrawOfferModal();
+    let eloDelta = 0;
+    const oldElo = AppState.chessElo || 1200;
+    if (this.mode === 'matchmaking' && (this.onlineMatch.status === 'playing' || this.onlineMatch.status === 'finished') && !this.onlineMatch.eloAlreadySettled) {
+     this.onlineMatch.eloAlreadySettled = true;
+     this.onlineMatch.status = 'finished';
+     const oppElo = this.onlineMatch.opponentElo || oldElo;
+     const expectedScore = 1 / (1 + Math.pow(10, (oppElo - oldElo) / 400));
+     let actualScore = 0.5;
+     if (winnerColor === this.playerColor) actualScore = 1.0;
+     else if (winnerColor !== 'draw') actualScore = 0.0;
+     eloDelta = Math.round(32 * (actualScore - expectedScore));
+     if (actualScore === 1.0 && eloDelta < 8) eloDelta = 8;
+     if (actualScore === 0.0 && eloDelta > -8) eloDelta = -8;
+     AppState.chessElo = Math.max(100, oldElo + eloDelta);
+     if (AppState.userEmail) {
+      saveUserProgress(true);
+     }
+     this.updateOnlineMatchRowInSupabase({
+      status: 'finished',
+      winner: winnerColor,
+      end_reason: reason,
+      fen: this.game.fen(),
+      white_time: this.whiteTime,
+      black_time: this.blackTime
+     });
+     this.updateOnlineLobbyUI();
+    }
+    this.customGameOver = { reason, winnerColor, eloDelta, oldElo, newElo: AppState.chessElo };
     updateDashboardProgressUI();
     SoundFX.play(winnerColor === this.playerColor || winnerColor === 'draw' ? 'success' : 'beep');
     showToast(toastMessage, winnerColor === this.playerColor ? 'emerald' : (winnerColor === 'draw' ? 'cyan' : 'rose'));
-    this.renderPostGameAnalysis(reason, winnerColor, eloDelta);
+    this.renderPostGameAnalysis(reason, winnerColor, eloDelta, oldElo);
     this.updateUI();
    },
-   renderPostGameAnalysis(reason, winnerColor, eloDelta) {
+   renderPostGameAnalysis(reason, winnerColor, eloDelta, oldElo = AppState.chessElo) {
     const box = document.getElementById('chess-postgame-box');
     const titleEl = document.getElementById('postgame-title');
     const badgeEl = document.getElementById('postgame-elo-badge');
     const sumEl = document.getElementById('postgame-summary-text');
     if (!box || !sumEl) return;
-    badgeEl.textContent = `+0 Elo (Hiện tại: ${AppState.chessElo})`;
-    badgeEl.className = 'px-2.5 py-1 rounded-full bg-slate-800 text-amber-300 border border-amber-500/40 font-mono-code text-xs font-extrabold';
+    const signStr = eloDelta > 0 ? `+${eloDelta}` : `${eloDelta}`;
+    if (this.mode === 'matchmaking') {
+     badgeEl.textContent = `${signStr} Elo (${oldElo} → ${AppState.chessElo})`;
+     badgeEl.className = eloDelta > 0
+      ? 'px-2.5 py-1 rounded-full bg-emerald-500 text-slate-950 font-mono-code text-xs font-extrabold shadow'
+      : (eloDelta < 0
+       ? 'px-2.5 py-1 rounded-full bg-rose-500 text-slate-950 font-mono-code text-xs font-extrabold shadow'
+       : 'px-2.5 py-1 rounded-full bg-amber-400 text-slate-950 font-mono-code text-xs font-extrabold shadow');
+    } else {
+     badgeEl.textContent = `+0 Elo (Hiện tại: ${AppState.chessElo})`;
+     badgeEl.className = 'px-2.5 py-1 rounded-full bg-slate-800 text-amber-300 border border-amber-500/40 font-mono-code text-xs font-extrabold';
+    }
+    const reasonMap = {
+     checkmate: 'Chiếu hết (Checkmate)',
+     resign: 'Đầu hàng (Resignation)',
+     timeout: 'Hết thời gian (Time Out)',
+     agreed_draw: 'Đồng ý Hòa cờ (Mutual Draw)',
+     mutual_agreement: 'Đồng ý Hòa cờ (Mutual Draw)',
+     draw_rule: 'Hòa theo luật quốc tế FIDE',
+     lone_king_2sq_10_moves: 'Hòa do Vua đơn độc lặp lại 10 nước',
+     ten_consecutive_checks: 'Hòa do chiếu liên tục 10 lần'
+    };
     const outcomeText = winnerColor === 'draw'
      ? '🤝 Kết quả: Hòa Cờ (Draw)'
      : (winnerColor === 'w' ? '👑 Kết quả: Quân Trắng Chiến Thắng' : '👑 Kết quả: Quân Đen Chiến Thắng');
@@ -5507,14 +5816,17 @@
       </div>
      `;
     }
+    const eloDescHtml = this.mode === 'matchmaking'
+     ? `<div>• <strong>Biến động Elo Online (Chuẩn FIDE K=32):</strong> <span class="font-mono-code font-extrabold ${eloDelta >= 0 ? 'text-emerald-300' : 'text-rose-300'}">${signStr} Elo (${oldElo} → ${AppState.chessElo} Elo)</span> trước đối thủ <strong>${this.onlineMatch.opponentName || 'Online'} (${this.onlineMatch.opponentElo} Elo • Chênh lệch ${this.onlineMatch.eloDiff} Elo)</strong>. Đã đồng bộ trực tiếp lên BXH!</div>`
+     : `<div>• <strong>Hệ số Elo:</strong> <span class="font-mono-code font-bold text-amber-300">+0 Elo (Giữ nguyên ${AppState.chessElo} Elo)</span> — <em>Chuyển sang chế độ <strong>⚔️ Ghép Đấu Online (±100 Elo)</strong> để thi đấu tính điểm Elo thật với người chơi khác!</em></div>`;
     sumEl.innerHTML = `
-     <div>• <strong>Tổng số hiệp đấu:</strong> ${totalFullMoves} hiệp (${totalHalfMoves} nước đi).</div>
-     <div>• <strong>Hệ số Elo:</strong> <span class="font-mono-code font-bold text-amber-300">+0 Elo (Giữ nguyên ${AppState.chessElo} Elo)</span> — <em>Theo quy định, Elo chỉ được cộng khi chiến thắng người chơi khác ở chế độ Ghép Trận Online (cập nhật sau).</em></div>
+     <div>• <strong>Lý do kết thúc:</strong> ${reasonMap[reason] || reason} (${totalFullMoves} hiệp / ${totalHalfMoves} nước đi).</div>
+     ${eloDescHtml}
      ${bestMoveHtml}
     `;
     box.classList.remove('hidden');
    },
-   executePlayerMove(fromSq, toSq, promoType = 'q') {
+   executePlayerMove(fromSq, toSq, promoType = 'q', isRemoteOnlineMove = false) {
     const prevEval = this.evaluateBoard();
     const moveObj = this.game.move({ from: fromSq, to: toSq, promotion: promoType });
     this.selectedSq = null;
@@ -5524,9 +5836,33 @@
      this.recordMoveEvaluation(moveObj, prevEval);
      this.startClockIfNeeded();
      SoundFX.play(moveObj.captured ? 'capture' : 'move');
-     if (moveObj.flags && moveObj.flags.includes('p')) {
+     if (moveObj.flags && moveObj.flags.includes('p') && !isRemoteOnlineMove) {
       const roleNames = { q: 'Hậu (Queen)', r: 'Xe (Rook)', b: 'Tượng (Bishop)', n: 'Mã (Knight)' };
       showToast(`👑 Đã phong cấp Tốt thành ${roleNames[promoType] || 'Hậu'}!`, 'emerald');
+     }
+     if (this.mode === 'matchmaking' && this.onlineMatch.status === 'playing' && !isRemoteOnlineMove) {
+      const movePayload = {
+       matchId: this.onlineMatch.matchId,
+       senderClientId: this.onlineMatch.clientId,
+       color: moveObj.color,
+       from: moveObj.from,
+       to: moveObj.to,
+       promotion: promoType || 'q',
+       san: moveObj.san,
+       fen: this.game.fen(),
+       history: this.game.history({ verbose: true }).map(m => ({ from: m.from, to: m.to, promotion: m.promotion || 'q' })),
+       whiteTime: this.whiteTime,
+       blackTime: this.blackTime,
+       moveCount: this.game.history().length
+      };
+      this.broadcastOnlineRoomEvent('ONLINE_MOVE', movePayload);
+      this.updateOnlineMatchRowInSupabase({
+       fen: movePayload.fen,
+       moves_json: movePayload.history,
+       last_move: { from: moveObj.from, to: moveObj.to, promotion: promoType || 'q', san: moveObj.san, moveCount: movePayload.moveCount },
+       white_time: this.whiteTime,
+       black_time: this.blackTime
+      });
      }
      this.renderBoard();
      this.updateUI();
@@ -5536,12 +5872,22 @@
    onSquareClick(sq) {
     if (this.isMatchOver()) return;
     if (this.mode === 'bot' && this.game.turn() !== this.playerColor) return;
+    if (this.mode === 'matchmaking') {
+     if (this.onlineMatch.status !== 'playing') {
+      showToast('⚔️ Hãy bấm "Tìm Đối Thủ Online" ở bảng bên phải để ghép trận trước khi đi quân!', 'amber');
+      return;
+     }
+     if (this.game.turn() !== this.playerColor) {
+      showToast('⏳ Đang là lượt đi của đối thủ Online!', 'amber');
+      return;
+     }
+    }
     if (this.selectedSq && this.legalTargets.includes(sq)) {
      if (this.isPromotionMove(this.selectedSq, sq)) {
       this.openPromotionModal(this.selectedSq, sq, this.game.turn());
       return;
      }
-     this.executePlayerMove(this.selectedSq, sq, 'q');
+     this.executePlayerMove(this.selectedSq, sq, 'q', false);
      return;
     }
     const p = this.game.get(sq);
@@ -5757,6 +6103,25 @@
      showToast('Ván cờ đã kết thúc!', 'amber');
      return;
     }
+    if (this.mode === 'matchmaking') {
+     if (this.onlineMatch.status !== 'playing') {
+      showToast('Bạn chưa vào trận đấu Online nào!', 'amber');
+      return;
+     }
+     if (this.game.history().length < 2) {
+      showToast('Hãy đi ít nhất 1 hiệp cờ trước khi gửi đề nghị Xin Hòa!', 'amber');
+      return;
+     }
+     this.broadcastOnlineRoomEvent('ONLINE_DRAW_OFFER', {
+      matchId: this.onlineMatch.matchId,
+      fromClientId: this.onlineMatch.clientId,
+      fromColor: this.playerColor,
+      fromName: AppState.userName || 'Kỳ thủ'
+     });
+     this.updateOnlineMatchRowInSupabase({ draw_offer_by: this.playerColor });
+     showToast(`🤝 Đã gửi lời đề nghị Xin Hòa tới đối thủ ${this.onlineMatch.opponentName}!`, 'cyan');
+     return;
+    }
     if (this.game.history().length < 2) {
      showToast('Hãy đi ít nhất 1 hiệp cờ trước khi gửi yêu cầu Xin Hòa!', 'amber');
      return;
@@ -5774,7 +6139,734 @@
      showToast('🤖 LM StockBot AI từ chối Xin Hòa vì đang có ưu thế lớn! Hãy tiếp tục chiến đấu.', 'amber');
     }
    },
+   // ---------- RESIGN (ĐẦU HÀNG) MODAL & EXECUTION ----------
+   openResignModal() {
+    if (this.mode === 'puzzle') {
+     showToast('Chế độ Giải Thế Cờ không áp dụng Đầu Hàng! Bấm "🎲 Tạo Bài Ngẫu Nhiên Mới" để đổi bài.', 'amber');
+     return;
+    }
+    if (this.isMatchOver()) {
+     showToast('Ván cờ hiện tại đã kết thúc!', 'amber');
+     return;
+    }
+    if (this.mode === 'matchmaking' && this.onlineMatch.status !== 'playing') {
+     showToast('Bạn chưa ở trong trận đấu Online nào để Đầu Hàng!', 'amber');
+     return;
+    }
+    const descEl = document.getElementById('chess-resign-modal-desc');
+    if (descEl) {
+     if (this.mode === 'matchmaking') {
+      descEl.innerHTML = `Bạn có chắc chắn muốn <strong>🏳️ Đầu Hàng</strong> trước đối thủ <strong class="text-emerald-300">${this.onlineMatch.opponentName || 'Online'} (${this.onlineMatch.opponentElo} Elo)</strong> không? Bạn sẽ bị xử thua ván này và bị trừ điểm Elo theo chuẩn FIDE.`;
+     } else if (this.mode === 'pvp') {
+      const turnSide = this.game.turn() === 'w' ? 'Quân Trắng' : 'Quân Đen';
+      descEl.innerHTML = `Đang là lượt của <strong>${turnSide}</strong>. Bạn có chắc chắn <strong>${turnSide}</strong> muốn nhận thua (Đầu Hàng) ván cờ này không?`;
+     } else {
+      descEl.innerHTML = `Bạn có chắc chắn muốn nhận thua (<strong>🏳️ Đầu Hàng</strong>) trước <strong>LM StockBot AI</strong> ở ván cờ này không?`;
+     }
+    }
+    const modal = document.getElementById('chess-resign-modal');
+    if (modal) {
+     modal.classList.remove('hidden');
+     modal.classList.add('flex');
+    }
+   },
+   closeResignModal() {
+    const modal = document.getElementById('chess-resign-modal');
+    if (modal) {
+     modal.classList.add('hidden');
+     modal.classList.remove('flex');
+    }
+   },
+   confirmResign() {
+    this.closeResignModal();
+    if (this.isMatchOver()) return;
+    if (this.mode === 'matchmaking' && this.onlineMatch.status === 'playing') {
+     const winnerColor = this.playerColor === 'w' ? 'b' : 'w';
+     this.broadcastOnlineRoomEvent('ONLINE_RESIGN', {
+      matchId: this.onlineMatch.matchId,
+      resignedColor: this.playerColor,
+      resignedName: AppState.userName || 'Đối thủ'
+     });
+     this.finishGame('resign', winnerColor, `🏳️ Bạn đã đầu hàng — ${this.onlineMatch.opponentName || 'Đối thủ'} giành chiến thắng!`);
+     return;
+    }
+    if (this.mode === 'pvp') {
+     const resigningColor = this.game.turn();
+     const winnerColor = resigningColor === 'w' ? 'b' : 'w';
+     const resignName = resigningColor === 'w' ? 'Quân Trắng' : 'Quân Đen';
+     const winName = winnerColor === 'w' ? 'Quân Trắng' : 'Quân Đen';
+     this.finishGame('resign', winnerColor, `🏳️ ${resignName} đã đầu hàng — ${winName} giành chiến thắng!`);
+     return;
+    }
+    const winnerColor = this.playerColor === 'w' ? 'b' : 'w';
+    this.finishGame('resign', winnerColor, '🏳️ Bạn đã đầu hàng — LM StockBot AI giành chiến thắng!');
+   },
+   openOnlineDrawOfferModal(fromName) {
+    const descEl = document.getElementById('chess-draw-offer-desc');
+    if (descEl) {
+     descEl.innerHTML = `Kỳ thủ <strong class="text-cyan-300">${fromName || this.onlineMatch.opponentName || 'Đối thủ'}</strong> vừa gửi lời đề nghị <strong>Hòa cờ (Mutual Draw)</strong>. Bạn có đồng ý Hòa ván này không?`;
+    }
+    const modal = document.getElementById('chess-draw-offer-modal');
+    if (modal) {
+     modal.classList.remove('hidden');
+     modal.classList.add('flex');
+    }
+    SoundFX.play('beep');
+   },
+   closeOnlineDrawOfferModal() {
+    const modal = document.getElementById('chess-draw-offer-modal');
+    if (modal) {
+     modal.classList.add('hidden');
+     modal.classList.remove('flex');
+    }
+   },
+   respondToOnlineDrawOffer(accepted) {
+    this.closeOnlineDrawOfferModal();
+    if (this.mode !== 'matchmaking' || this.onlineMatch.status !== 'playing' || this.isMatchOver()) return;
+    this.broadcastOnlineRoomEvent('ONLINE_DRAW_RESPONSE', {
+     matchId: this.onlineMatch.matchId,
+     accepted,
+     responderName: AppState.userName || 'Kỳ thủ'
+    });
+    this.updateOnlineMatchRowInSupabase({ draw_offer_by: null });
+    if (accepted) {
+     this.finishGame('agreed_draw', 'draw', '🤝 Hai kỳ thủ đã đồng ý Hòa cờ Online!');
+    } else {
+     showToast('Bạn đã từ chối lời đề nghị Hòa cờ của đối thủ.', 'amber');
+    }
+   },
+   // ---------- REAL-TIME ONLINE MATCHMAKING ENGINE (0 - 100 ELO FAIR RANGE + TIME CONTROL) ----------
+   initOnlineMatchmakingChannels() {
+    // 1. Local BroadcastChannel for instant multi-tab / same-machine testing
+    try {
+     if (typeof BroadcastChannel !== 'undefined' && !this.onlineMatch.localBus) {
+      this.onlineMatch.localBus = new BroadcastChannel('lm_chess_online_bus_v2');
+      this.onlineMatch.localBus.onmessage = ev => {
+       if (ev && ev.data) this.handleIncomingOnlinePacket(ev.data);
+      };
+     }
+    } catch (e) {}
+    // 2. Supabase Realtime Lobby Channel for cross-device / cross-network matchmaking
+    this.ensureSupabaseLobbyChannel();
+   },
+   ensureSupabaseLobbyChannel() {
+    if (!AppState.supabaseClient || this.onlineMatch.lobbyChannel) return;
+    try {
+     const ch = AppState.supabaseClient.channel('lm_chess_matchmaking_lobby_v2', {
+      config: {
+       broadcast: { self: false },
+       presence: { key: this.onlineMatch.clientId }
+      }
+     });
+     ch.on('broadcast', { event: 'LOBBY_EVENT' }, payload => {
+      if (payload && payload.payload) {
+       this.handleIncomingOnlinePacket(payload.payload);
+      }
+     });
+     ch.on('presence', { event: 'sync' }, () => {
+      try {
+       const st = ch.presenceState() || {};
+       Object.values(st).forEach(arr => {
+        if (Array.isArray(arr)) {
+         arr.forEach(p => {
+          if (p && p.clientId && p.clientId !== this.onlineMatch.clientId && p.status === 'searching') {
+           this.onlineMatch.waitingPeers.set(p.clientId, { ...p, lastSeen: Date.now() });
+          }
+         });
+        }
+       });
+       this.renderWaitingPeersList();
+      } catch (e) {}
+     });
+     // Also listen to postgres_changes on lm_chess_online_matches if the user created the table
+     ch.on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'lm_chess_online_matches' },
+      payload => {
+       this.handleSupabaseMatchTableChange(payload);
+      }
+     );
+     ch.subscribe(status => {
+      if (status === 'SUBSCRIBED') {
+       this.updateOnlineLobbyUI();
+      }
+     });
+     this.onlineMatch.lobbyChannel = ch;
+    } catch (e) {}
+   },
+   broadcastLobbyPacket(type, data) {
+    const packet = {
+     ...data,
+     packetType: type,
+     senderClientId: this.onlineMatch.clientId,
+     ts: Date.now()
+    };
+    if (this.onlineMatch.localBus) {
+     try { this.onlineMatch.localBus.postMessage(packet); } catch (e) {}
+    }
+    this.ensureSupabaseLobbyChannel();
+    if (this.onlineMatch.lobbyChannel) {
+     try {
+      this.onlineMatch.lobbyChannel.send({
+       type: 'broadcast',
+       event: 'LOBBY_EVENT',
+       payload: packet
+      });
+     } catch (e) {}
+    }
+   },
+   subscribeToOnlineMatchRoom(matchId) {
+    if (this.onlineMatch.roomChannel && AppState.supabaseClient) {
+     try { AppState.supabaseClient.removeChannel(this.onlineMatch.roomChannel); } catch (e) {}
+     this.onlineMatch.roomChannel = null;
+    }
+    if (!AppState.supabaseClient || !matchId) return;
+    try {
+     const rch = AppState.supabaseClient.channel(`lm_chess_room_${matchId}`, {
+      config: { broadcast: { self: false } }
+     });
+     rch.on('broadcast', { event: 'ROOM_EVENT' }, payload => {
+      if (payload && payload.payload) {
+       this.handleIncomingOnlinePacket(payload.payload);
+      }
+     });
+     rch.subscribe();
+     this.onlineMatch.roomChannel = rch;
+    } catch (e) {}
+   },
+   broadcastOnlineRoomEvent(type, data) {
+    const packet = {
+     ...data,
+     packetType: type,
+     senderClientId: this.onlineMatch.clientId,
+     ts: Date.now()
+    };
+    if (this.onlineMatch.localBus) {
+     try { this.onlineMatch.localBus.postMessage(packet); } catch (e) {}
+    }
+    if (this.onlineMatch.roomChannel) {
+     try {
+      this.onlineMatch.roomChannel.send({
+       type: 'broadcast',
+       event: 'ROOM_EVENT',
+       payload: packet
+      });
+     } catch (e) {}
+    }
+    if (this.onlineMatch.lobbyChannel) {
+     try {
+      this.onlineMatch.lobbyChannel.send({
+       type: 'broadcast',
+       event: 'LOBBY_EVENT',
+       payload: packet
+      });
+     } catch (e) {}
+    }
+   },
+   isPeerFairMatch(peer) {
+    if (!peer || peer.clientId === this.onlineMatch.clientId) return false;
+    const sameTime = Number(peer.timeControl) === Number(this.initialTimeSec);
+    const myElo = Number(AppState.chessElo) || 1200;
+    const peerElo = Number(peer.elo) || 1200;
+    const diff = Math.abs(myElo - peerElo);
+    return sameTime && diff >= 0 && diff <= 100;
+   },
+   async startOnlineMatchSearch() {
+    if (!AppState.userEmail) {
+     showToast('🔐 Vui lòng Đăng ký / Đăng nhập tài khoản trước để hệ thống xác định điểm Elo của bạn khi Ghép Đấu Online!', 'amber');
+     openAuthModal();
+     return;
+    }
+    if (this.onlineMatch.status === 'playing' && !this.isMatchOver()) {
+     showToast('Bạn đang trong một trận đấu Online!', 'amber');
+     return;
+    }
+    this.ensureSupabaseLobbyChannel();
+    this.onlineMatch.status = 'searching';
+    this.onlineMatch.queuedAt = Date.now();
+    this.onlineMatch.searchSeconds = 0;
+    this.onlineMatch.matchId = null;
+    this.onlineMatch.eloAlreadySettled = false;
+    this.updateOnlineLobbyUI();
+    const minElo = Math.max(100, AppState.chessElo - 100);
+    const maxElo = AppState.chessElo + 100;
+    showToast(`⚔️ Đang tìm đối thủ mức ${minElo}–${maxElo} Elo (Thời gian: ${this.initialTimeSec / 60} phút)...`, 'emerald');
+    // Track presence in Supabase channel
+    if (this.onlineMatch.lobbyChannel) {
+     try {
+      await this.onlineMatch.lobbyChannel.track({
+       clientId: this.onlineMatch.clientId,
+       email: AppState.userEmail,
+       nickname: AppState.userName || AppState.userEmail.split('@')[0],
+       elo: AppState.chessElo || 1200,
+       timeControl: this.initialTimeSec,
+       queuedAt: this.onlineMatch.queuedAt,
+       status: 'searching'
+      });
+     } catch (e) {}
+    }
+    // Also check / insert into Supabase table lm_chess_online_matches if table exists
+    this.tryMatchOrInsertInSupabaseTable();
+    // Broadcast queue ping immediately and every 1.5s
+    const sendQueuePing = () => {
+     if (this.onlineMatch.status !== 'searching') return;
+     this.broadcastLobbyPacket('QUEUE_PING', {
+      clientId: this.onlineMatch.clientId,
+      email: AppState.userEmail,
+      nickname: AppState.userName || AppState.userEmail.split('@')[0],
+      elo: AppState.chessElo || 1200,
+      timeControl: this.initialTimeSec,
+      queuedAt: this.onlineMatch.queuedAt
+     });
+     this.pruneAndAttemptAutoPair();
+    };
+    sendQueuePing();
+    clearInterval(this.onlineMatch.pingIntervalId);
+    this.onlineMatch.pingIntervalId = setInterval(sendQueuePing, 1400);
+    clearInterval(this.onlineMatch.searchTimerId);
+    this.onlineMatch.searchTimerId = setInterval(() => {
+     if (this.onlineMatch.status !== 'searching') {
+      clearInterval(this.onlineMatch.searchTimerId);
+      return;
+     }
+     this.onlineMatch.searchSeconds++;
+     const timerTxt = document.getElementById('online-search-timer-text');
+     if (timerTxt) {
+      timerTxt.textContent = `Đang tìm đối thủ (${minElo}–${maxElo} Elo • ${this.initialTimeSec / 60} phút)... (${this.onlineMatch.searchSeconds}s)`;
+     }
+     if (this.onlineMatch.searchSeconds % 3 === 0) {
+      this.tryMatchOrInsertInSupabaseTable();
+     }
+    }, 1000);
+   },
+   cancelOnlineMatchSearch(notify = true) {
+    clearInterval(this.onlineMatch.pingIntervalId);
+    clearInterval(this.onlineMatch.searchTimerId);
+    this.onlineMatch.pingIntervalId = null;
+    this.onlineMatch.searchTimerId = null;
+    if (this.onlineMatch.status === 'searching') {
+     this.onlineMatch.status = 'idle';
+    }
+    this.broadcastLobbyPacket('QUEUE_LEAVE', { clientId: this.onlineMatch.clientId });
+    if (this.onlineMatch.lobbyChannel) {
+     try { this.onlineMatch.lobbyChannel.untrack(); } catch (e) {}
+    }
+    if (AppState.supabaseClient) {
+     try {
+      AppState.supabaseClient
+       .from('lm_chess_online_matches')
+       .delete()
+       .eq('host_client_id', this.onlineMatch.clientId)
+       .eq('status', 'waiting')
+       .then(() => {});
+     } catch (e) {}
+    }
+    this.updateOnlineLobbyUI();
+    if (notify) {
+     showToast('✕ Đã hủy tìm trận đấu Online.', 'amber');
+    }
+   },
+   pruneAndAttemptAutoPair() {
+    const now = Date.now();
+    for (const [cid, peer] of this.onlineMatch.waitingPeers.entries()) {
+     if (now - (peer.lastSeen || 0) > 6500) {
+      this.onlineMatch.waitingPeers.delete(cid);
+     }
+    }
+    this.renderWaitingPeersList();
+    if (this.onlineMatch.status !== 'searching') return;
+    // Find all waiting peers with exact same timeControl and Elo difference 0..100
+    const candidates = Array.from(this.onlineMatch.waitingPeers.values())
+     .filter(p => this.isPeerFairMatch(p))
+     .sort((a, b) => {
+      const diffA = Math.abs((a.elo || 1200) - (AppState.chessElo || 1200));
+      const diffB = Math.abs((b.elo || 1200) - (AppState.chessElo || 1200));
+      if (diffA !== diffB) return diffA - diffB;
+      return (a.queuedAt || 0) - (b.queuedAt || 0);
+     });
+    if (!candidates.length) return;
+    const bestPeer = candidates[0];
+    // Deterministic initiator rule (or fallback after 2s wait) so both clients agree on the exact same matchId
+    const iAmInitiator =
+     this.onlineMatch.queuedAt < bestPeer.queuedAt ||
+     (this.onlineMatch.queuedAt === bestPeer.queuedAt && this.onlineMatch.clientId < bestPeer.clientId) ||
+     (now - this.onlineMatch.queuedAt > 2200);
+    if (iAmInitiator) {
+     this.proposeMatchWithPeer(bestPeer);
+    }
+   },
+   proposeMatchWithPeer(peer) {
+    if (this.onlineMatch.status !== 'searching' || !peer) return;
+    const pairKey = [this.onlineMatch.clientId, peer.clientId].sort().join('_');
+    const matchId = 'm_' + pairKey + '_' + Math.floor(Date.now() / 4000).toString(36);
+    const meObj = {
+     clientId: this.onlineMatch.clientId,
+     email: AppState.userEmail,
+     nickname: AppState.userName || AppState.userEmail.split('@')[0],
+     elo: AppState.chessElo || 1200
+    };
+    const peerObj = {
+     clientId: peer.clientId,
+     email: peer.email,
+     nickname: peer.nickname || 'Kỳ thủ Online',
+     elo: Number(peer.elo) || 1200
+    };
+    // Deterministic color assignment based on queuedAt
+    const meIsWhite = (this.onlineMatch.queuedAt <= peer.queuedAt);
+    const proposal = {
+     matchId,
+     timeControl: Number(this.initialTimeSec),
+     white: meIsWhite ? meObj : peerObj,
+     black: meIsWhite ? peerObj : meObj,
+     targetClientId: peer.clientId
+    };
+    this.broadcastLobbyPacket('MATCH_PROPOSAL', proposal);
+   },
+   handleIncomingOnlinePacket(pkt) {
+    if (!pkt || pkt.senderClientId === this.onlineMatch.clientId) return;
+    const type = pkt.packetType;
+    if (type === 'QUEUE_PING') {
+     this.onlineMatch.waitingPeers.set(pkt.clientId, {
+      clientId: pkt.clientId,
+      email: pkt.email,
+      nickname: pkt.nickname,
+      elo: Number(pkt.elo) || 1200,
+      timeControl: Number(pkt.timeControl) || 600,
+      queuedAt: pkt.queuedAt || Date.now(),
+      lastSeen: Date.now()
+     });
+     this.renderWaitingPeersList();
+     if (this.onlineMatch.status === 'searching' && this.isPeerFairMatch(pkt)) {
+      this.pruneAndAttemptAutoPair();
+     }
+     return;
+    }
+    if (type === 'QUEUE_LEAVE') {
+     this.onlineMatch.waitingPeers.delete(pkt.clientId);
+     this.renderWaitingPeersList();
+     return;
+    }
+    if (type === 'MATCH_PROPOSAL') {
+     if (this.onlineMatch.status === 'searching' && pkt.targetClientId === this.onlineMatch.clientId) {
+      // Verify fair Elo (0-100) and same timeControl
+      const opp = pkt.white.clientId === this.onlineMatch.clientId ? pkt.black : pkt.white;
+      if (Number(pkt.timeControl) === Number(this.initialTimeSec) && Math.abs(opp.elo - AppState.chessElo) <= 100) {
+       this.broadcastLobbyPacket('MATCH_ACCEPT', {
+        matchId: pkt.matchId,
+        timeControl: pkt.timeControl,
+        white: pkt.white,
+        black: pkt.black,
+        accepterClientId: this.onlineMatch.clientId
+       });
+       this.beginActiveOnlineMatch(pkt);
+      }
+     }
+     return;
+    }
+    if (type === 'MATCH_ACCEPT') {
+     const isParticipant =
+      (pkt.white && pkt.white.clientId === this.onlineMatch.clientId) ||
+      (pkt.black && pkt.black.clientId === this.onlineMatch.clientId);
+     if (isParticipant && this.onlineMatch.status === 'searching') {
+      this.beginActiveOnlineMatch(pkt);
+     }
+     return;
+    }
+    // In-game room events
+    if (!this.onlineMatch.matchId || pkt.matchId !== this.onlineMatch.matchId) return;
+    if (type === 'ONLINE_MOVE') {
+     if (this.isMatchOver()) return;
+     const currentLen = this.game.history().length;
+     if (pkt.moveCount === currentLen + 1) {
+      this.whiteTime = typeof pkt.whiteTime === 'number' ? pkt.whiteTime : this.whiteTime;
+      this.blackTime = typeof pkt.blackTime === 'number' ? pkt.blackTime : this.blackTime;
+      this.executePlayerMove(pkt.from, pkt.to, pkt.promotion || 'q', true);
+     } else if (Array.isArray(pkt.history) && pkt.history.length > currentLen) {
+      for (let i = currentLen; i < pkt.history.length; i++) {
+       const st = pkt.history[i];
+       this.executePlayerMove(st.from, st.to, st.promotion || 'q', true);
+      }
+      if (typeof pkt.whiteTime === 'number') this.whiteTime = pkt.whiteTime;
+      if (typeof pkt.blackTime === 'number') this.blackTime = pkt.blackTime;
+      this.renderClocksAndPlayers();
+     }
+     return;
+    }
+    if (type === 'ONLINE_RESIGN') {
+     if (this.isMatchOver()) return;
+     const winnerColor = pkt.resignedColor === 'w' ? 'b' : 'w';
+     this.finishGame('resign', winnerColor, `🏳️ Đối thủ ${pkt.resignedName || this.onlineMatch.opponentName} đã đầu hàng — Bạn giành chiến thắng!`);
+     return;
+    }
+    if (type === 'ONLINE_DRAW_OFFER') {
+     if (this.isMatchOver()) return;
+     this.openOnlineDrawOfferModal(pkt.fromName || this.onlineMatch.opponentName);
+     return;
+    }
+    if (type === 'ONLINE_DRAW_RESPONSE') {
+     if (this.isMatchOver()) return;
+     if (pkt.accepted) {
+      this.finishGame('agreed_draw', 'draw', '🤝 Đối thủ đã đồng ý lời đề nghị Hòa cờ của bạn!');
+     } else {
+      SoundFX.play('beep');
+      showToast(`✕ Đối thủ ${pkt.responderName || this.onlineMatch.opponentName} đã từ chối lời đề nghị Xin Hòa!`, 'amber');
+     }
+     return;
+    }
+    if (type === 'ONLINE_TIMEOUT') {
+     if (this.isMatchOver()) return;
+     const winnerColor = pkt.timeoutColor === 'w' ? 'b' : 'w';
+     const loserName = pkt.timeoutColor === 'w' ? 'Quân Trắng' : 'Quân Đen';
+     this.finishGame('timeout', winnerColor, `⏰ ${loserName} đã hết thời gian — Ván đấu Online kết thúc!`);
+     return;
+    }
+   },
+   async tryMatchOrInsertInSupabaseTable() {
+    if (!AppState.supabaseClient || this.onlineMatch.status !== 'searching') return;
+    try {
+     const myElo = Number(AppState.chessElo) || 1200;
+     const minElo = myElo - 100;
+     const maxElo = myElo + 100;
+     const freshCutoff = new Date(Date.now() - 40000).toISOString();
+     const { data: waitingRows, error } = await AppState.supabaseClient
+      .from('lm_chess_online_matches')
+      .select('*')
+      .eq('status', 'waiting')
+      .eq('time_control', this.initialTimeSec)
+      .gte('host_elo', minElo)
+      .lte('host_elo', maxElo)
+      .gte('updated_at', freshCutoff)
+      .neq('host_client_id', this.onlineMatch.clientId)
+      .limit(10);
+     if (error) return; // Table not created yet -> Realtime WebSocket handles everything seamlessly
+     if (Array.isArray(waitingRows) && waitingRows.length > 0) {
+      waitingRows.sort((a, b) => Math.abs(a.host_elo - myElo) - Math.abs(b.host_elo - myElo));
+      const room = waitingRows[0];
+      const guestObj = {
+       clientId: this.onlineMatch.clientId,
+       email: AppState.userEmail,
+       nickname: AppState.userName || AppState.userEmail.split('@')[0],
+       elo: myElo
+      };
+      const hostObj = {
+       clientId: room.host_client_id,
+       email: room.host_email,
+       nickname: room.host_name,
+       elo: room.host_elo
+      };
+      const { data: claimed, error: claimErr } = await AppState.supabaseClient
+       .from('lm_chess_online_matches')
+       .update({
+        status: 'playing',
+        guest_client_id: guestObj.clientId,
+        guest_email: guestObj.email,
+        guest_name: guestObj.nickname,
+        guest_elo: guestObj.elo,
+        white_client_id: hostObj.clientId,
+        white_email: hostObj.email,
+        white_name: hostObj.nickname,
+        white_elo: hostObj.elo,
+        black_client_id: guestObj.clientId,
+        black_email: guestObj.email,
+        black_name: guestObj.nickname,
+        black_elo: guestObj.elo,
+        updated_at: new Date().toISOString()
+       })
+       .eq('id', room.id)
+       .eq('status', 'waiting')
+       .select();
+      if (!claimErr && Array.isArray(claimed) && claimed.length > 0) {
+       const matchPacket = {
+        matchId: room.id,
+        timeControl: room.time_control,
+        white: hostObj,
+        black: guestObj
+       };
+       this.broadcastLobbyPacket('MATCH_ACCEPT', matchPacket);
+       this.beginActiveOnlineMatch(matchPacket);
+       return;
+      }
+     }
+     // Otherwise upsert our own waiting room row
+     const myRoomId = 'room_' + this.onlineMatch.clientId;
+     await AppState.supabaseClient
+      .from('lm_chess_online_matches')
+      .upsert({
+       id: myRoomId,
+       status: 'waiting',
+       time_control: this.initialTimeSec,
+       host_client_id: this.onlineMatch.clientId,
+       host_email: AppState.userEmail,
+       host_name: AppState.userName || AppState.userEmail.split('@')[0],
+       host_elo: myElo,
+       white_time: this.initialTimeSec,
+       black_time: this.initialTimeSec,
+       updated_at: new Date().toISOString()
+      }, { onConflict: 'id' });
+    } catch (e) {}
+   },
+   handleSupabaseMatchTableChange(payload) {
+    if (!payload || !payload.new) return;
+    const row = payload.new;
+    if (
+     this.onlineMatch.status === 'searching' &&
+     row.status === 'playing' &&
+     (row.host_client_id === this.onlineMatch.clientId || row.guest_client_id === this.onlineMatch.clientId)
+    ) {
+     this.beginActiveOnlineMatch({
+      matchId: row.id,
+      timeControl: row.time_control,
+      white: {
+       clientId: row.white_client_id,
+       email: row.white_email,
+       nickname: row.white_name,
+       elo: row.white_elo
+      },
+      black: {
+       clientId: row.black_client_id,
+       email: row.black_email,
+       nickname: row.black_name,
+       elo: row.black_elo
+      }
+     });
+     return;
+    }
+    if (this.onlineMatch.status === 'playing' && row.id === this.onlineMatch.matchId) {
+     if (row.last_move && row.last_move.moveCount === this.game.history().length + 1) {
+      const lm = row.last_move;
+      this.whiteTime = typeof row.white_time === 'number' ? row.white_time : this.whiteTime;
+      this.blackTime = typeof row.black_time === 'number' ? row.black_time : this.blackTime;
+      this.executePlayerMove(lm.from, lm.to, lm.promotion || 'q', true);
+     }
+     if (row.status === 'finished' && !this.isMatchOver() && row.winner) {
+      this.finishGame(row.end_reason || 'resign', row.winner, '🏁 Ván đấu Online đã kết thúc!');
+     }
+    }
+   },
+   updateOnlineMatchRowInSupabase(patchObj) {
+    if (!AppState.supabaseClient || !this.onlineMatch.matchId) return;
+    try {
+     AppState.supabaseClient
+      .from('lm_chess_online_matches')
+      .update({ ...patchObj, updated_at: new Date().toISOString() })
+      .eq('id', this.onlineMatch.matchId)
+      .then(() => {});
+    } catch (e) {}
+   },
+   beginActiveOnlineMatch(matchInfo) {
+    if (this.onlineMatch.status === 'playing' && this.onlineMatch.matchId === matchInfo.matchId) return;
+    clearInterval(this.onlineMatch.pingIntervalId);
+    clearInterval(this.onlineMatch.searchTimerId);
+    this.onlineMatch.pingIntervalId = null;
+    this.onlineMatch.searchTimerId = null;
+    this.onlineMatch.waitingPeers.delete(matchInfo.white.clientId);
+    this.onlineMatch.waitingPeers.delete(matchInfo.black.clientId);
+    if (this.onlineMatch.lobbyChannel) {
+     try { this.onlineMatch.lobbyChannel.untrack(); } catch (e) {}
+    }
+    this.onlineMatch.status = 'playing';
+    this.onlineMatch.matchId = matchInfo.matchId;
+    this.onlineMatch.whitePlayer = matchInfo.white;
+    this.onlineMatch.blackPlayer = matchInfo.black;
+    this.onlineMatch.eloAlreadySettled = false;
+    const iAmWhite = matchInfo.white.clientId === this.onlineMatch.clientId;
+    this.playerColor = iAmWhite ? 'w' : 'b';
+    const opp = iAmWhite ? matchInfo.black : matchInfo.white;
+    this.onlineMatch.opponentName = opp.nickname || 'Kỳ thủ Online';
+    this.onlineMatch.opponentEmail = opp.email || '';
+    this.onlineMatch.opponentElo = Number(opp.elo) || 1200;
+    this.onlineMatch.eloDiff = Math.abs((AppState.chessElo || 1200) - this.onlineMatch.opponentElo);
+    this.initialTimeSec = Number(matchInfo.timeControl) || this.initialTimeSec;
+    const timeSel = document.getElementById('chess-time-select');
+    if (timeSel) timeSel.value = String(this.initialTimeSec);
+    this.subscribeToOnlineMatchRoom(matchInfo.matchId);
+    this.game.reset();
+    this.selectedSq = null;
+    this.legalTargets = [];
+    this.lastMoveSquares = [];
+    this.resetClocks();
+    this.flipped = (this.playerColor === 'b');
+    this.startClockIfNeeded();
+    this.updateOnlineLobbyUI();
+    this.renderBoard();
+    this.updateUI();
+    const openingEl = document.getElementById('chess-opening-name');
+    const coachEl = document.getElementById('chess-coach-text');
+    if (openingEl) {
+     openingEl.textContent = `⚔️ Trận Đấu Online: ${matchInfo.white.nickname} (${matchInfo.white.elo}) vs ${matchInfo.black.nickname} (${matchInfo.black.elo})`;
+    }
+    if (coachEl) {
+     coachEl.innerHTML = `Đã ghép cặp thành công! Bạn cầm <strong>${iAmWhite ? '♔ Quân Trắng (Đi trước)' : '♚ Quân Đen (Đi sau)'}</strong> đấu với <strong class="text-emerald-300">${this.onlineMatch.opponentName} (${this.onlineMatch.opponentElo} Elo • Chênh lệch ${this.onlineMatch.eloDiff} Elo)</strong> — Thời gian: <strong>${this.initialTimeSec / 60} phút/bên</strong>.`;
+    }
+    SoundFX.play('success');
+    showToast(`⚔️ Đã ghép trận thành công với ${this.onlineMatch.opponentName} (${this.onlineMatch.opponentElo} Elo)! Bạn cầm ${iAmWhite ? 'Quân Trắng' : 'Quân Đen'}.`, 'emerald');
+   },
+   renderWaitingPeersList() {
+    const listEl = document.getElementById('online-waiting-players-list');
+    const countBadge = document.getElementById('online-lobby-count-badge');
+    if (!listEl) return;
+    const peers = Array.from(this.onlineMatch.waitingPeers.values()).filter(
+     p => p.clientId !== this.onlineMatch.clientId && (Date.now() - (p.lastSeen || 0) <= 6500)
+    );
+    if (countBadge) {
+     countBadge.textContent = `${peers.length} người đang tìm trận`;
+    }
+    if (peers.length === 0) {
+     listEl.innerHTML = `<div class="text-slate-400 italic text-[11px]">Hiện chưa có kỳ thủ nào khác đang phát tín hiệu tìm trận. Hãy mở trên thiết bị/máy thứ 2 và bấm "Tìm Đối Thủ Online"!</div>`;
+     return;
+    }
+    const myElo = Number(AppState.chessElo) || 1200;
+    listEl.innerHTML = peers.map(p => {
+     const diff = Math.abs((p.elo || 1200) - myElo);
+     const sameTime = Number(p.timeControl) === Number(this.initialTimeSec);
+     const fairElo = diff <= 100;
+     const canMatch = sameTime && fairElo;
+     const timeMin = Math.round((p.timeControl || 600) / 60);
+     return `
+      <div class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-xl bg-slate-950 border ${canMatch ? 'border-emerald-500/40' : 'border-slate-800'}">
+       <div class="min-w-0">
+        <div class="font-extrabold text-white truncate">${p.nickname} <span class="text-amber-300 font-mono-code">(${p.elo} Elo)</span></div>
+        <div class="text-[10px] text-slate-400">⏱️ ${timeMin} phút • Chênh lệch: <strong class="${fairElo ? 'text-emerald-300' : 'text-rose-400'}">${diff} Elo</strong></div>
+       </div>
+       ${canMatch
+        ? `<button type="button" data-pair-client="${p.clientId}" class="pair-online-now-btn px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-[11px] shrink-0 transition">⚡ Ghép Ngay</button>`
+        : `<span class="px-2 py-0.5 rounded bg-slate-900 text-slate-400 text-[10px] font-bold shrink-0">${!sameTime ? 'Khác giờ' : '> 100 Elo'}</span>`
+       }
+      </div>
+     `;
+    }).join('');
+   },
+   updateOnlineLobbyUI() {
+    const myElo = Number(AppState.chessElo) || 1200;
+    const minElo = Math.max(100, myElo - 100);
+    const maxElo = myElo + 100;
+    const myEloEl = document.getElementById('online-my-elo-label');
+    const rangeEl = document.getElementById('online-elo-range-label');
+    const timeEl = document.getElementById('online-time-control-label');
+    if (myEloEl) myEloEl.textContent = `${myElo} Elo`;
+    if (rangeEl) rangeEl.textContent = `${minElo} – ${maxElo}`;
+    if (timeEl) timeEl.textContent = `${this.initialTimeSec / 60} phút`;
+    const idleWrap = document.getElementById('online-lobby-idle-controls');
+    const searchWrap = document.getElementById('online-searching-box');
+    const activeWrap = document.getElementById('online-active-match-box');
+    if (idleWrap) idleWrap.classList.toggle('hidden', this.onlineMatch.status === 'searching' || (this.onlineMatch.status === 'playing' && !this.isMatchOver()));
+    if (searchWrap) searchWrap.classList.toggle('hidden', this.onlineMatch.status !== 'searching');
+    if (activeWrap) activeWrap.classList.toggle('hidden', !(this.onlineMatch.status === 'playing' && !this.isMatchOver()));
+    if (this.onlineMatch.status === 'playing' && this.onlineMatch.whitePlayer && this.onlineMatch.blackPlayer) {
+     const diffBadge = document.getElementById('online-elo-diff-badge');
+     const namesEl = document.getElementById('online-matchup-names');
+     if (diffBadge) diffBadge.textContent = `Chênh lệch: ${this.onlineMatch.eloDiff} Elo (Công bằng ≤ 100)`;
+     if (namesEl) {
+      namesEl.innerHTML = `♔ ${this.onlineMatch.whitePlayer.nickname} (${this.onlineMatch.whitePlayer.elo}) <span class="text-emerald-400 mx-1">⚔️</span> ♚ ${this.onlineMatch.blackPlayer.nickname} (${this.onlineMatch.blackPlayer.elo})`;
+     }
+    }
+    this.renderWaitingPeersList();
+   },
    showHint() {
+    if (this.mode === 'matchmaking') {
+     showToast('⚠️ Chế độ Ghép Đấu Online nghiêm cấm dùng Gợi Ý AI để đảm bảo sân chơi công bằng!', 'amber');
+     return;
+    }
     if (this.mode === 'puzzle') {
      const puz = this.puzzles[this.puzzleIdx];
      this.selectedSq = puz.solutionFrom;
@@ -6132,12 +7224,12 @@
    setTimeout(() => { if (typeof ChessArena !== 'undefined') ChessArena.syncEvalBarHeight(); }, 50);
   }
   window.addEventListener('DOMContentLoaded', () => {
+   initSupabaseClient();
    window.HeroCube = new InteractiveRubiksCube('hero-cube-canvas-wrap');
    window.MainCube = new InteractiveRubiksCube('main-cube-canvas-wrap');
    ChessArena.init();
    RubikTimer.renderStats();
    CameraScanner.renderGrid();
-   initSupabaseClient();
    renderAllKnowledgeCards();
    updateDashboardProgressUI();
    (async () => {
@@ -6632,17 +7724,35 @@
     showToast('♚ Bạn đã chọn cầm Quân Đen (Bot AI đi Trắng trước)!', 'cyan');
    });
    document.getElementById('chess-mode-select').addEventListener('change', e => {
+    if (ChessArena.mode === 'matchmaking' && ChessArena.onlineMatch.status === 'playing' && !ChessArena.isMatchOver()) {
+     e.target.value = 'matchmaking';
+     showToast('⚠️ Bạn đang trong trận đấu Online! Hãy thi đấu hết ván hoặc bấm "🏳️ Đầu Hàng" trước khi đổi chế độ.', 'amber');
+     return;
+    }
     ChessArena.mode = e.target.value;
     ChessArena.resetGameAndState(false);
    });
    document.getElementById('chess-level-select').addEventListener('change', e => {
     ChessArena.level = Number(e.target.value);
-    ChessArena.resetGameAndState(false);
-    const elo = ChessArena.levelEloMap[ChessArena.level] || 1500;
-    showToast(`🤖 Đã chọn Bot AI mức Elo ${elo}!`, 'emerald');
+    if (ChessArena.mode === 'bot') {
+     ChessArena.resetGameAndState(false);
+     const elo = ChessArena.levelEloMap[ChessArena.level] || 1500;
+     showToast(`🤖 Đã chọn Bot AI mức Elo ${elo}!`, 'emerald');
+    }
    });
    document.getElementById('chess-time-select').addEventListener('change', e => {
+    if (ChessArena.mode === 'matchmaking' && ChessArena.onlineMatch.status === 'playing' && !ChessArena.isMatchOver()) {
+     e.target.value = String(ChessArena.initialTimeSec);
+     showToast('⚠️ Không thể đổi thời gian khi đang trong ván đấu Online!', 'amber');
+     return;
+    }
     ChessArena.initialTimeSec = Number(e.target.value);
+    if (ChessArena.mode === 'matchmaking' && ChessArena.onlineMatch.status === 'searching') {
+     ChessArena.cancelOnlineMatchSearch(false);
+     ChessArena.updateOnlineLobbyUI();
+     ChessArena.startOnlineMatchSearch();
+     return;
+    }
     ChessArena.resetGameAndState(false);
     showToast(`⏱️ Đã đặt đồng hồ Cờ Vua: ${ChessArena.initialTimeSec / 60} phút mỗi bên`, 'emerald');
    });
@@ -6671,6 +7781,77 @@
    });
    document.getElementById('chess-draw-btn').addEventListener('click', () => {
     ChessArena.requestDraw();
+   });
+   document.getElementById('chess-resign-btn')?.addEventListener('click', () => {
+    ChessArena.openResignModal();
+   });
+   document.getElementById('exp-chess-resign-btn')?.addEventListener('click', () => {
+    ChessArena.openResignModal();
+   });
+   document.getElementById('cancel-resign-btn')?.addEventListener('click', () => {
+    ChessArena.closeResignModal();
+   });
+   document.getElementById('confirm-resign-btn')?.addEventListener('click', () => {
+    ChessArena.confirmResign();
+   });
+   document.getElementById('accept-online-draw-btn')?.addEventListener('click', () => {
+    ChessArena.respondToOnlineDrawOffer(true);
+   });
+   document.getElementById('decline-online-draw-btn')?.addEventListener('click', () => {
+    ChessArena.respondToOnlineDrawOffer(false);
+   });
+   document.getElementById('online-find-match-btn')?.addEventListener('click', () => {
+    ChessArena.startOnlineMatchSearch();
+   });
+   document.getElementById('online-cancel-search-btn')?.addEventListener('click', () => {
+    ChessArena.cancelOnlineMatchSearch(true);
+   });
+   document.getElementById('online-waiting-players-list')?.addEventListener('click', e => {
+    const pairBtn = e.target.closest('.pair-online-now-btn');
+    if (pairBtn) {
+     const cid = pairBtn.getAttribute('data-pair-client');
+     const peer = ChessArena.onlineMatch.waitingPeers.get(cid);
+     if (peer) {
+      if (ChessArena.onlineMatch.status !== 'searching') {
+       ChessArena.onlineMatch.status = 'searching';
+       ChessArena.onlineMatch.queuedAt = Date.now() - 5000;
+      }
+      ChessArena.proposeMatchWithPeer(peer);
+     }
+    }
+   });
+   const sqlModal = document.getElementById('supabase-sql-modal');
+   document.getElementById('open-supabase-sql-btn')?.addEventListener('click', () => {
+    if (sqlModal) {
+     sqlModal.classList.remove('hidden');
+     sqlModal.classList.add('flex');
+    }
+   });
+   const closeSqlModal = () => {
+    if (sqlModal) {
+     sqlModal.classList.add('hidden');
+     sqlModal.classList.remove('flex');
+    }
+   };
+   document.getElementById('close-supabase-sql-btn')?.addEventListener('click', closeSqlModal);
+   document.getElementById('close-supabase-sql-bottom-btn')?.addEventListener('click', closeSqlModal);
+   document.getElementById('copy-supabase-sql-btn')?.addEventListener('click', async () => {
+    const codeText = document.getElementById('supabase-sql-code-block')?.textContent || '';
+    try {
+     if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(codeText);
+     } else {
+      const ta = document.createElement('textarea');
+      ta.value = codeText;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+     }
+     showToast('📋 Đã sao chép mã SQL cài đặt bảng Ghép Trận Online! Hãy dán vào Supabase SQL Editor và bấm Run.', 'emerald');
+    } catch (e) {
+     showToast('Hãy bôi đen đoạn mã SQL trong khung và nhấn Ctrl+C!', 'cyan');
+    }
    });
    document.getElementById('chess-flip-btn').addEventListener('click', () => {
     ChessArena.flipped = !ChessArena.flipped;
@@ -6790,6 +7971,11 @@
    document.getElementById('exp-chess-draw-btn')?.addEventListener('click', () => ChessArena.requestDraw());
    document.getElementById('exp-chess-hint-btn')?.addEventListener('click', () => ChessArena.showHint());
    document.getElementById('exp-chess-mode-select')?.addEventListener('change', e => {
+    if (ChessArena.mode === 'matchmaking' && ChessArena.onlineMatch.status === 'playing' && !ChessArena.isMatchOver()) {
+     e.target.value = 'matchmaking';
+     showToast('⚠️ Bạn đang trong trận đấu Online! Hãy thi đấu hết ván hoặc bấm "🏳️ Đầu Hàng" trước khi đổi chế độ.', 'amber');
+     return;
+    }
     const modeSel = document.getElementById('chess-mode-select');
     if (modeSel) modeSel.value = e.target.value;
     ChessArena.mode = e.target.value;
@@ -6835,6 +8021,11 @@
    }, 7000);
    window.addEventListener('focus', () => {
     fetchLeaderboardsData(true);
+   });
+   window.addEventListener('beforeunload', () => {
+    if (ChessArena && ChessArena.onlineMatch && ChessArena.onlineMatch.status === 'searching') {
+     ChessArena.cancelOnlineMatchSearch(false);
+    }
    });
   });
  </script>
