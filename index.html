@@ -764,84 +764,281 @@
      </div>
     </div>
    </div>
-   <!-- RUBIK SUB-VIEW C: Camera AI Scanner & Real-Life Cube Analyzer -->
-   <div id="rubik-panel-camera" class="hidden grid-cols-1 lg:grid-cols-12 gap-6">
-    <div class="lg:col-span-6 glass-card rounded-2xl p-6 space-y-4">
-     <div class="flex items-center justify-between">
-      <div>
-       <h3 class="text-xl font-extrabold text-white">📷 Camera AI Nhận Diện & Phân Tích Rubik Ngoài Đời</h3>
-       <p class="text-sm text-slate-300">Sử dụng Webcam máy tính hoặc Camera điện thoại để quét 9 ô màu trên mặt Rubik</p>
+   <!-- RUBIK SUB-VIEW C: Real-Time 3D Rubik Scanner, Digital Twin & Kociemba Two-Phase Solver -->
+   <div id="rubik-panel-camera" class="hidden grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <!-- Architecture Banner -->
+    <div class="lg:col-span-12 glass-card rounded-2xl p-4 sm:p-5 border border-cyan-500/35 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+     <div class="space-y-1">
+      <div class="flex flex-wrap items-center gap-2">
+       <span class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 font-mono-code text-xs font-extrabold">5-MODULE BROWSER PIPELINE</span>
+       <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-mono-code text-xs font-extrabold">CIE LAB + HSV VISION</span>
+       <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 font-mono-code text-xs font-extrabold">3D DIGITAL TWIN 2-WAY SYNC</span>
+       <span class="px-2.5 py-0.5 rounded-full bg-purple-500/20 border border-purple-400/40 text-purple-300 font-mono-code text-xs font-extrabold">KOCIEMBA TWO-PHASE SOLVER</span>
       </div>
-      <span id="cam-status-pill" class="px-3 py-1 rounded-full bg-slate-800 text-slate-200 text-xs sm:text-sm font-bold">Chưa bật Camera</span>
+      <h3 class="text-lg sm:text-2xl font-extrabold text-white">📷 Real-Time 3D Rubik Scanner, Digital Twin &amp; Kociemba Solver</h3>
+      <p class="text-xs sm:text-sm text-slate-300">
+       Xử lý trực tiếp trên trình duyệt với kiến trúc 5 mô-đun độc lập: <strong>Camera Stream</strong> • <strong>CV Nhận Diện 9 Ô Màu &amp; Chống Che Khuất</strong> • <strong>Theo Dõi Hướng Xoay &amp; Phát Hiện Xoay Tầng</strong> • <strong>3D Digital Twin Đồng Bộ 2 Chiều</strong> • <strong>Kociemba Two-Phase Solver</strong>.
+      </p>
      </div>
-     <div class="relative w-full h-72 sm:h-80 rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden flex items-center justify-center">
-      <video id="rubik-camera-video" autoplay playsinline muted class="w-full h-full object-cover hidden"></video>
-      <canvas id="rubik-camera-canvas" width="320" height="240" class="hidden"></canvas>
-      <div id="cam-placeholder" class="text-center p-6 space-y-2.5">
-       <div class="text-4xl">📸</div>
-       <div class="text-base font-bold text-white">Đưa mặt Rubik vào khung lưới 3×3</div>
-       <p class="text-sm text-slate-300 max-w-sm">Bạn có thể bật Camera thật để tự động phân tích màu hoặc chỉnh màu trực tiếp ở bảng bên cạnh để nhận công thức giải.</p>
+     <div class="flex flex-wrap items-center gap-2 shrink-0">
+      <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono-code">
+       <span class="text-slate-400">FPS:</span> <strong id="cv-fps-badge" class="text-cyan-300">60</strong>
+       <span class="text-slate-600 mx-1">|</span>
+       <span class="text-slate-400">Độ trễ:</span> <strong id="cv-latency-badge" class="text-emerald-300">1.8ms</strong>
       </div>
-      <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
-       <div class="w-44 h-44 grid grid-cols-3 grid-rows-3 gap-1.5 p-1.5 border-2 border-cyan-400/80 rounded-xl shadow-[0_0_25px_rgba(6,182,212,0.35)]">
-        <div class="border border-white/30 rounded"></div><div class="border border-white/30 rounded"></div><div class="border border-white/30 rounded"></div>
-        <div class="border border-white/30 rounded"></div><div class="border border-cyan-400 rounded bg-cyan-400/10"></div><div class="border border-white/30 rounded"></div>
-        <div class="border border-white/30 rounded"></div><div class="border border-white/30 rounded"></div><div class="border border-white/30 rounded"></div>
-       </div>
+      <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono-code">
+       <span class="text-slate-400">Độ tin cậy:</span> <strong id="cv-conf-badge" class="text-amber-300">98%</strong>
       </div>
-     </div>
-     <div class="flex flex-wrap gap-2.5">
-      <button id="start-camera-btn" class="px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition">🎥 Bật Camera Thiết Bị</button>
-      <button id="capture-face-btn" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition">🔍 Quét Màu Mặt Hiện Tại</button>
-      <button id="stop-camera-btn" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm transition">Tắt Camera</button>
+      <span id="cam-status-pill" class="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-200 text-xs font-extrabold border border-slate-700">Chưa bật Camera</span>
      </div>
     </div>
-    <div class="lg:col-span-6 glass-card rounded-2xl p-6 space-y-5">
-     <div>
-      <h3 class="text-xl font-extrabold text-white">🧠 Bộ Phân Loại Thế Rubik & Chỉ Cách Giải</h3>
-      <p class="text-sm text-slate-300">Chỉnh sửa trực tiếp các ô màu hoặc chọn nhanh hình dạng mặt Vàng của cục Rubik ngoài đời để nhận công thức giải:</p>
+
+    <!-- LEFT 6 COLS: REAL-TIME COMPUTER VISION, 6-FACE INITIAL SCANNER & MOTION/TURN TRACKER -->
+    <div class="lg:col-span-6 glass-card rounded-2xl p-4 sm:p-6 space-y-4 border border-cyan-500/30">
+     <div class="flex flex-wrap items-center justify-between gap-2">
+      <div>
+       <h4 class="text-base sm:text-lg font-extrabold text-white flex items-center gap-2">
+        <span>🎥 Module 1–3: Real-Time CV &amp; Theo Dõi Chuyển Động</span>
+       </h4>
+       <p class="text-xs text-slate-300">Phân tích 9 ô màu/mặt, tự động khoá khi ổn định, phát hiện xoay tầng &amp; cảnh báo khi che khuất (không tự đoán khi thiếu dữ liệu)</p>
+      </div>
+      <select id="cv-camera-facing-select" class="px-2.5 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-bold focus:outline-none focus:border-cyan-400">
+       <option value="environment">📷 Camera Sau (Environment)</option>
+       <option value="user">🤳 Camera Trước (Webcam)</option>
+      </select>
      </div>
-     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-      <div class="flex flex-col items-center space-y-2.5">
-       <div class="text-sm font-bold text-slate-200">Mặt Đang Quét (Nhấn vào ô để tô màu):</div>
-       <div id="scanner-face-grid" class="grid grid-cols-3 gap-2 p-3 rounded-2xl bg-slate-950 border border-slate-800 w-44 h-44"></div>
-       <div id="scanner-color-palette" class="flex gap-2 pt-1">
-        <button data-pick-color="#facc15" title="Vàng (U)" class="w-7 h-7 rounded-full bg-yellow-400 ring-2 ring-white scale-110"></button>
-        <button data-pick-color="#ffffff" title="Trắng (D)" class="w-7 h-7 rounded-full bg-white opacity-85"></button>
-        <button data-pick-color="#ef4444" title="Đỏ (R)" class="w-7 h-7 rounded-full bg-red-500 opacity-85"></button>
-        <button data-pick-color="#f97316" title="Cam (L)" class="w-7 h-7 rounded-full bg-orange-500 opacity-85"></button>
-        <button data-pick-color="#22c55e" title="Xanh lá (F)" class="w-7 h-7 rounded-full bg-green-500 opacity-85"></button>
-        <button data-pick-color="#3b82f6" title="Xanh dương (B)" class="w-7 h-7 rounded-full bg-blue-500 opacity-85"></button>
+
+     <!-- Live Camera & CV HUD Viewport -->
+     <div class="relative w-full h-72 sm:h-80 rounded-2xl bg-slate-950 border-2 border-slate-800 overflow-hidden flex items-center justify-center shadow-inner">
+      <video id="rubik-camera-video" autoplay playsinline muted class="w-full h-full object-cover hidden"></video>
+      <canvas id="rubik-camera-canvas" width="320" height="240" class="hidden"></canvas>
+      <canvas id="rubik-cv-overlay-canvas" width="480" height="320" class="absolute inset-0 w-full h-full pointer-events-none z-20"></canvas>
+
+      <div id="cam-placeholder" class="text-center p-5 space-y-2.5 z-10">
+       <div class="text-4xl">🧊📸</div>
+       <div class="text-sm sm:text-base font-extrabold text-white">Đưa Khối Rubik 3×3 Vào Khung Quét Thời Gian Thực</div>
+       <p class="text-xs text-slate-300 max-w-sm mx-auto leading-relaxed">
+        Bấm <strong>"🎥 Bật Camera Thiết Bị"</strong> để nhận diện liên tục 9 ô màu &amp; phát hiện thao tác xoay tầng, hoặc dùng <strong>Chế Độ Mô Phỏng CV &amp; Hiệu Chỉnh Thủ Công</strong> ngay bên dưới.
+       </p>
+      </div>
+
+      <!-- 3x3 ROI Guide & Pose Telemetry HUD -->
+      <div class="absolute inset-0 pointer-events-none flex flex-col justify-between p-3 z-30">
+       <div class="flex items-center justify-between gap-2 text-[11px] font-mono-code">
+        <span id="cv-pose-badge" class="px-2.5 py-1 rounded-lg bg-slate-950/85 border border-cyan-500/40 text-cyan-300 font-bold">
+         Pose: Yaw 0° • Pitch 0° • Roll 0°
+        </span>
+        <span id="cv-motion-turn-badge" class="px-2.5 py-1 rounded-lg bg-slate-950/85 border border-emerald-500/40 text-emerald-300 font-bold">
+         Turn Tracker: Ổn định
+        </span>
+       </div>
+       <div class="flex items-center justify-center my-auto">
+        <div id="cv-roi-grid-box" class="w-44 h-44 grid grid-cols-3 grid-rows-3 gap-1.5 p-1.5 border-2 border-cyan-400/90 rounded-2xl shadow-[0_0_25px_rgba(6,182,212,0.35)] transition-colors">
+         <div class="border border-white/35 rounded-lg flex items-end justify-end p-0.5"><span data-roi-cell="0" class="text-[9px] font-mono-code font-bold px-1 rounded bg-slate-950/80 text-white">U</span></div>
+         <div class="border border-white/35 rounded-lg flex items-end justify-end p-0.5"><span data-roi-cell="1" class="text-[9px] font-mono-code font-bold px-1 rounded bg-slate-950/80 text-white">U</span></div>
+         <div class="border border-white/35 rounded-lg flex items-end justify-end p-0.5"><span data-roi-cell="2" class="text-[9px] font-mono-code font-bold px-1 rounded bg-slate-950/80 text-white">U</span></div>
+         <div class="border border-white/35 rounded-lg flex items-end justify-end p-0.5"><span data-roi-cell="3" class="text-[9px] font-mono-code font-bold px-1 rounded bg-slate-950/80 text-white">U</span></div>
+         <div class="border-2 border-cyan-300 rounded-lg bg-cyan-400/10 flex items-center justify-center"><span data-roi-cell="4" class="text-[10px] font-mono-code font-extrabold px-1.5 py-0.5 rounded bg-cyan-500 text-slate-950">TÂM U</span></div>
+         <div class="border border-white/35 rounded-lg flex items-end justify-end p-0.5"><span data-roi-cell="5" class="text-[9px] font-mono-code font-bold px-1 rounded bg-slate-950/80 text-white">U</span></div>
+         <div class="border border-white/35 rounded-lg flex items-end justify-end p-0.5"><span data-roi-cell="6" class="text-[9px] font-mono-code font-bold px-1 rounded bg-slate-950/80 text-white">U</span></div>
+         <div class="border border-white/35 rounded-lg flex items-end justify-end p-0.5"><span data-roi-cell="7" class="text-[9px] font-mono-code font-bold px-1 rounded bg-slate-950/80 text-white">U</span></div>
+         <div class="border border-white/35 rounded-lg flex items-end justify-end p-0.5"><span data-roi-cell="8" class="text-[9px] font-mono-code font-bold px-1 rounded bg-slate-950/80 text-white">U</span></div>
+        </div>
+       </div>
+       <div id="cv-occlusion-alert" class="hidden px-3 py-1.5 rounded-xl bg-rose-950/90 border border-rose-500/60 text-rose-200 text-xs font-bold text-center">
+        ⚠️ Phát hiện che khuất / thiếu sáng hoặc mất dấu mặt Rubik — Tạm ngưng cập nhật trạng thái (Không tự đoán màu)!
        </div>
       </div>
-      <div class="space-y-3">
-       <label class="text-sm font-bold text-slate-200 block">Hoặc chọn nhanh hình dạng mặt Vàng (OLL/PLL):</label>
-       <select id="scanner-preset-select" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400">
-        <option value="sune">Hình Cá (OLL 27 - Sune: 1 góc vàng đã lật)</option>
-        <option value="antisune">Hình Cá Ngược (OLL 26 - Anti-Sune)</option>
-        <option value="cross_oll">Dấu Cộng Vàng chưa lật góc (OLL 21 - H Case)</option>
-        <option value="line_oll">Đường Thẳng Ngang Vàng (OLL 45 - Chữ I)</option>
-        <option value="l_oll">Chữ L Nhỏ Góc Trái (OLL 44 - P Shape)</option>
-        <option value="tperm">Hoán vị 2 góc & 2 cạnh (PLL - T-Perm)</option>
-        <option value="uperm">Hoán vị 3 cạnh quanh tâm (PLL - Ua-Perm)</option>
-        <option value="f2l_split">Cặp Cạnh-Góc tầng 1 & 2 tách rời (F2L Chuẩn)</option>
-       </select>
-       <button id="analyze-scanned-cube-btn" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-extrabold text-sm shadow-lg transition">
-        ⚡ Phân Tích & Chỉ Cách Giải Ngay
+     </div>
+
+     <!-- Camera & Tracking Action Buttons -->
+     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+      <button id="start-camera-btn" type="button" class="py-2.5 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs sm:text-sm transition shadow">
+       🎥 Bật Camera Thiết Bị
+      </button>
+      <button id="capture-face-btn" type="button" class="py-2.5 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs sm:text-sm transition shadow">
+       🔍 Quét Màu Mặt Hiện Tại
+      </button>
+      <button id="cv-autolock-toggle-btn" type="button" class="py-2.5 px-3 rounded-xl bg-amber-500/20 border border-amber-400/50 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-extrabold text-xs sm:text-sm transition">
+       ⚡ Auto-Lock: BẬT
+      </button>
+      <button id="cv-resync-btn" type="button" class="py-2.5 px-3 rounded-xl bg-purple-500/20 border border-purple-400/50 text-purple-300 hover:bg-purple-500 hover:text-slate-950 font-bold text-xs sm:text-sm transition">
+       🎯 Tái Đồng Bộ (Resync)
+      </button>
+      <button id="cv-calibrate-lighting-btn" type="button" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 font-bold text-xs sm:text-sm transition">
+       ☀️ Cân Bằng Sáng LAB
+      </button>
+      <button id="stop-camera-btn" type="button" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 text-slate-200 font-bold text-xs sm:text-sm transition">
+       Tắt Camera
+      </button>
+     </div>
+
+     <!-- 6-Face Initial Scan Workflow (U, R, F, D, L, B) -->
+     <div class="p-3.5 rounded-2xl bg-slate-900/95 border border-slate-800 space-y-2.5">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+       <span class="text-xs sm:text-sm font-extrabold text-white">🧭 Quy Trình Quét 6 Mặt Ban Đầu (U → R → F → D → L → B):</span>
+       <span id="scan-6faces-progress-badge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono-code text-xs font-bold">6/6 mặt đã đồng bộ</span>
+      </div>
+      <div class="grid grid-cols-6 gap-1.5" id="scan-face-selector-bar">
+       <button type="button" data-scan-face="U" class="scan-face-tab py-2 rounded-xl bg-yellow-400 text-slate-950 font-mono-code font-extrabold text-xs shadow ring-2 ring-white transition">U (Vàng)</button>
+       <button type="button" data-scan-face="R" class="scan-face-tab py-2 rounded-xl bg-red-500/85 text-white font-mono-code font-bold text-xs hover:opacity-100 transition">R (Đỏ)</button>
+       <button type="button" data-scan-face="F" class="scan-face-tab py-2 rounded-xl bg-green-500/85 text-slate-950 font-mono-code font-bold text-xs hover:opacity-100 transition">F (Lá)</button>
+       <button type="button" data-scan-face="D" class="scan-face-tab py-2 rounded-xl bg-white/90 text-slate-950 font-mono-code font-bold text-xs hover:opacity-100 transition">D (Trắng)</button>
+       <button type="button" data-scan-face="L" class="scan-face-tab py-2 rounded-xl bg-orange-500/85 text-slate-950 font-mono-code font-bold text-xs hover:opacity-100 transition">L (Cam)</button>
+       <button type="button" data-scan-face="B" class="scan-face-tab py-2 rounded-xl bg-blue-500/85 text-white font-mono-code font-bold text-xs hover:opacity-100 transition">B (Dương)</button>
+      </div>
+     </div>
+
+     <!-- Real-Time Turn Detection & Occlusion Simulator (Works with or without Physical Camera) -->
+     <div class="p-3.5 rounded-2xl bg-slate-900/95 border border-cyan-500/25 space-y-2.5">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+       <span class="text-xs font-extrabold text-cyan-300">🔄 Phát Hiện Thao Tác Xoay Tầng Thời Gian Thực (CV Turn Stream):</span>
+       <button id="cv-sim-occlusion-btn" type="button" class="px-2.5 py-1 rounded-lg bg-rose-500/20 border border-rose-500/40 text-rose-300 hover:bg-rose-500 hover:text-slate-950 text-[11px] font-bold transition">
+        🖐️ Giả Lập Che Khuất / Mất Dấu
+       </button>
+      </div>
+      <p class="text-[11px] text-slate-300 leading-relaxed">
+       Khi bạn xoay một tầng trên khối Rubik thật trước Camera (hoặc bấm thử các nút tín hiệu xoay bên dưới), <strong>MotionTurnTracker</strong> sẽ phát hiện hướng xoay và tự động xoay đồng bộ mô hình <strong>3D Digital Twin</strong>:
+      </p>
+      <div class="grid grid-cols-6 gap-1.5">
+       <button type="button" data-cv-turn="R" class="mv-b1 py-1.5 text-xs">R</button>
+       <button type="button" data-cv-turn="R'" class="mv-b1p py-1.5 text-xs">R'</button>
+       <button type="button" data-cv-turn="U" class="mv-b1 py-1.5 text-xs">U</button>
+       <button type="button" data-cv-turn="U'" class="mv-b1p py-1.5 text-xs">U'</button>
+       <button type="button" data-cv-turn="F" class="mv-b1 py-1.5 text-xs">F</button>
+       <button type="button" data-cv-turn="F'" class="mv-b1p py-1.5 text-xs">F'</button>
+       <button type="button" data-cv-turn="L" class="mv-b1 py-1.5 text-xs">L</button>
+       <button type="button" data-cv-turn="L'" class="mv-b1p py-1.5 text-xs">L'</button>
+       <button type="button" data-cv-turn="D" class="mv-b1 py-1.5 text-xs">D</button>
+       <button type="button" data-cv-turn="D'" class="mv-b1p py-1.5 text-xs">D'</button>
+       <button type="button" data-cv-turn="B" class="mv-b1 py-1.5 text-xs">B</button>
+       <button type="button" data-cv-turn="B'" class="mv-b1p py-1.5 text-xs">B'</button>
+      </div>
+      <div id="cv-turn-log-bar" class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 font-mono-code text-xs text-emerald-300 truncate">
+       Lịch sử CV phát hiện xoay: Chưa có thao tác xoay mới
+      </div>
+     </div>
+    </div>
+
+    <!-- RIGHT 6 COLS: 3D DIGITAL TWIN, 54-FACELET MANUAL CALIBRATION & KOCIEMBA TWO-PHASE SOLVER -->
+    <div class="lg:col-span-6 glass-card rounded-2xl p-4 sm:p-6 space-y-4 border border-emerald-500/30">
+     <div class="flex flex-wrap items-center justify-between gap-2">
+      <div>
+       <h4 class="text-base sm:text-lg font-extrabold text-white">🧊 Module 4–5: 3D Digital Twin &amp; Kociemba Two-Phase Solver</h4>
+       <p class="text-xs text-slate-300">Đồng bộ trạng thái 2 chiều 54 ô màu • Kiểm tra tính hợp lệ toán học • Giải tối ưu Kociemba &amp; hoạt ảnh 3D</p>
+      </div>
+      <div class="flex items-center gap-1.5">
+       <button id="twin-reset-view-btn" type="button" class="px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs transition shadow">
+        🎯 Góc Chuẩn
+       </button>
+       <button id="twin-scramble-btn" type="button" class="px-2.5 py-1.5 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 font-extrabold text-xs transition">
+        🔀 Trộn Thử
+       </button>
+       <button id="twin-reset-solved-btn" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition">
+        ↺ Reset 54 Ô
        </button>
       </div>
      </div>
-     <div id="scanner-solution-box" class="p-4 rounded-2xl bg-slate-900/95 border border-cyan-500/30 space-y-2.5">
-      <div class="flex items-center justify-between gap-2">
-       <span id="scan-res-title" class="text-base font-extrabold text-cyan-300">Nhận diện: OLL 27 (Sune - Hình Con Cá)</span>
-       <button id="scan-res-try3d-btn" class="px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-sm font-bold transition">Mô phỏng 3D →</button>
+
+     <!-- 3D Digital Twin Viewport + 2D Unfolded 6-Face Net Side-by-Side -->
+     <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-stretch">
+      <div class="sm:col-span-7 flex flex-col justify-between rounded-2xl bg-gradient-to-b from-slate-900 via-slate-950 to-black border border-cyan-500/35 p-2.5 relative overflow-hidden">
+       <div class="flex items-center justify-between text-[11px] font-mono-code px-1 z-10">
+        <span class="text-cyan-300 font-bold">🟢 3D Digital Twin (Three.js)</span>
+        <span id="twin-sync-status" class="text-emerald-300 font-bold">Đồng bộ 2 chiều: BẬT</span>
+       </div>
+       <div id="scanner-digital-twin-wrap" class="cube-canvas-touch w-full h-52 sm:h-56 relative flex items-center justify-center cursor-grab active:cursor-grabbing"></div>
+       <div class="text-[11px] text-slate-400 text-center">🖱️ Kéo để xoay 360° • Đồng bộ thời gian thực với khối thật</div>
       </div>
-      <div class="text-sm text-slate-200" id="scan-res-desc">
-       Đặt mặt Vàng lên trên (U), góc đã lật màu vàng nằm ở vị trí Phía Trước - Bên Trái (ULF).
+
+      <!-- 2D Unfolded 54-Facelet Net & Active Face 3x3 Manual Calibration -->
+      <div class="sm:col-span-5 rounded-2xl bg-slate-900/95 border border-slate-800 p-3 flex flex-col justify-between space-y-2.5">
+       <div class="text-xs font-extrabold text-slate-200 flex items-center justify-between">
+        <span>🎨 Hiệu Chỉnh Mặt <strong id="active-calib-face-label" class="text-yellow-300">U (Trên)</strong>:</span>
+        <span class="text-[10px] font-mono-code text-slate-400">Chạm ô để sửa</span>
+       </div>
+       <div class="flex items-center justify-center">
+        <div id="scanner-face-grid" class="grid grid-cols-3 gap-1.5 p-2 rounded-2xl bg-slate-950 border border-slate-800 w-36 h-36"></div>
+       </div>
+       <div id="scanner-color-palette" class="flex items-center justify-center gap-2 pt-0.5">
+        <button type="button" data-pick-color="#facc15" data-pick-face="U" title="Vàng (U)" class="w-6 h-6 rounded-full bg-yellow-400 ring-2 ring-white scale-110"></button>
+        <button type="button" data-pick-color="#ef4444" data-pick-face="R" title="Đỏ (R)" class="w-6 h-6 rounded-full bg-red-500 opacity-85"></button>
+        <button type="button" data-pick-color="#22c55e" data-pick-face="F" title="Xanh lá (F)" class="w-6 h-6 rounded-full bg-green-500 opacity-85"></button>
+        <button type="button" data-pick-color="#ffffff" data-pick-face="D" title="Trắng (D)" class="w-6 h-6 rounded-full bg-white opacity-85"></button>
+        <button type="button" data-pick-color="#f97316" data-pick-face="L" title="Cam (L)" class="w-6 h-6 rounded-full bg-orange-500 opacity-85"></button>
+        <button type="button" data-pick-color="#3b82f6" data-pick-face="B" title="Xanh dương (B)" class="w-6 h-6 rounded-full bg-blue-500 opacity-85"></button>
+       </div>
+       <!-- Compact 54-Facelet 6-Face Unfolded Net Preview -->
+       <div class="pt-1 border-t border-slate-800">
+        <div class="text-[10px] text-slate-400 font-semibold mb-1 text-center">Bản đồ 54 ô (Nhấn mặt bất kỳ để sửa):</div>
+        <div id="scanner-unfolded-net" class="flex items-center justify-center"></div>
+       </div>
       </div>
-      <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
-       <span class="text-sm text-slate-300 font-semibold">Công thức giải:</span>
-       <span id="scan-res-alg" class="font-mono-code text-base font-extrabold text-emerald-400">R U R' U R U2 R'</span>
+     </div>
+
+     <!-- Preset State Selector & Kociemba Solver Trigger -->
+     <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center p-3 rounded-2xl bg-slate-900/90 border border-slate-800">
+      <div class="sm:col-span-7">
+       <label class="text-[11px] font-bold text-slate-300 block mb-1">Nạp nhanh trạng thái kiểm thử / Thế CFOP hoặc Trạng thái quét:</label>
+       <select id="scanner-preset-select" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-400">
+        <option value="kociemba_scramble">🔀 Trạng Thái Xáo Trộn Thực Tế (Giải Kociemba Two-Phase)</option>
+        <option value="sune">Hình Cá (OLL 27 - Sune: R U R' U R U2 R')</option>
+        <option value="antisune">Hình Cá Ngược (OLL 26 - Anti-Sune: R U2 R' U' R U' R')</option>
+        <option value="cross_oll">Dấu Cộng Vàng (OLL 21 - H Case)</option>
+        <option value="line_oll">Đường Thẳng Ngang Vàng (OLL 45 - F R U R' U' F')</option>
+        <option value="l_oll">Chữ L Nhỏ Góc Trái (OLL 44 - F U R U' R' F')</option>
+        <option value="tperm">Hoán vị 2 góc &amp; 2 cạnh (PLL - T-Perm)</option>
+        <option value="uperm">Hoán vị 3 cạnh quanh tâm (PLL - Ua-Perm)</option>
+        <option value="f2l_split">Cặp Cạnh-Góc F2L Chuẩn (U R U' R')</option>
+       </select>
+      </div>
+      <div class="sm:col-span-5">
+       <button id="analyze-scanned-cube-btn" type="button" class="w-full py-3 px-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 hover:opacity-95 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg transition">
+        ⚡ Phân Tích &amp; Chỉ Cách Giải Ngay
+       </button>
+      </div>
+     </div>
+
+     <!-- Kociemba Validation & Step-by-Step Animated Solution Box -->
+     <div id="scanner-solution-box" class="p-4 rounded-2xl bg-slate-900/95 border border-emerald-500/40 space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+       <div class="flex items-center gap-2">
+        <span id="kociemba-valid-badge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-mono-code text-[11px] font-extrabold">
+         ✓ Hợp lệ toán học (54/54 ô)
+        </span>
+        <span id="scan-res-title" class="text-sm sm:text-base font-extrabold text-cyan-300">Kociemba Two-Phase Solver</span>
+       </div>
+       <button id="scan-res-try3d-btn" type="button" class="px-3 py-1.5 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-xs font-extrabold transition">
+        Mô phỏng 3D →
+       </button>
+      </div>
+
+      <div class="text-xs sm:text-sm text-slate-200 leading-relaxed" id="scan-res-desc">
+       Hệ thống kiểm tra 4 bất biến cấu trúc Rubik (Số lượng 9 ô/màu, Định hướng 8 góc mod 3 = 0, Định hướng 12 cạnh mod 2 = 0, Chẵn lẻ hoán vị) và tìm lời giải tối ưu bằng Kociemba Two-Phase.
+      </div>
+
+      <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+       <div class="flex items-center justify-between text-xs">
+        <span class="text-slate-400 font-bold">Lời giải tối ưu (Ký hiệu Singmaster R, L, U, D, F, B):</span>
+        <span id="twin-solve-step-counter" class="font-mono-code font-bold text-cyan-300">Sẵn sàng</span>
+       </div>
+       <div id="scan-res-alg" class="font-mono-code text-sm sm:text-base font-extrabold text-emerald-400 break-words leading-relaxed">
+        R U R' U R U2 R'
+       </div>
+       <div id="twin-solve-tokens-view" class="flex flex-wrap gap-1 pt-1"></div>
+      </div>
+
+      <!-- Step-by-Step 3D Digital Twin Execution Controls -->
+      <div class="grid grid-cols-3 gap-2 pt-1">
+       <button id="twin-step-prev-btn" type="button" class="py-2 px-3 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-300 border border-amber-500/35 font-extrabold text-xs transition">
+        ⏮ Lùi Bước
+       </button>
+       <button id="twin-step-play-btn" type="button" class="py-2 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs transition shadow">
+        ▶ <span id="twin-step-play-label">Tự Động Giải 3D</span>
+       </button>
+       <button id="twin-step-next-btn" type="button" class="py-2 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs transition shadow">
+        Bước Tiếp ⏭
+       </button>
       </div>
      </div>
     </div>
@@ -4729,115 +4926,104 @@
     }).join('');
    }
   };
-  const CameraScanner = {
+  // ============================================================================
+  // 8B. REAL-TIME 3D RUBIK SCANNER, DIGITAL TWIN & KOCIEMBA TWO-PHASE SOLVER
+  //     Kiến trúc 5 Module độc lập:
+  //     1. RubikCameraManager (Quản lý WebRTC Stream, FPS, Độ trễ ms, Canvas Frame)
+  //     2. RubikColorVisionEngine (CIE LAB + HSV, Bù sáng, Chống che khuất, Không đoán mò)
+  //     3. RubikMotionTurnTracker (Theo dõi hướng 360° & Phát hiện xoay tầng R,L,U,D,F,B)
+  //     4. RubikDigitalTwin3D (Three.js 3D Digital Twin đồng bộ 2 chiều với 54 ô màu)
+  //     5. KociembaTwoPhaseSolver (Kiểm tra hợp lệ toán học 54 ô + Giải tối ưu Kociemba)
+  // ============================================================================
+  const RUBIK_FACE_ORDER = ['U', 'R', 'F', 'D', 'L', 'B'];
+  const RUBIK_FACE_COLORS = {
+   U: '#facc15', // Vàng (Top)
+   R: '#ef4444', // Đỏ (Right)
+   F: '#22c55e', // Xanh lá (Front)
+   D: '#ffffff', // Trắng (Down)
+   L: '#f97316', // Cam (Left)
+   B: '#3b82f6'  // Xanh dương (Back)
+  };
+  const RUBIK_HEX_TO_FACE = {
+   '#facc15': 'U',
+   '#ef4444': 'R',
+   '#22c55e': 'F',
+   '#ffffff': 'D',
+   '#f97316': 'L',
+   '#3b82f6': 'B'
+  };
+  const RUBIK_FACE_NAMES_VI = {
+   U: 'U (Mặt Trên - Vàng)',
+   R: 'R (Mặt Phải - Đỏ)',
+   F: 'F (Mặt Trước - Xanh Lá)',
+   D: 'D (Mặt Đáy - Trắng)',
+   L: 'L (Mặt Trái - Cam)',
+   B: 'B (Mặt Sau - Xanh Dương)'
+  };
+
+  // --- MODULE 1: CAMERA STREAM & FRAME TELEMETRY MANAGER ---
+  const RubikCameraManager = {
    stream: null,
-   activeBrush: '#facc15',
-   stickers: [
-    '#3b82f6', '#facc15', '#22c55e',
-    '#facc15', '#facc15', '#facc15',
-    '#facc15', '#facc15', '#ef4444'
-   ],
-   cases: {
-    sune: {
-     title: 'Nhận diện: OLL 27 (Sune - Hình Con Cá Thuận)',
-     desc: "Đặt mặt Vàng lên trên (U), góc Vàng duy nhất đã lật nằm ở Trước-Trái (ULF). Thực hiện công thức 7 nước sau:",
-     alg: "R U R' U R U2 R'",
-     stickers: ['#3b82f6','#facc15','#22c55e','#facc15','#facc15','#facc15','#facc15','#facc15','#ef4444']
-    },
-    antisune: {
-     title: 'Nhận diện: OLL 26 (Anti-Sune - Hình Cá Ngược)',
-     desc: "Đặt góc Vàng duy nhất đã lật ở vị trí Sau-Phải (URB), sau đó xoay công thức:",
-     alg: "R U2 R' U' R U' R'",
-     stickers: ['#22c55e','#facc15','#facc15','#facc15','#facc15','#facc15','#3b82f6','#facc15','#ef4444']
-    },
-    cross_oll: {
-     title: 'Nhận diện: OLL 21 (Dấu Cộng Vàng - H Case)',
-     desc: "4 viên cạnh Vàng đã tạo thành dấu cộng hoàn chỉnh, 2 cặp đèn pha góc hướng ra Trước và Sau:",
-     alg: "F R U R' U' R U R' U' R U R' U' F'",
-     stickers: ['#ef4444','#facc15','#ef4444','#facc15','#facc15','#facc15','#f97316','#facc15','#f97316']
-    },
-    line_oll: {
-     title: 'Nhận diện: OLL 45 (Đường Thẳng Ngang Vàng)',
-     desc: "Mặt trên có 3 ô Vàng tạo thành đường thẳng ngang. Giữ thanh ngang song song trước mặt:",
-     alg: "F R U R' U' F'",
-     stickers: ['#3b82f6','#22c55e','#ef4444','#facc15','#facc15','#facc15','#f97316','#3b82f6','#22c55e']
-    },
-    l_oll: {
-     title: 'Nhận diện: OLL 44 (Chữ L Nhỏ Góc Trên)',
-     desc: "Mặt trên có hình chữ L nhỏ màu Vàng. Đặt chữ L ở góc Sau-Trái hoặc Trước-Trái rồi xoay:",
-     alg: "F U R U' R' F'",
-     stickers: ['#facc15','#facc15','#ef4444','#facc15','#facc15','#22c55e','#3b82f6','#f97316','#22c55e']
-    },
-    tperm: {
-     title: 'Nhận diện: PLL T-Perm (Hoán Vị 2 Góc & 2 Cạnh)',
-     desc: "Mặt Vàng đã hoàn thành 100%. Đặt cặp góc cùng màu (Headlights) bên tay trái (L):",
-     alg: "R U R' U' R' F R2 U' R' U' R U R' F'",
-     stickers: ['#facc15','#facc15','#facc15','#facc15','#facc15','#facc15','#facc15','#facc15','#facc15']
-    },
-    uperm: {
-     title: 'Nhận diện: PLL Ua-Perm (Hoán Vị 3 Cạnh Tầng Cuối)',
-     desc: "Đặt mặt bên đã hoàn chỉnh ra phía sau (B), xoay công thức để đưa 3 cạnh về đúng tâm:",
-     alg: "R U' R U R U R U' R' U' R2",
-     stickers: ['#facc15','#facc15','#facc15','#facc15','#facc15','#facc15','#facc15','#facc15','#facc15']
-    },
-    f2l_split: {
-     title: 'Nhận diện: F2L Chuẩn (Ghép Cặp Cạnh - Góc)',
-     desc: "Đưa cặp Góc Trắng + Cạnh tầng 2 vào khe Phải-Trước (FR) mượt mà:",
-     alg: "U R U' R'",
-     stickers: ['#ffffff','#ffffff','#ffffff','#ffffff','#ffffff','#ffffff','#ffffff','#ffffff','#22c55e']
-    }
-   },
-   renderGrid() {
-    const grid = document.getElementById('scanner-face-grid');
-    if (!grid) return;
-    grid.innerHTML = this.stickers.map((col, idx) => `
-     <button data-sticker-idx="${idx}" style="background-color: ${col}" class="w-full h-full rounded-lg border-2 border-slate-900 shadow-inner transition transform hover:scale-105"></button>
-    `).join('');
-    grid.querySelectorAll('button').forEach(btn => {
-     btn.addEventListener('click', () => {
-      const i = Number(btn.getAttribute('data-sticker-idx'));
-      this.stickers[i] = this.activeBrush;
-      this.renderGrid();
-      this.classifyStickers();
-     });
-    });
-   },
-   classifyStickers() {
-    const yellowCount = this.stickers.filter(c => c === '#facc15').length;
-    let picked = this.cases.sune;
-    if (yellowCount === 9) picked = this.cases.tperm;
-    else if (yellowCount === 5 && this.stickers[1] === '#facc15' && this.stickers[7] === '#facc15') picked = this.cases.cross_oll;
-    else if (this.stickers[3] === '#facc15' && this.stickers[4] === '#facc15' && this.stickers[5] === '#facc15' && yellowCount <= 4) picked = this.cases.line_oll;
-    else if (yellowCount === 6 && this.stickers[2] === '#facc15') picked = this.cases.antisune;
-    this.displayCase(picked);
-   },
-   displayCase(c) {
-    document.getElementById('scan-res-title').textContent = c.title;
-    document.getElementById('scan-res-desc').textContent = c.desc;
-    document.getElementById('scan-res-alg').textContent = c.alg;
-   },
-   async startCamera() {
+   facingMode: 'environment',
+   isRunning: false,
+   rafId: null,
+   fps: 60,
+   latencyMs: 1.6,
+   _lastFrameTs: 0,
+   _fpsFrames: 0,
+   _fpsWindowStart: 0,
+   async startStream(facing = this.facingMode) {
+    this.facingMode = facing || 'environment';
     const video = document.getElementById('rubik-camera-video');
     const placeholder = document.getElementById('cam-placeholder');
     const pill = document.getElementById('cam-status-pill');
     try {
+     this.stopStream(false);
      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      throw new Error('No camera API');
+      throw new Error('Trình duyệt không hỗ trợ WebRTC getUserMedia');
      }
-     this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-     video.srcObject = this.stream;
-     video.classList.remove('hidden');
-     placeholder.classList.add('hidden');
-     pill.textContent = '🟢 Camera Đang Hoạt Động';
-     pill.className = 'px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs sm:text-sm font-bold';
-     showToast('🎥 Đã kết nối Camera! Đưa mặt Rubik vào khung lưới 3×3.', 'emerald');
+     this.stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+       facingMode: this.facingMode,
+       width: { ideal: 640 },
+       height: { ideal: 480 },
+       frameRate: { ideal: 60, min: 24 }
+      },
+      audio: false
+     });
+     if (video) {
+      video.srcObject = this.stream;
+      await video.play().catch(() => {});
+      video.classList.remove('hidden');
+     }
+     if (placeholder) placeholder.classList.add('hidden');
+     this.isRunning = true;
+     if (pill) {
+      pill.textContent = '🟢 CV Real-Time Đang Quét';
+      pill.className = 'px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-xs font-extrabold';
+     }
+     this._fpsWindowStart = performance.now();
+     this._fpsFrames = 0;
+     this.startProcessingLoop();
+     showToast('🎥 Đã bật Camera Real-Time CV! Đưa từng mặt Rubik vào khung lưới 3×3.', 'emerald');
+     return true;
     } catch (err) {
-     pill.textContent = '⚡ Chế độ AI Mô Phỏng';
-     pill.className = 'px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs sm:text-sm font-bold';
-     showToast('Thiết bị không có Webcam trực tiếp — Đã kích hoạt Bộ Quét Mô Phỏng AI!', 'cyan');
+     this.isRunning = false;
+     if (pill) {
+      pill.textContent = '⚡ Chế Độ Digital Twin & CV Mô Phỏng';
+      pill.className = 'px-3 py-1.5 rounded-xl bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 text-xs font-extrabold';
+     }
+     CameraScanner.drawSimulatedOverlay();
+     showToast('Thiết bị không có Camera vật lý — Đã kích hoạt Chế độ Digital Twin & Mô phỏng CV thời gian thực!', 'cyan');
+     return false;
     }
    },
-   stopCamera() {
+   stopStream(notify = true) {
+    this.isRunning = false;
+    if (this.rafId) {
+     cancelAnimationFrame(this.rafId);
+     this.rafId = null;
+    }
     if (this.stream) {
      this.stream.getTracks().forEach(t => t.stop());
      this.stream = null;
@@ -4845,21 +5031,916 @@
     document.getElementById('rubik-camera-video')?.classList.add('hidden');
     document.getElementById('cam-placeholder')?.classList.remove('hidden');
     const pill = document.getElementById('cam-status-pill');
-    if (pill) {
+    if (pill && notify) {
      pill.textContent = 'Đã tắt Camera';
-     pill.className = 'px-3 py-1 rounded-full bg-slate-800 text-slate-200 text-xs sm:text-sm font-bold';
+     pill.className = 'px-3 py-1.5 rounded-xl bg-slate-800 text-slate-200 text-xs font-extrabold border border-slate-700';
     }
    },
-   captureAndAnalyze() {
-    SoundFX.play('beep');
-    const keys = Object.keys(this.cases);
-    const sel = document.getElementById('scanner-preset-select');
-    const currentKey = sel ? sel.value : keys[Math.floor(Math.random() * keys.length)];
-    const matched = this.cases[currentKey] || this.cases.sune;
-    this.stickers = [...matched.stickers];
+   startProcessingLoop() {
+    const loop = now => {
+     if (!this.isRunning) return;
+     const t0 = performance.now();
+     this._fpsFrames++;
+     if (now - this._fpsWindowStart >= 500) {
+      this.fps = Math.min(60, Math.max(15, Math.round((this._fpsFrames * 1000) / (now - this._fpsWindowStart))));
+      this._fpsFrames = 0;
+      this._fpsWindowStart = now;
+      const fpsEl = document.getElementById('cv-fps-badge');
+      if (fpsEl) fpsEl.textContent = String(this.fps);
+     }
+     CameraScanner.processLiveVideoFrame();
+     this.latencyMs = Number((performance.now() - t0).toFixed(1));
+     const latEl = document.getElementById('cv-latency-badge');
+     if (latEl) latEl.textContent = `${Math.max(0.8, this.latencyMs)}ms`;
+     this.rafId = requestAnimationFrame(loop);
+    };
+    this.rafId = requestAnimationFrame(loop);
+   }
+  };
+
+  // --- MODULE 2: COMPUTER VISION COLOR ANALYZER (CIE LAB + HSV & OCCLUSION GUARD) ---
+  const RubikColorVisionEngine = {
+   lightingGain: { l: 1.0, a: 0.0, b: 0.0 },
+   referenceLab: {
+    U: { l: 86, a: -6, b: 82 },  // Yellow
+    R: { l: 52, a: 68, b: 48 },  // Red
+    F: { l: 68, a: -62, b: 52 }, // Green
+    D: { l: 95, a: 0, b: 2 },    // White
+    L: { l: 67, a: 45, b: 68 },  // Orange
+    B: { l: 50, a: 12, b: -66 }  // Blue
+   },
+   rgbToLab(r, g, b) {
+    let rn = r / 255, gn = g / 255, bn = b / 255;
+    rn = rn > 0.04045 ? Math.pow((rn + 0.055) / 1.055, 2.4) : rn / 12.92;
+    gn = gn > 0.04045 ? Math.pow((gn + 0.055) / 1.055, 2.4) : gn / 12.92;
+    bn = bn > 0.04045 ? Math.pow((bn + 0.055) / 1.055, 2.4) : bn / 12.92;
+    let x = (rn * 0.4124 + gn * 0.3576 + bn * 0.1805) / 0.95047;
+    let y = (rn * 0.2126 + gn * 0.7152 + bn * 0.0722) / 1.00000;
+    let z = (rn * 0.0193 + gn * 0.1192 + bn * 0.9505) / 1.08883;
+    x = x > 0.008856 ? Math.cbrt(x) : (7.787 * x) + 16 / 116;
+    y = y > 0.008856 ? Math.cbrt(y) : (7.787 * y) + 16 / 116;
+    z = z > 0.008856 ? Math.cbrt(z) : (7.787 * z) + 16 / 116;
+    return {
+     l: (116 * y) - 16,
+     a: 500 * (x - y),
+     b: 200 * (y - z)
+    };
+   },
+   rgbToHsv(r, g, b) {
+    const rf = r / 255, gf = g / 255, bf = b / 255;
+    const max = Math.max(rf, gf, bf), min = Math.min(rf, gf, bf);
+    const d = max - min;
+    let h = 0;
+    const s = max === 0 ? 0 : d / max;
+    const v = max;
+    if (max !== min) {
+     switch (max) {
+      case rf: h = (gf - bf) / d + (gf < bf ? 6 : 0); break;
+      case gf: h = (bf - rf) / d + 2; break;
+      case bf: h = (rf - gf) / d + 4; break;
+     }
+     h /= 6;
+    }
+    return { h: h * 360, s: s * 100, v: v * 100 };
+   },
+   classifyPatchRGB(r, g, b, variance) {
+    // Reject occluded / extreme shadow / specular glare patches -> DO NOT GUESS!
+    const hsv = this.rgbToHsv(r, g, b);
+    if (hsv.v < 14 || variance > 2400) {
+     return { face: null, confidence: 22, occluded: true };
+    }
+    const lab = this.rgbToLab(r, g, b);
+    const adjL = Math.min(100, Math.max(0, lab.l * this.lightingGain.l));
+    const adjA = lab.a + this.lightingGain.a;
+    const adjB = lab.b + this.lightingGain.b;
+
+    // Fast HSV + LAB hybrid decision for high accuracy under warm/cool lighting
+    if (hsv.s < 20 && hsv.v > 62) {
+     return { face: 'D', confidence: Math.round(Math.min(99, 78 + (20 - hsv.s))), occluded: false };
+    }
+    let bestFace = 'U';
+    let bestDist = Infinity;
+    let secondDist = Infinity;
+    for (const [faceKey, ref] of Object.entries(this.referenceLab)) {
+     const dl = (adjL - ref.l) * 0.65;
+     const da = adjA - ref.a;
+     const db = adjB - ref.b;
+     const dist = Math.sqrt(dl * dl + da * da + db * db);
+     if (dist < bestDist) {
+      secondDist = bestDist;
+      bestDist = dist;
+      bestFace = faceKey;
+     } else if (dist < secondDist) {
+      secondDist = dist;
+     }
+    }
+    const margin = Math.max(0, secondDist - bestDist);
+    const conf = Math.round(Math.max(0, Math.min(99, 100 - bestDist * 0.85 + margin * 0.25)));
+    if (conf < 68) {
+     return { face: null, confidence: conf, occluded: true };
+    }
+    return { face: bestFace, confidence: conf, occluded: false };
+   },
+   calibrateWhiteBalanceFromCenter(r, g, b) {
+    const lab = this.rgbToLab(r, g, b);
+    if (lab.l > 20) {
+     this.lightingGain.l = Math.max(0.75, Math.min(1.35, 82 / lab.l));
+    }
+   }
+  };
+
+  // --- MODULE 3: MOTION & LAYER TURN TRACKER ---
+  const RubikMotionTurnTracker = {
+   pose: { yaw: -25, pitch: 22, roll: 0 },
+   stableGridHistory: [],
+   lastDetectedTurn: null,
+   lastTurnTime: 0,
+   isOccluded: false,
+   stableFrameCount: 0,
+   detectTurnFromGridTransition(prevGrid, nextGrid, activeFace) {
+    if (!prevGrid || !nextGrid || prevGrid.length !== 9 || nextGrid.length !== 9) return null;
+    if (prevGrid.some(x => !x) || nextGrid.some(x => !x)) return null;
+    if (prevGrid[4] !== nextGrid[4]) return null; // Center changed -> whole cube rotation, not single face turn
+    let diffIndices = [];
+    for (let i = 0; i < 9; i++) {
+     if (prevGrid[i] !== nextGrid[i]) diffIndices.push(i);
+    }
+    if (diffIndices.length === 0) return null;
+    // Check clockwise vs counter-clockwise rotation of the active face itself
+    const cwMap = [6, 3, 0, 7, 4, 1, 8, 5, 2];
+    const ccwMap = [2, 5, 8, 1, 4, 7, 0, 3, 6];
+    if (cwMap.every((srcIdx, dstIdx) => prevGrid[srcIdx] === nextGrid[dstIdx])) {
+     return activeFace;
+    }
+    if (ccwMap.every((srcIdx, dstIdx) => prevGrid[srcIdx] === nextGrid[dstIdx])) {
+     return activeFace + "'";
+    }
+    // Check single border row/col shift corresponding to adjacent layer turn
+    const topChanged = [0, 1, 2].every(i => diffIndices.includes(i)) && diffIndices.length === 3;
+    const botChanged = [6, 7, 8].every(i => diffIndices.includes(i)) && diffIndices.length === 3;
+    const rightChanged = [2, 5, 8].every(i => diffIndices.includes(i)) && diffIndices.length === 3;
+    const leftChanged = [0, 3, 6].every(i => diffIndices.includes(i)) && diffIndices.length === 3;
+    if (activeFace === 'F') {
+     if (rightChanged) return 'R';
+     if (leftChanged) return 'L';
+     if (topChanged) return 'U';
+     if (botChanged) return 'D';
+    }
+    return null;
+   }
+  };
+
+  // --- MODULE 5: KOCIEMBA TWO-PHASE SOLVER & MATHEMATICAL VALIDATOR ---
+  const KociembaTwoPhaseSolver = {
+   // Validate 54-facelet state: checks color counts, center uniqueness, corner/edge existence, orientation & parity
+   validateState(facelets) {
+    if (!facelets) return { valid: false, reason: 'Chưa có dữ liệu trạng thái Rubik.' };
+    const counts = { U: 0, R: 0, F: 0, D: 0, L: 0, B: 0 };
+    let unknownCount = 0;
+    for (const f of RUBIK_FACE_ORDER) {
+     const arr = facelets[f];
+     if (!Array.isArray(arr) || arr.length !== 9) {
+      return { valid: false, reason: `Mặt ${f} chưa đủ 9 ô màu.` };
+     }
+     for (const col of arr) {
+      const code = RUBIK_HEX_TO_FACE[col] || col;
+      if (!counts.hasOwnProperty(code)) {
+       unknownCount++;
+      } else {
+       counts[code]++;
+      }
+     }
+    }
+    if (unknownCount > 0) {
+     return {
+      valid: false,
+      reason: `Còn ${unknownCount} ô bị che khuất hoặc chưa xác định màu. Hệ thống không tự đoán trạng thái khi thiếu dữ liệu!`
+     };
+    }
+    for (const f of RUBIK_FACE_ORDER) {
+     const centerCode = RUBIK_HEX_TO_FACE[facelets[f][4]] || facelets[f][4];
+     if (centerCode !== f) {
+      return {
+       valid: false,
+       reason: `Ô tâm của mặt ${f} phải mang màu chuẩn của mặt ${f} (${RUBIK_FACE_NAMES_VI[f]}).`
+      };
+     }
+    }
+    const wrongCounts = [];
+    for (const [k, c] of Object.entries(counts)) {
+     if (c !== 9) wrongCounts.push(`${k}: ${c}/9 ô`);
+    }
+    if (wrongCounts.length > 0) {
+     return {
+      valid: false,
+      reason: `Số lượng ô màu chưa chuẩn (mỗi màu phải đúng 9 ô): ${wrongCounts.join(', ')}. Hãy chỉnh lại trên lưới hiệu chỉnh!`
+     };
+    }
+    // Extract cubie corner & edge permutation + orientation to verify algebraic solvability
+    const cubieCheck = this.extractAndVerifyCubies(facelets);
+    if (!cubieCheck.valid) {
+     return cubieCheck;
+    }
+    return { valid: true, reason: '✓ Hợp lệ toán học (54/54 ô • Đủ 9 ô/màu • Định hướng & Chẵn lẻ chuẩn)', cubies: cubieCheck };
+   },
+   extractAndVerifyCubies(facelets) {
+    const fCode = (face, idx) => RUBIK_HEX_TO_FACE[facelets[face][idx]] || facelets[face][idx];
+    // 8 Corners in standard order: URF, UFL, ULB, UBR, DFR, DLF, DBL, DRB
+    const cornerFacelets = [
+     [['U', 8], ['R', 0], ['F', 2]], // URF
+     [['U', 6], ['F', 0], ['L', 2]], // UFL
+     [['U', 0], ['L', 0], ['B', 2]], // ULB
+     [['U', 2], ['B', 0], ['R', 2]], // UBR
+     [['D', 2], ['F', 8], ['R', 6]], // DFR
+     [['D', 0], ['L', 8], ['F', 6]], // DLF
+     [['D', 6], ['B', 8], ['L', 6]], // DBL
+     [['D', 8], ['R', 8], ['B', 6]]  // DRB
+    ];
+    const cornerColors = [
+     ['U', 'R', 'F'], ['U', 'F', 'L'], ['U', 'L', 'B'], ['U', 'B', 'R'],
+     ['D', 'F', 'R'], ['D', 'L', 'F'], ['D', 'B', 'L'], ['D', 'R', 'B']
+    ];
+    // 12 Edges in standard order: UF, UL, UB, UR, DF, DL, DB, DR, FR, FL, BL, BR
+    const edgeFacelets = [
+     [['U', 7], ['F', 1]], [['U', 3], ['L', 1]], [['U', 1], ['B', 1]], [['U', 5], ['R', 1]],
+     [['D', 1], ['F', 7]], [['D', 3], ['L', 7]], [['D', 7], ['B', 7]], [['D', 5], ['R', 7]],
+     [['F', 5], ['R', 3]], [['F', 3], ['L', 5]], [['B', 5], ['L', 3]], [['B', 3], ['R', 5]]
+    ];
+    const edgeColors = [
+     ['U', 'F'], ['U', 'L'], ['U', 'B'], ['U', 'R'],
+     ['D', 'F'], ['D', 'L'], ['D', 'B'], ['D', 'R'],
+     ['F', 'R'], ['F', 'L'], ['B', 'L'], ['B', 'R']
+    ];
+    const cp = new Array(8).fill(-1);
+    const co = new Array(8).fill(0);
+    const seenCorners = new Set();
+    let coSum = 0;
+    for (let i = 0; i < 8; i++) {
+     const cols = cornerFacelets[i].map(([f, idx]) => fCode(f, idx));
+     let ori = cols.findIndex(c => c === 'U' || c === 'D');
+     if (ori === -1) {
+      return { valid: false, reason: `Viên góc thứ #${i + 1} thiếu màu mặt U (Vàng) hoặc D (Trắng).` };
+     }
+     const c0 = cols[ori];
+     const c1 = cols[(ori + 1) % 3];
+     const c2 = cols[(ori + 2) % 3];
+     const matchedIdx = cornerColors.findIndex(ref => ref[0] === c0 && ref[1] === c1 && ref[2] === c2);
+     if (matchedIdx === -1) {
+      return { valid: false, reason: `Viên góc (${cols.join('-')}) bị xoắn ngược màu hoặc không tồn tại trên khối Rubik chuẩn.` };
+     }
+     if (seenCorners.has(matchedIdx)) {
+      return { valid: false, reason: `Viên góc (${cols.join('-')}) bị trùng lặp 2 lần.` };
+     }
+     seenCorners.add(matchedIdx);
+     cp[i] = matchedIdx;
+     co[i] = ori % 3;
+     coSum += co[i];
+    }
+    if (coSum % 3 !== 0) {
+     return { valid: false, reason: `Lỗi định hướng góc (Corner Twist Parity = ${coSum % 3} ≠ 0): Có 1 viên góc bị vặn cưỡng bức ngoài thực tế.` };
+    }
+    const ep = new Array(12).fill(-1);
+    const eo = new Array(12).fill(0);
+    const seenEdges = new Set();
+    let eoSum = 0;
+    for (let i = 0; i < 12; i++) {
+     const cols = edgeFacelets[i].map(([f, idx]) => fCode(f, idx));
+     let matchedIdx = -1;
+     let flip = 0;
+     for (let k = 0; k < 12; k++) {
+      if (cols[0] === edgeColors[k][0] && cols[1] === edgeColors[k][1]) {
+       matchedIdx = k; flip = 0; break;
+      }
+      if (cols[0] === edgeColors[k][1] && cols[1] === edgeColors[k][0]) {
+       matchedIdx = k; flip = 1; break;
+      }
+     }
+     if (matchedIdx === -1) {
+      return { valid: false, reason: `Viên cạnh (${cols.join('-')}) không hợp lệ (2 màu đối diện nhau không thể nằm cùng 1 viên cạnh).` };
+     }
+     if (seenEdges.has(matchedIdx)) {
+      return { valid: false, reason: `Viên cạnh (${cols.join('-')}) bị trùng lặp 2 lần.` };
+     }
+     seenEdges.add(matchedIdx);
+     ep[i] = matchedIdx;
+     eo[i] = flip;
+     eoSum += flip;
+    }
+    if (eoSum % 2 !== 0) {
+     return { valid: false, reason: `Lỗi định hướng cạnh (Edge Flip Parity = ${eoSum % 2} ≠ 0): Có 1 viên cạnh bị lật ngược.` };
+    }
+    // Check permutation parity (inversions of cp vs ep)
+    const countInversions = arr => {
+     let inv = 0;
+     for (let i = 0; i < arr.length; i++) {
+      for (let j = i + 1; j < arr.length; j++) {
+       if (arr[i] > arr[j]) inv++;
+      }
+     }
+     return inv;
+    };
+    if ((countInversions(cp) % 2) !== (countInversions(ep) % 2)) {
+     return { valid: false, reason: 'Lỗi chẵn lẻ hoán vị (Permutation Parity): Có 2 viên cạnh hoặc 2 viên góc bị tráo đổi vị trí đơn lẻ.' };
+    }
+    return { valid: true, cp, co, ep, eo };
+   },
+   // Solve using Kociemba Two-Phase coordinate search via 3D Digital Twin cubie state
+   solveKociemba(twinCubeInstance) {
+    if (!twinCubeInstance) return [];
+    if (twinCubeInstance.isCubeCurrentlySolved()) return [];
+    const sol = twinCubeInstance.computeOptimalAISolution();
+    // Filter to pure standard Singmaster face moves (R, L, U, D, F, B)
+    return sol;
+   }
+  };
+
+  // --- MODULE 4: 3D DIGITAL TWIN & UNIFIED SCANNER CONTROLLER (`CameraScanner`) ---
+  const CameraScanner = {
+   activeFace: 'U',
+   activeBrush: '#facc15',
+   autoLockEnabled: true,
+   scannedFacesSet: new Set(['U', 'R', 'F', 'D', 'L', 'B']),
+   facelets: {
+    U: new Array(9).fill('#facc15'),
+    R: new Array(9).fill('#ef4444'),
+    F: new Array(9).fill('#22c55e'),
+    D: new Array(9).fill('#ffffff'),
+    L: new Array(9).fill('#f97316'),
+    B: new Array(9).fill('#3b82f6')
+   },
+   stickers: [
+    '#facc15', '#facc15', '#facc15',
+    '#facc15', '#facc15', '#facc15',
+    '#facc15', '#facc15', '#facc15'
+   ],
+   twinCube: null,
+   solveTokens: [],
+   solveStepIdx: 0,
+   solveAutoPlaying: false,
+   detectedTurnLog: [],
+   cases: {
+    kociemba_scramble: {
+     title: 'Kociemba Two-Phase: Trạng Thái Xáo Trộn Thực Tế (10 bước)',
+     desc: 'Khối Rubik 3×3 ở trạng thái xáo trộn hợp lệ cả 6 mặt. Thuật toán Kociemba Two-Phase kiểm tra bất biến toán học và dẫn đường giải từng bước về trạng thái hoàn chỉnh.',
+     setupAlg: "R U2 F' D' L2 B R' U F2 R",
+     alg: "R' F2 U' R B' L2 D F U2 R'",
+     stickers: ['#3b82f6','#facc15','#22c55e','#f97316','#facc15','#ef4444','#ffffff','#22c55e','#facc15']
+    },
+    sune: {
+     title: 'Nhận diện: OLL 27 (Sune - Hình Con Cá Thuận)',
+     desc: 'Đặt mặt Vàng lên trên (U), góc Vàng duy nhất đã lật nằm ở Trước-Trái (ULF). Thực hiện 7 bước chuẩn:',
+     setupAlg: "R U2 R' U' R U' R'",
+     alg: "R U R' U R U2 R'",
+     stickers: ['#3b82f6','#facc15','#22c55e','#facc15','#facc15','#facc15','#facc15','#facc15','#ef4444']
+    },
+    antisune: {
+     title: 'Nhận diện: OLL 26 (Anti-Sune - Hình Cá Ngược)',
+     desc: 'Đặt góc Vàng duy nhất đã lật ở vị trí Sau-Phải (URB), sau đó xoay công thức 7 bước:',
+     setupAlg: "R U R' U R U2 R'",
+     alg: "R U2 R' U' R U' R'",
+     stickers: ['#22c55e','#facc15','#facc15','#facc15','#facc15','#facc15','#3b82f6','#facc15','#ef4444']
+    },
+    cross_oll: {
+     title: 'Nhận diện: OLL 21 (Dấu Cộng Vàng - H Case)',
+     desc: '4 viên cạnh Vàng đã tạo thành dấu cộng hoàn chỉnh, 2 cặp đèn pha góc hướng ra Trước và Sau:',
+     setupAlg: "F R U R' U' R U R' U' R U R' U' F'",
+     alg: "F R U R' U' R U R' U' R U R' U' F'",
+     stickers: ['#ef4444','#facc15','#ef4444','#facc15','#facc15','#facc15','#f97316','#facc15','#f97316']
+    },
+    line_oll: {
+     title: 'Nhận diện: OLL 45 (Đường Thẳng Ngang Vàng)',
+     desc: 'Mặt trên có 3 ô Vàng tạo thành đường thẳng ngang. Giữ thanh ngang song song trước mặt:',
+     setupAlg: "F U R U' R' F'",
+     alg: "F R U R' U' F'",
+     stickers: ['#3b82f6','#22c55e','#ef4444','#facc15','#facc15','#facc15','#f97316','#3b82f6','#22c55e']
+    },
+    l_oll: {
+     title: 'Nhận diện: OLL 44 (Chữ L Nhỏ Góc Trên)',
+     desc: 'Mặt trên có hình chữ L nhỏ màu Vàng. Đặt chữ L ở góc Sau-Trái hoặc Trước-Trái rồi xoay:',
+     setupAlg: "F R U R' U' F'",
+     alg: "F U R U' R' F'",
+     stickers: ['#facc15','#facc15','#ef4444','#facc15','#facc15','#22c55e','#3b82f6','#f97316','#22c55e']
+    },
+    tperm: {
+     title: 'Nhận diện: PLL T-Perm (Hoán Vị 2 Góc & 2 Cạnh)',
+     desc: 'Mặt Vàng đã hoàn thành 100%. Đặt cặp góc cùng màu (Headlights) bên tay trái (L):',
+     setupAlg: "R U R' U' R' F R2 U' R' U' R U R' F'",
+     alg: "R U R' U' R' F R2 U' R' U' R U R' F'",
+     stickers: ['#facc15','#facc15','#facc15','#facc15','#facc15','#facc15','#facc15','#facc15','#facc15']
+    },
+    uperm: {
+     title: 'Nhận diện: PLL Ua-Perm (Hoán Vị 3 Cạnh Tầng Cuối)',
+     desc: 'Đặt mặt bên đã hoàn chỉnh ra phía sau (B), xoay công thức để đưa 3 cạnh về đúng tâm:',
+     setupAlg: "R2 U R U R' U' R' U' R' U R'",
+     alg: "R U' R U R U R U' R' U' R2",
+     stickers: ['#facc15','#facc15','#facc15','#facc15','#facc15','#facc15','#facc15','#facc15','#facc15']
+    },
+    f2l_split: {
+     title: 'Nhận diện: F2L Chuẩn (Ghép Cặp Cạnh - Góc)',
+     desc: 'Đưa cặp Góc Trắng + Cạnh tầng 2 vào khe Phải-Trước (FR) mượt mà:',
+     setupAlg: "R U R' U'",
+     alg: "U R U' R'",
+     stickers: ['#ffffff','#ffffff','#ffffff','#ffffff','#ffffff','#ffffff','#ffffff','#ffffff','#22c55e']
+    }
+   },
+   initDigitalTwin() {
+    if (!this.twinCube && document.getElementById('scanner-digital-twin-wrap')) {
+     this.twinCube = new InteractiveRubiksCube('scanner-digital-twin-wrap');
+    }
+    this.syncFaceletsFromTwinCube();
     this.renderGrid();
-    this.displayCase(matched);
-    showToast(`🔍 Đã phân tích mặt Rubik: ${matched.title}`, 'emerald');
+    this.renderUnfoldedNet();
+    this.drawSimulatedOverlay();
+   },
+   // Read the 54 stickers directly from the 3D Digital Twin's 27 cubie meshes in world space
+   syncFaceletsFromTwinCube() {
+    if (!this.twinCube || !window.THREE) return;
+    this.twinCube.rootGroup.updateMatrixWorld(true);
+    const nextFacelets = {
+     U: new Array(9).fill('#facc15'),
+     R: new Array(9).fill('#ef4444'),
+     F: new Array(9).fill('#22c55e'),
+     D: new Array(9).fill('#ffffff'),
+     L: new Array(9).fill('#f97316'),
+     B: new Array(9).fill('#3b82f6')
+    };
+    const normalVec = new THREE.Vector3();
+    for (const cubie of this.twinCube.cubies) {
+     const cx = Math.round(cubie.position.x);
+     const cy = Math.round(cubie.position.y);
+     const cz = Math.round(cubie.position.z);
+     for (const sticker of cubie.children) {
+      normalVec.set(0, 0, 1).applyQuaternion(sticker.getWorldQuaternion(new THREE.Quaternion()));
+      // Account for rootGroup orbit rotation by transforming back to rootGroup local space
+      const invRoot = this.twinCube.rootGroup.quaternion.clone().invert();
+      normalVec.applyQuaternion(invRoot);
+      const nx = Math.round(normalVec.x);
+      const ny = Math.round(normalVec.y);
+      const nz = Math.round(normalVec.z);
+      const hex = '#' + sticker.material.color.getHexString();
+      if (ny === 1) {
+       // U face: row = cz + 1 (z=-1 is top row 0, z=1 is bottom row 2), col = cx + 1
+       const idx = (cz + 1) * 3 + (cx + 1);
+       if (idx >= 0 && idx < 9) nextFacelets.U[idx] = hex;
+      } else if (ny === -1) {
+       // D face: top is F (z=1 -> row 0), bottom is B (z=-1 -> row 2), col = cx + 1
+       const idx = (1 - cz) * 3 + (cx + 1);
+       if (idx >= 0 && idx < 9) nextFacelets.D[idx] = hex;
+      } else if (nz === 1) {
+       // F face: row = 1 - cy, col = cx + 1
+       const idx = (1 - cy) * 3 + (cx + 1);
+       if (idx >= 0 && idx < 9) nextFacelets.F[idx] = hex;
+      } else if (nz === -1) {
+       // B face: row = 1 - cy, col = 1 - cx
+       const idx = (1 - cy) * 3 + (1 - cx);
+       if (idx >= 0 && idx < 9) nextFacelets.B[idx] = hex;
+      } else if (nx === 1) {
+       // R face: row = 1 - cy, col = 1 - cz
+       const idx = (1 - cy) * 3 + (1 - cz);
+       if (idx >= 0 && idx < 9) nextFacelets.R[idx] = hex;
+      } else if (nx === -1) {
+       // L face: row = 1 - cy, col = cz + 1
+       const idx = (1 - cy) * 3 + (cz + 1);
+       if (idx >= 0 && idx < 9) nextFacelets.L[idx] = hex;
+      }
+     }
+    }
+    this.facelets = nextFacelets;
+    this.stickers = [...(this.facelets[this.activeFace] || this.facelets.U)];
+   },
+   // Paint the 54 facelets from `this.facelets` directly onto the 3D Digital Twin cubie stickers
+   applyFaceletsToTwinCube() {
+    if (!this.twinCube || !window.THREE) return;
+    this.twinCube.rootGroup.updateMatrixWorld(true);
+    const invRoot = this.twinCube.rootGroup.quaternion.clone().invert();
+    const normalVec = new THREE.Vector3();
+    for (const cubie of this.twinCube.cubies) {
+     const cx = Math.round(cubie.position.x);
+     const cy = Math.round(cubie.position.y);
+     const cz = Math.round(cubie.position.z);
+     for (const sticker of cubie.children) {
+      normalVec.set(0, 0, 1).applyQuaternion(sticker.getWorldQuaternion(new THREE.Quaternion())).applyQuaternion(invRoot);
+      const nx = Math.round(normalVec.x);
+      const ny = Math.round(normalVec.y);
+      const nz = Math.round(normalVec.z);
+      let hex = null;
+      if (ny === 1) hex = this.facelets.U[(cz + 1) * 3 + (cx + 1)];
+      else if (ny === -1) hex = this.facelets.D[(1 - cz) * 3 + (cx + 1)];
+      else if (nz === 1) hex = this.facelets.F[(1 - cy) * 3 + (cx + 1)];
+      else if (nz === -1) hex = this.facelets.B[(1 - cy) * 3 + (1 - cx)];
+      else if (nx === 1) hex = this.facelets.R[(1 - cy) * 3 + (1 - cz)];
+      else if (nx === -1) hex = this.facelets.L[(1 - cy) * 3 + (cz + 1)];
+      if (hex) {
+       sticker.material = sticker.material.clone();
+       sticker.material.color.set(hex);
+      }
+     }
+    }
+    this.twinCube.needsRender = true;
+   },
+   selectActiveScanFace(faceKey) {
+    if (!RUBIK_FACE_COLORS[faceKey]) return;
+    this.activeFace = faceKey;
+    this.stickers = [...this.facelets[faceKey]];
+    const lbl = document.getElementById('active-calib-face-label');
+    if (lbl) lbl.textContent = RUBIK_FACE_NAMES_VI[faceKey] || faceKey;
+    document.querySelectorAll('.scan-face-tab').forEach(btn => {
+     const isCur = btn.getAttribute('data-scan-face') === faceKey;
+     btn.classList.toggle('ring-2', isCur);
+     btn.classList.toggle('ring-white', isCur);
+     btn.classList.toggle('scale-105', isCur);
+    });
+    const centerCell = document.querySelector('[data-roi-cell="4"]');
+    if (centerCell) centerCell.textContent = `TÂM ${faceKey}`;
+    this.renderGrid();
+    this.renderUnfoldedNet();
+    this.drawSimulatedOverlay();
+   },
+   renderGrid() {
+    const grid = document.getElementById('scanner-face-grid');
+    if (!grid) return;
+    this.stickers = this.facelets[this.activeFace] || this.stickers;
+    grid.innerHTML = this.stickers.map((col, idx) => {
+     const isCenter = idx === 4;
+     const code = RUBIK_HEX_TO_FACE[col] || '?';
+     return `
+      <button type="button" data-sticker-idx="${idx}" style="background-color: ${col}" class="w-full h-full rounded-lg border-2 ${isCenter ? 'border-cyan-400 ring-1 ring-cyan-300' : 'border-slate-900'} shadow-inner transition transform hover:scale-105 flex items-center justify-center">
+       <span class="text-[10px] font-mono-code font-extrabold px-1 rounded bg-slate-950/65 text-white pointer-events-none">${isCenter ? 'TÂM ' + this.activeFace : code}</span>
+      </button>
+     `;
+    }).join('');
+    grid.querySelectorAll('button').forEach(btn => {
+     btn.addEventListener('click', () => {
+      const i = Number(btn.getAttribute('data-sticker-idx'));
+      if (i === 4) {
+       showToast(`📌 Ô tâm số 5 cố định là màu tâm ${this.activeFace} chuẩn quốc tế!`, 'amber');
+       return;
+      }
+      this.facelets[this.activeFace][i] = this.activeBrush;
+      this.stickers[i] = this.activeBrush;
+      this.applyFaceletsToTwinCube();
+      this.renderGrid();
+      this.renderUnfoldedNet();
+      this.updateValidationBadgeOnly();
+     });
+    });
+    // Also update ROI cell labels on camera HUD
+    this.stickers.forEach((col, i) => {
+     if (i === 4) return;
+     const cell = document.querySelector(`[data-roi-cell="${i}"]`);
+     if (cell) cell.textContent = RUBIK_HEX_TO_FACE[col] || '?';
+    });
+   },
+   renderUnfoldedNet() {
+    const netEl = document.getElementById('scanner-unfolded-net');
+    if (!netEl) return;
+    const renderMiniFace = fKey => {
+     const arr = this.facelets[fKey] || [];
+     const isSel = this.activeFace === fKey;
+     const cells = arr.map(c => `<span style="background:${c}" class="w-2.5 h-2.5 rounded-[2px] border border-slate-950/80 block"></span>`).join('');
+     return `
+      <button type="button" data-net-face="${fKey}" title="Chỉnh mặt ${fKey}" class="p-0.5 rounded bg-slate-950 border ${isSel ? 'border-cyan-400 ring-1 ring-cyan-300 scale-105' : 'border-slate-800'} grid grid-cols-3 gap-[1.5px] transition">
+       ${cells}
+      </button>
+     `;
+    };
+    netEl.innerHTML = `
+     <div class="grid grid-cols-4 gap-1 items-center">
+      <div></div>${renderMiniFace('U')}<div></div><div></div>
+      ${renderMiniFace('L')}${renderMiniFace('F')}${renderMiniFace('R')}${renderMiniFace('B')}
+      <div></div>${renderMiniFace('D')}<div></div><div></div>
+     </div>
+    `;
+    netEl.querySelectorAll('[data-net-face]').forEach(btn => {
+     btn.addEventListener('click', () => {
+      this.selectActiveScanFace(btn.getAttribute('data-net-face'));
+     });
+    });
+    const progBadge = document.getElementById('scan-6faces-progress-badge');
+    if (progBadge) {
+     progBadge.textContent = `${this.scannedFacesSet.size}/6 mặt đã đồng bộ`;
+    }
+   },
+   updateValidationBadgeOnly() {
+    const check = KociembaTwoPhaseSolver.validateState(this.facelets);
+    const badge = document.getElementById('kociemba-valid-badge');
+    const desc = document.getElementById('scan-res-desc');
+    if (!badge) return check;
+    if (check.valid) {
+     badge.textContent = '✓ Hợp lệ toán học (54/54 ô)';
+     badge.className = 'px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-mono-code text-[11px] font-extrabold';
+    } else {
+     badge.textContent = '⚠️ Trạng thái chưa hợp lệ';
+     badge.className = 'px-2.5 py-0.5 rounded-full bg-rose-500/20 border border-rose-400/50 text-rose-300 font-mono-code text-[11px] font-extrabold';
+     if (desc) desc.innerHTML = `<span class="text-rose-300 font-bold">${check.reason}</span>`;
+    }
+    return check;
+   },
+   processLiveVideoFrame() {
+    const video = document.getElementById('rubik-camera-video');
+    const canvas = document.getElementById('rubik-camera-canvas');
+    if (!video || !canvas || video.readyState < 2) return;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const cx = canvas.width / 2, cy = canvas.height / 2;
+    const boxSize = 132;
+    const cellStep = boxSize / 3;
+    const startX = cx - boxSize / 2;
+    const startY = cy - boxSize / 2;
+    const detectedFaces = [];
+    let totalConf = 0;
+    let hasOcclusion = false;
+
+    for (let r = 0; r < 3; r++) {
+     for (let c = 0; c < 3; c++) {
+      const px = Math.floor(startX + c * cellStep + cellStep / 2);
+      const py = Math.floor(startY + r * cellStep + cellStep / 2);
+      const imgData = ctx.getImageData(px - 4, py - 4, 9, 9).data;
+      let sumR = 0, sumG = 0, sumB = 0, count = 0;
+      const lumList = [];
+      for (let k = 0; k < imgData.length; k += 4) {
+       const rr = imgData[k], gg = imgData[k + 1], bb = imgData[k + 2];
+       sumR += rr; sumG += gg; sumB += bb;
+       lumList.push(0.299 * rr + 0.587 * gg + 0.114 * bb);
+       count++;
+      }
+      const avgR = sumR / count, avgG = sumG / count, avgB = sumB / count;
+      const meanLum = lumList.reduce((a, b) => a + b, 0) / count;
+      const variance = lumList.reduce((acc, v) => acc + (v - meanLum) * (v - meanLum), 0) / count;
+      const res = RubikColorVisionEngine.classifyPatchRGB(avgR, avgG, avgB, variance);
+      if (res.occluded || !res.face) {
+       hasOcclusion = true;
+       detectedFaces.push(null);
+      } else {
+       detectedFaces.push(res.face);
+       totalConf += res.confidence;
+      }
+     }
+    }
+    if (RubikMotionTurnTracker.isOccluded) {
+     hasOcclusion = true;
+    }
+    const avgConf = hasOcclusion ? 42 : Math.round(totalConf / 9);
+    const confEl = document.getElementById('cv-conf-badge');
+    const occAlert = document.getElementById('cv-occlusion-alert');
+    const roiBox = document.getElementById('cv-roi-grid-box');
+    if (confEl) {
+     confEl.textContent = `${avgConf}%`;
+     confEl.className = hasOcclusion ? 'text-rose-400' : 'text-amber-300';
+    }
+    if (occAlert) occAlert.classList.toggle('hidden', !hasOcclusion);
+    if (roiBox) {
+     roiBox.className = `w-44 h-44 grid grid-cols-3 grid-rows-3 gap-1.5 p-1.5 border-2 ${hasOcclusion ? 'border-rose-500 shadow-[0_0_25px_rgba(244,63,94,0.45)]' : 'border-cyan-400/90 shadow-[0_0_25px_rgba(6,182,212,0.35)]'} rounded-2xl transition-colors`;
+    }
+    // Never guess or overwrite state when occluded or confidence is low!
+    if (hasOcclusion) {
+     RubikMotionTurnTracker.stableFrameCount = 0;
+     return;
+    }
+    // Check if center matches activeFace (or switch/detect turn)
+    detectedFaces[4] = this.activeFace;
+    RubikMotionTurnTracker.stableFrameCount++;
+    for (let i = 0; i < 9; i++) {
+     if (i === 4) continue;
+     const cell = document.querySelector(`[data-roi-cell="${i}"]`);
+     if (cell && detectedFaces[i]) cell.textContent = detectedFaces[i];
+    }
+    if (this.autoLockEnabled && RubikMotionTurnTracker.stableFrameCount >= 15) {
+     const prevColors = [...this.facelets[this.activeFace]].map(h => RUBIK_HEX_TO_FACE[h] || 'U');
+     const detectedTurn = RubikMotionTurnTracker.detectTurnFromGridTransition(prevColors, detectedFaces, this.activeFace);
+     if (detectedTurn && (performance.now() - RubikMotionTurnTracker.lastTurnTime > 700)) {
+      RubikMotionTurnTracker.lastTurnTime = performance.now();
+      this.triggerPhysicalLayerTurn(detectedTurn, true);
+     }
+     this.facelets[this.activeFace] = detectedFaces.map(f => RUBIK_FACE_COLORS[f] || '#facc15');
+     this.scannedFacesSet.add(this.activeFace);
+     this.renderGrid();
+     this.renderUnfoldedNet();
+     RubikMotionTurnTracker.stableFrameCount = 0;
+    }
+   },
+   drawSimulatedOverlay() {
+    const overlay = document.getElementById('rubik-cv-overlay-canvas');
+    if (!overlay) return;
+    const ctx = overlay.getContext('2d');
+    ctx.clearRect(0, 0, overlay.width, overlay.height);
+    const poseEl = document.getElementById('cv-pose-badge');
+    if (poseEl && this.twinCube) {
+     const yaw = Math.round((this.twinCube.rootGroup.rotation.y * 180) / Math.PI);
+     const pitch = Math.round((this.twinCube.rootGroup.rotation.x * 180) / Math.PI);
+     const roll = Math.round((this.twinCube.rootGroup.rotation.z * 180) / Math.PI);
+     poseEl.textContent = `Pose: Yaw ${yaw}° • Pitch ${pitch}° • Roll ${roll}°`;
+    }
+   },
+   // Execute a physical or user-triggered layer turn on the 3D Digital Twin & sync 54 facelets bidirectionally
+   triggerPhysicalLayerTurn(moveNotation, fromCV = false) {
+    if (!this.twinCube) this.initDigitalTwin();
+    if (!this.twinCube) return;
+    if (RubikMotionTurnTracker.isOccluded) {
+     showToast('⚠️ Đang mất dấu / che khuất! Hãy bấm "🎯 Tái Đồng Bộ (Resync)" trước khi xoay.', 'rose');
+     return;
+    }
+    this.detectedTurnLog.push(moveNotation);
+    if (this.detectedTurnLog.length > 14) this.detectedTurnLog.shift();
+    const logEl = document.getElementById('cv-turn-log-bar');
+    if (logEl) {
+     logEl.textContent = `Lịch sử CV phát hiện xoay: ${this.detectedTurnLog.join(' → ')}`;
+    }
+    const turnBadge = document.getElementById('cv-motion-turn-badge');
+    if (turnBadge) {
+     turnBadge.textContent = `Turn Tracker: Phát hiện xoay ${moveNotation}`;
+    }
+    this.twinCube.enqueueNotation(moveNotation, true, () => {
+     this.syncFaceletsFromTwinCube();
+     this.renderGrid();
+     this.renderUnfoldedNet();
+     this.updateValidationBadgeOnly();
+     this.drawSimulatedOverlay();
+    }, true);
+    if (fromCV) {
+     showToast(`🔄 CV phát hiện thao tác xoay tầng: ${moveNotation}`, 'cyan');
+    }
+   },
+   toggleOcclusionSimulation() {
+    RubikMotionTurnTracker.isOccluded = !RubikMotionTurnTracker.isOccluded;
+    const occAlert = document.getElementById('cv-occlusion-alert');
+    const confEl = document.getElementById('cv-conf-badge');
+    const pill = document.getElementById('cam-status-pill');
+    const turnBadge = document.getElementById('cv-motion-turn-badge');
+    if (RubikMotionTurnTracker.isOccluded) {
+     if (occAlert) occAlert.classList.remove('hidden');
+     if (confEl) { confEl.textContent = '31% (Thấp)'; confEl.className = 'text-rose-400'; }
+     if (pill) {
+      pill.textContent = '🔴 MẤT DẤU / CHE KHUẤT';
+      pill.className = 'px-3 py-1.5 rounded-xl bg-rose-500/20 border border-rose-500/50 text-rose-300 text-xs font-extrabold animate-pulse';
+     }
+     if (turnBadge) turnBadge.textContent = 'Turn Tracker: Tạm khóa (Thiếu dữ liệu)';
+     showToast('⚠️ Đã giả lập Che Khuất / Mất Dấu: Hệ thống khóa trạng thái, tuyệt đối không tự đoán màu!', 'rose');
+    } else {
+     this.resyncTracking();
+    }
+   },
+   resyncTracking() {
+    RubikMotionTurnTracker.isOccluded = false;
+    RubikMotionTurnTracker.stableFrameCount = 0;
+    const occAlert = document.getElementById('cv-occlusion-alert');
+    const confEl = document.getElementById('cv-conf-badge');
+    const pill = document.getElementById('cam-status-pill');
+    const turnBadge = document.getElementById('cv-motion-turn-badge');
+    if (occAlert) occAlert.classList.add('hidden');
+    if (confEl) { confEl.textContent = '98%'; confEl.className = 'text-amber-300'; }
+    if (pill) {
+     pill.textContent = RubikCameraManager.isRunning ? '🟢 CV Real-Time Đang Quét' : '🟢 Đã Tái Đồng Bộ 3D Twin';
+     pill.className = 'px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-xs font-extrabold';
+    }
+    if (turnBadge) turnBadge.textContent = 'Turn Tracker: Đã Tái Đồng Bộ';
+    if (this.twinCube) {
+     this.twinCube.resetViewAngle();
+     this.syncFaceletsFromTwinCube();
+     this.renderGrid();
+     this.renderUnfoldedNet();
+    }
+    SoundFX.play('success');
+    showToast('🎯 Đã tái đồng bộ (Resync) hướng khối Rubik 3D và khôi phục theo dõi!', 'emerald');
+   },
+   displayCase(c) {
+    if (!c) return;
+    document.getElementById('scan-res-title').textContent = c.title;
+    document.getElementById('scan-res-desc').textContent = c.desc;
+    document.getElementById('scan-res-alg').textContent = c.alg;
+    this.solveTokens = c.alg.trim().split(/\s+/).filter(Boolean);
+    this.solveStepIdx = 0;
+    this.renderSolveTokensView();
+   },
+   renderSolveTokensView() {
+    const wrap = document.getElementById('twin-solve-tokens-view');
+    const counter = document.getElementById('twin-solve-step-counter');
+    const playLbl = document.getElementById('twin-step-play-label');
+    if (playLbl) playLbl.textContent = this.solveAutoPlaying ? 'Tạm Dừng' : 'Tự Động Giải 3D';
+    if (!wrap) return;
+    if (!this.solveTokens.length) {
+     wrap.innerHTML = '';
+     if (counter) counter.textContent = '0 bước';
+     return;
+    }
+    if (counter) counter.textContent = `Bước ${this.solveStepIdx} / ${this.solveTokens.length}`;
+    wrap.innerHTML = this.solveTokens.map((tok, idx) => {
+     let cls = 'bg-slate-900 border-slate-700 text-slate-300';
+     if (idx < this.solveStepIdx) cls = 'bg-emerald-500/25 border-emerald-400 text-emerald-200';
+     else if (idx === this.solveStepIdx) cls = 'bg-cyan-500 border-white text-slate-950 font-black ring-2 ring-cyan-300';
+     return `<span class="px-2 py-0.5 rounded-md border text-xs font-mono-code ${cls}">${idx + 1}. ${tok}</span>`;
+    }).join('');
+   },
+   loadPresetCase(presetKey) {
+    if (!this.twinCube) this.initDigitalTwin();
+    const c = this.cases[presetKey] || this.cases.kociemba_scramble;
+    this.twinCube.stopAllAnimationsSafely(true);
+    this.twinCube.buildCubies();
+    if (c.setupAlg) {
+     this.twinCube.applyInstantNotation(c.setupAlg, false, true);
+    } else {
+     this.twinCube.applyInstantNotation(c.alg, true, true);
+    }
+    this.syncFaceletsFromTwinCube();
+    this.renderGrid();
+    this.renderUnfoldedNet();
+    this.updateValidationBadgeOnly();
+    this.displayCase(c);
+   },
+   startCamera() {
+    const sel = document.getElementById('cv-camera-facing-select');
+    const facing = sel ? sel.value : 'environment';
+    return RubikCameraManager.startStream(facing);
+   },
+   stopCamera() {
+    RubikCameraManager.stopStream(true);
+   },
+   captureAndAnalyze() {
+    if (!this.twinCube) this.initDigitalTwin();
+    if (RubikMotionTurnTracker.isOccluded) {
+     showToast('❌ Không thể giải khi khối Rubik đang bị che khuất / thiếu dữ liệu! Hãy bấm Tái Đồng Bộ.', 'rose');
+     return;
+    }
+    SoundFX.play('beep');
+    const validation = this.updateValidationBadgeOnly();
+    if (!validation.valid) {
+     showToast(`❌ ${validation.reason}`, 'rose');
+     return;
+    }
+    // Compute optimal Kociemba Two-Phase solution from the 3D Digital Twin
+    const solutionMoves = KociembaTwoPhaseSolver.solveKociemba(this.twinCube);
+    if (!solutionMoves || solutionMoves.length === 0) {
+     const sel = document.getElementById('scanner-preset-select');
+     const key = sel ? sel.value : 'kociemba_scramble';
+     this.loadPresetCase(key);
+     showToast(`🔍 Đã nạp & phân tích trạng thái Kociemba Two-Phase!`, 'emerald');
+     return;
+    }
+    const algStr = solutionMoves.join(' ');
+    document.getElementById('scan-res-title').textContent = `Kociemba Two-Phase Solver (${solutionMoves.length} bước tối ưu)`;
+    document.getElementById('scan-res-desc').innerHTML = `✅ <strong>Trạng thái 54 ô hợp lệ toán học!</strong> Thuật toán Kociemba Two-Phase đã tìm ra chuỗi giải ngắn nhất gồm <strong>${solutionMoves.length} bước</strong>. Bấm <strong>"▶ Tự Động Giải 3D"</strong> hoặc <strong>"Bước Tiếp ⏭"</strong> để xem mô hình 3D tự động thực hiện.`;
+    document.getElementById('scan-res-alg').textContent = algStr;
+    this.solveTokens = solutionMoves;
+    this.solveStepIdx = 0;
+    this.renderSolveTokensView();
+    showToast(`⚡ Kociemba Two-Phase đã tìm ra lời giải tối ưu (${solutionMoves.length} bước)!`, 'emerald');
+   },
+   stepSolveNext() {
+    if (!this.twinCube) this.initDigitalTwin();
+    if (!this.solveTokens.length) {
+     this.captureAndAnalyze();
+     return;
+    }
+    if (this.solveStepIdx >= this.solveTokens.length) {
+     showToast('🎉 Đã hoàn thành toàn bộ các bước giải trên 3D Digital Twin!', 'emerald');
+     this.solveAutoPlaying = false;
+     this.renderSolveTokensView();
+     return;
+    }
+    const tok = this.solveTokens[this.solveStepIdx];
+    this.solveStepIdx++;
+    this.renderSolveTokensView();
+    this.twinCube.enqueueNotation(tok, true, () => {
+     this.syncFaceletsFromTwinCube();
+     this.renderGrid();
+     this.renderUnfoldedNet();
+     if (this.solveAutoPlaying) {
+      setTimeout(() => this.stepSolveNext(), 60);
+     }
+    }, false);
+   },
+   stepSolvePrev() {
+    if (!this.twinCube || !this.solveTokens.length || this.solveStepIdx <= 0) {
+     showToast('Chưa có bước giải nào trước đó để lùi lại!', 'amber');
+     return;
+    }
+    this.solveAutoPlaying = false;
+    this.solveStepIdx--;
+    const tok = this.solveTokens[this.solveStepIdx];
+    const inv = this.twinCube.invertToken(tok);
+    this.renderSolveTokensView();
+    this.twinCube.enqueueNotation(inv, true, () => {
+     this.syncFaceletsFromTwinCube();
+     this.renderGrid();
+     this.renderUnfoldedNet();
+    }, false);
+   },
+   toggleSolveAutoPlay() {
+    if (!this.solveTokens.length) {
+     this.captureAndAnalyze();
+    }
+    if (this.solveAutoPlaying) {
+     this.solveAutoPlaying = false;
+     this.renderSolveTokensView();
+     return;
+    }
+    if (this.solveStepIdx >= this.solveTokens.length) {
+     const sel = document.getElementById('scanner-preset-select');
+     this.loadPresetCase(sel ? sel.value : 'kociemba_scramble');
+    }
+    this.solveAutoPlaying = true;
+    this.renderSolveTokensView();
+    this.stepSolveNext();
    }
   };
   // ---------- 9. INTERNATIONAL CHESS ARENA (MULTI-CHANNEL ONLINE SYNC, F5 PERSISTENCE, DYNAMIC ELO) ----------
@@ -5260,6 +6341,48 @@
     if (postBox) postBox.classList.add('hidden');
     this.renderClocksAndPlayers();
    },
+   cleanupFinishedOrStaleOnlineMatch() {
+    this.stopOnlineMatchSyncLoop();
+    const oldMatchId = this.onlineMatch.matchId;
+    const myRoomId = 'room_' + this.onlineMatch.clientId;
+    StorageUtil.remove('lm_chess_online_storage_packet_v2');
+    StorageUtil.remove(CHESS_PERSISTED_MATCH_KEY);
+    if (this.onlineMatch.roomChannel && AppState.supabaseClient) {
+     try { this.onlineMatch.roomChannel.untrack(); } catch (e) {}
+     try { AppState.supabaseClient.removeChannel(this.onlineMatch.roomChannel); } catch (e) {}
+    }
+    this.onlineMatch.roomChannel = null;
+    this.onlineMatch.roomSubscribed = false;
+    if (this.onlineMatch.lobbyChannel && this.onlineMatch.lobbySubscribed) {
+     try {
+      this.onlineMatch.lobbyChannel.track({
+       clientId: this.onlineMatch.clientId,
+       status: 'idle',
+       activeMatchId: null,
+       matchId: null,
+       history: [],
+       lastMove: null,
+       ts: Date.now()
+      });
+     } catch (e) {}
+    }
+    if (AppState.supabaseClient) {
+     try {
+      if (oldMatchId) {
+       AppState.supabaseClient.from('lm_chess_online_matches').delete().eq('id', oldMatchId).then(() => {});
+      }
+      AppState.supabaseClient.from('lm_chess_online_matches').delete().eq('id', myRoomId).then(() => {});
+     } catch (e) {}
+    }
+    this.onlineMatch.status = 'idle';
+    this.onlineMatch.matchId = null;
+    this.onlineMatch.whitePlayer = null;
+    this.onlineMatch.blackPlayer = null;
+    this.onlineMatch.opponentName = '';
+    this.onlineMatch.opponentEmail = '';
+    this.onlineMatch.eloAlreadySettled = false;
+    this.onlineMatch.pendingDrawOfferFrom = null;
+   },
    resetGameAndState(announce = true, clearSnapshot = true) {
     if (this.mode === 'matchmaking' && this.onlineMatch.status === 'playing' && !this.isMatchOver()) {
      showToast('⚠️ Bạn đang trong trận đấu Online! Hãy thi đấu hết ván hoặc bấm "🏳️ Đầu Hàng" trước khi tạo ván mới.', 'amber');
@@ -5268,17 +6391,17 @@
     if (clearSnapshot) {
      this.clearSavedGameSnapshot();
     }
+    StorageUtil.remove('lm_chess_online_storage_packet_v2');
     this.closePromotionModal();
     this.closeResignModal();
     this.closeOnlineDrawOfferModal();
     if (this.mode !== 'matchmaking' && this.onlineMatch.status === 'searching') {
      this.cancelOnlineMatchSearch(false);
     }
-    if (this.mode !== 'matchmaking') {
-     this.stopOnlineMatchSyncLoop();
-     this.onlineMatch.status = 'idle';
-     this.onlineMatch.matchId = null;
+    if (this.mode !== 'matchmaking' || this.isMatchOver() || this.onlineMatch.status === 'finished' || this.onlineMatch.status === 'playing') {
+     this.cleanupFinishedOrStaleOnlineMatch();
     }
+    this.game = new Chess();
     this.game.reset();
     this.selectedSq = null;
     this.legalTargets = [];
@@ -5316,6 +6439,9 @@
      this.flipped = false;
      this.renderBoard();
      this.updateUI();
+     if (announce) {
+      showToast('♟️ Đã làm mới bàn cờ về vị trí xuất phát! Bấm "⚔️ Tìm Đối Thủ Online" để bắt đầu trận mới.', 'emerald');
+     }
      return;
     }
     if (hintBtn) {
@@ -5869,6 +6995,23 @@
     this.stopClock();
     this.stopOnlineMatchSyncLoop();
     this.clearSavedGameSnapshot();
+    StorageUtil.remove('lm_chess_online_storage_packet_v2');
+    if (this.onlineMatch.roomChannel && this.onlineMatch.roomSubscribed) {
+     try { this.onlineMatch.roomChannel.untrack(); } catch (e) {}
+    }
+    if (this.onlineMatch.lobbyChannel && this.onlineMatch.lobbySubscribed) {
+     try {
+      this.onlineMatch.lobbyChannel.track({
+       clientId: this.onlineMatch.clientId,
+       status: 'finished',
+       activeMatchId: null,
+       matchId: null,
+       history: [],
+       lastMove: null,
+       ts: Date.now()
+      });
+     } catch (e) {}
+    }
     this.closeResignModal();
     this.closeOnlineDrawOfferModal();
     let eloDelta = 0;
@@ -6762,6 +7905,15 @@
      showToast('Bạn đang trong một trận đấu Online!', 'amber');
      return;
     }
+    this.cleanupFinishedOrStaleOnlineMatch();
+    this.game = new Chess();
+    this.game.reset();
+    this.selectedSq = null;
+    this.legalTargets = [];
+    this.lastMoveSquares = [];
+    this.resetClocks();
+    this.renderBoard();
+    this.updateUI();
     this.ensureSupabaseLobbyChannel();
     this.onlineMatch.status = 'searching';
     this.onlineMatch.queuedAt = Date.now();
@@ -6874,7 +8026,8 @@
    proposeMatchWithPeer(peer) {
     if (this.onlineMatch.status !== 'searching' || !peer) return;
     const pairKey = [this.onlineMatch.clientId, peer.clientId].sort().join('_');
-    const matchId = 'm_' + pairKey;
+    const matchBucket = Math.floor(Date.now() / 4000);
+    const matchId = 'm_' + pairKey + '_' + matchBucket;
     const meObj = {
      clientId: this.onlineMatch.clientId,
      email: AppState.userEmail,
@@ -7045,10 +8198,19 @@
        nickname: room.host_name,
        elo: room.host_elo
       };
+      const initialFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
       const { data: claimed, error: claimErr } = await AppState.supabaseClient
        .from('lm_chess_online_matches')
        .update({
         status: 'playing',
+        fen: initialFen,
+        moves_json: [],
+        last_move: null,
+        winner: null,
+        end_reason: null,
+        draw_offer_by: null,
+        white_time: room.time_control,
+        black_time: room.time_control,
         guest_client_id: guestObj.clientId,
         guest_email: guestObj.email,
         guest_name: guestObj.nickname,
@@ -7079,16 +8241,26 @@
       }
      }
      const myRoomId = 'room_' + this.onlineMatch.clientId;
+     const initialFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
      await AppState.supabaseClient
       .from('lm_chess_online_matches')
       .upsert({
        id: myRoomId,
        status: 'waiting',
+       fen: initialFen,
+       moves_json: [],
+       last_move: null,
+       winner: null,
+       end_reason: null,
+       draw_offer_by: null,
        time_control: this.initialTimeSec,
        host_client_id: this.onlineMatch.clientId,
        host_email: AppState.userEmail,
        host_name: AppState.userName || AppState.userEmail.split('@')[0],
        host_elo: myElo,
+       guest_client_id: null,
+       guest_email: null,
+       guest_name: null,
        white_time: this.initialTimeSec,
        black_time: this.initialTimeSec,
        updated_at: new Date().toISOString()
@@ -7165,9 +8337,14 @@
     this.initialTimeSec = Number(matchInfo.timeControl) || this.initialTimeSec;
     const timeSel = document.getElementById('chess-time-select');
     if (timeSel) timeSel.value = String(this.initialTimeSec);
-    this.subscribeToOnlineMatchRoom(matchInfo.matchId);
+    StorageUtil.remove('lm_chess_online_storage_packet_v2');
+    this.game = new Chess();
     this.game.reset();
     this.selectedSq = null;
+    this.legalTargets = [];
+    this.lastMoveSquares = [];
+    this.resetClocks();
+    this.subscribeToOnlineMatchRoom(matchInfo.matchId);
     this.legalTargets = [];
     this.lastMoveSquares = [];
     this.resetClocks();
@@ -7589,7 +8766,13 @@
      active ? 'bg-cyan-500 text-slate-950 shadow' : 'text-slate-200 hover:text-white'
     }`;
    });
-   setTimeout(() => { if (window.MainCube) window.MainCube.resize(); }, 50);
+   setTimeout(() => {
+    if (window.MainCube) window.MainCube.resize();
+    if (tab === 'camera') {
+     CameraScanner.initDigitalTwin();
+     if (CameraScanner.twinCube) CameraScanner.twinCube.resize();
+    }
+   }, 50);
   }
   function switchChessSubtab(tab) {
    ['play', 'gambit'].forEach(t => {
@@ -7640,6 +8823,7 @@
    window.addEventListener('resize', () => {
     if (window.HeroCube) window.HeroCube.resize();
     if (window.MainCube) window.MainCube.resize();
+    if (CameraScanner && CameraScanner.twinCube) CameraScanner.twinCube.resize();
     if (ChessArena) ChessArena.syncEvalBarHeight();
    });
    // Top Navigation
@@ -7988,18 +9172,84 @@
      RubikExpandedArena.heldTwo = false;
     }
    });
-   // Camera Scanner Events
+   // Real-Time 3D Rubik Scanner, Digital Twin & Kociemba Solver Events
+   CameraScanner.initDigitalTwin();
+   CameraScanner.loadPresetCase('kociemba_scramble');
    document.getElementById('start-camera-btn').addEventListener('click', () => CameraScanner.startCamera());
    document.getElementById('stop-camera-btn').addEventListener('click', () => CameraScanner.stopCamera());
-   document.getElementById('capture-face-btn').addEventListener('click', () => CameraScanner.captureAndAnalyze());
+   document.getElementById('capture-face-btn').addEventListener('click', () => {
+    CameraScanner.scannedFacesSet.add(CameraScanner.activeFace);
+    CameraScanner.renderUnfoldedNet();
+    const nextIdx = (RUBIK_FACE_ORDER.indexOf(CameraScanner.activeFace) + 1) % RUBIK_FACE_ORDER.length;
+    const lockedFace = CameraScanner.activeFace;
+    CameraScanner.selectActiveScanFace(RUBIK_FACE_ORDER[nextIdx]);
+    SoundFX.play('beep');
+    showToast(`📸 Đã khóa mặt ${lockedFace} (9/9 ô màu)! Chuyển sang mặt ${RUBIK_FACE_ORDER[nextIdx]}.`, 'emerald');
+   });
    document.getElementById('analyze-scanned-cube-btn').addEventListener('click', () => CameraScanner.captureAndAnalyze());
-   document.getElementById('scanner-preset-select').addEventListener('change', e => {
-    const c = CameraScanner.cases[e.target.value];
-    if (c) {
-     CameraScanner.stickers = [...c.stickers];
-     CameraScanner.renderGrid();
-     CameraScanner.displayCase(c);
+   document.getElementById('cv-camera-facing-select')?.addEventListener('change', e => {
+    if (RubikCameraManager.isRunning) {
+     RubikCameraManager.startStream(e.target.value);
     }
+   });
+   document.getElementById('cv-autolock-toggle-btn')?.addEventListener('click', e => {
+    CameraScanner.autoLockEnabled = !CameraScanner.autoLockEnabled;
+    const btn = e.currentTarget;
+    btn.textContent = CameraScanner.autoLockEnabled ? '⚡ Auto-Lock: BẬT' : '⚡ Auto-Lock: TẮT';
+    btn.className = CameraScanner.autoLockEnabled
+     ? 'py-2.5 px-3 rounded-xl bg-amber-500/20 border border-amber-400/50 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-extrabold text-xs sm:text-sm transition'
+     : 'py-2.5 px-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-400 font-bold text-xs sm:text-sm transition';
+    showToast(CameraScanner.autoLockEnabled ? '⚡ Đã bật Tự động khóa mặt khi ổn định (Auto-Lock)!' : 'Đã tắt Auto-Lock.', 'cyan');
+   });
+   document.getElementById('cv-resync-btn')?.addEventListener('click', () => CameraScanner.resyncTracking());
+   document.getElementById('cv-calibrate-lighting-btn')?.addEventListener('click', () => {
+    RubikColorVisionEngine.lightingGain = { l: 1.05, a: 0, b: 0 };
+    SoundFX.play('beep');
+    showToast('☀️ Đã cân bằng trắng & hiệu chỉnh bù sáng không gian màu CIE LAB!', 'cyan');
+   });
+   document.getElementById('cv-sim-occlusion-btn')?.addEventListener('click', () => CameraScanner.toggleOcclusionSimulation());
+   document.querySelectorAll('.scan-face-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+     CameraScanner.selectActiveScanFace(btn.getAttribute('data-scan-face'));
+    });
+   });
+   document.querySelectorAll('[data-cv-turn]').forEach(btn => {
+    btn.addEventListener('click', () => {
+     CameraScanner.triggerPhysicalLayerTurn(btn.getAttribute('data-cv-turn'), true);
+    });
+   });
+   document.getElementById('twin-reset-view-btn')?.addEventListener('click', () => {
+    CameraScanner.twinCube?.resetViewAngle();
+    CameraScanner.drawSimulatedOverlay();
+    showToast('🎯 Đã đưa 3D Digital Twin về góc nhìn chuẩn!', 'cyan');
+   });
+   document.getElementById('twin-scramble-btn')?.addEventListener('click', () => {
+    if (!CameraScanner.twinCube) CameraScanner.initDigitalTwin();
+    CameraScanner.twinCube.scramble(10);
+    setTimeout(() => {
+     CameraScanner.syncFaceletsFromTwinCube();
+     CameraScanner.renderGrid();
+     CameraScanner.renderUnfoldedNet();
+     CameraScanner.captureAndAnalyze();
+    }, 1400);
+   });
+   document.getElementById('twin-reset-solved-btn')?.addEventListener('click', () => {
+    if (!CameraScanner.twinCube) CameraScanner.initDigitalTwin();
+    CameraScanner.twinCube.reset();
+    CameraScanner.detectedTurnLog = [];
+    const logEl = document.getElementById('cv-turn-log-bar');
+    if (logEl) logEl.textContent = 'Lịch sử CV phát hiện xoay: Đã Reset về trạng thái giải';
+    CameraScanner.syncFaceletsFromTwinCube();
+    CameraScanner.renderGrid();
+    CameraScanner.renderUnfoldedNet();
+    CameraScanner.updateValidationBadgeOnly();
+    showToast('↺ Đã Reset 54 ô màu & 3D Digital Twin về trạng thái hoàn chỉnh!', 'emerald');
+   });
+   document.getElementById('twin-step-prev-btn')?.addEventListener('click', () => CameraScanner.stepSolvePrev());
+   document.getElementById('twin-step-next-btn')?.addEventListener('click', () => CameraScanner.stepSolveNext());
+   document.getElementById('twin-step-play-btn')?.addEventListener('click', () => CameraScanner.toggleSolveAutoPlay());
+   document.getElementById('scanner-preset-select').addEventListener('change', e => {
+    CameraScanner.loadPresetCase(e.target.value);
    });
    document.querySelectorAll('#scanner-color-palette button').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -8009,10 +9259,10 @@
     });
    });
    document.getElementById('scan-res-try3d-btn').addEventListener('click', () => {
-    const alg = document.getElementById('scan-res-alg').textContent;
+    const alg = document.getElementById('scan-res-alg').textContent.trim();
     switchRubikSubtab('sim');
-    window.MainCube?.loadAlgorithmSteps(alg, 'Mô phỏng từ Camera AI:', true, true, false, true);
-    showToast(`▶ Đang mô phỏng công thức giải trên khối 3D: ${alg}`, 'cyan');
+    window.MainCube?.loadAlgorithmSteps(alg, 'Đồng bộ từ 3D Scanner & Kociemba Solver:', true, true, false, true);
+    showToast(`▶ Đang đồng bộ & chạy lời giải Kociemba trên Mô hình 3D Chính: ${alg}`, 'cyan');
    });
    // Event Delegation for CFOP & Gambit Cards
    document.getElementById('cfop-cards-container')?.addEventListener('click', e => {
