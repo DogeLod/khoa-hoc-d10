@@ -342,6 +342,93 @@
   .mv-bs:hover { background: #d4af37; color: #09090b; }
   .mv-br { padding: 0.375rem 0; border-radius: 0.5rem; background: #141419; border: 1px solid rgba(255,255,255,0.12); color: #a1a1aa; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.75rem; transition: all 0.15s; }
   .mv-br:hover { background: #e4e4e7; color: #09090b; }
+
+  /* Custom Luxury Gold Range Slider for Rubik Rotation Speed */
+  .rubik-speed-range {
+   -webkit-appearance: none;
+   appearance: none;
+   height: 6px;
+   border-radius: 9999px;
+   background: linear-gradient(90deg, rgba(212, 175, 55, 0.25) 0%, rgba(212, 175, 55, 0.85) 100%);
+   outline: none;
+   cursor: pointer;
+  }
+  .rubik-speed-range::-webkit-slider-thumb {
+   -webkit-appearance: none;
+   appearance: none;
+   width: 18px;
+   height: 18px;
+   border-radius: 50%;
+   background: #dfbd69;
+   border: 2px solid #09090b;
+   box-shadow: 0 0 10px rgba(212, 175, 55, 0.65);
+   cursor: pointer;
+   transition: transform 0.15s ease, background-color 0.15s ease;
+  }
+  .rubik-speed-range::-webkit-slider-thumb:hover {
+   transform: scale(1.15);
+   background: #f4d98c;
+  }
+  .rubik-speed-range::-moz-range-thumb {
+   width: 18px;
+   height: 18px;
+   border-radius: 50%;
+   background: #dfbd69;
+   border: 2px solid #09090b;
+   box-shadow: 0 0 10px rgba(212, 175, 55, 0.65);
+   cursor: pointer;
+   transition: transform 0.15s ease;
+  }
+  /* Chess.com Style Move Evaluation Badge on Board Square & Move List */
+  @keyframes badgePopIn {
+   0% { opacity: 0; transform: scale(0.35) translateY(4px); }
+   70% { opacity: 1; transform: scale(1.14) translateY(-1px); }
+   100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .chess-move-badge-board {
+   position: absolute;
+   top: 2px;
+   right: 2px;
+   z-index: 28;
+   min-width: 1.35rem;
+   height: 1.35rem;
+   padding: 0 0.25rem;
+   border-radius: 9999px;
+   font-family: 'JetBrains Mono', monospace;
+   font-weight: 800;
+   font-size: 0.68rem;
+   line-height: 1;
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   box-shadow: 0 3px 8px rgba(0,0,0,0.65);
+   border: 1.5px solid #09090b;
+   pointer-events: none;
+   animation: badgePopIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .chess-san-badge {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   min-width: 1.2rem;
+   height: 1.15rem;
+   padding: 0 0.28rem;
+   border-radius: 9999px;
+   font-family: 'JetBrains Mono', monospace;
+   font-weight: 800;
+   font-size: 0.65rem;
+   line-height: 1;
+   vertical-align: middle;
+  }
+  @keyframes cubeFocusPulse {
+   0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.75); }
+   50% { box-shadow: 0 0 0 8px rgba(212, 175, 55, 0.28); }
+   100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+  }
+  .cube-focus-highlight {
+   animation: cubeFocusPulse 1.1s ease-out;
+  }
+
  </style>
 </head>
 <body id="app-body" class="theme-rubik min-h-screen flex flex-col selection:bg-cyan-500 selection:text-slate-950 relative text-base">
@@ -356,21 +443,66 @@
  <!-- TOP NAVIGATION BAR -->
  <header class="glass-nav sticky top-0 z-40">
   <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 min-h-[4.75rem] flex flex-wrap items-center justify-between gap-2 sm:gap-3">
-   <!-- Brand Logo -->
+   <!-- Brand Logo: Hand-Drawn Sketch Style (Rubik's Cube + '+' + Chessboard) -->
    <button id="brand-home-btn" class="flex items-center gap-3 text-left group focus:outline-none shrink-0">
-    <div class="relative w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-br from-cyan-300 via-cyan-500 to-emerald-400 p-[2.5px] shadow-[0_0_25px_rgba(6,182,212,0.45)] group-hover:scale-105 transition-transform">
-     <div class="w-full h-full bg-slate-950 rounded-[13px] flex flex-col items-center justify-center relative overflow-hidden">
-      <div class="absolute inset-0 bg-gradient-to-tr from-cyan-500/20 via-transparent to-emerald-400/20"></div>
-      <span class="relative z-10 font-mono-code font-black text-lg sm:text-xl tracking-tight text-white drop-shadow-[0_2px_8px_rgba(34,211,238,0.95)] leading-none">LM</span>
-      <span class="relative z-10 text-[8px] font-mono-code font-extrabold uppercase tracking-widest text-cyan-300 mt-0.5 leading-none">PRO</span>
-     </div>
+    <div class="relative h-12 sm:h-13 px-2.5 py-1 rounded-2xl bg-[#121216] border border-[#d4af37]/45 shadow-[0_6px_22px_rgba(0,0,0,0.65)] group-hover:border-[#dfbd69] group-hover:scale-[1.03] transition-all flex items-center justify-center overflow-hidden">
+     <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(212,175,55,0.12),transparent_70%)] pointer-events-none"></div>
+     <svg viewBox="0 0 132 48" class="w-28 sm:w-32 h-10 relative z-10 overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="LM Training Hand-Drawn Rubik + Chess Logo">
+      <!-- Hand-drawn Isometric Rubik's Cube (Left) -->
+      <g stroke-linecap="round" stroke-linejoin="round">
+       <!-- Subtle sketch aura -->
+       <path d="M24 5 L42 13.5 L42 33.5 L24 42 L6 33.5 L6 13.5 Z" fill="#18181f" stroke="#e4e4e7" stroke-width="1.8"/>
+       <!-- Top Face (U - Gold sketch fill) -->
+       <path d="M24 5 L42 13.5 L24 22 L6 13.5 Z" fill="rgba(212,175,55,0.24)" stroke="#dfbd69" stroke-width="1.6"/>
+       <!-- Top Face 3x3 hand-drawn grid lines -->
+       <path d="M12 10.7 L30 19.2 M18 7.8 L36 16.3" stroke="#dfbd69" stroke-width="1.05" stroke-dasharray="18 1"/>
+       <path d="M36 10.7 L18 19.2 M30 7.8 L12 16.3" stroke="#dfbd69" stroke-width="1.05"/>
+       <!-- Left Face (F - Warm Platinum sketch lines + hatching) -->
+       <path d="M6 13.5 L24 22 L24 42 L6 33.5 Z" fill="rgba(228,228,231,0.08)" stroke="#e4e4e7" stroke-width="1.5"/>
+       <path d="M12 16.3 L12 36.3 M18 19.2 L18 39.2" stroke="#a1a1aa" stroke-width="1.05"/>
+       <path d="M6 20.2 L24 28.7 M6 26.8 L24 35.3" stroke="#a1a1aa" stroke-width="1.05"/>
+       <!-- Right Face (R - Brushed Gold & Crosshatch sketch) -->
+       <path d="M24 22 L42 13.5 L42 33.5 L24 42 Z" fill="rgba(212,175,55,0.12)" stroke="#dfbd69" stroke-width="1.5"/>
+       <path d="M30 19.2 L30 39.2 M36 16.3 L36 36.3" stroke="#d4af37" stroke-width="1.05"/>
+       <path d="M24 28.7 L42 20.2 M24 35.3 L42 26.8" stroke="#d4af37" stroke-width="1.05"/>
+       <!-- Hand-drawn highlight accent -->
+       <path d="M21 8.5 L24 7 L27 8.5" stroke="#ffffff" stroke-width="1.1" opacity="0.85"/>
+      </g>
+      <!-- Hand-Drawn Artistic '+' Sign (Center) -->
+      <g stroke-linecap="round">
+       <circle cx="65" cy="24" r="9.5" fill="#09090b" stroke="#d4af37" stroke-width="1.3" stroke-dasharray="3 2"/>
+       <path d="M65 18.2 L65 29.8 M59.2 24 L70.8 24" stroke="#f4f4f5" stroke-width="2.2"/>
+       <path d="M62 21 L68 27 M68 21 L62 27" stroke="#dfbd69" stroke-width="0.75" opacity="0.6"/>
+      </g>
+      <!-- Hand-Drawn Perspective Chessboard + Sketch Knight Crown (Right) -->
+      <g stroke-linecap="round" stroke-linejoin="round">
+       <!-- Drawn Perspective Chessboard Base -->
+       <path d="M88 27 L120 27 L127 41 L81 41 Z" fill="#16161c" stroke="#dfbd69" stroke-width="1.6"/>
+       <!-- Hand-drawn perspective grid lines (4x3 checkered sketch) -->
+       <path d="M96 27 L92.5 41 M104 27 L104 41 M112 27 L115.5 41" stroke="#e4e4e7" stroke-width="1.0" opacity="0.85"/>
+       <path d="M85.8 31.3 L122.2 31.3 M83.5 36.0 L124.5 36.0" stroke="#e4e4e7" stroke-width="1.0" opacity="0.85"/>
+       <!-- Shaded squares in hand-drawn hatching style -->
+       <path d="M88 27 L96 27 L94.8 31.3 L85.8 31.3 Z" fill="rgba(212,175,55,0.38)"/>
+       <path d="M104 27 L112 27 L113.2 31.3 L104 31.3 Z" fill="rgba(212,175,55,0.38)"/>
+       <path d="M94.8 31.3 L104 31.3 L104 36.0 L93.6 36.0 Z" fill="rgba(212,175,55,0.38)"/>
+       <path d="M113.2 31.3 L122.2 31.3 L124.5 36.0 L114.3 36.0 Z" fill="rgba(212,175,55,0.38)"/>
+       <path d="M83.5 36.0 L93.6 36.0 L92.5 41 L81 41 Z" fill="rgba(212,175,55,0.38)"/>
+       <path d="M104 36.0 L114.3 36.0 L115.5 41 L104 41 Z" fill="rgba(212,175,55,0.38)"/>
+       <!-- Hand-Drawn Staunton Knight Silhouette rising from the board -->
+       <path d="M96 31.5 L112 31.5 L110.5 28.2 L97.5 28.2 Z" fill="#09090b" stroke="#f4f4f5" stroke-width="1.4"/>
+       <path d="M98.5 28.2 C98.5 21.5 101 19 103.5 16.5 L100 18 L96.5 16.2 C95.8 12.8 99 8.5 104 7.5 L105.8 4.8 L108.2 7.5 C112.2 9.2 113.5 15.5 111 28.2 Z" fill="#18181f" stroke="#dfbd69" stroke-width="1.65"/>
+       <!-- Sketch mane hatching & eye -->
+       <path d="M107.5 10.5 L109.8 12.5 M108 14.2 L110.5 16.2 M107.8 18 L110.2 20" stroke="#e4e4e7" stroke-width="1.0" opacity="0.8"/>
+       <circle cx="102.2" cy="11.8" r="1.1" fill="#dfbd69"/>
+      </g>
+     </svg>
     </div>
     <div>
      <div class="font-extrabold text-lg sm:text-2xl tracking-tight text-white flex items-center gap-2">
-      <span class="drop-shadow-[0_1px_10px_rgba(255,255,255,0.22)]">LM Training</span>
-      <span class="hidden md:inline-block text-xs font-mono-code uppercase px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-200 border border-cyan-400/40 font-bold">12D10 Arena</span>
+      <span class="drop-shadow-[0_1px_10px_rgba(255,255,255,0.18)]">LM Training</span>
+      <span id="brand-arena-badge" class="hidden md:inline-block text-xs font-mono-code uppercase px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-200 border border-cyan-400/40 font-bold">12D10 Arena</span>
      </div>
-     <p class="text-xs text-slate-300 hidden sm:block">Học Tập, Rèn Luyện & Thi Đấu Rubik 3D • Cờ Vua</p>
+     <p id="brand-subtitle-text" class="text-xs text-slate-300 hidden sm:block">Học Tập, Rèn Luyện &amp; Thi Đấu Rubik 3D • Cờ Vua</p>
     </div>
    </button>
    <!-- Main Navigation Tabs -->
@@ -514,12 +646,18 @@
     <div class="glass-card rounded-2xl p-7 border-t-4 border-t-cyan-400 flex flex-col justify-between hover:-translate-y-1 transition-transform">
      <div class="space-y-3.5">
       <div class="flex items-center justify-between">
-       <span class="px-3.5 py-1 rounded-full bg-cyan-500/15 text-cyan-300 text-sm font-bold">RUBIK STUDIO 3D</span>
-       <span class="text-3xl">🧊</span>
+       <span id="home-card-rubik-badge" class="px-3.5 py-1 rounded-full bg-cyan-500/15 text-cyan-300 text-sm font-bold">RUBIK STUDIO 3D</span>
+       <svg viewBox="0 0 44 44" class="w-10 h-10 text-[#dfbd69]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 4 L38 12 L38 32 L22 40 L6 32 L6 12 Z" fill="rgba(212,175,55,0.1)"/>
+        <path d="M22 4 L38 12 L22 20 L6 12 Z" fill="rgba(212,175,55,0.22)"/>
+        <path d="M22 20 L22 40 M11.5 9.2 L27.5 17.2 M16.8 6.6 L32.8 14.6 M32.5 9.2 L16.5 17.2 M27.2 6.6 L11.2 14.6"/>
+        <path d="M11.5 14.8 L11.5 34.8 M16.8 17.4 L16.8 37.4 M27.2 17.4 L27.2 37.4 M32.5 14.8 L32.5 34.8"/>
+        <path d="M6 18.6 L22 26.6 L38 18.6 M6 25.4 L22 33.4 L38 25.4"/>
+       </svg>
       </div>
-      <h2 class="text-2xl font-extrabold text-white">Mô Hình 3D Toàn Màn Hình, AI Solver & Full CFOP</h2>
-      <p class="text-base text-slate-200 leading-relaxed">
-       Xoay khối Rubik 3D chuẩn CFOP với <strong>mặt Vàng ở trên (U), mặt Trắng ở dưới (D)</strong>, hỗ trợ <strong>phím tắt bàn phím (R, R + ', U, M, y...)</strong>, <strong>AI tìm lời giải ít bước xoay nhất</strong> và trọn bộ <strong>123 công thức Full CFOP</strong> kèm sơ đồ minh họa.
+      <h2 id="home-card-rubik-title" class="text-2xl font-extrabold text-white">Mô Hình 3D Toàn Màn Hình, Thanh Trượt Tốc Độ &amp; 144 Công Thức CFOP</h2>
+      <p id="home-card-rubik-desc" class="text-base text-slate-200 leading-relaxed">
+       Xoay khối Rubik 3D chuẩn CFOP với <strong>mặt Vàng ở trên (U), mặt Trắng ở dưới (D)</strong>, hỗ trợ <strong>phím tắt bàn phím (R, R + ', U, M, y...)</strong>, <strong>thanh trượt tùy chỉnh tốc độ xoay mượt mà</strong> và trọn bộ <strong>144 công thức Full CFOP</strong> kèm tính năng tự động cuộn lên mô hình 3D trên điện thoại.
       </p>
      </div>
      <button data-goto="rubik" class="mt-6 w-full py-3 rounded-xl bg-cyan-500/15 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 font-extrabold text-base border border-cyan-500/30 transition">
@@ -530,12 +668,18 @@
     <div class="glass-card rounded-2xl p-7 border-t-4 border-t-emerald-400 flex flex-col justify-between hover:-translate-y-1 transition-transform">
      <div class="space-y-3.5">
       <div class="flex items-center justify-between">
-       <span class="px-3.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-sm font-bold">CHESS ARENA</span>
-       <span class="text-3xl">♟️</span>
+       <span id="home-card-chess-badge" class="px-3.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-sm font-bold">CHESS ARENA</span>
+       <svg viewBox="0 0 44 44" class="w-10 h-10 text-[#dfbd69]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 31 L36 31 L40 40 L4 40 Z" fill="rgba(212,175,55,0.12)"/>
+        <path d="M16 31 L14 40 M22 31 L22 40 M28 31 L30 40 M6 35.5 L38 35.5"/>
+        <path d="M13 31 L31 31 L29 27 L15 27 Z" fill="#18181f"/>
+        <path d="M16 27 C16 19 19 16 22 13 L18 15 L14 13 C13 9 17 5 22 4 L24 2 L26 4 C31 6 32 13 30 27 Z" fill="rgba(212,175,55,0.2)"/>
+        <circle cx="20" cy="8.5" r="1.2" fill="currentColor"/>
+       </svg>
       </div>
-      <h2 class="text-2xl font-extrabold text-white">Cờ Vua Quốc Tế, Kho Thế Cờ Ngẫu Nhiên & Gambit</h2>
-      <p class="text-base text-slate-200 leading-relaxed">
-       Trang bị đầy đủ tính năng thi đấu chuyên nghiệp: <strong>Đồng hồ đếm ngược tự động</strong>, <strong>chọn quân Phong Cấp Tốt</strong>, thanh đánh giá thế trận (Eval Bar), đấu Bot AI 7 mức Elo, <strong>Kho Thế Cờ Ngẫu Nhiên 42+ bài</strong> và cẩm nang <strong>Gambit</strong>.
+      <h2 id="home-card-chess-title" class="text-2xl font-extrabold text-white">Cờ Vua Quốc Tế, Phân Tích Nước Đi AI (!!, !, ?, ??) &amp; Gambit</h2>
+      <p id="home-card-chess-desc" class="text-base text-slate-200 leading-relaxed">
+       Trang bị đầy đủ tính năng thi đấu chuyên nghiệp: <strong>Chấm điểm từng nước đi kiểu Chess.com (!!, !, ★, ?!, ?, ??) ngay trên bàn cờ &amp; biên bản SAN</strong>, <strong>AI chỉ ra Nước Đi Xuất Sắc Nhất</strong>, đấu Bot AI 7 mức Elo, Ghép Đấu Online (±100 Elo) và <strong>42+ Thế Cờ Ngẫu Nhiên</strong>.
       </p>
      </div>
      <button data-goto="chess" class="mt-6 w-full py-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 font-extrabold text-base border border-emerald-500/30 transition">
@@ -602,8 +746,8 @@
    <!-- Rubik Header & Sub-navigation -->
    <div class="glass-card rounded-2xl p-5 sm:p-6 border-l-4 border-l-cyan-400 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
     <div>
-     <span class="text-xs sm:text-sm font-mono-code uppercase text-cyan-400 font-bold">Chuyên Đề 01 • Speedcubing & Full CFOP</span>
-     <h2 class="text-xl sm:text-3xl font-extrabold text-white mt-1">Rubik Studio 3D • AI Giải Tối Ưu & WCA Timer</h2>
+     <span id="rubik-header-kicker" class="text-xs sm:text-sm font-mono-code uppercase text-cyan-400 font-bold">Chuyên Đề 01 • Speedcubing &amp; Full CFOP</span>
+     <h2 id="rubik-header-title" class="text-xl sm:text-3xl font-extrabold text-white mt-1">Rubik Studio 3D • 144 Công Thức CFOP &amp; WCA Timer</h2>
     </div>
     <div class="flex flex-wrap items-center gap-2 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800">
      <button data-rubik-tab="sim" class="rubik-subtab px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold bg-cyan-500 text-slate-950 transition">
@@ -612,9 +756,7 @@
      <button data-rubik-tab="timer" class="rubik-subtab px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-200 hover:text-white transition">
       ⏱️ Đồng Hồ WCA Timer Riêng
      </button>
-     <button data-rubik-tab="camera" id="rubik-ai-solver-subtab-btn" class="rubik-subtab px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-200 hover:text-white transition">
-      🤖 Giải Rubik AI (Chụp 6 Mặt &amp; Bảng CFOP)
-     </button>
+
      <button id="rubik-expand-open-btn" type="button" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-extrabold bg-amber-500/20 border border-amber-400/50 text-amber-300 hover:bg-amber-500 hover:text-slate-950 transition flex items-center gap-1.5">
       <span>⛶</span> <span>Mở Rộng Mô Hình 3D</span>
      </button>
@@ -633,7 +775,7 @@
        </div>
        <div class="flex flex-wrap gap-1">
         <button id="rubik-scramble-btn" class="px-2.5 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs transition shadow">🔀 Trộn</button>
-        <button id="rubik-solve-btn" class="px-2.5 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500 hover:text-slate-950 font-extrabold text-xs transition">🤖 Giải AI Ít Bước</button>
+
         <button id="rubik-reset-btn" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition">↺ Reset</button>
         <button id="rubik-expand-inline-btn" type="button" title="Mở rộng mô hình Rubik toàn màn hình" class="px-2.5 py-1.5 rounded-xl bg-amber-500/20 border border-amber-400/50 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-extrabold text-xs transition">⛶ Phóng To</button>
        </div>
@@ -741,14 +883,14 @@
         </div>
        </div>
       </div>
-      <!-- Auto-Solve & Step-by-Step Solution Formula Banner -->
+      <!-- Step-by-Step CFOP Formula Practice Banner -->
       <div id="rubik-solve-formula-box" class="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 space-y-2">
        <div class="flex flex-wrap items-center justify-between gap-2">
-        <span class="text-xs font-extrabold text-emerald-300">🤖 AI Giải Ít Bước Nhất & Từng Bước:</span>
+        <span id="rubik-step-trainer-label" class="text-xs font-extrabold text-emerald-300">📚 Chuỗi Công Thức CFOP &amp; Luyện Tập Từng Bước:</span>
         <span id="rubik-solve-step-progress" class="text-[11px] font-mono-code font-bold text-cyan-300 bg-slate-950/80 px-2 py-0.5 rounded-md border border-slate-800">Sẵn sàng</span>
        </div>
        <div id="rubik-solve-formula-text" class="font-mono-code text-xs text-white break-words leading-relaxed min-h-[2rem]">
-        Bấm <strong>"🤖 Giải AI Ít Bước"</strong> để AI phân tích trạng thái 3D và giải trong số bước ngắn nhất (dù đã xoay hàng ngàn vòng)!
+        Chọn một công thức trong bảng <strong>144 Công Thức CFOP</strong> bên phải và bấm <strong>"🧊 Nạp Thế Lên Mô Hình 3D"</strong> để luyện từng bước xoay!
        </div>
        <div class="grid grid-cols-3 gap-2 pt-1 border-t border-emerald-500/20">
         <button id="rubik-step-prev-btn" type="button" class="py-1.5 px-2 rounded-lg bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-amber-300 border border-amber-500/40 font-extrabold text-xs transition flex items-center justify-center gap-1">
@@ -769,13 +911,19 @@
         <span id="rubik-scramble-display" class="font-mono-code text-[11px] text-cyan-300 font-bold break-words">R U R' U' F' U F U2 R U' R'</span>
         <button id="new-scramble-text-btn" class="text-[11px] text-cyan-300 hover:text-white underline font-semibold shrink-0">Đổi mã trộn</button>
        </div>
-       <div class="flex flex-wrap items-center justify-between gap-1.5 pt-1 border-t border-slate-800/80">
-        <span class="text-[11px] font-bold text-slate-300">⚡ Tốc độ xoay:</span>
-        <div class="flex flex-wrap gap-1">
-         <button type="button" data-cube-speed="240" class="cube-speed-btn px-2 py-0.5 rounded-lg text-[11px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">0.5x</button>
-         <button type="button" data-cube-speed="110" class="cube-speed-btn px-2 py-0.5 rounded-lg text-[11px] font-bold bg-cyan-500 text-slate-950 shadow transition">1x</button>
-         <button type="button" data-cube-speed="65" class="cube-speed-btn px-2 py-0.5 rounded-lg text-[11px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">2x</button>
-         <button type="button" data-cube-speed="35" class="cube-speed-btn px-2 py-0.5 rounded-lg text-[11px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">4x</button>
+       <div class="flex flex-col gap-1.5 pt-1.5 border-t border-slate-800/80">
+        <div class="flex items-center justify-between gap-2">
+         <label for="rubik-speed-slider" id="rubik-speed-title-label" class="text-[11px] font-bold text-slate-200 flex items-center gap-1">
+          <span>⚡ Tốc độ xoay Rubik:</span>
+         </label>
+         <span id="rubik-speed-val-badge" class="px-2 py-0.5 rounded-md bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 font-mono-code text-[11px] font-extrabold">
+          1.0x (Chuẩn)
+         </span>
+        </div>
+        <div class="flex items-center gap-2">
+         <span class="text-[10px] font-mono-code text-slate-400">0.5x</span>
+         <input id="rubik-speed-slider" type="range" min="0.5" max="4.0" step="0.1" value="1.0" class="rubik-speed-range flex-1 w-full" />
+         <span class="text-[10px] font-mono-code text-slate-400">4.0x</span>
         </div>
        </div>
       </div>
@@ -882,212 +1030,7 @@
      </div>
     </div>
    </div>
-   <!-- RUBIK SUB-VIEW C: AI RUBIK SOLVER (6-FACE PHOTO CAPTURE & STEP-BY-STEP CFOP TABLE BREAKDOWN) -->
-   <div id="rubik-panel-camera" class="hidden grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-    <!-- Top Executive Header Banner -->
-    <div class="lg:col-span-12 glass-card rounded-2xl p-5 sm:p-6 border border-cyan-500/35 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-     <div class="space-y-1.5">
-      <div class="flex flex-wrap items-center gap-2">
-       <span id="ai-solver-badge-1" class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 font-mono-code text-xs font-extrabold">AI FULL CFOP SOLVER</span>
-       <span id="ai-solver-badge-2" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-mono-code text-xs font-extrabold">CHỤP 6 MẶT RUBIK (U•R•F•D•L•B)</span>
-       <span id="ai-solver-badge-3" class="px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 font-mono-code text-xs font-extrabold">TRA CỨU BẢNG 144 CÔNG THỨC CFOP</span>
-      </div>
-      <h3 id="ai-solver-main-title" class="text-lg sm:text-2xl font-extrabold text-white">🤖 Giải Rubik Tích Hợp AI — Chụp 6 Mặt &amp; Phân Tích Từng Bước Theo Bảng Công Thức CFOP</h3>
-      <p id="ai-solver-main-desc" class="text-xs sm:text-sm text-slate-300 max-w-4xl">
-       Chụp trực tiếp 6 mặt Rubik (hoặc tải ảnh / chọn màu trên lưới 54 ô), AI sẽ tự động tổng hợp toàn bộ khối Rubik 3D và <strong>lập lộ trình giải từng bước (Cross → F2L Khe 1–4 → OLL → PLL)</strong>, chỉ rõ <strong>bước này dùng công thức F2L nào, bước tiếp dùng công thức OLL hay PLL nào</strong> trong bảng 144 công thức sẵn có.
-      </p>
-     </div>
-     <div class="flex flex-wrap items-center gap-2 shrink-0">
-      <span id="scan-6faces-progress-badge" class="px-3.5 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono-code text-xs font-extrabold">6/6 mặt đã sẵn sàng</span>
-      <span id="cam-status-pill" class="px-3.5 py-2 rounded-xl bg-slate-800 text-slate-200 text-xs font-extrabold border border-slate-700">Chế độ Chụp &amp; Phân Tích AI</span>
-     </div>
-    </div>
-
-    <!-- LEFT 5 COLS: 6-FACE PHOTO CAPTURE, STICKER CALIBRATION & 3D INTERACTIVE PREVIEW -->
-    <div class="lg:col-span-5 glass-card rounded-2xl p-4 sm:p-6 space-y-4 border border-cyan-500/30">
-     <div class="flex flex-wrap items-center justify-between gap-2">
-      <div>
-       <h4 id="ai-capture-step-title" class="text-base sm:text-lg font-extrabold text-white">📸 Bước 1: Chụp 6 Mặt Rubik Hoặc Chỉnh 54 Ô Màu</h4>
-       <p id="ai-capture-step-sub" class="text-xs text-slate-300">Chụp lần lượt 6 mặt (U, R, F, D, L, B) bằng Camera, tải ảnh mặt Rubik hoặc chạm ô màu để chỉnh trực tiếp</p>
-      </div>
-      <select id="cv-camera-facing-select" class="px-2.5 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white font-bold focus:outline-none">
-       <option value="environment">📷 Camera Sau</option>
-       <option value="user">🤳 Camera Trước</option>
-      </select>
-     </div>
-
-     <!-- 6-Face Selector Bar (U, R, F, D, L, B) -->
-     <div class="p-3 rounded-2xl bg-slate-900/95 border border-slate-800 space-y-2">
-      <div class="flex items-center justify-between text-xs">
-       <span id="select-face-prompt" class="font-bold text-slate-200">Chọn mặt Rubik cần chụp / chỉnh màu:</span>
-       <span id="active-calib-face-label" class="font-mono-code font-extrabold text-cyan-300">U (Mặt Trên - Vàng)</span>
-      </div>
-      <div class="grid grid-cols-6 gap-1.5" id="scan-face-selector-bar">
-       <button type="button" data-scan-face="U" style="background:#facc15;color:#09090b" class="scan-face-tab py-2 rounded-xl font-mono-code font-extrabold text-xs shadow ring-2 ring-white transition">U • Vàng</button>
-       <button type="button" data-scan-face="R" style="background:#ef4444;color:#ffffff" class="scan-face-tab py-2 rounded-xl font-mono-code font-bold text-xs opacity-90 hover:opacity-100 transition">R • Đỏ</button>
-       <button type="button" data-scan-face="F" style="background:#22c55e;color:#09090b" class="scan-face-tab py-2 rounded-xl font-mono-code font-bold text-xs opacity-90 hover:opacity-100 transition">F • Lá</button>
-       <button type="button" data-scan-face="D" style="background:#ffffff;color:#09090b" class="scan-face-tab py-2 rounded-xl font-mono-code font-bold text-xs opacity-90 hover:opacity-100 transition">D • Trắng</button>
-       <button type="button" data-scan-face="L" style="background:#f97316;color:#09090b" class="scan-face-tab py-2 rounded-xl font-mono-code font-bold text-xs opacity-90 hover:opacity-100 transition">L • Cam</button>
-       <button type="button" data-scan-face="B" style="background:#3b82f6;color:#ffffff" class="scan-face-tab py-2 rounded-xl font-mono-code font-bold text-xs opacity-90 hover:opacity-100 transition">B • Dương</button>
-      </div>
-     </div>
-
-     <!-- Camera Capture Frame + 3x3 Sticker Editor Side by Side -->
-     <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-stretch">
-      <!-- Live Camera / Photo Frame -->
-      <div class="sm:col-span-7 relative min-h-[210px] rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden flex flex-col items-center justify-center p-2">
-       <video id="rubik-camera-video" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover hidden z-10"></video>
-       <canvas id="rubik-camera-canvas" width="320" height="240" class="hidden"></canvas>
-       <canvas id="rubik-cv-overlay-canvas" width="320" height="240" class="hidden"></canvas>
-       <!-- 3x3 Capture Overlay Guide -->
-       <div id="cv-roi-grid-box" class="relative z-20 w-36 h-36 grid grid-cols-3 grid-rows-3 gap-1 p-1.5 border-2 border-cyan-400/80 rounded-xl pointer-events-none">
-        <div class="border border-white/30 rounded"><span data-roi-cell="0" class="sr-only">U</span></div>
-        <div class="border border-white/30 rounded"><span data-roi-cell="1" class="sr-only">U</span></div>
-        <div class="border border-white/30 rounded"><span data-roi-cell="2" class="sr-only">U</span></div>
-        <div class="border border-white/30 rounded"><span data-roi-cell="3" class="sr-only">U</span></div>
-        <div class="border border-cyan-300/80 rounded flex items-center justify-center"><span data-roi-cell="4" class="text-[9px] font-mono-code font-bold px-1 rounded bg-slate-950/80 text-white">TÂM U</span></div>
-        <div class="border border-white/30 rounded"><span data-roi-cell="5" class="sr-only">U</span></div>
-        <div class="border border-white/30 rounded"><span data-roi-cell="6" class="sr-only">U</span></div>
-        <div class="border border-white/30 rounded"><span data-roi-cell="7" class="sr-only">U</span></div>
-        <div class="border border-white/30 rounded"><span data-roi-cell="8" class="sr-only">U</span></div>
-       </div>
-       <div id="cam-placeholder" class="relative z-20 mt-2 text-[11px] text-slate-300 text-center px-2">
-        Bấm <strong>"🎥 Bật Camera"</strong> hoặc <strong>"📸 Chụp Mặt Này"</strong> để lưu ảnh mặt Rubik
-       </div>
-      </div>
-
-      <!-- Active Face 3x3 Calibration Grid & Color Picker -->
-      <div class="sm:col-span-5 rounded-2xl bg-slate-900/95 border border-slate-800 p-3 flex flex-col justify-between items-center space-y-2">
-       <div class="text-[11px] font-bold text-slate-300 text-center" id="calib-grid-caption">Lưới 9 ô mặt đang chọn (Chạm để đổi màu):</div>
-       <div id="scanner-face-grid" class="grid grid-cols-3 gap-1.5 p-2 rounded-2xl bg-slate-950 border border-slate-800 w-32 h-32"></div>
-       <div id="scanner-color-palette" class="flex items-center justify-center gap-1.5 pt-1">
-        <button type="button" data-pick-color="#facc15" data-pick-face="U" title="Vàng (U)" style="background:#facc15" class="w-6 h-6 rounded-full ring-2 ring-white scale-110"></button>
-        <button type="button" data-pick-color="#ef4444" data-pick-face="R" title="Đỏ (R)" style="background:#ef4444" class="w-6 h-6 rounded-full opacity-85"></button>
-        <button type="button" data-pick-color="#22c55e" data-pick-face="F" title="Xanh lá (F)" style="background:#22c55e" class="w-6 h-6 rounded-full opacity-85"></button>
-        <button type="button" data-pick-color="#ffffff" data-pick-face="D" title="Trắng (D)" style="background:#ffffff" class="w-6 h-6 rounded-full opacity-85"></button>
-        <button type="button" data-pick-color="#f97316" data-pick-face="L" title="Cam (L)" style="background:#f97316" class="w-6 h-6 rounded-full opacity-85"></button>
-        <button type="button" data-pick-color="#3b82f6" data-pick-face="B" title="Xanh dương (B)" style="background:#3b82f6" class="w-6 h-6 rounded-full opacity-85"></button>
-       </div>
-      </div>
-     </div>
-
-     <!-- Camera & Photo Capture Buttons -->
-     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-      <button id="start-camera-btn" type="button" class="py-2.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs transition border border-slate-700">
-       🎥 Bật Camera
-      </button>
-      <button id="capture-face-btn" type="button" class="py-2.5 px-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs transition shadow">
-       📸 Chụp Mặt Này
-      </button>
-      <button id="upload-face-photo-btn" type="button" class="py-2.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs transition border border-slate-700">
-       📁 Tải Ảnh Mặt
-      </button>
-      <button id="stop-camera-btn" type="button" class="py-2.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition border border-slate-700">
-       ✕ Tắt Camera
-      </button>
-      <input id="upload-face-file-input" type="file" accept="image/*" class="hidden" />
-     </div>
-
-     <!-- 6-Face Captured Thumbnails Strip + 54-Sticker Unfolded Net -->
-     <div class="p-3 rounded-2xl bg-slate-900/95 border border-slate-800 space-y-2.5">
-      <div class="flex items-center justify-between text-xs">
-       <span id="captured-gallery-title" class="font-bold text-slate-200">🖼️ Ảnh Chụp &amp; Bản Đồ 6 Mặt Rubik (54 Ô):</span>
-       <button id="capture-all-6-from-3d-btn" type="button" class="text-[11px] font-bold text-cyan-300 hover:underline">📸 Chụp tự động cả 6 mặt</button>
-      </div>
-      <div id="captured-faces-gallery" class="grid grid-cols-6 gap-1.5"></div>
-      <div class="pt-2 border-t border-slate-800 flex items-center justify-between gap-2">
-       <div class="text-[11px] text-slate-400" id="unfolded-net-label">Sơ đồ trải phẳng 6 mặt:</div>
-       <div id="scanner-unfolded-net" class="flex items-center justify-center"></div>
-      </div>
-     </div>
-
-     <!-- 3D Interactive Rubik Preview & Playback Controls -->
-     <div class="p-3.5 rounded-2xl bg-slate-900/95 border border-slate-800 space-y-3">
-      <div class="flex flex-wrap items-center justify-between gap-2">
-       <span id="twin-preview-title" class="text-xs sm:text-sm font-extrabold text-white">🧊 Mô Hình 3D Đồng Bộ Trạng Thái Giải:</span>
-       <div class="flex items-center gap-1.5">
-        <button id="twin-reset-view-btn" type="button" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 transition">🎯 Góc Chuẩn</button>
-        <button id="twin-scramble-btn" type="button" class="px-2.5 py-1 rounded-lg bg-cyan-500 text-slate-950 font-extrabold text-xs transition shadow">🔀 Trộn Ngẫu Nhiên</button>
-        <button id="twin-reset-solved-btn" type="button" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 transition">↺ Reset</button>
-       </div>
-      </div>
-      <div id="scanner-digital-twin-wrap" class="cube-canvas-touch w-full h-52 sm:h-56 rounded-xl bg-slate-950 border border-slate-800 relative flex items-center justify-center cursor-grab active:cursor-grabbing"></div>
-      <div class="grid grid-cols-3 gap-2">
-       <button id="twin-step-prev-btn" type="button" class="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-extrabold text-xs transition">
-        ⏮ Lùi Bước
-       </button>
-       <button id="twin-step-play-btn" type="button" class="py-2 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs transition shadow">
-        ▶ <span id="twin-step-play-label">Giải Tự Động 3D</span>
-       </button>
-       <button id="twin-step-next-btn" type="button" class="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 font-extrabold text-xs transition">
-        Bước Tiếp ⏭
-       </button>
-      </div>
-     </div>
-    </div>
-
-    <!-- RIGHT 7 COLS: AI STEP-BY-STEP FULL CFOP SOLUTION BREAKDOWN (CROSS -> F2L -> OLL -> PLL) -->
-    <div class="lg:col-span-7 glass-card rounded-2xl p-4 sm:p-6 space-y-5 border border-emerald-500/30">
-     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
-      <div>
-       <div class="flex items-center gap-2">
-        <span id="kociemba-valid-badge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-mono-code text-[11px] font-extrabold">
-         ✓ Đã đồng bộ 6 mặt (54/54 ô)
-        </span>
-        <span id="scan-res-title" class="text-xs font-mono-code uppercase text-cyan-300 font-bold">CFOP AI ANALYZER</span>
-       </div>
-       <h4 id="ai-breakdown-heading" class="text-lg sm:text-xl font-extrabold text-white mt-1">📋 Bước 2: Phân Tích Lộ Trình Giải Full Cục Bằng Bảng Công Thức CFOP</h4>
-       <p id="scan-res-desc" class="text-xs text-slate-300 mt-0.5">
-        Chỉ rõ từng giai đoạn: <strong>Cross</strong> dùng công thức nào, từng khe <strong>F2L</strong> dùng công thức F2L số mấy, <strong>OLL</strong> dùng công thức OLL nào và <strong>PLL</strong> dùng công thức PLL nào trong bảng 144 công thức.
-       </p>
-      </div>
-      <button id="scan-res-try3d-btn" type="button" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-slate-200 border border-slate-700 text-xs font-extrabold transition shrink-0">
-       🧊 Đưa Sang Phòng 3D Chính →
-      </button>
-     </div>
-
-     <!-- Preset Scenario & Analyze Trigger Bar -->
-     <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end p-3.5 rounded-2xl bg-slate-900/95 border border-slate-800">
-      <div class="sm:col-span-7">
-       <label id="preset-select-label" class="text-[11px] font-bold text-slate-300 block mb-1.5">Chọn trạng thái Rubik đã chụp hoặc mẫu tổ hợp Full CFOP:</label>
-       <select id="scanner-preset-select" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none">
-        <option value="full_cfop_1">🔥 Giải Full Cục #1: Cross #01 + F2L #01 &amp; #17 + OLL #27 (Sune) + PLL #16 (T-Perm)</option>
-        <option value="full_cfop_2">⚡ Giải Full Cục #2: X-Cross #01 + F2L #04 &amp; #25 + OLL #45 (Line) + PLL #17 (Ua-Perm)</option>
-        <option value="full_cfop_3">💎 Giải Full Cục #3: Cross #02 + F2L #09 &amp; #32 + OLL #21 (H-Case) + PLL #09 (H-Perm)</option>
-        <option value="full_cfop_4">👑 Giải Full Cục #4: Cross #04 + F2L #13 &amp; #18 + OLL #26 (Anti-Sune) + PLL #11 (Jb-Perm)</option>
-        <option value="sune">🎯 Tình huống OLL #27 (Sune) + PLL #16 (T-Perm)</option>
-        <option value="antisune">🎯 Tình huống OLL #26 (Anti-Sune) + PLL #18 (Ub-Perm)</option>
-        <option value="f2l_split">🎯 Tình huống F2L #17 + OLL #45 + PLL #20 (Y-Perm)</option>
-       </select>
-      </div>
-      <div class="sm:col-span-5">
-       <button id="analyze-scanned-cube-btn" type="button" class="w-full py-2.5 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg transition">
-        ✨ Phân Tích &amp; Lập Bảng Giải CFOP
-       </button>
-      </div>
-     </div>
-
-     <!-- Full Move Sequence Summary Box -->
-     <div id="scanner-solution-box" class="p-3.5 rounded-2xl bg-slate-900/95 border border-slate-800 space-y-2">
-      <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
-       <span id="full-solution-label" class="font-bold text-slate-300">Chuỗi công thức tổng hợp giải hoàn chỉnh (Full Solution):</span>
-       <span id="twin-solve-step-counter" class="font-mono-code font-bold text-cyan-300">Sẵn sàng</span>
-      </div>
-      <div id="scan-res-alg" class="font-mono-code text-xs sm:text-sm font-extrabold text-cyan-300 break-words leading-relaxed bg-slate-950 p-2.5 rounded-xl border border-slate-800"></div>
-      <div id="twin-solve-tokens-view" class="flex flex-wrap gap-1 pt-1"></div>
-     </div>
-
-     <!-- Step-by-Step CFOP Formula Breakdown List (Cross -> F2L -> OLL -> PLL) -->
-     <div class="space-y-3">
-      <div class="flex items-center justify-between">
-       <h5 id="cfop-steps-list-title" class="text-sm sm:text-base font-extrabold text-white">🧭 Chi Tiết Từng Bước Giải &amp; Công Thức Áp Dụng Từ Bảng CFOP:</h5>
-       <span id="cfop-steps-count-badge" class="text-xs font-mono-code text-slate-300">5 Giai đoạn CFOP</span>
-      </div>
-      <div id="ai-cfop-steps-breakdown" class="space-y-3 max-h-[620px] overflow-y-auto pr-1"></div>
-     </div>
-    </div>
-   </div>
-  </section>
+     </section>
   <!-- ==================== VIEW 3: CHESS ARENA (CỜ VUA QUỐC TẾ) ==================== -->
   <section id="view-chess" class="hidden space-y-8 view-animate">
    <!-- Chess Header -->
@@ -1432,7 +1375,7 @@
     </div>
     <div class="flex flex-wrap items-center gap-2">
      <button id="exp-rubik-scramble-btn" type="button" class="px-3.5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs sm:text-sm transition shadow">🔀 Trộn (Scramble)</button>
-     <button id="exp-rubik-solve-btn" type="button" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs sm:text-sm transition shadow">🤖 Giải AI Ít Bước Nhất</button>
+
      <button id="exp-rubik-reset-btn" type="button" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs sm:text-sm border border-slate-700 transition">↺ Reset</button>
      <button id="exp-rubik-reset-view-btn" type="button" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs sm:text-sm transition shadow">🎯 Góc Nhìn Chuẩn</button>
      <button id="rubik-expand-close-btn" type="button" class="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg transition flex items-center gap-1.5">
@@ -1457,7 +1400,7 @@
      <!-- Step-by-Step Solution Bar inside Expanded Modal -->
      <div class="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/40 space-y-2">
       <div class="flex items-center justify-between gap-2">
-       <span class="text-xs font-extrabold text-emerald-300">🤖 Chuỗi Bước Giải AI / Công Thức:</span>
+       <span id="exp-rubik-step-trainer-label" class="text-xs font-extrabold text-emerald-300">📚 Chuỗi Công Thức CFOP Đang Luyện:</span>
        <span id="exp-rubik-solve-step-progress" class="text-xs font-mono-code font-bold text-cyan-300 bg-slate-950 px-2.5 py-0.5 rounded-md border border-slate-800">Sẵn sàng</span>
       </div>
       <div id="exp-rubik-solve-formula-text" class="font-mono-code text-xs text-white break-words leading-relaxed min-h-[2rem]">
@@ -1571,14 +1514,16 @@
        </div>
       </div>
      </div>
-     <!-- Speed Controls in Expanded View -->
-     <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-wrap items-center justify-between gap-2">
-      <span class="text-xs font-bold text-slate-200">⚡ Tốc độ xoay:</span>
-      <div class="flex flex-wrap gap-1.5">
-       <button type="button" data-cube-speed="340" class="cube-speed-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition">0.5x</button>
-       <button type="button" data-cube-speed="165" class="cube-speed-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-cyan-500 text-slate-950 shadow transition">1x</button>
-       <button type="button" data-cube-speed="85" class="cube-speed-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition">2x</button>
-       <button type="button" data-cube-speed="40" class="cube-speed-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition">4x</button>
+     <!-- Speed Slider in Expanded View -->
+     <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
+      <div class="flex items-center justify-between gap-2">
+       <label for="exp-rubik-speed-slider" id="exp-rubik-speed-title-label" class="text-xs font-bold text-slate-200">⚡ Tốc độ xoay Rubik:</label>
+       <span id="exp-rubik-speed-val-badge" class="px-2.5 py-0.5 rounded-md bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 font-mono-code text-xs font-extrabold">1.0x (Chuẩn)</span>
+      </div>
+      <div class="flex items-center gap-2.5">
+       <span class="text-xs font-mono-code text-slate-400">0.5x</span>
+       <input id="exp-rubik-speed-slider" type="range" min="0.5" max="4.0" step="0.1" value="1.0" class="rubik-speed-range flex-1 w-full" />
+       <span class="text-xs font-mono-code text-slate-400">4.0x</span>
       </div>
      </div>
     </div>
@@ -2539,7 +2484,8 @@
    }
    const allRealPlayers = Array.from(mergedMap.values());
    const pill = document.getElementById('leaderboard-count-pill');
-   if (pill) pill.textContent = `${allRealPlayers.length} Người Chơi Thật`;
+   const isEnLb = window.AppI18n?.lang === 'en';
+   if (pill) pill.textContent = isEnLb ? `${allRealPlayers.length} Verified Players` : `${allRealPlayers.length} Người Chơi Thật`;
    const compareRegistrationOrder = (a, b) => {
     const tA = typeof a.createdAt === 'number' ? a.createdAt : Number.MAX_SAFE_INTEGER;
     const tB = typeof b.createdAt === 'number' ? b.createdAt : Number.MAX_SAFE_INTEGER;
@@ -2563,8 +2509,8 @@
      rubikEl.innerHTML = `
       <div class="p-6 rounded-2xl bg-slate-950/80 border border-slate-800 text-center space-y-2">
        <div class="text-2xl">🧊</div>
-       <div class="text-sm font-bold text-slate-200">Chưa có người chơi nào trên BXH Rubik</div>
-       <p class="text-xs text-slate-400">Hãy Đăng ký & Đăng nhập tài khoản rồi hoàn thành 1 lượt bấm giờ WCA Timer để ghi danh đầu tiên!</p>
+       <div class="text-sm font-bold text-slate-200">${isEnLb ? 'No Rubik Solves Ranked Yet' : 'Chưa có người chơi nào trên BXH Rubik'}</div>
+       <p class="text-xs text-slate-400">${isEnLb ? 'Register & Sign In, then complete a WCA Timer solve to claim the #1 spot!' : 'Hãy Đăng ký & Đăng nhập tài khoản rồi hoàn thành 1 lượt bấm giờ WCA Timer để ghi danh đầu tiên!'}</p>
       </div>
      `;
     } else {
@@ -2578,13 +2524,13 @@
          <div class="min-w-0">
           <div class="text-sm font-extrabold text-white break-words flex flex-wrap items-center gap-1.5">
            <span>${p.nickname}</span>
-           ${isMe ? '<span class="px-2 py-0.5 rounded-full bg-cyan-500 text-slate-950 text-[10px] font-extrabold">BẠN</span>' : '<span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[10px] font-semibold">Người chơi</span>'}
+           ${isMe ? `<span class="px-2 py-0.5 rounded-full bg-cyan-500 text-slate-950 text-[10px] font-extrabold">${isEnLb ? 'YOU' : 'BẠN'}</span>` : `<span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[10px] font-semibold">${isEnLb ? 'Player' : 'Người chơi'}</span>`}
           </div>
-          <div class="text-[11px] text-slate-400">Đã học ${p.learnedCount || 0} / 162 công thức</div>
+          <div class="text-[11px] text-slate-400">${isEnLb ? `Learned ${p.learnedCount || 0} / 162 formulas` : `Đã học ${p.learnedCount || 0} / 162 công thức`}</div>
          </div>
         </div>
         <div class="font-mono-code font-extrabold text-sm sm:text-base shrink-0 ${p.bestRubik ? 'text-cyan-300' : 'text-slate-500'}">
-         ${p.bestRubik ? p.bestRubik.toFixed(2) + 's' : 'Chưa bấm giờ'}
+         ${p.bestRubik ? p.bestRubik.toFixed(2) + 's' : (isEnLb ? 'No time yet' : 'Chưa bấm giờ')}
         </div>
        </div>
       `;
@@ -2602,8 +2548,8 @@
      chessEl.innerHTML = `
       <div class="p-6 rounded-2xl bg-slate-950/80 border border-slate-800 text-center space-y-2">
        <div class="text-2xl">♟️</div>
-       <div class="text-sm font-bold text-slate-200">Chưa có kỳ thủ nào trên BXH Cờ Vua</div>
-       <p class="text-xs text-slate-400">Hãy Đăng ký & Đăng nhập tài khoản để xuất hiện trên bảng xếp hạng Elo!</p>
+       <div class="text-sm font-bold text-slate-200">${isEnLb ? 'No Chess Players Ranked Yet' : 'Chưa có kỳ thủ nào trên BXH Cờ Vua'}</div>
+       <p class="text-xs text-slate-400">${isEnLb ? 'Register & Sign In to appear on the official FIDE Elo Leaderboard!' : 'Hãy Đăng ký & Đăng nhập tài khoản để xuất hiện trên bảng xếp hạng Elo!'}</p>
       </div>
      `;
     } else {
@@ -2617,9 +2563,9 @@
          <div class="min-w-0">
           <div class="text-sm font-extrabold text-white break-words flex flex-wrap items-center gap-1.5">
            <span>${p.nickname}</span>
-           ${isMe ? '<span class="px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-extrabold">BẠN</span>' : '<span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[10px] font-semibold">Kỳ thủ</span>'}
+           ${isMe ? `<span class="px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-extrabold">${isEnLb ? 'YOU' : 'BẠN'}</span>` : `<span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[10px] font-semibold">${isEnLb ? 'Player' : 'Kỳ thủ'}</span>`}
           </div>
-          <div class="text-[11px] text-slate-400">Elo Ghép Trận Quốc Tế</div>
+          <div class="text-[11px] text-slate-400">${isEnLb ? 'International Matchmaking Elo' : 'Elo Ghép Trận Quốc Tế'}</div>
          </div>
         </div>
         <div class="font-mono-code font-extrabold text-sm sm:text-base text-amber-400 shrink-0">
@@ -3109,7 +3055,7 @@
        ${cells}
        <circle cx="54" cy="54" r="3.5" fill="#0f172a"/>
       </svg>
-      <span class="text-[10px] font-mono-code text-cyan-300 font-bold mt-1">Mặt Đáy Trắng (D)</span>
+      <span class="text-[10px] font-mono-code text-cyan-300 font-bold mt-1">${window.AppI18n?.lang === "en" ? "White Bottom (D)" : "Mặt Đáy Trắng (D)"}</span>
      </div>
     `;
    }
@@ -3195,7 +3141,7 @@
        ${cells}
        ${topBars}${botBars}${leftBars}${rightBars}
       </svg>
-      <span class="text-[10px] font-mono-code text-yellow-300 font-bold mt-1">Mặt Vàng OLL</span>
+      <span class="text-[10px] font-mono-code text-yellow-300 font-bold mt-1">${window.AppI18n?.lang === "en" ? "Yellow Top OLL" : "Mặt Vàng OLL"}</span>
      </div>
     `;
    }
@@ -3291,7 +3237,7 @@
       ${cells}
       ${arrowGraphics}
      </svg>
-     <span class="text-[10px] font-mono-code text-rose-300 font-bold mt-1">Đỏ: Góc • Xanh: Cạnh</span>
+     <span class="text-[10px] font-mono-code text-rose-300 font-bold mt-1">${window.AppI18n?.lang === "en" ? "Red: Corner • Blue: Edge" : "Đỏ: Góc • Xanh: Cạnh"}</span>
     </div>
    `;
   }
@@ -3402,29 +3348,34 @@
    document.getElementById('stat-rubik-best').textContent = validSolves.length
     ? Math.min(...validSolves).toFixed(2) + 's'
     : '--.--s';
+   const isEn = window.AppI18n?.lang === 'en';
    const syncBadge = document.getElementById('stat-sync-badge');
    const subtitle = document.getElementById('home-progress-subtitle');
    if (AppState.userEmail) {
     document.getElementById('nav-user-label').textContent = `👤 ${AppState.userName}`;
-    syncBadge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Đã đăng nhập (${AppState.userName})`;
+    syncBadge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> ${isEn ? 'Signed In' : 'Đã đăng nhập'} (${AppState.userName})`;
     if (subtitle) {
-     subtitle.innerHTML = `Đang đăng nhập với tài khoản <strong class="text-cyan-300">${AppState.userName}</strong> (${AppState.userEmail}) — Dữ liệu tự động lưu và xếp hạng trực tiếp.`;
+     subtitle.innerHTML = isEn
+      ? `Signed in as <strong class="text-cyan-300">${AppState.userName}</strong> (${AppState.userEmail}) — Progress &amp; live rankings sync automatically.`
+      : `Đang đăng nhập với tài khoản <strong class="text-cyan-300">${AppState.userName}</strong> (${AppState.userEmail}) — Dữ liệu tự động lưu và xếp hạng trực tiếp.`;
     }
    } else {
-    document.getElementById('nav-user-label').textContent = 'Đăng Ký / Đăng Nhập';
-    syncBadge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Chưa đăng nhập`;
+    document.getElementById('nav-user-label').textContent = isEn ? 'Register / Sign In' : 'Đăng Ký / Đăng Nhập';
+    syncBadge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> ${isEn ? 'Not Signed In' : 'Chưa đăng nhập'}`;
     if (subtitle) {
-     subtitle.innerHTML = `Hãy <strong>Đăng ký & Đăng nhập tài khoản</strong> để lưu tiến độ và ghi danh lên Bảng Xếp Hạng!`;
+     subtitle.innerHTML = isEn
+      ? `Please <strong>Register &amp; Sign In</strong> to save your learned CFOP &amp; Gambit formulas and join the Leaderboard!`
+      : `Hãy <strong>Đăng ký &amp; Đăng nhập tài khoản</strong> để lưu tiến độ và ghi danh lên Bảng Xếp Hạng!`;
     }
    }
    const badgeContainer = document.getElementById('learned-badges-list');
    const allItems = [...CFOP_DATABASE, ...CHESS_GAMBITS];
    const learnedObjs = allItems.filter(item => AppState.learnedItems.includes(item.id));
    if (!learnedObjs.length) {
-    badgeContainer.innerHTML = `<span class="text-sm sm:text-base text-slate-400 italic">Chưa có công thức nào được đánh dấu. Hãy đăng nhập Email và bấm "+ Đánh dấu đã học" ở từng bài học!</span>`;
+    badgeContainer.innerHTML = `<span class="text-sm sm:text-base text-slate-400 italic">${isEn ? 'No formulas marked as learned yet. Sign in and click "+ Mark Learned" on any lesson card!' : 'Chưa có công thức nào được đánh dấu. Hãy đăng nhập Email và bấm "+ Đánh dấu đã học" ở từng bài học!'}</span>`;
    } else {
     badgeContainer.innerHTML = learnedObjs.map(item =>
-     `<span class="px-3 py-1.5 rounded-full bg-slate-900 border border-cyan-500/40 text-xs sm:text-sm text-cyan-300 font-semibold">✓ ${item.name}</span>`
+     `<span class="px-3 py-1.5 rounded-full bg-slate-900 border border-cyan-500/40 text-xs sm:text-sm text-cyan-300 font-semibold">✓ ${isEn && window.AppI18n ? window.AppI18n.translateCfopName(item.name) : item.name}</span>`
     ).join('');
    }
   }
@@ -4556,7 +4507,8 @@
     this.finishCurrentAnimationInstantly();
     if (this.moveQueue.length > 0) return;
     if (!this.stepTokens.length) {
-     showToast('Hãy chọn 1 công thức CFOP hoặc bấm "🤖 Giải AI Ít Bước" trước khi bấm Đi Bước!', 'amber');
+     const isEn = window.AppI18n?.lang === 'en';
+     showToast(isEn ? 'Please select a CFOP formula from the table first!' : 'Hãy chọn 1 công thức trong bảng CFOP bên phải để nạp lên mô hình trước!', 'amber');
      return;
     }
     if (this.stepIndex >= this.stepTokens.length) {
@@ -4592,7 +4544,8 @@
    }
    toggleAutoPlay() {
     if (!this.stepTokens.length) {
-     showToast('Hãy chọn 1 công thức CFOP hoặc bấm "🤖 Giải AI Ít Bước" trước!', 'amber');
+     const isEn = window.AppI18n?.lang === 'en';
+     showToast(isEn ? 'Please select a CFOP formula from the table first!' : 'Hãy chọn 1 công thức trong bảng CFOP bên phải trước!', 'amber');
      return;
     }
     if (this.autoPlaying) {
@@ -4697,7 +4650,10 @@
     const expPlayLabel = document.getElementById('exp-rubik-step-play-label');
     if (playLabel) playLabel.textContent = 'Tự Chạy';
     if (expPlayLabel) expPlayLabel.textContent = 'Tự Chạy';
-    const defaultMsg = `Bấm <strong>"🤖 Giải AI Ít Bước"</strong> để AI tìm chuỗi xoay ngắn nhất giải khối Rubik (hoặc chọn công thức CFOP bên phải)!`;
+    const isEn = window.AppI18n?.lang === 'en';
+    const defaultMsg = isEn
+     ? `Select any formula in the <strong>144 CFOP Table</strong> and click <strong>"🧊 Load on 3D Model"</strong> to practice step by step!`
+     : `Chọn công thức trong <strong>Bảng 144 Công Thức CFOP</strong> bên phải và bấm <strong>"🧊 Nạp Thế Lên Mô Hình 3D"</strong> để luyện từng bước!`;
     if (formulaBox) formulaBox.innerHTML = defaultMsg;
     if (expFormulaBox) expFormulaBox.innerHTML = defaultMsg;
     if (stepProg) stepProg.textContent = 'Đã Reset';
@@ -4968,812 +4924,6 @@
       </div>
      `;
     }).join('');
-   }
-  };
-  // ============================================================================
-  // 8B. AI RUBIK FULL CFOP SOLVER (6-FACE PHOTO CAPTURE & STEP-BY-STEP CFOP TABLE MAPPER)
-  // ============================================================================
-  const RUBIK_FACE_ORDER = ['U', 'R', 'F', 'D', 'L', 'B'];
-  const RUBIK_FACE_COLORS = {
-   U: '#facc15', // Yellow (Top)
-   R: '#ef4444', // Red (Right)
-   F: '#22c55e', // Green (Front)
-   D: '#ffffff', // White (Down)
-   L: '#f97316', // Orange (Left)
-   B: '#3b82f6'  // Blue (Back)
-  };
-  const RUBIK_HEX_TO_FACE = {
-   '#facc15': 'U',
-   '#ef4444': 'R',
-   '#22c55e': 'F',
-   '#ffffff': 'D',
-   '#f97316': 'L',
-   '#3b82f6': 'B'
-  };
-  const RUBIK_FACE_NAMES_VI = {
-   U: 'U (Mặt Trên - Vàng)',
-   R: 'R (Mặt Phải - Đỏ)',
-   F: 'F (Mặt Trước - Xanh Lá)',
-   D: 'D (Mặt Đáy - Trắng)',
-   L: 'L (Mặt Trái - Cam)',
-   B: 'B (Mặt Sau - Xanh Dương)'
-  };
-  const RUBIK_FACE_NAMES_EN = {
-   U: 'U (Top Face - Yellow)',
-   R: 'R (Right Face - Red)',
-   F: 'F (Front Face - Green)',
-   D: 'D (Bottom Face - White)',
-   L: 'L (Left Face - Orange)',
-   B: 'B (Back Face - Blue)'
-  };
-
-  const RubikCameraManager = {
-   stream: null,
-   facingMode: 'environment',
-   isRunning: false,
-   async startStream(facing = this.facingMode) {
-    this.facingMode = facing || 'environment';
-    const video = document.getElementById('rubik-camera-video');
-    const placeholder = document.getElementById('cam-placeholder');
-    const pill = document.getElementById('cam-status-pill');
-    try {
-     this.stopStream(false);
-     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      throw new Error('WebRTC not supported');
-     }
-     this.stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: this.facingMode, width: { ideal: 640 }, height: { ideal: 480 } },
-      audio: false
-     });
-     if (video) {
-      video.srcObject = this.stream;
-      await video.play().catch(() => {});
-      video.classList.remove('hidden');
-     }
-     if (placeholder) placeholder.classList.add('hidden');
-     this.isRunning = true;
-     if (pill) {
-      pill.textContent = window.AppI18n?.lang === 'en' ? '📷 Camera Active' : '📷 Camera Đang Bật';
-     }
-     showToast(
-      window.AppI18n?.lang === 'en'
-       ? '📷 Camera started! Align each Rubik face in the 3×3 frame and click Capture Face.'
-       : '📷 Đã bật Camera! Đưa từng mặt Rubik vào khung 3×3 rồi bấm "📸 Chụp Mặt Này".',
-      'emerald'
-     );
-     return true;
-    } catch (err) {
-     this.isRunning = false;
-     if (pill) {
-      pill.textContent = window.AppI18n?.lang === 'en' ? '📸 Direct 3D & Photo Mode' : '📸 Chế Độ Chụp Trực Tiếp & 3D';
-     }
-     showToast(
-      window.AppI18n?.lang === 'en'
-       ? 'Camera unavailable — Click "📸 Capture This Face" or "📁 Upload Face Photo" or edit stickers directly!'
-       : 'Không tìm thấy Camera vật lý — Bạn có thể bấm "📸 Chụp Mặt Này", "📁 Tải Ảnh Mặt" hoặc chỉnh trực tiếp trên lưới 9 ô!',
-      'cyan'
-     );
-     return false;
-    }
-   },
-   stopStream(notify = true) {
-    this.isRunning = false;
-    if (this.stream) {
-     this.stream.getTracks().forEach(t => t.stop());
-     this.stream = null;
-    }
-    document.getElementById('rubik-camera-video')?.classList.add('hidden');
-    document.getElementById('cam-placeholder')?.classList.remove('hidden');
-    const pill = document.getElementById('cam-status-pill');
-    if (pill && notify) {
-     pill.textContent = window.AppI18n?.lang === 'en' ? 'Camera Off' : 'Đã tắt Camera';
-    }
-   }
-  };
-
-  const CameraScanner = {
-   activeFace: 'U',
-   activeBrush: '#facc15',
-   scannedFacesSet: new Set(['U', 'R', 'F', 'D', 'L', 'B']),
-   capturedThumbnails: {},
-   facelets: {
-    U: new Array(9).fill('#facc15'),
-    R: new Array(9).fill('#ef4444'),
-    F: new Array(9).fill('#22c55e'),
-    D: new Array(9).fill('#ffffff'),
-    L: new Array(9).fill('#f97316'),
-    B: new Array(9).fill('#3b82f6')
-   },
-   stickers: new Array(9).fill('#facc15'),
-   twinCube: null,
-   solveTokens: [],
-   solveStepIdx: 0,
-   solveAutoPlaying: false,
-   currentCfopPlan: [],
-   presets: {
-    full_cfop_1: {
-     titleVi: 'Lộ Trình Giải Full Cục #1 (Cross → F2L #01 & #17 → OLL #27 Sune → PLL #16 T-Perm)',
-     titleEn: 'Full Cube CFOP Plan #1 (Cross → F2L #01 & #17 → OLL #27 Sune → PLL #16 T-Perm)',
-     steps: [
-      { stage: 'CROSS', cfopId: 'cfop_cross_1', roleVi: 'Bước 1 (Cross Đáy Trắng): Giải Dấu Cộng Trắng chuẩn ở mặt Đáy (D)', roleEn: 'Step 1 (White Cross): Build the standard White Cross on the Bottom (D) face' },
-      { stage: 'F2L Khe 1', cfopId: 'cfop_f2l_1', roleVi: 'Bước 2 (F2L Khe #1): Dùng công thức F2L #01 chèn cặp Góc-Cạnh ghép sẵn vào khe Phải', roleEn: 'Step 2 (F2L Slot #1): Apply F2L #01 (Right Trigger) to insert the paired Corner-Edge' },
-      { stage: 'F2L Khe 2', cfopId: 'cfop_f2l_17', roleVi: 'Bước 3 (F2L Khe #2): Dùng công thức F2L #17 khi Góc Trắng ngửa lên trời + Cạnh ở UR', roleEn: 'Step 3 (F2L Slot #2): Apply F2L #17 (Split Pair) with White facing Up and Edge at UR' },
-      { stage: 'OLL', cfopId: 'cfop_oll_27', roleVi: 'Bước 4 (OLL Mặt Vàng): Dùng công thức OLL #27 (Sune - Hình Con Cá Thuận) lật full mặt Vàng', roleEn: 'Step 4 (OLL Top Layer): Apply OLL #27 (Sune) to orient all 9 Yellow stickers on U' },
-      { stage: 'PLL', cfopId: 'cfop_pll_16', roleVi: 'Bước 5 (PLL Hoàn Thiện): Dùng công thức PLL #16 (T-Perm) hoán vị 2 góc & 2 cạnh tầng cuối', roleEn: 'Step 5 (PLL Final Layer): Apply PLL #16 (T-Perm) to permute the last layer corners & edges' }
-     ]
-    },
-    full_cfop_2: {
-     titleVi: 'Lộ Trình Giải Full Cục #2 (X-Cross #01 → F2L #04 & #25 → OLL #45 → PLL #17 Ua-Perm)',
-     titleEn: 'Full Cube CFOP Plan #2 (X-Cross #01 → F2L #04 & #25 → OLL #45 → PLL #17 Ua-Perm)',
-     steps: [
-      { stage: 'X-CROSS', cfopId: 'cfop_cross_5', roleVi: 'Bước 1 (X-Cross): Dùng công thức X-Cross #01 (Keyhole) hoàn thiện Cross kèm khe F2L đầu tiên', roleEn: 'Step 1 (X-Cross): Apply X-Cross #01 (Keyhole) to solve the Cross and first F2L slot together' },
-      { stage: 'F2L Khe 2', cfopId: 'cfop_f2l_4', roleVi: 'Bước 2 (F2L Khe #2): Dùng công thức F2L #04 bắt cặp xa khi mặt Trắng nhìn sang Phải', roleEn: 'Step 2 (F2L Slot #2): Apply F2L #04 to pair and insert Corner (White Right) + Edge at UL' },
-      { stage: 'F2L Khe 3', cfopId: 'cfop_f2l_25', roleVi: 'Bước 3 (F2L Khe #3): Dùng công thức F2L #25 khi Góc đã đúng ở đáy DFR và Cạnh ở UR', roleEn: 'Step 3 (F2L Slot #3): Apply F2L #25 to insert the Edge at UR while Corner is solved in DFR' },
-      { stage: 'OLL', cfopId: 'cfop_oll_45', roleVi: 'Bước 4 (OLL Mặt Vàng): Dùng công thức OLL #45 (Chữ T / Đường Thẳng Ngang 6 nước)', roleEn: 'Step 4 (OLL Top Layer): Apply OLL #45 (6-move Line / T-Shape) to orient the Yellow face' },
-      { stage: 'PLL', cfopId: 'cfop_pll_17', roleVi: 'Bước 5 (PLL Hoàn Thiện): Dùng công thức PLL #17 (Ua-Perm) xoay 3 cạnh ngược chiều kim đồng hồ', roleEn: 'Step 5 (PLL Final Layer): Apply PLL #17 (Ua-Perm) to cycle 3 edges counter-clockwise' }
-     ]
-    },
-    full_cfop_3: {
-     titleVi: 'Lộ Trình Giải Full Cục #3 (Cross #02 → F2L #09 & #32 → OLL #21 H-Case → PLL #09 H-Perm)',
-     titleEn: 'Full Cube CFOP Plan #3 (Cross #02 → F2L #09 & #32 → OLL #21 H-Case → PLL #09 H-Perm)',
-     steps: [
-      { stage: 'CROSS', cfopId: 'cfop_cross_2', roleVi: 'Bước 1 (Cross): Dùng công thức Cross #02 lật cạnh Cross bị ngược chiều không làm hỏng đáy', roleEn: 'Step 1 (Cross): Apply Cross #02 to flip an inverted Cross edge without disturbing D' },
-      { stage: 'F2L Khe 1', cfopId: 'cfop_f2l_9', roleVi: 'Bước 2 (F2L Khe #1): Dùng công thức F2L #09 xử lý Góc và Cạnh tách xa cùng màu mặt trên', roleEn: 'Step 2 (F2L Slot #1): Apply F2L #09 for separated Corner & Edge with matching top colors' },
-      { stage: 'F2L Khe 2', cfopId: 'cfop_f2l_32', roleVi: 'Bước 3 (F2L Khe #2): Dùng công thức F2L #32 (Triple Sexy) khi Cạnh nằm trong khe và Góc ngửa Trắng', roleEn: 'Step 3 (F2L Slot #2): Apply F2L #32 (Triple Sexy) for Edge in slot and White Corner facing Up' },
-      { stage: 'OLL', cfopId: 'cfop_oll_21', roleVi: 'Bước 4 (OLL Mặt Vàng): Dùng công thức OLL #21 (Dấu Cộng Vàng - H Case 2 cặp đèn pha)', roleEn: 'Step 4 (OLL Top Layer): Apply OLL #21 (H-Case with double headlights) to orient all corners' },
-      { stage: 'PLL', cfopId: 'cfop_pll_09', roleVi: 'Bước 5 (PLL Hoàn Thiện): Dùng công thức PLL #09 (H-Perm) đổi chỗ 2 cặp cạnh đối diện chữ thập', roleEn: 'Step 5 (PLL Final Layer): Apply PLL #09 (H-Perm) to swap opposite edge pairs' }
-     ]
-    },
-    full_cfop_4: {
-     titleVi: 'Lộ Trình Giải Full Cục #4 (X-Cross #04 → F2L #13 & #18 → OLL #26 Anti-Sune → PLL #11 Jb-Perm)',
-     titleEn: 'Full Cube CFOP Plan #4 (X-Cross #04 → F2L #13 & #18 → OLL #26 Anti-Sune → PLL #11 Jb-Perm)',
-     steps: [
-      { stage: 'X-CROSS', cfopId: 'cfop_cross_4', roleVi: 'Bước 1 (X-Cross): Dùng công thức Cross #04 bảo toàn cặp F2L đầu tiên khi giải Cross', roleEn: 'Step 1 (X-Cross): Apply Cross #04 to preserve the first F2L pair while finishing the Cross' },
-      { stage: 'F2L Khe 2', cfopId: 'cfop_f2l_13', roleVi: 'Bước 2 (F2L Khe #2): Dùng công thức F2L #13 tách cặp dính liền cùng màu trên ở UF', roleEn: 'Step 2 (F2L Slot #2): Apply F2L #13 to split and re-pair adjacent pieces with same top color' },
-      { stage: 'F2L Khe 3', cfopId: 'cfop_f2l_18', roleVi: 'Bước 3 (F2L Khe #3): Dùng công thức F2L #18 khi Góc Trắng ngửa lên trời và Cạnh ở UF', roleEn: 'Step 3 (F2L Slot #3): Apply F2L #18 with White Corner facing Up and Edge at UF' },
-      { stage: 'OLL', cfopId: 'cfop_oll_26', roleVi: 'Bước 4 (OLL Mặt Vàng): Dùng công thức OLL #26 (Anti-Sune - Hình Cá Ngược)', roleEn: 'Step 4 (OLL Top Layer): Apply OLL #26 (Anti-Sune) to orient the Yellow top face' },
-      { stage: 'PLL', cfopId: 'cfop_pll_11', roleVi: 'Bước 5 (PLL Hoàn Thiện): Dùng công thức PLL #11 (Jb-Perm) hoán vị 2 góc & 2 cạnh kề bên Phải', roleEn: 'Step 5 (PLL Final Layer): Apply PLL #11 (Jb-Perm) to swap adjacent right-side corners & edges' }
-     ]
-    },
-    sune: {
-     titleVi: 'Tổ Hợp Tầng Cuối: F2L #01 → OLL #27 (Sune) → PLL #16 (T-Perm)',
-     titleEn: 'Last Layer Combo: F2L #01 → OLL #27 (Sune) → PLL #16 (T-Perm)',
-     steps: [
-      { stage: 'F2L Cuối', cfopId: 'cfop_f2l_1', roleVi: 'Bước 1 (F2L): Dùng công thức F2L #01 đóng khe F2L cuối cùng', roleEn: 'Step 1 (F2L): Apply F2L #01 to complete the final F2L slot' },
-      { stage: 'OLL', cfopId: 'cfop_oll_27', roleVi: 'Bước 2 (OLL): Dùng công thức OLL #27 (Sune) lật toàn bộ mặt Vàng', roleEn: 'Step 2 (OLL): Apply OLL #27 (Sune) to orient the Yellow face' },
-      { stage: 'PLL', cfopId: 'cfop_pll_16', roleVi: 'Bước 3 (PLL): Dùng công thức PLL #16 (T-Perm) giải hoàn chỉnh khối Rubik', roleEn: 'Step 3 (PLL): Apply PLL #16 (T-Perm) to finish the cube' }
-     ]
-    },
-    antisune: {
-     titleVi: 'Tổ Hợp Tầng Cuối: F2L #02 → OLL #26 (Anti-Sune) → PLL #18 (Ub-Perm)',
-     titleEn: 'Last Layer Combo: F2L #02 → OLL #26 (Anti-Sune) → PLL #18 (Ub-Perm)',
-     steps: [
-      { stage: 'F2L Cuối', cfopId: 'cfop_f2l_2', roleVi: 'Bước 1 (F2L): Dùng công thức F2L #02 chèn cặp Góc-Cạnh từ mặt Trước', roleEn: 'Step 1 (F2L): Apply F2L #02 (Front Trigger) to finish the F2L slot' },
-      { stage: 'OLL', cfopId: 'cfop_oll_26', roleVi: 'Bước 2 (OLL): Dùng công thức OLL #26 (Anti-Sune) định hướng mặt Vàng', roleEn: 'Step 2 (OLL): Apply OLL #26 (Anti-Sune) to orient the Yellow face' },
-      { stage: 'PLL', cfopId: 'cfop_pll_18', roleVi: 'Bước 3 (PLL): Dùng công thức PLL #18 (Ub-Perm) hoán vị 3 cạnh thuận chiều KĐH', roleEn: 'Step 3 (PLL): Apply PLL #18 (Ub-Perm) to cycle 3 edges clockwise' }
-     ]
-    },
-    f2l_split: {
-     titleVi: 'Tổ Hợp Chuyên Sâu: F2L #17 → OLL #45 (Line) → PLL #20 (Y-Perm)',
-     titleEn: 'Pro Combo: F2L #17 → OLL #45 (Line) → PLL #20 (Y-Perm)',
-     steps: [
-      { stage: 'F2L', cfopId: 'cfop_f2l_17', roleVi: 'Bước 1 (F2L): Dùng công thức F2L #17 tách và ghép cặp khi Góc ngửa Trắng', roleEn: 'Step 1 (F2L): Apply F2L #17 to pair and insert the Corner-Edge' },
-      { stage: 'OLL', cfopId: 'cfop_oll_45', roleVi: "Bước 2 (OLL): Dùng công thức OLL #45 (F R U R' U' F') lật mặt Vàng", roleEn: "Step 2 (OLL): Apply OLL #45 (F R U R' U' F') to orient the top layer" },
-      { stage: 'PLL', cfopId: 'cfop_pll_20', roleVi: 'Bước 3 (PLL): Dùng công thức PLL #20 (Y-Perm) hoán đổi 2 góc chéo & 2 cạnh', roleEn: 'Step 3 (PLL): Apply PLL #20 (Y-Perm) to swap diagonal corners and edges' }
-     ]
-    }
-   },
-   initDigitalTwin() {
-    if (!this.twinCube && document.getElementById('scanner-digital-twin-wrap')) {
-     this.twinCube = new InteractiveRubiksCube('scanner-digital-twin-wrap');
-    }
-    this.syncFaceletsFromTwinCube();
-    this.generateAll6FaceThumbnails();
-    this.renderGrid();
-    this.renderUnfoldedNet();
-    this.renderCapturedGallery();
-   },
-   generateFaceThumbnailDataURL(faceKey) {
-    const c = document.createElement('canvas');
-    c.width = 96;
-    c.height = 96;
-    const ctx = c.getContext('2d');
-    ctx.fillStyle = '#09090b';
-    ctx.fillRect(0, 0, 96, 96);
-    const cols = this.facelets[faceKey] || new Array(9).fill(RUBIK_FACE_COLORS[faceKey]);
-    for (let i = 0; i < 9; i++) {
-     const r = Math.floor(i / 3), col = i % 3;
-     const x = 6 + col * 29, y = 6 + r * 29;
-     ctx.fillStyle = cols[i] || '#facc15';
-     ctx.beginPath();
-     ctx.roundRect ? ctx.roundRect(x, y, 26, 26, 4) : ctx.rect(x, y, 26, 26);
-     ctx.fill();
-     ctx.strokeStyle = '#18181b';
-     ctx.lineWidth = 1.5;
-     ctx.stroke();
-    }
-    return c.toDataURL('image/png');
-   },
-   generateAll6FaceThumbnails() {
-    for (const f of RUBIK_FACE_ORDER) {
-     this.capturedThumbnails[f] = this.generateFaceThumbnailDataURL(f);
-    }
-   },
-   renderCapturedGallery() {
-    const gal = document.getElementById('captured-faces-gallery');
-    if (!gal) return;
-    gal.innerHTML = RUBIK_FACE_ORDER.map(f => {
-     const isCaptured = this.scannedFacesSet.has(f);
-     const isSel = this.activeFace === f;
-     const thumb = this.capturedThumbnails[f] || this.generateFaceThumbnailDataURL(f);
-     return `
-      <button type="button" data-gallery-face="${f}" class="p-1.5 rounded-xl bg-slate-950 border ${isSel ? 'border-cyan-400 ring-1 ring-cyan-300' : 'border-slate-800'} flex flex-col items-center gap-1 transition hover:opacity-95">
-       <img src="${thumb}" alt="Face ${f}" class="w-11 h-11 rounded-lg object-cover border border-slate-800" />
-       <div class="flex items-center gap-1 text-[10px] font-mono-code font-bold ${isCaptured ? 'text-emerald-300' : 'text-slate-400'}">
-        <span>${f}</span>
-        <span>${isCaptured ? '✓' : '○'}</span>
-       </div>
-      </button>
-     `;
-    }).join('');
-    gal.querySelectorAll('[data-gallery-face]').forEach(btn => {
-     btn.addEventListener('click', () => {
-      this.selectActiveScanFace(btn.getAttribute('data-gallery-face'));
-     });
-    });
-    const progBadge = document.getElementById('scan-6faces-progress-badge');
-    if (progBadge) {
-     const isEn = window.AppI18n?.lang === 'en';
-     progBadge.textContent = isEn
-      ? `${this.scannedFacesSet.size}/6 Faces Captured`
-      : `${this.scannedFacesSet.size}/6 mặt đã chụp`;
-    }
-   },
-   syncFaceletsFromTwinCube() {
-    if (!this.twinCube || !window.THREE) return;
-    this.twinCube.rootGroup.updateMatrixWorld(true);
-    const nextFacelets = {
-     U: new Array(9).fill('#facc15'),
-     R: new Array(9).fill('#ef4444'),
-     F: new Array(9).fill('#22c55e'),
-     D: new Array(9).fill('#ffffff'),
-     L: new Array(9).fill('#f97316'),
-     B: new Array(9).fill('#3b82f6')
-    };
-    const normalVec = new THREE.Vector3();
-    for (const cubie of this.twinCube.cubies) {
-     const cx = Math.round(cubie.position.x);
-     const cy = Math.round(cubie.position.y);
-     const cz = Math.round(cubie.position.z);
-     for (const sticker of cubie.children) {
-      normalVec.set(0, 0, 1).applyQuaternion(sticker.getWorldQuaternion(new THREE.Quaternion()));
-      const invRoot = this.twinCube.rootGroup.quaternion.clone().invert();
-      normalVec.applyQuaternion(invRoot);
-      const nx = Math.round(normalVec.x);
-      const ny = Math.round(normalVec.y);
-      const nz = Math.round(normalVec.z);
-      const hex = '#' + sticker.material.color.getHexString();
-      if (ny === 1) {
-       const idx = (cz + 1) * 3 + (cx + 1);
-       if (idx >= 0 && idx < 9) nextFacelets.U[idx] = hex;
-      } else if (ny === -1) {
-       const idx = (1 - cz) * 3 + (cx + 1);
-       if (idx >= 0 && idx < 9) nextFacelets.D[idx] = hex;
-      } else if (nz === 1) {
-       const idx = (1 - cy) * 3 + (cx + 1);
-       if (idx >= 0 && idx < 9) nextFacelets.F[idx] = hex;
-      } else if (nz === -1) {
-       const idx = (1 - cy) * 3 + (1 - cx);
-       if (idx >= 0 && idx < 9) nextFacelets.B[idx] = hex;
-      } else if (nx === 1) {
-       const idx = (1 - cy) * 3 + (1 - cz);
-       if (idx >= 0 && idx < 9) nextFacelets.R[idx] = hex;
-      } else if (nx === -1) {
-       const idx = (1 - cy) * 3 + (cz + 1);
-       if (idx >= 0 && idx < 9) nextFacelets.L[idx] = hex;
-      }
-     }
-    }
-    this.facelets = nextFacelets;
-    this.stickers = [...(this.facelets[this.activeFace] || this.facelets.U)];
-    this.generateAll6FaceThumbnails();
-   },
-   applyFaceletsToTwinCube() {
-    if (!this.twinCube || !window.THREE) return;
-    this.twinCube.rootGroup.updateMatrixWorld(true);
-    const invRoot = this.twinCube.rootGroup.quaternion.clone().invert();
-    const normalVec = new THREE.Vector3();
-    for (const cubie of this.twinCube.cubies) {
-     const cx = Math.round(cubie.position.x);
-     const cy = Math.round(cubie.position.y);
-     const cz = Math.round(cubie.position.z);
-     for (const sticker of cubie.children) {
-      normalVec.set(0, 0, 1).applyQuaternion(sticker.getWorldQuaternion(new THREE.Quaternion())).applyQuaternion(invRoot);
-      const nx = Math.round(normalVec.x);
-      const ny = Math.round(normalVec.y);
-      const nz = Math.round(normalVec.z);
-      let hex = null;
-      if (ny === 1) hex = this.facelets.U[(cz + 1) * 3 + (cx + 1)];
-      else if (ny === -1) hex = this.facelets.D[(1 - cz) * 3 + (cx + 1)];
-      else if (nz === 1) hex = this.facelets.F[(1 - cy) * 3 + (cx + 1)];
-      else if (nz === -1) hex = this.facelets.B[(1 - cy) * 3 + (1 - cx)];
-      else if (nx === 1) hex = this.facelets.R[(1 - cy) * 3 + (1 - cz)];
-      else if (nx === -1) hex = this.facelets.L[(1 - cy) * 3 + (cz + 1)];
-      if (hex) {
-       sticker.material = sticker.material.clone();
-       sticker.material.color.set(hex);
-      }
-     }
-    }
-    this.twinCube.needsRender = true;
-   },
-   selectActiveScanFace(faceKey) {
-    if (!RUBIK_FACE_COLORS[faceKey]) return;
-    this.activeFace = faceKey;
-    this.stickers = [...this.facelets[faceKey]];
-    const lbl = document.getElementById('active-calib-face-label');
-    const isEn = window.AppI18n?.lang === 'en';
-    if (lbl) lbl.textContent = (isEn ? RUBIK_FACE_NAMES_EN[faceKey] : RUBIK_FACE_NAMES_VI[faceKey]) || faceKey;
-    document.querySelectorAll('.scan-face-tab').forEach(btn => {
-     const isCur = btn.getAttribute('data-scan-face') === faceKey;
-     btn.classList.toggle('ring-2', isCur);
-     btn.classList.toggle('ring-white', isCur);
-     btn.classList.toggle('scale-105', isCur);
-    });
-    const centerCell = document.querySelector('[data-roi-cell="4"]');
-    if (centerCell) centerCell.textContent = (isEn ? 'CENTER ' : 'TÂM ') + faceKey;
-    this.renderGrid();
-    this.renderUnfoldedNet();
-    this.renderCapturedGallery();
-   },
-   renderGrid() {
-    const grid = document.getElementById('scanner-face-grid');
-    if (!grid) return;
-    this.stickers = this.facelets[this.activeFace] || this.stickers;
-    grid.innerHTML = this.stickers.map((col, idx) => {
-     const isCenter = idx === 4;
-     const code = RUBIK_HEX_TO_FACE[col] || '?';
-     return `
-      <button type="button" data-sticker-idx="${idx}" style="background-color: ${col}" class="w-full h-full rounded-lg border-2 ${isCenter ? 'border-white ring-1 ring-white' : 'border-slate-900'} shadow-inner transition transform hover:scale-105 flex items-center justify-center">
-       <span class="text-[10px] font-mono-code font-extrabold px-1 rounded bg-slate-950/75 text-white pointer-events-none">${isCenter ? this.activeFace : code}</span>
-      </button>
-     `;
-    }).join('');
-    grid.querySelectorAll('button').forEach(btn => {
-     btn.addEventListener('click', () => {
-      const i = Number(btn.getAttribute('data-sticker-idx'));
-      if (i === 4) {
-       showToast(
-        window.AppI18n?.lang === 'en'
-         ? `Center sticker #5 is fixed to face ${this.activeFace}!`
-         : `Ô tâm số 5 cố định là màu tâm ${this.activeFace} chuẩn quốc tế!`,
-        'amber'
-       );
-       return;
-      }
-      this.facelets[this.activeFace][i] = this.activeBrush;
-      this.stickers[i] = this.activeBrush;
-      this.capturedThumbnails[this.activeFace] = this.generateFaceThumbnailDataURL(this.activeFace);
-      this.applyFaceletsToTwinCube();
-      this.renderGrid();
-      this.renderUnfoldedNet();
-      this.renderCapturedGallery();
-     });
-    });
-   },
-   renderUnfoldedNet() {
-    const netEl = document.getElementById('scanner-unfolded-net');
-    if (!netEl) return;
-    const renderMiniFace = fKey => {
-     const arr = this.facelets[fKey] || [];
-     const isSel = this.activeFace === fKey;
-     const cells = arr.map(c => `<span style="background:${c}" class="w-2.5 h-2.5 rounded-[2px] border border-slate-950/80 block"></span>`).join('');
-     return `
-      <button type="button" data-net-face="${fKey}" title="Face ${fKey}" class="p-0.5 rounded bg-slate-950 border ${isSel ? 'border-white ring-1 ring-white scale-105' : 'border-slate-800'} grid grid-cols-3 gap-[1.5px] transition">
-       ${cells}
-      </button>
-     `;
-    };
-    netEl.innerHTML = `
-     <div class="grid grid-cols-4 gap-1 items-center">
-      <div></div>${renderMiniFace('U')}<div></div><div></div>
-      ${renderMiniFace('L')}${renderMiniFace('F')}${renderMiniFace('R')}${renderMiniFace('B')}
-      <div></div>${renderMiniFace('D')}<div></div><div></div>
-     </div>
-    `;
-    netEl.querySelectorAll('[data-net-face]').forEach(btn => {
-     btn.addEventListener('click', () => {
-      this.selectActiveScanFace(btn.getAttribute('data-net-face'));
-     });
-    });
-   },
-   classifyRgbToFace(r, g, b) {
-    const refs = {
-     U: [250, 204, 21],
-     R: [239, 68, 68],
-     F: [34, 197, 94],
-     D: [255, 255, 255],
-     L: [249, 115, 22],
-     B: [59, 130, 246]
-    };
-    let best = 'U', bestDist = Infinity;
-    for (const [k, [rr, gg, bb]] of Object.entries(refs)) {
-     const d = (r - rr) ** 2 + (g - gg) ** 2 + (b - bb) ** 2;
-     if (d < bestDist) { bestDist = d; best = k; }
-    }
-    return best;
-   },
-   captureCurrentFaceFromVideoOrCanvas(imgSource = null) {
-    const face = this.activeFace;
-    const video = document.getElementById('rubik-camera-video');
-    const canvas = document.getElementById('rubik-camera-canvas');
-    const source = imgSource || (RubikCameraManager.isRunning && video && video.readyState >= 2 ? video : null);
-    if (source && canvas) {
-     const ctx = canvas.getContext('2d', { willReadFrequently: true });
-     ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
-     const cx = canvas.width / 2, cy = canvas.height / 2;
-     const boxSize = Math.min(canvas.width, canvas.height) * 0.55;
-     const step = boxSize / 3;
-     const sx = cx - boxSize / 2, sy = cy - boxSize / 2;
-     const detected = [];
-     for (let r = 0; r < 3; r++) {
-      for (let c = 0; c < 3; c++) {
-       if (r === 1 && c === 1) {
-        detected.push(RUBIK_FACE_COLORS[face]);
-        continue;
-       }
-       const px = Math.floor(sx + c * step + step / 2);
-       const py = Math.floor(sy + r * step + step / 2);
-       const data = ctx.getImageData(Math.max(0, px - 3), Math.max(0, py - 3), 7, 7).data;
-       let sr = 0, sg = 0, sb = 0, cnt = 0;
-       for (let k = 0; k < data.length; k += 4) {
-        sr += data[k]; sg += data[k + 1]; sb += data[k + 2]; cnt++;
-       }
-       const fKey = this.classifyRgbToFace(sr / cnt, sg / cnt, sb / cnt);
-       detected.push(RUBIK_FACE_COLORS[fKey] || RUBIK_FACE_COLORS[face]);
-      }
-     }
-     this.facelets[face] = detected;
-     this.applyFaceletsToTwinCube();
-    }
-    this.scannedFacesSet.add(face);
-    this.capturedThumbnails[face] = this.generateFaceThumbnailDataURL(face);
-    this.renderGrid();
-    this.renderUnfoldedNet();
-    this.renderCapturedGallery();
-   },
-   // Build a complete CFOP step-by-step plan that maps to exact formulas in CFOP_DATABASE
-   buildCfopBreakdownFromPlanSteps(planSteps, customMoveTokens = null, planTitleVi = '', planTitleEn = '') {
-    const isEn = window.AppI18n?.lang === 'en';
-    const resolvedSteps = [];
-    const combinedMoves = [];
-    planSteps.forEach((st, idx) => {
-     const item = CFOP_DATABASE.find(x => x.id === st.cfopId) || CFOP_DATABASE[0];
-     const stepMoves = st.overrideAlg ? st.overrideAlg : item.alg;
-     combinedMoves.push(stepMoves);
-     resolvedSteps.push({
-      stepNum: idx + 1,
-      stage: st.stage,
-      cfopItem: item,
-      alg: stepMoves,
-      roleText: isEn ? (st.roleEn || st.roleVi) : st.roleVi
-     });
-    });
-    this.currentCfopPlan = resolvedSteps;
-    const finalAlgStr = customMoveTokens ? customMoveTokens.join(' ') : combinedMoves.join(' ');
-    this.solveTokens = finalAlgStr.trim().split(/\s+/).filter(Boolean);
-    this.solveStepIdx = 0;
-
-    const titleEl = document.getElementById('scan-res-title');
-    if (titleEl) {
-     titleEl.textContent = isEn
-      ? (planTitleEn || `AI CFOP Breakdown (${resolvedSteps.length} Stages • ${this.solveTokens.length} Moves)`)
-      : (planTitleVi || `Phân Tích AI: ${resolvedSteps.length} Giai Đoạn CFOP (${this.solveTokens.length} nước xoay)`);
-    }
-    const algEl = document.getElementById('scan-res-alg');
-    if (algEl) algEl.textContent = finalAlgStr;
-    const countBadge = document.getElementById('cfop-steps-count-badge');
-    if (countBadge) {
-     countBadge.textContent = isEn
-      ? `${resolvedSteps.length} CFOP Formulas Applied`
-      : `Áp dụng ${resolvedSteps.length} công thức trong bảng CFOP`;
-    }
-    this.renderSolveTokensView();
-    this.renderCfopBreakdownCards();
-   },
-   renderCfopBreakdownCards() {
-    const container = document.getElementById('ai-cfop-steps-breakdown');
-    if (!container) return;
-    const isEn = window.AppI18n?.lang === 'en';
-    if (!this.currentCfopPlan || !this.currentCfopPlan.length) {
-     container.innerHTML = `<div class="p-6 rounded-2xl bg-slate-950 border border-slate-800 text-center text-xs text-slate-400">${isEn ? 'Click "Analyze & Build CFOP Solution" to generate the step-by-step CFOP formula guide.' : 'Bấm "✨ Phân Tích & Lập Bảng Giải CFOP" để xem lộ trình giải từng bước.'}</div>`;
-     return;
-    }
-    container.innerHTML = this.currentCfopPlan.map(step => {
-     const item = step.cfopItem;
-     if (!item._cachedSvg) item._cachedSvg = renderCfopDiagramSVG(item);
-     const displayName = isEn && window.AppI18n ? window.AppI18n.translateCfopName(item.name) : item.name;
-     const displayDesc = isEn && window.AppI18n ? window.AppI18n.translateCfopDesc(item.desc) : item.desc;
-     return `
-      <div class="p-4 rounded-2xl bg-slate-900/95 border border-slate-800 hover:border-cyan-500/40 transition space-y-3">
-       <div class="flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-         <span class="px-2.5 py-1 rounded-lg bg-cyan-500 text-slate-950 font-mono-code text-xs font-extrabold">
-          ${isEn ? 'STEP' : 'BƯỚC'} ${step.stepNum} • ${step.stage}
-         </span>
-         <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-700 text-cyan-300 font-mono-code text-xs font-bold">
-          ${item.code}
-         </span>
-        </div>
-        <div class="flex items-center gap-1.5">
-         <button type="button" data-run-cfop-step="${step.alg}" class="run-single-cfop-step-btn px-3 py-1.5 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-xs font-extrabold transition">
-          ▶ ${isEn ? 'Run This Step (3D)' : 'Chạy Bước Này (3D)'}
-         </button>
-         <button type="button" data-goto-cfop-id="${item.id}" class="goto-cfop-table-btn px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition">
-          📚 ${isEn ? 'View in CFOP Table' : 'Xem Ở Bảng Công Thức'}
-         </button>
-        </div>
-       </div>
-       <div class="text-xs sm:text-sm font-bold text-emerald-300">
-        👉 ${step.roleText}
-       </div>
-       <div class="flex flex-col sm:flex-row items-start gap-3.5 pt-1">
-        ${item._cachedSvg}
-        <div class="space-y-1.5 flex-1 min-w-0">
-         <div class="text-sm sm:text-base font-extrabold text-white leading-snug">${displayName}</div>
-         <p class="text-xs text-slate-300 leading-relaxed">${displayDesc}</p>
-         <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex flex-wrap items-center justify-between gap-2 mt-1">
-          <span class="text-[11px] text-slate-400 font-semibold">${isEn ? 'Formula to execute:' : 'Công thức thực hiện:'}</span>
-          <span class="font-mono-code text-xs sm:text-sm font-extrabold text-cyan-300">${step.alg}</span>
-         </div>
-        </div>
-       </div>
-      </div>
-     `;
-    }).join('');
-
-    container.querySelectorAll('.run-single-cfop-step-btn').forEach(btn => {
-     btn.addEventListener('click', () => {
-      const alg = btn.getAttribute('data-run-cfop-step');
-      if (!this.twinCube) this.initDigitalTwin();
-      this.twinCube.enqueueNotation(alg, true, () => {
-       this.syncFaceletsFromTwinCube();
-       this.renderGrid();
-       this.renderUnfoldedNet();
-       this.renderCapturedGallery();
-      }, false);
-      showToast(
-       isEn ? `▶ Executing step formula: ${alg}` : `▶ Đang thực hiện bước công thức: ${alg}`,
-       'cyan'
-      );
-     });
-    });
-
-    container.querySelectorAll('.goto-cfop-table-btn').forEach(btn => {
-     btn.addEventListener('click', () => {
-      const cfopId = btn.getAttribute('data-goto-cfop-id');
-      const targetItem = CFOP_DATABASE.find(x => x.id === cfopId);
-      switchRubikSubtab('sim');
-      if (targetItem) {
-       currentCfopFilter = 'ALL';
-       currentCfopSearch = targetItem.code.split('•')[0].trim();
-       const searchInput = document.getElementById('cfop-search-input');
-       if (searchInput) searchInput.value = currentCfopSearch;
-       renderCfopCardsOnly();
-       window.MainCube?.loadAlgorithmSteps(targetItem.alg, `${targetItem.code} — ${targetItem.name}`, true, false, false, true);
-       showToast(
-        isEn
-         ? `📚 Opened "${targetItem.code}" in the 144 CFOP Formula Table!`
-         : `📚 Đã mở công thức "${targetItem.code}" trong Bảng 144 Công Thức CFOP!`,
-        'emerald'
-       );
-      }
-     });
-    });
-   },
-   renderSolveTokensView() {
-    const wrap = document.getElementById('twin-solve-tokens-view');
-    const counter = document.getElementById('twin-solve-step-counter');
-    const playLbl = document.getElementById('twin-step-play-label');
-    const isEn = window.AppI18n?.lang === 'en';
-    if (playLbl) {
-     playLbl.textContent = this.solveAutoPlaying
-      ? (isEn ? 'Pause' : 'Tạm Dừng')
-      : (isEn ? 'Auto-Solve 3D' : 'Giải Tự Động 3D');
-    }
-    if (!wrap) return;
-    if (!this.solveTokens.length) {
-     wrap.innerHTML = '';
-     if (counter) counter.textContent = isEn ? '0 moves' : '0 bước';
-     return;
-    }
-    if (counter) {
-     counter.textContent = isEn
-      ? `Move ${this.solveStepIdx} / ${this.solveTokens.length}`
-      : `Bước ${this.solveStepIdx} / ${this.solveTokens.length}`;
-    }
-    wrap.innerHTML = this.solveTokens.map((tok, idx) => {
-     let cls = 'bg-slate-900 border-slate-700 text-slate-300';
-     if (idx < this.solveStepIdx) cls = 'bg-emerald-500/25 border-emerald-400 text-emerald-200';
-     else if (idx === this.solveStepIdx) cls = 'bg-cyan-500 border-white text-slate-950 font-black ring-2 ring-white';
-     return `<span class="px-2 py-0.5 rounded-md border text-xs font-mono-code ${cls}">${idx + 1}. ${tok}</span>`;
-    }).join('');
-   },
-   loadPresetCase(presetKey) {
-    if (!this.twinCube) this.initDigitalTwin();
-    const preset = this.presets[presetKey] || this.presets.full_cfop_1;
-    const allAlgs = preset.steps.map(s => {
-     const item = CFOP_DATABASE.find(x => x.id === s.cfopId);
-     return item ? item.alg : "R U R' U'";
-    }).join(' ');
-    this.twinCube.stopAllAnimationsSafely(true);
-    this.twinCube.buildCubies();
-    // Apply the inverse of the combined CFOP sequence so executing the steps in order solves the cube 100%!
-    this.twinCube.applyInstantNotation(allAlgs, true, true);
-    this.syncFaceletsFromTwinCube();
-    this.scannedFacesSet = new Set(['U', 'R', 'F', 'D', 'L', 'B']);
-    this.renderGrid();
-    this.renderUnfoldedNet();
-    this.renderCapturedGallery();
-    this.buildCfopBreakdownFromPlanSteps(preset.steps, null, preset.titleVi, preset.titleEn);
-   },
-   startCamera() {
-    const sel = document.getElementById('cv-camera-facing-select');
-    return RubikCameraManager.startStream(sel ? sel.value : 'environment');
-   },
-   stopCamera() {
-    RubikCameraManager.stopStream(true);
-   },
-   captureAndAnalyze() {
-    if (!this.twinCube) this.initDigitalTwin();
-    SoundFX.play('beep');
-    const isEn = window.AppI18n?.lang === 'en';
-    if (this.twinCube.isCubeCurrentlySolved()) {
-     const sel = document.getElementById('scanner-preset-select');
-     this.loadPresetCase(sel ? sel.value : 'full_cfop_1');
-     showToast(
-      isEn
-       ? '✨ Generated step-by-step Full CFOP solution breakdown!'
-       : '✨ Đã phân tích và lập bảng công thức giải Full CFOP từng bước!',
-      'emerald'
-     );
-     return;
-    }
-    // Compute exact solution moves for the current 3D / 6-face state AND map to CFOP stages
-    const optimalMoves = this.twinCube.computeOptimalAISolution();
-    if (!optimalMoves || !optimalMoves.length) {
-     const sel = document.getElementById('scanner-preset-select');
-     this.loadPresetCase(sel ? sel.value : 'full_cfop_1');
-     return;
-    }
-    // Check if current tokens already match the active preset
-    const currentPresetKey = document.getElementById('scanner-preset-select')?.value || 'full_cfop_1';
-    const preset = this.presets[currentPresetKey] || this.presets.full_cfop_1;
-    const presetMoves = preset.steps.map(s => CFOP_DATABASE.find(x => x.id === s.cfopId)?.alg || '').join(' ').trim().split(/\s+/).filter(Boolean);
-    if (Math.abs(optimalMoves.length - presetMoves.length) <= 2 && this.currentCfopPlan.length > 0 && this.solveStepIdx === 0) {
-     this.buildCfopBreakdownFromPlanSteps(preset.steps, null, preset.titleVi, preset.titleEn);
-    } else {
-     // Decompose custom scrambled state into Cross, F2L, OLL, PLL stages referencing matching CFOP_DATABASE formulas
-     const n = optimalMoves.length;
-     const cEnd = Math.max(1, Math.floor(n * 0.22));
-     const f1End = Math.max(cEnd + 1, Math.floor(n * 0.52));
-     const oEnd = Math.max(f1End + 1, Math.floor(n * 0.78));
-     const crossSlice = optimalMoves.slice(0, cEnd).join(' ');
-     const f2lSlice = optimalMoves.slice(cEnd, f1End).join(' ');
-     const ollSlice = optimalMoves.slice(f1End, oEnd).join(' ');
-     const pllSlice = optimalMoves.slice(oEnd).join(' ') || optimalMoves[optimalMoves.length - 1];
-     const customSteps = [
-      {
-       stage: 'CROSS',
-       cfopId: 'cfop_cross_1',
-       overrideAlg: crossSlice,
-       roleVi: `Bước 1 (Cross Đáy Trắng): Áp dụng nguyên lý Cross #01 giải các cạnh Trắng về đáy D (${ crossSlice })`,
-       roleEn: `Step 1 (White Cross): Apply Cross #01 principle to align White edges on D (${ crossSlice })`
-      },
-      {
-       stage: 'F2L (2 Tầng Đầu)',
-       cfopId: 'cfop_f2l_17',
-       overrideAlg: f2lSlice,
-       roleVi: `Bước 2 (F2L): Ghép cặp Góc-Cạnh và chèn vào khe theo nhóm công thức F2L #17 / F2L #01 (${ f2lSlice })`,
-       roleEn: `Step 2 (F2L): Pair and insert Corner-Edge slots using F2L #17 / F2L #01 (${ f2lSlice })`
-      },
-      {
-       stage: 'OLL (Mặt Vàng)',
-       cfopId: 'cfop_oll_27',
-       overrideAlg: ollSlice,
-       roleVi: `Bước 3 (OLL): Định hướng mặt Vàng tầng trên theo nhóm công thức OLL #27 Sune / OLL #45 (${ ollSlice })`,
-       roleEn: `Step 3 (OLL): Orient the top Yellow face using OLL #27 Sune / OLL #45 (${ ollSlice })`
-      }
-     ];
-     if (oEnd < n) {
-      customSteps.push({
-       stage: 'PLL (Hoàn Thiện)',
-       cfopId: 'cfop_pll_16',
-       overrideAlg: pllSlice,
-       roleVi: `Bước 4 (PLL): Hoán vị các viên tầng cuối theo nhóm công thức PLL #16 (T-Perm) để hoàn thành khối Rubik (${ pllSlice })`,
-       roleEn: `Step 4 (PLL): Permute the last layer using PLL #16 (T-Perm) to complete the Rubik's Cube (${ pllSlice })`
-      });
-     }
-     this.buildCfopBreakdownFromPlanSteps(
-      customSteps,
-      optimalMoves,
-      `Lộ Trình AI Giải Trạng Thái Đã Chụp (${optimalMoves.length} bước • 4 Giai đoạn CFOP)`,
-      `AI Solution for Captured State (${optimalMoves.length} moves • 4 CFOP Stages)`
-     );
-    }
-    showToast(
-     isEn
-      ? `✨ AI analyzed all 6 faces and mapped the solution to CFOP formulas!`
-      : `✨ AI đã phân tích 6 mặt Rubik và chỉ rõ từng bước dùng công thức Cross, F2L, OLL, PLL nào!`,
-     'emerald'
-    );
-   },
-   stepSolveNext() {
-    if (!this.twinCube) this.initDigitalTwin();
-    if (!this.solveTokens.length) {
-     this.captureAndAnalyze();
-     return;
-    }
-    const isEn = window.AppI18n?.lang === 'en';
-    if (this.solveStepIdx >= this.solveTokens.length) {
-     showToast(
-      isEn ? '🎉 All solution steps completed on the 3D Rubik model!' : '🎉 Đã hoàn thành toàn bộ các bước giải trên mô hình 3D!',
-      'emerald'
-     );
-     this.solveAutoPlaying = false;
-     this.renderSolveTokensView();
-     return;
-    }
-    const tok = this.solveTokens[this.solveStepIdx];
-    this.solveStepIdx++;
-    this.renderSolveTokensView();
-    this.twinCube.enqueueNotation(tok, true, () => {
-     this.syncFaceletsFromTwinCube();
-     this.renderGrid();
-     this.renderUnfoldedNet();
-     this.renderCapturedGallery();
-     if (this.solveAutoPlaying) {
-      setTimeout(() => this.stepSolveNext(), 65);
-     }
-    }, false);
-   },
-   stepSolvePrev() {
-    const isEn = window.AppI18n?.lang === 'en';
-    if (!this.twinCube || !this.solveTokens.length || this.solveStepIdx <= 0) {
-     showToast(
-      isEn ? 'No previous step to undo!' : 'Chưa có bước giải nào trước đó để lùi lại!',
-      'amber'
-     );
-     return;
-    }
-    this.solveAutoPlaying = false;
-    this.solveStepIdx--;
-    const tok = this.solveTokens[this.solveStepIdx];
-    const inv = this.twinCube.invertToken(tok);
-    this.renderSolveTokensView();
-    this.twinCube.enqueueNotation(inv, true, () => {
-     this.syncFaceletsFromTwinCube();
-     this.renderGrid();
-     this.renderUnfoldedNet();
-     this.renderCapturedGallery();
-    }, false);
-   },
-   toggleSolveAutoPlay() {
-    if (!this.solveTokens.length) {
-     this.captureAndAnalyze();
-    }
-    if (this.solveAutoPlaying) {
-     this.solveAutoPlaying = false;
-     this.renderSolveTokensView();
-     return;
-    }
-    if (this.solveStepIdx >= this.solveTokens.length) {
-     const sel = document.getElementById('scanner-preset-select');
-     this.loadPresetCase(sel ? sel.value : 'full_cfop_1');
-    }
-    this.solveAutoPlaying = true;
-    this.renderSolveTokensView();
-    this.stepSolveNext();
    }
   };
   // ---------- 9. INTERNATIONAL CHESS ARENA (MULTI-CHANNEL ONLINE SYNC, F5 PERSISTENCE, DYNAMIC ELO) ----------
@@ -6408,10 +5558,11 @@
      if (this.mode === 'puzzle') {
       return col === 'w' ? 'Bạn (Giải Thế Cờ - Quân Trắng)' : 'Thế Cờ Đối Phương (Quân Đen)';
      }
+     const isEn = window.AppI18n?.lang === 'en';
      if (col === this.playerColor) {
-      return `${AppState.userName || 'Bạn'} (${col === 'w' ? 'Quân Trắng' : 'Quân Đen'} • ${AppState.chessElo} Elo)`;
+      return `${AppState.userName || (isEn ? 'You' : 'Bạn')} (${col === 'w' ? (isEn ? 'White' : 'Quân Trắng') : (isEn ? 'Black' : 'Quân Đen')} • ${AppState.chessElo} Elo)`;
      }
-     return `LM StockBot AI (${col === 'w' ? 'Trắng' : 'Đen'} • Elo ${botElo})`;
+     return `LM StockBot AI (${col === 'w' ? (isEn ? 'White' : 'Trắng') : (isEn ? 'Black' : 'Đen')} • Elo ${botElo})`;
     };
     document.getElementById('chess-top-player-name').textContent = labelForColor(topColor);
     document.getElementById('chess-bottom-player-name').textContent = labelForColor(botColor);
@@ -6446,8 +5597,9 @@
     const botAdvEl = document.getElementById('chess-adv-bottom');
     const topCaps = topColor === 'b' ? capturedByBlack : capturedByWhite;
     const botCaps = botColor === 'w' ? capturedByWhite : capturedByBlack;
-    topCapEl.innerHTML = topCaps.length ? topCaps.join('') : `<span class="text-xs text-slate-500 italic">Chưa ăn quân</span>`;
-    botCapEl.innerHTML = botCaps.length ? botCaps.join('') : `<span class="text-xs text-slate-500 italic">Chưa ăn quân</span>`;
+    const noCapTxt = window.AppI18n?.lang === 'en' ? 'No captures yet' : 'Chưa ăn quân';
+    topCapEl.innerHTML = topCaps.length ? topCaps.join('') : `<span class="text-xs text-slate-500 italic">${noCapTxt}</span>`;
+    botCapEl.innerHTML = botCaps.length ? botCaps.join('') : `<span class="text-xs text-slate-500 italic">${noCapTxt}</span>`;
     const topAdv = topColor === 'b' ? -diff : diff;
     const botAdv = botColor === 'w' ? diff : -diff;
     if (topAdv > 0) {
@@ -6472,8 +5624,8 @@
     if (expBotName) expBotName.textContent = labelForColor(botColor);
     if (expTopClock) expTopClock.textContent = this.formatClock(topSec);
     if (expBotClock) expBotClock.textContent = this.formatClock(botSec);
-    if (expTopCap) expTopCap.innerHTML = topCaps.length ? topCaps.join('') : `<span class="text-xs text-slate-500 italic">Chưa ăn quân</span>`;
-    if (expBotCap) expBotCap.innerHTML = botCaps.length ? botCaps.join('') : `<span class="text-xs text-slate-500 italic">Chưa ăn quân</span>`;
+    if (expTopCap) expTopCap.innerHTML = topCaps.length ? topCaps.join('') : `<span class="text-xs text-slate-500 italic">${noCapTxt}</span>`;
+    if (expBotCap) expBotCap.innerHTML = botCaps.length ? botCaps.join('') : `<span class="text-xs text-slate-500 italic">${noCapTxt}</span>`;
    },
    renderHeroMiniBoard(movesArr, captionText) {
     const wrap = document.getElementById('hero-mini-chessboard');
@@ -6589,11 +5741,19 @@
         legalOverlay = `<span class="absolute w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-slate-950/60 ring-2 ring-white/70 pointer-events-none z-20"></span>`;
        }
       }
+      let moveQualityOverlay = '';
+      const latestEv = this.moveEvaluations && this.moveEvaluations.length
+       ? this.moveEvaluations[this.moveEvaluations.length - 1]
+       : null;
+      if (latestEv && latestEv.to === sqName && latestEv.symbol) {
+       moveQualityOverlay = `<span class="chess-move-badge-board" style="background:${latestEv.badgeBg};color:${latestEv.badgeText};" title="${latestEv.labelVi}">${latestEv.symbol}</span>`;
+      }
       html += `
        <div data-sq="${sqName}" class="chess-square flex items-center justify-center ${bgClass} cursor-pointer">
         ${colIdx === 0 ? `<span class="absolute top-0.5 left-1 text-[10px] font-extrabold pointer-events-none ${isLight ? 'text-amber-950' : 'text-amber-100'}">${8 - r}</span>` : ''}
         ${rowIdx === 7 ? `<span class="absolute bottom-0.5 right-1 text-[10px] font-extrabold pointer-events-none ${isLight ? 'text-amber-950' : 'text-amber-100'}">${files[c]}</span>` : ''}
         ${legalOverlay}
+        ${moveQualityOverlay}
         ${svgPiece}
        </div>
       `;
@@ -6640,10 +5800,86 @@
     this.closePromotionModal();
     this.executePlayerMove(from, to, promoPieceType);
    },
-   recordMoveEvaluation(moveObj, prevEval) {
+   classifyChessMoveQuality(moveObj, delta, engineBest) {
+    const isEngineBest = !!(engineBest && engineBest.from === moveObj.from && engineBest.to === moveObj.to);
+    const isMate = moveObj.san.includes('#');
+    const isCheck = moveObj.san.includes('+');
+    // Chess.com style classification: !! (Brilliant), ! (Great), ★ (Best), ?! (Inaccuracy), ? (Mistake), ?? (Blunder)
+    if (isMate || (isEngineBest && delta >= 1.35) || (moveObj.captured && delta >= 1.85)) {
+     return {
+      symbol: '!!',
+      code: 'brilliant',
+      labelVi: 'Nước Đi Thiên Tài (Brilliant !!)',
+      labelEn: 'Brilliant Move (!!)',
+      badgeBg: '#06b6d4',
+      badgeText: '#09090b'
+     };
+    }
+    if ((isEngineBest && delta >= 0.35) || delta >= 0.75 || (isEngineBest && isCheck && delta >= 0.1)) {
+     return {
+      symbol: '!',
+      code: 'great',
+      labelVi: 'Nước Đi Tuyệt Vời (Great Move !)',
+      labelEn: 'Great Move (!)',
+      badgeBg: '#38bdf8',
+      badgeText: '#09090b'
+     };
+    }
+    if (isEngineBest && delta >= -0.25) {
+     return {
+      symbol: '★',
+      code: 'best',
+      labelVi: 'Nước Đi Tốt Nhất AI (Best Move ★)',
+      labelEn: 'Best AI Move (★)',
+      badgeBg: '#22c55e',
+      badgeText: '#09090b'
+     };
+    }
+    if (delta >= -0.38) {
+     return {
+      symbol: '',
+      code: 'good',
+      labelVi: 'Nước Đi Tốt (Solid Move)',
+      labelEn: 'Good Move',
+      badgeBg: '#3f3f46',
+      badgeText: '#f4f4f5'
+     };
+    }
+    if (delta >= -0.95) {
+     return {
+      symbol: '?!',
+      code: 'inaccuracy',
+      labelVi: 'Nước Đi Chưa Chính Xác (Inaccuracy ?!)',
+      labelEn: 'Inaccuracy (?!)',
+      badgeBg: '#facc15',
+      badgeText: '#09090b'
+     };
+    }
+    if (delta >= -2.1) {
+     return {
+      symbol: '?',
+      code: 'mistake',
+      labelVi: 'Sai Lầm Chiến Thuật (Mistake ?)',
+      labelEn: 'Mistake (?)',
+      badgeBg: '#fb923c',
+      badgeText: '#09090b'
+     };
+    }
+    return {
+     symbol: '??',
+     code: 'blunder',
+     labelVi: 'Nước Đi Ngớ Ngẩn / Mất Quân (Blunder ??)',
+     labelEn: 'Blunder (??)',
+     badgeBg: '#f43f5e',
+     badgeText: '#ffffff'
+    };
+   },
+   recordMoveEvaluation(moveObj, prevEval, engineBest = null) {
     const afterEval = this.evaluateBoard();
     const delta = moveObj.color === 'w' ? (afterEval - prevEval) : (prevEval - afterEval);
-    this.moveEvaluations.push({
+    const quality = this.classifyChessMoveQuality(moveObj, delta, engineBest);
+    const entry = {
+     plyIndex: this.game.history().length - 1,
      moveNumber: Math.ceil(this.game.history().length / 2),
      color: moveObj.color,
      san: moveObj.san,
@@ -6651,8 +5887,19 @@
      to: moveObj.to,
      captured: moveObj.captured || null,
      delta: Number(delta.toFixed(2)),
-     evalAfter: Number(afterEval.toFixed(2))
-    });
+     evalAfter: Number(afterEval.toFixed(2)),
+     symbol: quality.symbol,
+     qualityCode: quality.code,
+     labelVi: quality.labelVi,
+     labelEn: quality.labelEn,
+     badgeBg: quality.badgeBg,
+     badgeText: quality.badgeText,
+     engineBestSan: engineBest ? engineBest.san : moveObj.san,
+     engineBestFrom: engineBest ? engineBest.from : moveObj.from,
+     engineBestTo: engineBest ? engineBest.to : moveObj.to
+    };
+    this.moveEvaluations.push(entry);
+    return entry;
    },
    checkSpecialEndgameDrawRules(lastMove) {
     const { wCount, bCount } = this.countPiecesPerSide();
@@ -6970,12 +6217,32 @@
    },
    executePlayerMove(fromSq, toSq, promoType = 'q', isRemoteOnlineMove = false) {
     const prevEval = this.evaluateBoard();
+    const engineBest = !isRemoteOnlineMove ? this.chooseBestMove(this.game.turn()) : null;
     const moveObj = this.game.move({ from: fromSq, to: toSq, promotion: promoType });
     this.selectedSq = null;
     this.legalTargets = [];
     if (moveObj) {
      this.lastMoveSquares = [moveObj.from, moveObj.to];
-     this.recordMoveEvaluation(moveObj, prevEval);
+     const evEntry = this.recordMoveEvaluation(moveObj, prevEval, engineBest);
+     if (!isRemoteOnlineMove && this.mode !== 'puzzle' && evEntry) {
+      const isEn = window.AppI18n?.lang === 'en';
+      const coachEl = document.getElementById('chess-coach-text');
+      if (evEntry.symbol === '!!' || evEntry.symbol === '!' || evEntry.symbol === '★') {
+       const tagTitle = isEn ? evEntry.labelEn : evEntry.labelVi;
+       showToast(`♟️ ${moveObj.san} ${evEntry.symbol} — ${tagTitle}`, 'emerald');
+       if (coachEl) {
+        coachEl.innerHTML = isEn
+         ? `<span style="background:${evEntry.badgeBg};color:${evEntry.badgeText}" class="chess-san-badge mr-1.5">${evEntry.symbol}</span> <strong>${evEntry.labelEn}:</strong> Move <strong class="text-emerald-300">${moveObj.san}</strong> (${moveObj.from} → ${moveObj.to}) matches AI top tactical analysis!`
+         : `<span style="background:${evEntry.badgeBg};color:${evEntry.badgeText}" class="chess-san-badge mr-1.5">${evEntry.symbol}</span> <strong>${evEntry.labelVi}:</strong> Nước đi <strong class="text-emerald-300">${moveObj.san}</strong> (${moveObj.from} → ${moveObj.to}) đã được ghi vào Biên Bản SAN!`;
+       }
+      } else if (evEntry.symbol === '??' || evEntry.symbol === '?') {
+       if (coachEl && evEntry.engineBestSan && evEntry.engineBestSan !== moveObj.san) {
+        coachEl.innerHTML = isEn
+         ? `<span style="background:${evEntry.badgeBg};color:${evEntry.badgeText}" class="chess-san-badge mr-1.5">${evEntry.symbol}</span> <strong>${evEntry.labelEn}:</strong> You played <strong>${moveObj.san}</strong>. AI recommends <strong class="text-emerald-300">${evEntry.engineBestSan}</strong> (${evEntry.engineBestFrom} → ${evEntry.engineBestTo}).`
+         : `<span style="background:${evEntry.badgeBg};color:${evEntry.badgeText}" class="chess-san-badge mr-1.5">${evEntry.symbol}</span> <strong>${evEntry.labelVi}:</strong> Bạn vừa đi <strong>${moveObj.san}</strong>. Nước đi xuất sắc nhất AI khuyên dùng là <strong class="text-emerald-300">${evEntry.engineBestSan}</strong> (${evEntry.engineBestFrom} → ${evEntry.engineBestTo}).`;
+       }
+      }
+     }
      this.startClockIfNeeded();
      SoundFX.play(moveObj.captured ? 'capture' : 'move');
      if (moveObj.flags && moveObj.flags.includes('p') && !isRemoteOnlineMove) {
@@ -7290,7 +6557,7 @@
     const m = this.game.move(best);
     if (m) {
      this.lastMoveSquares = [m.from, m.to];
-     this.recordMoveEvaluation(m, prevEval);
+     this.recordMoveEvaluation(m, prevEval, best);
      this.startClockIfNeeded();
      SoundFX.play(m.captured ? 'capture' : 'move');
      this.saveActiveGameSnapshot();
@@ -8420,7 +7687,8 @@
      badgeClass = 'px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs sm:text-sm font-bold animate-pulse';
     } else {
      const isW = this.game.turn() === 'w';
-     badgeText = isW ? 'Lượt Trắng đi' : 'Lượt Đen đi';
+     const isEn = window.AppI18n?.lang === 'en';
+     badgeText = isW ? (isEn ? "White's Turn" : 'Lượt Trắng đi') : (isEn ? "Black's Turn" : 'Lượt Đen đi');
      badgeClass = isW
       ? 'px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs sm:text-sm font-bold'
       : 'px-3 py-1 rounded-full bg-slate-800 text-slate-200 border border-slate-700 text-xs sm:text-sm font-bold';
@@ -8433,27 +7701,84 @@
      expTurnBadge.textContent = badgeText;
      expTurnBadge.className = badgeClass;
     }
+    const isEn = window.AppI18n?.lang === 'en';
     const hist = this.game.history();
-    document.getElementById('chess-move-count').textContent = `${hist.length} nước`;
+    const moveCountTxt = isEn ? `${hist.length} moves` : `${hist.length} nước`;
+    document.getElementById('chess-move-count').textContent = moveCountTxt;
     const expMoveCount = document.getElementById('exp-chess-move-count');
-    if (expMoveCount) expMoveCount.textContent = `${hist.length} nước`;
+    if (expMoveCount) expMoveCount.textContent = moveCountTxt;
     const histEl = document.getElementById('chess-move-history');
     const expHistEl = document.getElementById('exp-chess-move-history');
     if (!hist.length) {
-     const emptyHtml = `<div class="text-slate-400 italic">Chưa có nước đi nào.</div>`;
+     const emptyHtml = `<div class="text-slate-400 italic">${isEn ? 'No moves played yet. Make a move to see AI analysis (!!, !, ★, ?, ??).' : 'Chưa có nước đi nào. Hãy đi quân để AI chấm điểm (!!, !, ★, ?, ??) trực tiếp!'}</div>`;
      if (histEl) histEl.innerHTML = emptyHtml;
      if (expHistEl) expHistEl.innerHTML = emptyHtml;
     } else {
-     let rows = '';
+     // Find the single most impactful Best Move by the player (or overall in PvP)
+     const candidateEvals = (this.moveEvaluations || []).filter(ev =>
+      ev && (this.mode === 'pvp' ? true : ev.color === this.playerColor)
+     );
+     let topMatchEv = null;
+     if (candidateEvals.length > 0) {
+      topMatchEv = [...candidateEvals].sort((a, b) => {
+       const rankMap = { '!!': 6, '!': 5, '★': 4, '': 2, '?!': 1, '?': 0, '??': -1 };
+       const rDiff = (rankMap[b.symbol] ?? 2) - (rankMap[a.symbol] ?? 2);
+       if (rDiff !== 0) return rDiff;
+       return (b.delta || 0) - (a.delta || 0);
+      })[0];
+     }
+     const formatPlyCell = (plyIdx, defaultColorClass) => {
+      const san = hist[plyIdx] || '';
+      if (!san) return '';
+      const ev = this.moveEvaluations ? this.moveEvaluations[plyIdx] : null;
+      if (!ev) return `<span class="${defaultColorClass}">${san}</span>`;
+      const isBestOfGame = topMatchEv && topMatchEv.plyIndex === plyIdx;
+      const badgeHtml = ev.symbol
+       ? `<span class="chess-san-badge ml-1" style="background:${ev.badgeBg};color:${ev.badgeText}" title="${isEn ? ev.labelEn : ev.labelVi}">${ev.symbol}</span>`
+       : '';
+      const bestCrownHtml = isBestOfGame
+       ? `<span class="ml-1 px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-400/50 text-[10px] text-amber-300 font-extrabold" title="${isEn ? 'AI Best Move of the Game' : 'Nước đi xuất sắc nhất trận do AI bình chọn'}">🌟AI Best</span>`
+       : '';
+      const aiFixHtml = ((ev.symbol === '?' || ev.symbol === '??') && ev.engineBestSan && ev.engineBestSan !== san)
+       ? `<div class="text-[10px] text-slate-400 font-normal leading-tight mt-0.5">💡 AI: <span class="text-emerald-300 font-semibold">${ev.engineBestSan}</span></div>`
+       : '';
+      return `
+       <div class="inline-flex flex-col">
+        <div class="flex flex-wrap items-center">
+         <span class="${defaultColorClass}">${san}</span>
+         ${badgeHtml}
+         ${bestCrownHtml}
+        </div>
+        ${aiFixHtml}
+       </div>
+      `;
+     };
+     let aiBestSummaryBanner = '';
+     if (topMatchEv) {
+      const deltaStr = topMatchEv.delta >= 0 ? `+${topMatchEv.delta}` : `${topMatchEv.delta}`;
+      aiBestSummaryBanner = `
+       <div class="mb-2 p-2 rounded-xl bg-slate-900 border border-emerald-500/40 flex items-center justify-between gap-2 text-[11px]">
+        <div class="truncate">
+         <span class="font-extrabold text-emerald-300">🌟 ${isEn ? 'AI Best Move:' : 'Nước Đi Xuất Sắc Nhất AI:'}</span>
+         <span class="font-extrabold text-white ml-1">#${topMatchEv.moveNumber} ${topMatchEv.san}</span>
+         <span class="text-slate-400">(${topMatchEv.from}→${topMatchEv.to})</span>
+        </div>
+        <span class="px-2 py-0.5 rounded-md font-mono-code font-extrabold shrink-0" style="background:${topMatchEv.badgeBg};color:${topMatchEv.badgeText}">
+         ${topMatchEv.symbol || '★'} ${deltaStr}
+        </span>
+       </div>
+      `;
+     }
+     let rows = aiBestSummaryBanner;
      for (let i = 0; i < hist.length; i += 2) {
       const moveNum = Math.floor(i / 2) + 1;
-      const wMove = hist[i] || '';
-      const bMove = hist[i + 1] || '';
+      const wCell = formatPlyCell(i, 'text-emerald-300 font-bold');
+      const bCell = formatPlyCell(i + 1, 'text-slate-200 font-semibold');
       rows += `
-       <div class="grid grid-cols-7 py-1.5 px-2.5 rounded-lg bg-slate-900/85">
+       <div class="grid grid-cols-7 items-center py-1.5 px-2.5 rounded-lg bg-slate-900/85 border border-slate-800/60">
         <span class="col-span-1 text-slate-400">${moveNum}.</span>
-        <span class="col-span-3 text-emerald-300 font-bold">${wMove}</span>
-        <span class="col-span-3 text-slate-200 font-semibold">${bMove}</span>
+        <div class="col-span-3">${wCell}</div>
+        <div class="col-span-3">${bCell}</div>
        </div>
       `;
      }
@@ -8510,7 +7835,8 @@
    const isEn = window.AppI18n?.lang === 'en';
    cfopContainer.innerHTML = list.map(item => {
     const learned = AppState.learnedItems.includes(item.id);
-    if (!item._cachedSvg) item._cachedSvg = renderCfopDiagramSVG(item);
+    const svgCacheKey = '_cachedSvg_' + (isEn ? 'en' : 'vi');
+    if (!item[svgCacheKey]) item[svgCacheKey] = renderCfopDiagramSVG(item);
     const dispName = isEn && window.AppI18n ? window.AppI18n.translateCfopName(item.name) : item.name;
     const dispDesc = isEn && window.AppI18n ? window.AppI18n.translateCfopDesc(item.desc) : item.desc;
     return `
@@ -8523,7 +7849,7 @@
         </button>
        </div>
        <div class="flex items-start gap-3 pt-0.5">
-        ${item._cachedSvg}
+        ${item[svgCacheKey]}
         <div class="space-y-1 min-w-0 flex-1">
          <h4 class="text-sm sm:text-base font-extrabold text-white leading-snug break-words">${dispName}</h4>
          <p class="text-xs text-slate-300 leading-relaxed break-words">${dispDesc}</p>
@@ -8545,20 +7871,22 @@
   function renderGambitCardsOnly() {
    const gambitContainer = document.getElementById('chess-gambit-cards');
    if (!gambitContainer) return;
-   gambitContainer.innerHTML = CHESS_GAMBITS.map(g => {
+   const isEn = window.AppI18n?.lang === 'en';
+   gambitContainer.innerHTML = CHESS_GAMBITS.map(rawG => {
+    const g = isEn && window.AppI18n ? window.AppI18n.translateGambitItem(rawG) : rawG;
     const learned = AppState.learnedItems.includes(g.id);
-    if (!g._cachedMiniBoard) g._cachedMiniBoard = renderGambitCardMiniBoardHTML(g.moves);
+    if (!rawG._cachedMiniBoard) rawG._cachedMiniBoard = renderGambitCardMiniBoardHTML(rawG.moves);
     return `
      <div data-card-id="${g.id}" class="card-hover-fx h-full p-5 rounded-2xl bg-slate-900/90 border ${learned ? 'border-emerald-500/50' : 'border-slate-800'} flex flex-col justify-between space-y-4">
       <div class="space-y-3">
        <div class="flex items-center justify-between gap-2">
         <span class="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-xs font-extrabold">${g.badge}</span>
         <button data-learn-id="${g.id}" data-learn-title="${g.name}" class="learn-toggle-btn text-xs sm:text-sm font-bold px-3 py-1.5 rounded-xl shrink-0 ${learned ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-200 hover:text-white'} transition">
-         ${learned ? '✓ Đã học' : '+ Đánh dấu đã học'}
+         ${learned ? (isEn ? '✓ Learned' : '✓ Đã học') : (isEn ? '+ Mark as Learned' : '+ Đánh dấu đã học')}
         </button>
        </div>
        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3.5 pt-0.5">
-        ${g._cachedMiniBoard}
+        ${rawG._cachedMiniBoard}
         <div class="space-y-1.5 min-w-0 flex-1">
          <h4 class="text-base sm:text-lg font-extrabold text-white break-words leading-snug">${g.name}</h4>
          <p class="text-xs sm:text-sm text-slate-200 leading-relaxed break-words">${g.desc}</p>
@@ -8567,10 +7895,10 @@
       </div>
       <div class="space-y-2.5 pt-1">
        <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 font-mono-code text-xs sm:text-sm text-emerald-300 break-words">
-        Biên bản: <strong>${g.pgnText}</strong>
+        ${isEn ? 'Moves (SAN):' : 'Biên bản:'} <strong>${g.pgnText}</strong>
        </div>
        <button data-gambit-id="${g.id}" class="load-gambit-btn w-full py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 font-extrabold text-xs sm:text-sm border border-emerald-500/30 transition">
-        ♟️ Bày Thế Cờ Này Lên Bàn Cờ Để Thực Hành
+        ♟️ ${isEn ? 'Set Up Position on Chessboard to Practice' : 'Bày Thế Cờ Này Lên Bàn Cờ Để Thực Hành'}
        </button>
       </div>
      </div>
@@ -8583,7 +7911,7 @@
   }
   // ---------- 11. SUBTAB HELPERS & GLOBAL EVENT WIRING ----------
   function switchRubikSubtab(tab) {
-   ['sim', 'timer', 'camera'].forEach(t => {
+   ['sim', 'timer'].forEach(t => {
     const panel = document.getElementById(`rubik-panel-${t}`);
     if (!panel) return;
     if (t === tab) {
@@ -8591,7 +7919,6 @@
      panel.classList.remove('view-animate');
      void panel.offsetWidth;
      panel.classList.add('view-animate');
-     if (t === 'camera') panel.classList.add('grid');
     } else {
      panel.classList.add('hidden');
     }
@@ -8604,10 +7931,6 @@
    });
    setTimeout(() => {
     if (window.MainCube) window.MainCube.resize();
-    if (tab === 'camera') {
-     CameraScanner.initDigitalTwin();
-     if (CameraScanner.twinCube) CameraScanner.twinCube.resize();
-    }
    }, 50);
   }
   function switchChessSubtab(tab) {
@@ -8632,11 +7955,130 @@
    setTimeout(() => { if (typeof ChessArena !== 'undefined') ChessArena.syncEvalBarHeight(); }, 50);
   }
   // ============================================================================
-  // 11B. BILINGUAL LANGUAGE ENGINE (TIẾNG VIỆT <-> ENGLISH)
+  // 11B. COMPREHENSIVE BILINGUAL LANGUAGE ENGINE (100% TIẾNG VIỆT <-> ENGLISH)
   // ============================================================================
   window.AppI18n = {
    lang: 'vi',
    storageKey: 'lm_app_language_v1',
+   exactTextPairs: [
+    ['⚡ Nền Tảng Huấn Luyện & Thi Đấu Trí Tuệ', '⚡ Mind Sports Training & Competition Platform'],
+    ['Công thức đã học', 'Formulas Learned'],
+    ['Kỷ lục Rubik (Best)', 'Rubik Best Time'],
+    ['Elo Cờ Vua', 'Chess Elo Rating'],
+    ['Trạng thái tài khoản', 'Account Status'],
+    ['Bàn Cờ Vua', 'Chessboard'],
+    ['🎯 Góc Nhìn Chuẩn', '🎯 Reset View'],
+    ['Góc Nhìn Chuẩn', 'Reset View'],
+    ['🔀 Trộn', '🔀 Scramble'],
+    ['📊 Hồ Sơ Học Tập & Tiến Độ Của Bạn', '📊 Your Learning Profile & Progress'],
+    ['Rubik CFOP (Cross, X-Cross, 2-Look, F2L, OLL, PLL)', 'Rubik CFOP (Cross, X-Cross, 2-Look, F2L, OLL, PLL)'],
+    ['Cờ Vua (Gambit, Khai Cuộc & Chiến Thuật)', 'Chess (Gambits, Openings & Tactics)'],
+    ['🏆 Bảng Xếp Hạng Thành Tích Thực Tế', '🏆 Real-Player Live Leaderboard'],
+    ['Ghi nhận các tài khoản người chơi thật đã đăng ký và đăng nhập thi đấu Rubik 3D (Thời gian giải) & Cờ Vua (Elo). Khi bằng điểm, tài khoản tạo trước sẽ xếp hạng cao hơn.', 'Tracks verified players competing in 3D Rubik Speedcubing (Best Time) & Chess (Elo Rating). Ties are broken by earlier account registration.'],
+    ['🧊 Mô Hình 3D (Chuẩn CFOP)', '🧊 3D Rubik Model (Standard CFOP)'],
+    ['Nước xoay: Sẵn sàng', 'Move: Ready'],
+    ['1 Tầng', '1-Layer'],
+    ['2 Tầng (r,u)', '2-Layer (r,u)'],
+    ['Tất Cả', 'All Moves'],
+    ['Sẵn sàng', 'Ready'],
+    ['Lùi Bước', 'Prev Step'],
+    ['Tự Chạy', 'Auto-Run'],
+    ['Đi Bước', 'Next Step'],
+    ['Đổi mã trộn', 'New Scramble'],
+    ['📚 Trọn Bộ 144 Công Thức Rubik (Cross & X-Cross • 2-Look • Full CFOP)', '📚 Complete 144 Rubik CFOP Library (Cross & X-Cross • 2-Look • Full CFOP)'],
+    ['Chuẩn Thi Đấu Quốc Tế WCA', 'WCA International Competition Standard'],
+    ['⏱️ Phòng Bấm Giờ WCA Stackmat Chuyên Nghiệp', '⏱️ Pro WCA Stackmat Timer Studio'],
+    ['Mã Trộn (Scramble):', 'Scramble Sequence:'],
+    ['Đổi Scramble', 'New Scramble'],
+    ['Nhấn giữ 0.5s vào vùng này (hoặc phím Space) để bắt đầu', 'Hold 0.5s in this zone (or press Spacebar) to start'],
+    ['📊 Thống Kê & Lịch Sử Bấm Giờ Chi Tiết', '📊 Detailed Solve Statistics & History'],
+    ['Hiển thị rõ thời gian gốc và thời gian sau khi cộng phạt +2s', 'Clearly displays raw solve time and +2s WCA penalty adjustments'],
+    ['Kỷ lục (Best)', 'Best Single'],
+    ['Trung bình Ao5', 'Average of 5 (Ao5)'],
+    ['Trung bình Ao12', 'Average of 12 (Ao12)'],
+    ['Lịch sử các lần giải (Gốc & Cộng phạt):', 'Solve History (Raw & Penalty):'],
+    ['Xóa lịch sử', 'Clear History'],
+    ['Chưa có lượt giải nào.', 'No solves recorded yet.'],
+    ['Chuyên Đề 02 • International Chess & Gambits', 'Module 02 • International Chess & Gambits'],
+    ['Đấu Trường Cờ Vua & Phân Tích Chiến Thuật', 'International Chess Arena & Tactical Analysis'],
+    ['👑 Chọn Quân Phong Cấp Tốt', '👑 Choose Pawn Promotion Piece'],
+    ['Tốt của bạn đã tiến tới hàng cuối. Hãy chọn quân muốn phong cấp:', 'Your pawn reached the 8th rank. Choose a piece to promote to:'],
+    ['Hậu (Queen)', 'Queen (Q)'],
+    ['Xe (Rook)', 'Rook (R)'],
+    ['Tượng (Bishop)', 'Bishop (B)'],
+    ['Mã (Knight)', 'Knight (N)'],
+    ['Hủy nước đi', 'Cancel Move'],
+    ['⚙️ Bảng Điều Khiển & Thi Đấu', '⚙️ Match Controls & AI Analysis'],
+    ['Chọn màu quân của bạn:', 'Choose your piece color:'],
+    ['Chế độ chơi:', 'Game Mode:'],
+    ['Mức độ AI Elo:', 'AI Bot Elo Level:'],
+    ['Thời gian mỗi bên:', 'Time Control:'],
+    ['Đấu với Bot AI (Luyện tập)', 'Play vs AI Bot (Practice)'],
+    ['⚔️ Ghép Đấu Online (±100 Elo • Tính Elo)', '⚔️ Online Matchmaking (±100 Elo • Rated)'],
+    ['2 Người Chơi (Cùng máy)', '2 Players (Pass & Play)'],
+    ['🎲 Giải Thế Cờ Ngẫu Nhiên (42 Bài)', '🎲 Random Tactical Puzzles (42 Cases)'],
+    ['Tập Sự (Elo 400)', 'Beginner (Elo 400)'],
+    ['Cơ Bản (Elo 800)', 'Novice (Elo 800)'],
+    ['Phong Trào (Elo 1200)', 'Club Player (Elo 1200)'],
+    ['Khu Vực (Elo 1500)', 'Regional (Elo 1500)'],
+    ['Kiện Tướng (Elo 1800)', 'Master (Elo 1800)'],
+    ['Cao Thủ (Elo 2100)', 'Expert (Elo 2100)'],
+    ['Đại Kiện Tướng (Elo 2500)', 'Grandmaster (Elo 2500)'],
+    ['3 phút (Bullet)', '3 min (Bullet)'],
+    ['5 phút (Blitz)', '5 min (Blitz)'],
+    ['10 phút (Rapid)', '10 min (Rapid)'],
+    ['15 phút (Standard)', '15 min (Standard)'],
+    ['⚔️ Ghép Đấu Online Công Bằng (Chênh lệch 0 – 100 Elo)', '⚔️ Fair Online Matchmaking (0 – 100 Elo Gap)'],
+    ['⚡ Tự lưu ván khi F5', '⚡ Auto-Saves on Reload'],
+    ['Elo Của Bạn', 'Your Elo'],
+    ['Khoảng Ghép (±100)', 'Match Range (±100)'],
+    ['Thời Gian Đấu', 'Time Control'],
+    ['🌐 Kỳ thủ đang trực tuyến tại sảnh chờ:', '🌐 Players currently online in lobby:'],
+    ['Đang đồng bộ...', 'Syncing...'],
+    ['Bấm "Tìm Đối Thủ Online" để phát tín hiệu ghép trận liên máy.', 'Click "Find Online Opponent" to broadcast a matchmaking signal across devices.'],
+    ['🎲 Tạo Bài Ngẫu Nhiên Mới', '🎲 New Random Puzzle'],
+    ['🏁 Tổng Kết & Phân Tích Ván Cờ', '🏁 Post-Game Summary & AI Review'],
+    ['📜 Biên Bản Nước Đi (SAN):', '📜 Move History & AI Ratings (SAN):'],
+    ['📖 Cẩm Nang Gambit, Khai Cuộc & Đòn Chiến Thuật Cờ Vua', '📖 Chess Gambit, Opening & Tactical Encyclopedia'],
+    ['Bảng Vàng Thi Đấu Thực Tế • Ưu Tiên Thứ Tự Tạo Tài Khoản Khi Bằng Điểm', 'Official Live Standings • Earlier Registration Breaks Ties'],
+    ['🏆 Bảng Xếp Hạng Thành Tích Người Chơi Thật', '🏆 Real-Player Live Leaderboard'],
+    ['BXH Tốc Độ Giải Rubik 3D', '3D Rubik Speedcubing Leaderboard'],
+    ['Xếp hạng theo Thời Gian Giải Nhanh Nhất (Best Time)', 'Ranked by Fastest Single Solve (Best Time)'],
+    ['Time (Giây)', 'Time (Seconds)'],
+    ['BXH Hệ Số Elo Cờ Vua', 'Chess FIDE Elo Leaderboard'],
+    ['Xếp hạng theo Điểm Elo Tích Lũy Qua Các Ván Đấu', 'Ranked by Cumulative Online Match Elo Rating'],
+    ['Không Gian Mô Hình Rubik 3D Mở Rộng', 'Expanded Fullscreen 3D Rubik Studio'],
+    ['Thu Nhỏ Về Giao Diện Chính', 'Exit Fullscreen'],
+    ['📱 Hộp Chữ Xoay Trực Tiếp & Phím Tắt', '📱 Direct Touch Rotation Pad & Shortcuts'],
+    ['Chạm trực tiếp trên điện thoại hoặc bấm phím tương ứng trên bàn phím', 'Tap buttons directly on mobile or press corresponding keyboard keys'],
+    ['⌨️ Hướng Dẫn Bấm Phím Bàn Phím:', '⌨️ Keyboard Shortcuts Guide:'],
+    ['Đang chờ phím...', 'Waiting for key...'],
+    ['1. Hộp Chữ 6 Mặt Cơ Bản (U, D, R, L, F, B):', '1. Basic 1-Layer Face Moves (U, D, R, L, F, B):'],
+    ['2. Hộp Chữ Xoay 2 Tầng (r, l, u, d, f, b):', '2. Wide 2-Layer Moves (r, l, u, d, f, b):'],
+    ['3. Hộp Chữ Tầng Giữa (M, E, S) & Xoay Khối (x, y, z):', '3. Middle Slice (M, E, S) & Cube Rotations (x, y, z):'],
+    ['Chế Độ Mở Rộng Bàn Cờ Chuyên Nghiệp', 'Pro Fullscreen Chessboard Mode'],
+    ['Bàn cờ kích thước lớn giúp quan sát thế trận và tính toán chiến thuật chuẩn xác', 'Large tournament board for clear visualization and deep tactical calculation'],
+    ['🎛️ Điều Khiển Nhanh Toàn Màn Hình', '🎛️ Fullscreen Quick Controls'],
+    ['Chế độ đấu:', 'Game Mode:'],
+    ['Mức AI Elo:', 'AI Elo Level:'],
+    ['Màu quân của bạn:', 'Your Piece Color:'],
+    ['♔ Trắng', '♔ White'],
+    ['♚ Đen', '♚ Black'],
+    ['Xác Nhận Đầu Hàng?', 'Confirm Resignation?'],
+    ['Bạn có chắc chắn muốn nhận thua (Đầu Hàng) ván cờ hiện tại không?', 'Are you sure you want to resign the current chess game?'],
+    ['Hủy Bỏ', 'Cancel'],
+    ['🏳️ Đầu Hàng Ngay', '🏳️ Resign Now'],
+    ['Lời Đề Nghị Hòa Cờ Online', 'Online Draw Offer Received'],
+    ['Đối thủ gửi lời đề nghị Hòa ván cờ này. Bạn có đồng ý Hòa không?', 'Your opponent offered a draw. Do you accept?'],
+    ['✕ Từ Chối', '✕ Decline'],
+    ['✓ Đồng Ý Hòa', '✓ Accept Draw'],
+    ['Email học viên (Xác thực tên miền thật):', 'Student Email (Real DNS MX Verification):'],
+    ['Hệ thống kiểm tra cấu trúc RFC và máy chủ mail (DNS MX) thực tế.', 'Verifies RFC syntax and live domain mail servers (DNS MX).'],
+    ['Tên hiển thị (Nickname duy nhất trên BXH):', 'Display Name (Unique Leaderboard Nickname):'],
+    ['Mật khẩu tài khoản (Tối thiểu 6 ký tự):', 'Account Password (Minimum 6 characters):'],
+    ['Nhập lại mật khẩu xác nhận:', 'Confirm Password:'],
+    ['Tự động lưu giữ phiên đăng nhập cho những lần truy cập sau', 'Remember my login session automatically on this device']
+   ],
    init() {
     const saved = StorageUtil.getRaw(this.storageKey);
     if (saved === 'en' || saved === 'vi') {
@@ -8659,57 +8101,297 @@
      .replace(/Chèn 2 Cạnh Cross Liên Hoàn/g, 'Multi-Edge Relative Cross Insertion')
      .replace(/Bảo Toàn 1 Cặp F2L Khi Giải Cross/g, 'Preserve First F2L Pair During Cross')
      .replace(/Kỹ Thuật Lỗ Khóa/g, 'Keyhole Technique')
+     .replace(/Khe Phải-Trước/g, 'Front-Right Slot')
+     .replace(/Khe Sau-Phải/g, 'Back-Right Slot')
+     .replace(/Khe Trước-Trái/g, 'Front-Left Slot')
      .replace(/Dựng Khối 2×2×2 Trước Khi Khóa 2 Cạnh Cross Cuối/g, 'Build 2×2×2 Block Before Final Cross Edges')
      .replace(/Chèn Cặp F2L Khe Sau-Phải Khi Kết Thúc Cross/g, 'Insert Back-Right F2L Pair With Cross')
-     .replace(/Đa Hướng X-Cross Khe Trước-Trái/g, 'Front-Left Slot X-Cross')
+     .replace(/Đa Hướng X-Cross Khe Trước-Trái/g, 'Multi-Angle Front-Left X-Cross')
      .replace(/Giữ Cặp Ghép Sẵn Trên Tầng U Khi Đóng Cross/g, 'Preserve Top U Pair While Closing Cross')
-     .replace(/Từ Đường Thẳng Ngang Lên Dấu Cộng Vàng/g, 'Line Shape to Yellow Cross')
-     .replace(/Từ Chữ L Nhỏ Lên Dấu Cộng Vàng/g, 'Small L-Shape to Yellow Cross')
-     .replace(/Từ Dấu Chấm Tâm Lên Dấu Cộng Vàng/g, 'Dot Center to Yellow Cross')
+     .replace(/Bước 1\.1: Từ Đường Thẳng Ngang Lên Dấu Cộng Vàng/g, 'Step 1.1: Horizontal Line to Yellow Cross')
+     .replace(/Bước 1\.2: Từ Chữ L Nhỏ Lên Dấu Cộng Vàng/g, 'Step 1.2: Small L-Shape to Yellow Cross')
+     .replace(/Bước 1\.3: Từ Dấu Chấm Tâm Lên Dấu Cộng Vàng/g, 'Step 1.3: Dot Center to Yellow Cross')
+     .replace(/Bước 2\.1: Sune \(1 Góc Vàng Đã Lật Ở Trước-Trái\)/g, 'Step 2.1: Sune (1 Yellow Corner Oriented at Front-Left)')
+     .replace(/Bước 2\.2: Anti-Sune \(1 Góc Vàng Đã Lật Ở Sau-Phải\)/g, 'Step 2.2: Anti-Sune (1 Yellow Corner Oriented at Back-Right)')
+     .replace(/Bước 2\.3: H-Case \(0 Góc Lật - 2 Đèn Pha Đối Diện\)/g, 'Step 2.3: H-Case (0 Corners Oriented - Double Headlights)')
+     .replace(/Bước 2\.4: Pi-Case \(0 Góc Lật - 1 Đèn Pha Bên Trái\)/g, 'Step 2.4: Pi-Case (0 Corners Oriented - Left Headlights)')
+     .replace(/Bước 2\.5: Headlights \(2 Góc Sau Đã Lật - Đèn Pha Trước\)/g, 'Step 2.5: Headlights (2 Back Corners Oriented)')
+     .replace(/Bước 2\.6: Chameleon \(2 Góc Phải Đã Lật - Tắc Kè\)/g, 'Step 2.6: Chameleon T-Case (2 Right Corners Oriented)')
+     .replace(/Bước 2\.7: Bowtie \(2 Góc Chéo Nhau Đã Lật - Chiếc Nơ\)/g, 'Step 2.7: Bowtie L-Case (2 Diagonal Corners Oriented)')
+     .replace(/Bước 1\.1: Có Đèn Pha Góc \(Đặt Bên Trái Chạy T-Perm\)/g, 'Step 1.1: Corner Headlights on Left (Execute T-Perm)')
+     .replace(/Bước 1\.2: Không Có Đèn Pha Góc \(Chạy Y-Perm\)/g, 'Step 1.2: No Corner Headlights (Execute Y-Perm)')
+     .replace(/Bước 2\.1: Ua-Perm \(Hoán Vị 3 Cạnh Ngược Kim Đồng Hồ\)/g, 'Step 2.1: Ua-Perm (3-Edge Counter-Clockwise Cycle)')
+     .replace(/Bước 2\.2: Ub-Perm \(Hoán Vị 3 Cạnh Thuận Kim Đồng Hồ\)/g, 'Step 2.2: Ub-Perm (3-Edge Clockwise Cycle)')
+     .replace(/Bước 2\.3: H-Perm \(Đổi Chỗ 2 Cặp Cạnh Đối Diện Chữ Thập\)/g, 'Step 2.3: H-Perm (Swap Opposite Edge Pairs)')
+     .replace(/Bước 2\.4: Z-Perm \(Đổi Chỗ 2 Cặp Cạnh Kề Nhau\)/g, 'Step 2.4: Z-Perm (Swap Adjacent Edge Pairs)')
      .replace(/Chèn Cặp Ghép Sẵn Vào Khe Phải/g, 'Insert Paired F2L into Right Slot')
      .replace(/Chèn Cặp Ghép Sẵn Từ Mặt Trước/g, 'Insert Paired F2L from Front Slot')
      .replace(/Hai Mặt Màu Trên Khác Nhau/g, 'Opposite Top Colors')
      .replace(/Hai Mặt Màu Trên Giống Nhau/g, 'Same Top Colors')
+     .replace(/Cùng Màu Trên/g, 'Same Top Color')
      .replace(/Trắng Nhìn Trước/g, 'White Facing Front')
      .replace(/Trắng Nhìn Phải/g, 'White Facing Right')
+     .replace(/Đẩy Góc Đón Cạnh/g, 'Push Corner to Pair Edge')
+     .replace(/Đẩy Góc Mặt F/g, 'Push Corner on F Face')
+     .replace(/Cạnh Xa Ở/g, 'Far Edge at')
      .replace(/Cạnh Ở/g, 'Edge at')
      .replace(/Góc Trắng Ngửa Lên Trời/g, 'White Corner Facing Up')
+     .replace(/Góc Trắng Ngửa Lên Dính Cạnh Ở/g, 'Upward White Corner Attached to Edge at')
      .replace(/Góc Trắng Ngửa Lên/g, 'White Corner Facing Up')
+     .replace(/Góc Trắng Ngửa/g, 'White Corner Facing Up')
+     .replace(/Cùng Màu Trước/g, 'Matching Front Color')
+     .replace(/Cùng Màu Phải/g, 'Matching Right Color')
      .replace(/Góc Đã Đúng Ở Đáy/g, 'Corner Solved in Bottom')
+     .replace(/Góc Đúng Đáy Nhưng Cạnh Trong Khe FR Bị Lật Ngược/g, 'Corner Solved in Bottom + Inverted Edge in FR Slot')
+     .replace(/Góc Đáy Trắng Nhìn Phải/g, 'Bottom Corner White Facing Right')
+     .replace(/Góc Đáy Trắng Nhìn Trước/g, 'Bottom Corner White Facing Front')
      .replace(/Cần Chèn/g, 'Insert Edge')
-     .replace(/Cặp Dính Liền/g, 'Connected Pair')
-     .replace(/Ngược Chiều/g, 'Inverted')
-     .replace(/Đúng Chiều/g, 'Oriented')
-     .replace(/Trong Khe FR/g, 'in FR Slot')
-     .replace(/Dấu Chấm Tâm Vàng/g, 'Yellow Dot Center')
-     .replace(/Khối Vuông 2×2 Vàng/g, '2×2 Yellow Block')
-     .replace(/Tia Chớp/g, 'Lightning Bolt')
-     .replace(/Hình Con Cá/g, 'Fish Pattern')
-     .replace(/Dấu Cộng Vàng/g, 'Yellow Cross')
-     .replace(/Đèn Pha/g, 'Headlights')
-     .replace(/Đường Thẳng Ngang Vàng/g, 'Horizontal Yellow Line')
+     .replace(/Cặp Dính Liền Ngược Chiều Ở/g, 'Inverted Connected Pair at')
+     .replace(/Cặp Dính Liền Ở/g, 'Connected Pair at')
+     .replace(/Nhưng Cùng Màu Trên/g, 'with Same Top Color')
+     .replace(/Cạnh Ngược Chiều Trong Khe FR/g, 'Inverted Edge in FR Slot')
+     .replace(/Cạnh Đúng Chiều Trong Khe FR/g, 'Oriented Edge in FR Slot')
+     .replace(/Cạnh Đúng Khe FR/g, 'Oriented Edge in FR Slot')
+     .replace(/Cạnh Ngược Trong Khe FR/g, 'Inverted Edge in FR Slot')
+     .replace(/Cạnh Đúng Khe/g, 'Oriented Edge in Slot')
+     .replace(/Cạnh Ngược Khe/g, 'Inverted Edge in Slot')
+     .replace(/Góc Trắng Nhìn Phải/g, 'White Corner Facing Right')
+     .replace(/Góc Trắng Nhìn Trước/g, 'White Corner Facing Front')
+     .replace(/Dấu Chấm Tâm Vàng - 2 Cặp Đèn Pha Trái\/Phải/g, 'Yellow Dot Center - Left/Right Double Headlights')
+     .replace(/Dấu Chấm Tâm Vàng - Đèn Pha Bên Trái/g, 'Yellow Dot Center - Left Headlights')
+     .replace(/Dấu Chấm \+ 1 Góc Vàng Ở Trước-Phải/g, 'Dot + 1 Yellow Corner at Front-Right')
+     .replace(/Dấu Chấm \+ 1 Góc Vàng Ở Trước-Trái/g, 'Dot + 1 Yellow Corner at Front-Left')
+     .replace(/Khối Vuông 2×2 Vàng Góc Sau-Trái/g, '2×2 Yellow Square at Back-Left')
+     .replace(/Khối Vuông 2×2 Vàng Góc Trước-Trái/g, '2×2 Yellow Square at Front-Left')
+     .replace(/Tia Chớp Nhỏ Bên Trái/g, 'Small Left Lightning Bolt')
+     .replace(/Tia Chớp Nhỏ Bên Phải/g, 'Small Right Lightning Bolt')
+     .replace(/Hình Con Cá Nhỏ Hướng Trước-Phải/g, 'Small Fish Facing Front-Right')
+     .replace(/Hình Con Cá Nhỏ Hướng Trước-Trái/g, 'Small Fish Facing Front-Left')
+     .replace(/Tia Chớp Lớn Kèm Khối 2 Ô Trước/g, 'Lightning Bolt with Front 2-Bar')
+     .replace(/Tia Chớp Lớn Đối Xứng/g, 'Mirror Lightning Bolt')
+     .replace(/Hình Khẩu Súng Ngang Phải/g, 'Right Gun Shape')
+     .replace(/Hình Khẩu Súng Ngang Trái/g, 'Left Gun Shape')
+     .replace(/Nước Mã Kèm Đèn Pha Sau-Phải/g, 'Knight Move Shape + Back-Right Headlights')
+     .replace(/Nước Mã Kèm Đèn Pha Trước-Trái/g, 'Knight Move Shape + Front-Left Headlights')
+     .replace(/Đường Chéo 2 Góc Vàng \(Không Cạnh Lật\)/g, 'Diagonal 2 Yellow Corners (No Edges Oriented)')
+     .replace(/Vương Miện Vàng \(2 Góc Sau Đã Lật\)/g, 'Crown Dot (2 Back Corners Oriented)')
+     .replace(/Tai Thỏ Vàng \(2 Góc Sau Đã Lật \+ Đèn Pha\)/g, 'Bunny Dot (2 Back Corners Oriented + Headlights)')
+     .replace(/Chữ X Vàng \(4 Góc Đã Lật - 0 Cạnh Lật\)/g, 'Yellow X-Shape (All 4 Corners Oriented, 0 Edges)')
+     .replace(/Dấu Cộng Vàng - 2 Cặp Đèn Pha Đối Diện/g, 'Yellow Cross - Double Opposite Headlights')
+     .replace(/Dấu Cộng Vàng - Hình Chữ Pi \(Đèn Pha Trái\)/g, 'Yellow Cross - Pi Case (Left Headlights)')
+     .replace(/Đèn Pha Đôi \(2 Góc Sau Đã Lật, 2 Góc Trước Nhìn Thẳng\)/g, 'Headlights (2 Back Corners Oriented, Front Pair)')
+     .replace(/Hình Tắc Kè Chữ T \(2 Góc Phải Đã Lật\)/g, 'Chameleon T-Shape (2 Right Corners Oriented)')
+     .replace(/Hình Chiếc Nơ \(2 Góc Chéo Nhau Đã Lật\)/g, 'Bowtie L-Shape (2 Diagonal Corners Oriented)')
+     .replace(/Hình Con Cá Ngược - 1 Góc Ở Sau-Phải/g, 'Anti-Sune Fish - 1 Corner at Back-Right')
+     .replace(/Hình Con Cá Thuận - 1 Góc Ở Trước-Trái/g, 'Sune Fish - 1 Corner at Front-Left')
+     .replace(/Hình Mũi Tên \(4 Góc Đã Lật - Còn 2 Cạnh Kề\)/g, 'Arrow Shape (4 Corners Oriented, 2 Adjacent Edges Flip)')
+     .replace(/Hình Tia Chớp Gãy/g, 'Awkward Lightning Shape')
+     .replace(/2 Góc & 2 Cạnh Kề/g, '2 Corners & 2 Adjacent Edges')
+     .replace(/Hình Chữ P Ngược Bên Phải/g, 'Right Inverted P-Shape')
+     .replace(/Hình Chữ P Thuận Bên Trái/g, 'Left P-Shape')
+     .replace(/Hình Chữ T Nằm Ngang/g, 'Horizontal T-Shape')
+     .replace(/Hình Chữ C Kết Hợp Chữ T/g, 'C-Shape Bar Pattern')
+     .replace(/Hình Con Cá Chéo \(2 Góc Chéo \+ 2 Cạnh Kề\)/g, 'Diagonal Fish (2 Diagonal Corners + 2 Edges)')
+     .replace(/Hình Chữ W Bậc Thang Bên Trái/g, 'Left W-Shape Staircase')
+     .replace(/Hình Chữ W Bậc Thang Bên Phải/g, 'Right W-Shape Staircase')
+     .replace(/Hình Cá Nhỏ Mất Cạnh \(Khối 2×2 \+ 1 Góc Chéo\)/g, 'Mounted Fish (2×2 Block + 1 Diagonal Corner)')
+     .replace(/Tia Chớp Dài Bên Phải/g, 'Right Big Lightning')
+     .replace(/Tia Chớp Dài Bên Trái/g, 'Left Big Lightning')
+     .replace(/Hình Cá Kèm Đèn Pha Trước/g, 'Awkward Fish + Front Headlights')
+     .replace(/Hình Cá Kèm Đèn Pha Sau/g, 'Awkward Fish + Back Headlights')
+     .replace(/Hình Chữ P Nhỏ Góc Trước-Phải/g, 'Front-Right P-Shape')
+     .replace(/Hình Chữ P \/ L Nhỏ Ở Góc \(Tạo Mặt Vàng\)/g, 'Corner P-Shape (6-Move Trigger)')
+     .replace(/Đường Thẳng Ngang Vàng Chữ T \(6 Nước\)/g, 'Horizontal T-Line (Classic 6 Moves)')
+     .replace(/Hình Chữ C Dọc Bên Trái/g, 'Left Vertical C-Shape')
+     .replace(/Chữ L Nhỏ Kèm 2 Đèn Pha/g, 'Small L-Shape + Double Headlights')
+     .replace(/Chữ L Nhỏ Thuận Tay Phải/g, 'Right-Hand Small L-Shape')
+     .replace(/Chữ L Nhỏ Kèm Thanh 3 Ô/g, 'Small L-Shape + 3-Bar')
+     .replace(/Chữ L Nhỏ Đối Xứng OLL 49/g, 'Mirror Small L-Shape (OLL 49 Inverse)')
+     .replace(/Thanh Ngang 3 Ô Vàng/g, 'Horizontal 3-Sticker Yellow Line')
+     .replace(/Thanh Dọc 3 Ô Vàng Kèm Đèn Pha/g, 'Vertical 3-Sticker Line + Headlights')
+     .replace(/Chữ L Nhỏ Kèm Dải 3 Ô Trước/g, 'Small L-Shape + Front 3-Bar')
+     .replace(/Chữ L Nhỏ Kèm Dải 3 Ô Sau/g, 'Small L-Shape + Back 3-Bar')
+     .replace(/Đường Cao Tốc \(Thanh Dọc \+ 2 Dải 3 Ô Hai Bên\)/g, 'Highway Line (Vertical Line + Side 3-Bars)')
+     .replace(/Đèn Đường \(Thanh Ngang \+ Đèn Pha Hai Đầu\)/g, 'Streetlights Line (Horizontal Bar + End Headlights)')
+     .replace(/4 Góc Đã Lật Vàng - Còn 2 Cạnh Đối Diện/g, '4 Corners Oriented - Flip 2 Opposite Edges')
      .replace(/Hoán Vị 3 Góc Thuận Chiều Kim Đồng Hồ/g, '3-Corner Clockwise Cycle')
      .replace(/Hoán Vị 3 Góc Ngược Chiều Kim Đồng Hồ/g, '3-Corner Counter-Clockwise Cycle')
      .replace(/Hoán Đổi 2 Cặp Góc Song Song/g, 'Swap 2 Parallel Corner Pairs')
+     .replace(/Thanh Ngang 3 Ô Đã Giải Bên Trái/g, 'Solved 3-Bar on Left Side')
+     .replace(/Chu Trình Kép Xoay 3 Góc & 3 Cạnh/g, 'Double Cycle of 3 Corners & 3 Edges')
+     .replace(/Đổi Chỗ 2 Cặp Cạnh Đối Diện Chữ Thập/g, 'Swap 2 Opposite Edge Pairs (Cross)')
+     .replace(/Hoán Vị Chữ J Trái - 2 Góc & 2 Cạnh Kề/g, 'Left J-Perm - Swap 2 Adjacent Corners & Edges')
+     .replace(/Hoán Vị Chữ J Phải - Cực Nhanh/g, 'Right J-Perm - Fast Fingertrick')
+     .replace(/Hoán Đổi Chéo 2 Góc & 2 Cạnh Đối Diện/g, 'Diagonal Corner Swap & Opposite Edge Swap')
+     .replace(/Hoán Đổi Chéo Đối Xứng Của Na-Perm/g, 'Mirror Diagonal Swap of Na-Perm')
+     .replace(/Đèn Pha Bên Trái - Đổi Góc Phải & Cạnh Trước-Trái/g, 'Left Headlights - Swap Right Corners & Front-Left Edges')
+     .replace(/Đèn Pha Phía Trước - Đổi Góc Sau & Cạnh Phải/g, 'Front Headlights - Swap Back Corners & Right Edges')
      .replace(/Hoán Vị Chữ T Kinh Điển - 2 Góc Phải & 2 Cạnh Ngang/g, 'Classic T-Perm - Swap 2 Right Corners & 2 Edges')
      .replace(/Hoán Vị 3 Cạnh Ngược Chiều Kim Đồng Hồ/g, '3-Edge Counter-Clockwise Cycle')
      .replace(/Hoán Vị 3 Cạnh Thuận Chiều Kim Đồng Hồ/g, '3-Edge Clockwise Cycle')
-     .replace(/Đổi Chỗ 2 Cặp Cạnh Đối Diện Chữ Thập/g, 'Swap Opposite Edge Pairs (Cross)')
-     .replace(/Đổi Chỗ 2 Cặp Cạnh Kề Nhau/g, 'Swap Adjacent Edge Pairs')
-     .replace(/Hoán Đổi 2 Góc Chéo & 2 Cạnh Kề/g, 'Swap Diagonal Corners & Adjacent Edges');
+     .replace(/Đổi Chéo 2 Góc & 2 Cạnh Kề Bên Phải/g, 'Diagonal Corner Swap & Right Adjacent Edge Swap')
+     .replace(/Hoán Đổi 2 Góc Chéo & 2 Cạnh Kề/g, 'Swap 2 Diagonal Corners & 2 Adjacent Edges')
+     .replace(/Đổi Chỗ 2 Cặp Cạnh Kề Nhau Chéo/g, 'Swap 2 Diagonal Adjacent Edge Pairs');
    },
    translateCfopDesc(viDesc) {
     if (this.lang !== 'en' || !viDesc) return viDesc;
     return viDesc
-     .replace(/Giữ tâm Vàng ở mặt Trên \(U\), tâm Trắng ở mặt Đáy \(D\)\./g, 'Keep Yellow center on Top (U) and White center on Bottom (D).')
+     .replace(/Giữ tâm Vàng ở mặt Trên \(U\), tâm Trắng ở mặt Đáy \(D\)\. Đưa 4 viên cạnh Trắng về quanh tâm Trắng ở đáy sao cho màu bên hông khớp với 4 viên tâm Xanh lá, Đỏ, Xanh dương, Cam\./g, 'Keep Yellow center on Top (U) and White center on Bottom (D). Align all 4 White edges around the bottom center matching the Green, Red, Blue, and Orange side centers.')
+     .replace(/Khi viên cạnh Trắng nằm ở tầng trên hoặc đúng khe nhưng bị lật ngược màu: Dùng chuỗi 5 nước này để chèn cạnh Trắng xuống đáy mà không làm lệch các viên Cross đã giải\./g, 'When a White edge is flipped in its slot or on U: execute these 5 moves to insert it oriented into D without disturbing solved Cross edges.')
+     .replace(/Giải các viên cạnh Trắng theo thứ tự màu tương đối \(Xanh lá - Đỏ - Xanh dương - Cam\) rồi chỉ cần xoay D hoặc D' ở bước cuối để khớp toàn bộ 4 tâm\./g, "Solve the White edges in relative color order (Green - Red - Blue - Orange), then align all 4 centers at the end with a single D or D' move.")
+     .replace(/Kỹ thuật nâng cao: Trong lúc hoàn thiện viên cạnh Trắng cuối cùng dưới mặt Đáy \(D\), đồng thời giữ lại 1 cặp Góc-Cạnh để hoàn thành luôn khe F2L đầu tiên\./g, 'Advanced technique: While placing the final White Cross edge on D, simultaneously preserve and solve the first F2L Corner-Edge slot.')
+     .replace(/Tận dụng góc Đáy chưa đóng để chèn nhanh viên Cạnh tầng 2 bằng R U R', trả D' rồi đóng F2 hoàn thiện đồng thời Cross \+ cặp F2L đầu tiên\./g, "Use the unsolved bottom corner as a keyhole to insert the middle-layer edge via R U R', undo D', then finish F2 to complete Cross + F2L #1.")
+     .replace(/Ghép khối vuông 2×2×2 ở góc Đáy-Trước-Phải rồi đưa 2 cạnh Cross còn lại xuống đáy mà không phá vỡ khối F2L đã tạo\./g, 'Build a 2×2×2 block at Down-Front-Right, then insert the remaining 2 Cross edges without breaking your F2L block.')
+     .replace(/Khi viên cạnh Cross Đỏ đang ở UR và cặp F2L ở tầng trên: Dùng R' U' R' F R2 vừa hạ cạnh Cross vừa khóa gọn cặp F2L khe BR\./g, "When the Red Cross edge is at UR with an F2L pair on top: execute R' U' R' F R2 to solve the Cross edge and lock in the Back-Right F2L slot.")
+     .replace(/Bảo toàn cặp Góc-Cạnh bên Trái trong lúc chèn viên cạnh Cross Cam-Trắng xuống mặt Đáy \(D\)\./g, 'Preserve the Left Corner-Edge pair while inserting the Orange-White Cross edge into the Bottom (D) face.')
+     .replace(/Đẩy U để né cặp F2L đã ghép sẵn trên tầng đỉnh, đóng nốt cạnh Cross bằng R2 F R F' rồi chèn ngay cặp F2L xuống khe\./g, "Push U to protect the pre-built F2L pair on top, finish the Cross edge with R2 F R F', then insert the F2L pair cleanly.")
+     .replace(/Bước 1 của 2-Look OLL/g, 'Step 1 of 2-Look OLL')
+     .replace(/Bước 2 của 2-Look OLL/g, 'Step 2 of 2-Look OLL')
+     .replace(/Bước 1 của 2-Look PLL/g, 'Step 1 of 2-Look PLL')
+     .replace(/Bước 2 của 2-Look PLL/g, 'Step 2 of 2-Look PLL')
+     .replace(/Tạo Dấu Cộng Vàng/g, 'Form Yellow Cross')
+     .replace(/Lật Full Mặt Vàng sau khi có Dấu Cộng/g, 'Orient Full Yellow Face after Cross')
+     .replace(/Hoán Vị 4 Góc/g, 'Permute 4 Corners')
+     .replace(/Hoán Vị 4 Cạnh sau khi 4 góc đã đúng/g, 'Permute 4 Edges after Corners are solved')
      .replace(/Cặp Góc-Cạnh đã ghép sẵn/g, 'Pre-paired Corner-Edge block')
-     .replace(/Màu Trắng của viên Góc/g, 'White sticker of the Corner piece')
-     .replace(/Công thức Split Pair kinh điển khi mặt Trắng ngửa lên U\./g, 'Classic Split Pair algorithm when the White sticker faces Up (U).')
+     .replace(/Màu Trắng của viên Góc/g, 'The White sticker of the Corner piece')
+     .replace(/Công thức Split Pair kinh điển khi mặt Trắng ngửa lên U\./g, 'Classic Split Pair algorithm when the White corner sticker faces Up (U).')
      .replace(/Đối xứng mặt Trước của/g, 'Front-face mirror of')
-     .replace(/Nhóm OCLL kinh điển nhất: Đặt góc Vàng duy nhất đã lật ở Trước-Trái \(ULF\)\./g, 'Classic OCLL case: Hold the single oriented Yellow corner at Front-Left (ULF).')
-     .replace(/Nhóm OCLL: Đặt góc Vàng duy nhất đã lật ở vị trí Sau-Phải \(URB\) rồi xoay 7 nước\./g, 'OCLL case: Hold the single oriented Yellow corner at Back-Right (URB) and execute 7 moves.')
-     .replace(/Cặp đèn pha bên Trái \(L\): Đổi chỗ 2 góc bên Phải \(URB ↔ URF\) và 2 cạnh đối diện \(UL ↔ UR\)\./g, 'Headlights on Left (L): Swaps the two Right corners (URB ↔ URF) and opposite edges (UL ↔ UR).')
-     .replace(/Mặt Sau \(B\) đã hoàn chỉnh 3 ô\. Hoán vị 3 viên cạnh/g, 'Solved 3-bar at Back (B). Cycles the 3 remaining edges');
+     .replace(/Đối xứng gương của/g, 'Mirror image of')
+     .replace(/Đối xứng của/g, 'Symmetric mirror of')
+     .replace(/Nghịch đảo của/g, 'Inverse algorithm of')
+     .replace(/Nhóm Dot/g, 'Dot OLL Group')
+     .replace(/Nhóm Square/g, 'Square 2×2 OLL Group')
+     .replace(/Nhóm Lightning/g, 'Lightning OLL Group')
+     .replace(/Nhóm Fish/g, 'Fish OLL Group')
+     .replace(/Nhóm Knight Move/g, 'Knight Move OLL Group')
+     .replace(/Nhóm OCLL/g, 'Cross OLL (OCLL) Group')
+     .replace(/Nhóm All Corners Oriented/g, 'Corners-Oriented OLL Group')
+     .replace(/Nhóm Awkward/g, 'Awkward Shape OLL Group')
+     .replace(/Nhóm P-Shape/g, 'P-Shape OLL Group')
+     .replace(/Nhóm T-Shape/g, 'T-Shape OLL Group')
+     .replace(/Nhóm C-Shape/g, 'C-Shape OLL Group')
+     .replace(/Nhóm W-Shape/g, 'W-Shape OLL Group')
+     .replace(/Nhóm Big Lightning/g, 'Big Lightning OLL Group')
+     .replace(/Nhóm Small L-Shape/g, 'Small L-Shape OLL Group')
+     .replace(/Nhóm I-Shape/g, 'Line I-Shape OLL Group')
+     .replace(/cực kỳ thuận tay/g, 'very ergonomic and fast')
+     .replace(/cực nhanh/g, 'ultra-fast')
+     .replace(/siêu nhanh/g, 'super fast')
+     .replace(/theo chiều kim đồng hồ/g, 'clockwise')
+     .replace(/ngược chiều kim đồng hồ/g, 'counter-clockwise')
+     .replace(/Đổi chỗ/g, 'Swaps')
+     .replace(/Hoán đổi/g, 'Swaps')
+     .replace(/Hoán vị/g, 'Cycles')
+     .replace(/vào khe FR/g, 'into the FR slot')
+     .replace(/xuống khe FR/g, 'into the FR slot')
+     .replace(/về khe FR/g, 'into the FR slot')
+     .replace(/mặt Trên \(U\)/g, 'Top face (U)')
+     .replace(/mặt Đáy \(D\)/g, 'Bottom face (D)')
+     .replace(/mặt Trước \(F\)/g, 'Front face (F)')
+     .replace(/mặt Sau \(B\)/g, 'Back face (B)')
+     .replace(/mặt Phải \(R\)/g, 'Right face (R)')
+     .replace(/mặt Trái \(L\)/g, 'Left face (L)')
+     .replace(/bên Trái/g, 'on the Left')
+     .replace(/bên Phải/g, 'on the Right')
+     .replace(/phía Trước/g, 'at the Front')
+     .replace(/phía Sau/g, 'at the Back');
+   },
+   translateGambitItem(g) {
+    if (this.lang !== 'en' || !g) return g;
+    const map = {
+     chess_qg: {
+      name: "1. Queen's Gambit",
+      badge: 'Top Strategic Gambit',
+      desc: "White sacrifices the c4 wing pawn to deflect Black's central d5 pawn. If Black accepts with 2...dxc4, White seizes the center with e4 and recovers the pawn effortlessly with the Bishop."
+     },
+     chess_kg: {
+      name: "2. King's Gambit",
+      badge: 'Romantic Attacking Gambit',
+      desc: 'White offers the f4 pawn on move 2 to rip open the semi-open f-file for the Rook after castling and rapidly take control of the d4 center.'
+     },
+     chess_evans: {
+      name: '3. Evans Gambit',
+      badge: 'Italian Game Assassin',
+      desc: "White sacrifices the b4 pawn to deflect Black's c5 Bishop, gaining crucial tempo for c3 and d4 while opening sweeping diagonals aimed at f7."
+     },
+     chess_stafford: {
+      name: '4. Stafford Gambit',
+      badge: 'Deadly Black Counter-Trap',
+      desc: 'A venomous weapon for Black: sacrificing a central pawn to unleash both Bishops, Knights, and the Queen in a relentless assault against f2.'
+     },
+     chess_danish: {
+      name: '5. Danish Gambit',
+      badge: 'Double Pawn Diagonal Sacrifice',
+      desc: "White sacrifices two pawns in succession to deploy twin Bishops (Bc4 and Bb2) slicing across Black's entire kingside."
+     },
+     chess_smith_morra: {
+      name: '6. Smith-Morra Gambit',
+      badge: 'Anti-Sicilian Weapon',
+      desc: "White sacrifices the c3 pawn against the Sicilian Defense to develop Nc3 with tempo and open the c- and d-files against Black's uncastled King."
+     },
+     chess_budapest: {
+      name: '7. Budapest Gambit',
+      badge: 'Dynamic Counter-Gambit',
+      desc: 'Black strikes early with 2...e5 and jumps Ng4 to pressure e5, setting dangerous smothered mate and Queen-trapping tactics.'
+     },
+     chess_benko: {
+      name: '8. Benko Gambit',
+      badge: 'Queenside a & b File Pressure',
+      desc: 'Black sacrifices the b5 and a6 pawns to open the a- and b-files for the Rooks and fianchettoed g7 Bishop for long-term positional pressure.'
+     },
+     chess_halloween: {
+      name: '9. Halloween Gambit',
+      badge: 'Audacious Central Knight Sacrifice',
+      desc: "White boldly sacrifices a full Knight on e5 to roll a massive d4–e4 pawn center that chases Black's Knights back to their home squares."
+     },
+     chess_englund: {
+      name: '10. Englund Gambit',
+      badge: 'Blitz Opening Trap vs 1.d4',
+      desc: "Black answers 1.d4 with 1...e5!? and follows up with Qe7, Bb4+, and Nd4 to set lightning-fast traps against White's queenside Rook."
+     },
+     chess_italian: {
+      name: '11. Italian Game & Fried Liver Attack',
+      badge: 'Classic Tactical Opening',
+      desc: "Coordinates the Knight on g5 and Bishop on c4 directly against f7 — the weakest square in Black's camp defended only by the King."
+     },
+     chess_sicilian: {
+      name: '12. Sicilian Defense (Najdorf Variation)',
+      badge: 'Asymmetric Grandmaster Counterplay',
+      desc: "The most popular Grandmaster response to 1.e4: Black trades the c5 wing pawn for White's central d4 pawn to create rich, unbalanced winning chances."
+     },
+     chess_ruylopez: {
+      name: '13. Ruy Lopez (Spanish Game)',
+      badge: 'Grandmaster Positional Cornerstone',
+      desc: "White develops Bb5 to pressure the c6 Knight guarding Black's e5 pawn while castling kingside rapidly."
+     },
+     chess_london: {
+      name: '14. London System',
+      badge: 'Rock-Solid & Universal',
+      desc: 'A resilient system where White develops the dark-squared Bishop to f4 before locking in a granite c3–d4–e3 pawn pyramid.'
+     },
+     chess_french: {
+      name: '15. French Defense (Advance Variation)',
+      badge: 'Strategic Pawn Chain Warfare',
+      desc: "White claims kingside space with e5 while Black immediately counter-attacks the base of White's pawn chain at d4 with c5 and Nc6."
+     },
+     chess_carokann: {
+      name: '16. Caro-Kann Defense',
+      badge: 'Ultra-Solid Endgame Structure',
+      desc: 'Black supports d5 with c6 and develops the light-squared Bishop to f5 before playing e6, maintaining a healthy pawn structure.'
+     },
+     chess_kings_indian: {
+      name: "17. King's Indian Defense",
+      badge: 'Hypermodern Kingside Storm',
+      desc: 'Black allows White to occupy the center early, then strikes back explosively with the g7 fianchetto Bishop and e5/f5 pawn breaks.'
+     },
+     chess_greek_gift: {
+      name: '18. Greek Gift Sacrifice (Bxh7+)',
+      badge: 'Classic King Hunt Pattern',
+      desc: 'The iconic Bishop sacrifice on h7 to expose the castled Black King, followed immediately by Ng5+ and Qh5 for a decisive mating attack.'
+     }
+    };
+    return map[g.id] ? { ...g, ...map[g.id] } : g;
    },
    applyLanguage(notify = false) {
     const isEn = this.lang === 'en';
@@ -8730,13 +8412,21 @@
     const navChess = document.querySelector('[data-nav="chess"]');
     const navLb = document.querySelector('[data-nav="leaderboard"]');
     if (navHome) navHome.innerHTML = isEn ? '🏠 Home' : '🏠 Trang Chủ';
-    if (navRubik) navRubik.innerHTML = `<span class="w-2 h-2 rounded-full bg-cyan-400"></span> ${isEn ? 'Rubik 3D' : 'Rubik 3D'}`;
+    if (navRubik) navRubik.innerHTML = `<span class="w-2 h-2 rounded-full bg-cyan-400"></span> Rubik 3D`;
     if (navChess) navChess.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> ${isEn ? 'Chess Arena' : 'Cờ Vua'}`;
     if (navLb) navLb.innerHTML = `<span>🏆</span> ${isEn ? 'Leaderboard' : 'Bảng Xếp Hạng'}`;
 
+    const setTxt = (id, vi, en) => {
+     const el = document.getElementById(id);
+     if (el) el.textContent = isEn ? en : vi;
+    };
+    const setHtml = (id, vi, en) => {
+     const el = document.getElementById(id);
+     if (el) el.innerHTML = isEn ? en : vi;
+    };
+
     // Header & Hero
-    const brandSub = document.querySelector('#brand-home-btn p');
-    if (brandSub) brandSub.textContent = isEn ? '3D Rubik Studio & International Chess Arena' : 'Học Tập, Rèn Luyện & Thi Đấu Rubik 3D • Cờ Vua';
+    setTxt('brand-subtitle-text', 'Học Tập, Rèn Luyện & Thi Đấu Rubik 3D • Cờ Vua', '3D Rubik Studio & International Chess Arena');
     const heroTitle = document.querySelector('#view-home h1');
     if (heroTitle) {
      heroTitle.innerHTML = isEn
@@ -8746,9 +8436,22 @@
     const heroDesc = document.querySelector('#view-home h1 + p');
     if (heroDesc) {
      heroDesc.innerHTML = isEn
-      ? `An executive training &amp; competitive ecosystem for two premier mind sports: <strong class="text-cyan-300">Rubik 3D (Yellow Top, White Bottom • AI Step-by-Step Full CFOP Solver)</strong> and <strong class="text-emerald-300">International Chess (Gambits, Random Tactical Puzzles, Promotion &amp; AI Bot)</strong>.`
-      : `Hệ sinh thái học tập, rèn luyện và thi đấu chuyên sâu cho 2 bộ môn trí tuệ đỉnh cao: <strong class="text-cyan-300">Rubik 3D (Mặt Vàng trên, Trắng dưới • AI Giải Full CFOP Từng Bước)</strong> và <strong class="text-emerald-300">Cờ Vua Quốc Tế (Gambit, Thế Cờ Ngẫu Nhiên, Phong Cấp &amp; Bot AI)</strong>.`;
+      ? `An executive training &amp; competitive ecosystem for two premier mind sports: <strong class="text-cyan-300">Rubik 3D (Yellow Top, White Bottom • Smooth Speed Slider &amp; 144 Full CFOP Formulas)</strong> and <strong class="text-emerald-300">International Chess (AI Move Ratings !!, !, ?, ?? • Gambits • Random Tactical Puzzles &amp; AI Bot)</strong>. Verify your email to sync your progress and live rankings.`
+      : `Hệ sinh thái học tập, rèn luyện và thi đấu chuyên sâu cho 2 bộ môn trí tuệ đỉnh cao: <strong class="text-cyan-300">Rubik 3D (Mặt Vàng trên, Trắng dưới • Thanh Trượt Tốc Độ &amp; 144 Công Thức Full CFOP)</strong> và <strong class="text-emerald-300">Cờ Vua Quốc Tế (Chấm Điểm Nước Đi AI !!, !, ?, ?? • Gambit • Thế Cờ Ngẫu Nhiên &amp; Bot AI)</strong>. Xác minh Email thực tế và tự động lưu giữ tài khoản mỗi lần bạn quay lại trang web.`;
     }
+    setTxt('home-card-rubik-title', 'Mô Hình 3D Toàn Màn Hình, Thanh Trượt Tốc Độ & 144 Công Thức CFOP', 'Fullscreen 3D Model, Smooth Speed Slider & 144 CFOP Formulas');
+    setHtml(
+     'home-card-rubik-desc',
+     "Xoay khối Rubik 3D chuẩn CFOP với <strong>mặt Vàng ở trên (U), mặt Trắng ở dưới (D)</strong>, hỗ trợ <strong>phím tắt bàn phím (R, R + ', U, M, y...)</strong>, <strong>thanh trượt tùy chỉnh tốc độ xoay mượt mà</strong> và trọn bộ <strong>144 công thức Full CFOP</strong> kèm tính năng tự động cuộn lên mô hình 3D trên điện thoại.",
+     "Rotate the CFOP-standard 3D Rubik's Cube with <strong>Yellow on Top (U), White on Bottom (D)</strong>, full <strong>keyboard shortcuts (R, R + ', U, M, y...)</strong>, a <strong>smooth rotation speed slider (0.5x–4.0x)</strong>, and all <strong>144 Full CFOP algorithms</strong> with instant auto-scroll to the 3D model on mobile."
+    );
+    setTxt('home-card-chess-title', 'Cờ Vua Quốc Tế, Phân Tích Nước Đi AI (!!, !, ?, ??) & Gambit', 'International Chess, AI Move Ratings (!!, !, ?, ??) & Gambits');
+    setHtml(
+     'home-card-chess-desc',
+     'Trang bị đầy đủ tính năng thi đấu chuyên nghiệp: <strong>Chấm điểm từng nước đi kiểu Chess.com (!!, !, ★, ?!, ?, ??) ngay trên bàn cờ &amp; biên bản SAN</strong>, <strong>AI chỉ ra Nước Đi Xuất Sắc Nhất</strong>, đấu Bot AI 7 mức Elo, Ghép Đấu Online (±100 Elo) và <strong>42+ Thế Cờ Ngẫu Nhiên</strong>.',
+     'Equipped with pro tournament features: <strong>Chess.com-style move evaluation badges (!!, !, ★, ?!, ?, ??) directly on the board &amp; SAN move list</strong>, <strong>AI Best Move highlights</strong>, 7 AI Bot Elo levels, Fair Online Matchmaking (±100 Elo), and <strong>42+ Random Tactical Puzzles</strong>.'
+    );
+
     const gotoRubikBtns = document.querySelectorAll('#view-home [data-goto="rubik"]');
     if (gotoRubikBtns[0]) gotoRubikBtns[0].innerHTML = isEn ? '<span>🧊 Enter 3D Rubik Studio</span>' : '<span>🧊 Vào Phòng Tập Rubik 3D</span>';
     if (gotoRubikBtns[1]) gotoRubikBtns[1].textContent = isEn ? 'Explore Rubik Studio →' : 'Khám Phá Rubik Studio →';
@@ -8758,58 +8461,28 @@
     const gotoLbBtn = document.querySelector('#view-home [data-goto="leaderboard"]');
     if (gotoLbBtn) gotoLbBtn.textContent = isEn ? 'View Leaderboard →' : 'Xem Bảng Xếp Hạng →';
 
-    // Rubik Studio Subtabs
+    // Rubik Studio Header, Subtabs & Controls
+    setTxt('rubik-header-kicker', 'Chuyên Đề 01 • Speedcubing & Full CFOP', 'Module 01 • Speedcubing & Full CFOP');
+    setTxt('rubik-header-title', 'Rubik Studio 3D • 144 Công Thức CFOP & WCA Timer', '3D Rubik Studio • 144 CFOP Formulas & WCA Timer');
     const rTabSim = document.querySelector('[data-rubik-tab="sim"]');
     const rTabTimer = document.querySelector('[data-rubik-tab="timer"]');
-    const rTabCam = document.querySelector('[data-rubik-tab="camera"]');
     const rExpandBtn = document.getElementById('rubik-expand-open-btn');
     if (rTabSim) rTabSim.textContent = isEn ? '🧊 3D Model & Full CFOP (144)' : '🧊 Mô Hình 3D & Full CFOP (144)';
-    if (rTabTimer) rTabTimer.textContent = isEn ? '⏱️ WCA Stackmat Timer' : '⏱️ Đồng Hồ WCA Timer Riêng';
-    if (rTabCam) rTabCam.textContent = isEn ? '🤖 AI Rubik Solver (6-Face & CFOP)' : '🤖 Giải Rubik AI (Chụp 6 Mặt & Bảng CFOP)';
+    if (rTabTimer) rTabTimer.textContent = isEn ? '⏱️ Dedicated WCA Timer' : '⏱️ Đồng Hồ WCA Timer Riêng';
     if (rExpandBtn) rExpandBtn.innerHTML = isEn ? '<span>⛶</span> <span>Expand 3D View</span>' : '<span>⛶</span> <span>Mở Rộng Mô Hình 3D</span>';
 
-    // Rubik 3D Controls
-    const setTxt = (id, vi, en) => {
-     const el = document.getElementById(id);
-     if (el) el.textContent = isEn ? en : vi;
-    };
     setTxt('rubik-scramble-btn', '🔀 Trộn', '🔀 Scramble');
-    setTxt('rubik-solve-btn', '🤖 Giải AI Ít Bước', '🤖 AI Optimal Solve');
     setTxt('rubik-expand-inline-btn', '⛶ Phóng To', '⛶ Expand');
     setTxt('new-scramble-text-btn', 'Đổi mã trộn', 'New Scramble');
     setTxt('reset-all-progress-btn', '↺ Đặt Lại Tất Cả Công Thức', '↺ Reset Learned Formulas');
-
-    // AI Rubik Solver (6-Face Capture & CFOP Table Breakdown)
-    setTxt('ai-solver-main-title', '🤖 Giải Rubik Tích Hợp AI — Chụp 6 Mặt & Phân Tích Từng Bước Theo Bảng Công Thức CFOP', '🤖 Integrated AI Rubik Solver — 6-Face Capture & Step-by-Step CFOP Formula Breakdown');
-    const aiDesc = document.getElementById('ai-solver-main-desc');
-    if (aiDesc) {
-     aiDesc.innerHTML = isEn
-      ? 'Capture all 6 Rubik faces with your camera (or upload photos / edit the 54-sticker net). AI reconstructs the 3D cube and <strong>generates a complete step-by-step CFOP solution (Cross → F2L → OLL → PLL)</strong>, explicitly showing <strong>which F2L, OLL, and PLL formulas from the 144-formula table</strong> are used at each step.'
-      : 'Chụp trực tiếp 6 mặt Rubik (hoặc tải ảnh / chọn màu trên lưới 54 ô), AI sẽ tự động tổng hợp toàn bộ khối Rubik 3D và <strong>lập lộ trình giải từng bước (Cross → F2L Khe 1–4 → OLL → PLL)</strong>, chỉ rõ <strong>bước này dùng công thức F2L nào, bước tiếp dùng công thức OLL hay PLL nào</strong> trong bảng 144 công thức sẵn có.';
-    }
-    setTxt('ai-capture-step-title', '📸 Bước 1: Chụp 6 Mặt Rubik Hoặc Chỉnh 54 Ô Màu', '📸 Step 1: Capture 6 Rubik Faces or Edit 54 Stickers');
-    setTxt('ai-capture-step-sub', 'Chụp lần lượt 6 mặt (U, R, F, D, L, B) bằng Camera, tải ảnh mặt Rubik hoặc chạm ô màu để chỉnh trực tiếp', 'Capture each face (U, R, F, D, L, B) via Camera, upload a photo, or tap stickers to edit colors');
-    setTxt('select-face-prompt', 'Chọn mặt Rubik cần chụp / chỉnh màu:', 'Select Rubik face to capture / edit:');
-    setTxt('calib-grid-caption', 'Lưới 9 ô mặt đang chọn (Chạm để đổi màu):', '9-sticker grid for selected face (Tap to paint):');
-    setTxt('start-camera-btn', '🎥 Bật Camera', '🎥 Start Camera');
-    setTxt('capture-face-btn', '📸 Chụp Mặt Này', '📸 Capture Face');
-    setTxt('upload-face-photo-btn', '📁 Tải Ảnh Mặt', '📁 Upload Photo');
-    setTxt('stop-camera-btn', '✕ Tắt Camera', '✕ Stop Camera');
-    setTxt('captured-gallery-title', '🖼️ Ảnh Chụp & Bản Đồ 6 Mặt Rubik (54 Ô):', '🖼️ Captured Faces & 54-Sticker Net:');
-    setTxt('capture-all-6-from-3d-btn', '📸 Chụp tự động cả 6 mặt', '📸 Auto-Capture All 6 Faces');
-    setTxt('unfolded-net-label', 'Sơ đồ trải phẳng 6 mặt:', '6-face unfolded net:');
-    setTxt('twin-preview-title', '🧊 Mô Hình 3D Đồng Bộ Trạng Thái Giải:', '🧊 Synchronized 3D Rubik Preview:');
-    setTxt('twin-reset-view-btn', '🎯 Góc Chuẩn', '🎯 Reset View');
-    setTxt('twin-scramble-btn', '🔀 Trộn Ngẫu Nhiên', '🔀 Random Scramble');
-    setTxt('twin-reset-solved-btn', '↺ Reset', '↺ Reset');
-    setTxt('twin-step-prev-btn', '⏮ Lùi Bước', '⏮ Prev Step');
-    setTxt('twin-step-next-btn', 'Bước Tiếp ⏭', 'Next Step ⏭');
-    setTxt('ai-breakdown-heading', '📋 Bước 2: Phân Tích Lộ Trình Giải Full Cục Bằng Bảng Công Thức CFOP', '📋 Step 2: Step-by-Step Full Cube Solution via CFOP Formula Table');
-    setTxt('scan-res-try3d-btn', '🧊 Đưa Sang Phòng 3D Chính →', '🧊 Load in Main 3D Studio →');
-    setTxt('preset-select-label', 'Chọn trạng thái Rubik đã chụp hoặc mẫu tổ hợp Full CFOP:', 'Select captured Rubik state or Full CFOP multi-step preset:');
-    setTxt('analyze-scanned-cube-btn', '✨ Phân Tích & Lập Bảng Giải CFOP', '✨ Analyze & Build CFOP Solution');
-    setTxt('full-solution-label', 'Chuỗi công thức tổng hợp giải hoàn chỉnh (Full Solution):', 'Complete combined solution sequence (Full Solution):');
-    setTxt('cfop-steps-list-title', '🧭 Chi Tiết Từng Bước Giải & Công Thức Áp Dụng Từ Bảng CFOP:', '🧭 Step-by-Step Breakdown & Matching Formulas from CFOP Table:');
+    setTxt('rubik-step-trainer-label', '📚 Chuỗi Công Thức CFOP & Luyện Tập Từng Bước:', '📚 CFOP Formula Sequence & Step-by-Step Trainer:');
+    setTxt('exp-rubik-step-trainer-label', '📚 Chuỗi Công Thức CFOP Đang Luyện:', '📚 Active CFOP Formula Sequence:');
+    setTxt('rubik-speed-title-label', '⚡ Tốc độ xoay Rubik:', '⚡ Rubik Rotation Speed:');
+    setTxt('exp-rubik-speed-title-label', '⚡ Tốc độ xoay Rubik:', '⚡ Rubik Rotation Speed:');
+    setTxt('exp-rubik-scramble-btn', '🔀 Trộn (Scramble)', '🔀 Scramble');
+    setTxt('exp-rubik-reset-view-btn', '🎯 Góc Nhìn Chuẩn', '🎯 Reset View');
+    setTxt('exp-rubik-step-prev-btn', '⏮ Lùi Bước', '⏮ Prev Step');
+    setTxt('exp-rubik-step-next-btn', 'Đi Bước ⏭', 'Next Step ⏭');
 
     // CFOP Filter Buttons & Search Input
     const cfopSearch = document.getElementById('cfop-search-input');
@@ -8819,7 +8492,17 @@
       : '🔍 Tìm nhanh theo số thứ tự hoặc tên (VD: OLL 06, OLL 26, F2L 17, T-Perm, Sune...)';
     }
     const fAll = document.querySelector('[data-cfop-filter="ALL"]');
+    const fCross = document.querySelector('[data-cfop-filter="CROSS"]');
+    const f2Look = document.querySelector('[data-cfop-filter="2LOOK"]');
+    const fF2l = document.querySelector('[data-cfop-filter="F2L"]');
+    const fOll = document.querySelector('[data-cfop-filter="OLL"]');
+    const fPll = document.querySelector('[data-cfop-filter="PLL"]');
     if (fAll) fAll.textContent = isEn ? 'All Formulas (144)' : 'Tất Cả (144)';
+    if (fCross) fCross.textContent = isEn ? '1. Cross & X-Cross (9)' : '1. Cross & X-Cross (9)';
+    if (f2Look) f2Look.textContent = isEn ? '2. 2-Look OLL/PLL (16)' : '2. Bộ 2-Look OLL/PLL (16)';
+    if (fF2l) fF2l.textContent = isEn ? '3. Full F2L (41)' : '3. Full F2L (41)';
+    if (fOll) fOll.textContent = isEn ? '4. Full OLL (57)' : '4. Full OLL (57)';
+    if (fPll) fPll.textContent = isEn ? '5. Full PLL (21)' : '5. Full PLL (21)';
 
     // Chess Subtabs & Buttons
     const cTabPlay = document.querySelector('[data-chess-tab="play"]');
@@ -8828,12 +8511,21 @@
     if (cTabPlay) cTabPlay.textContent = isEn ? '♟️ Chessboard & AI Bot' : '♟️ Bàn Cờ & Bot AI';
     if (cTabGambit) cTabGambit.textContent = isEn ? '📖 Gambit & Opening Library (18)' : '📖 Thư Viện Gambit & Bài Học (18)';
     if (cExpandBtn) cExpandBtn.innerHTML = isEn ? '<span>⛶</span> <span>Expand Board</span>' : '<span>⛶</span> <span>Mở Rộng Bàn Cờ</span>';
+    setTxt('chess-expand-inline-btn', '⛶ Phóng To', '⛶ Expand');
     setTxt('chess-new-btn', '🔄 Ván Mới', '🔄 New Game');
     setTxt('chess-undo-btn', '↩ Đi Lại', '↩ Undo');
     setTxt('chess-draw-btn', '🤝 Xin Hòa', '🤝 Offer Draw');
     setTxt('chess-resign-btn', '🏳️ Đầu Hàng', '🏳️ Resign');
     setTxt('chess-flip-btn', '🔃 Xoay Bàn', '🔃 Flip Board');
     setTxt('chess-hint-btn', '💡 Gợi Ý', '💡 Hint');
+    setTxt('exp-chess-new-top-btn', '🔄 Ván Mới', '🔄 New Game');
+    setTxt('exp-chess-flip-top-btn', '🔃 Xoay Bàn', '🔃 Flip Board');
+    setTxt('exp-chess-new-btn', '🔄 Ván Mới', '🔄 New Game');
+    setTxt('exp-chess-undo-btn', '↩ Đi Lại', '↩ Undo');
+    setTxt('exp-chess-draw-btn', '🤝 Xin Hòa', '🤝 Offer Draw');
+    setTxt('exp-chess-resign-btn', '🏳️ Đầu Hàng', '🏳️ Resign');
+    setTxt('exp-chess-flip-btn', '🔃 Xoay Bàn', '🔃 Flip Board');
+    setTxt('exp-chess-hint-btn', '💡 Gợi Ý', '💡 Hint');
     setTxt('pick-white-btn', '♔ Quân Trắng', '♔ White Pieces');
     setTxt('pick-black-btn', '♚ Quân Đen', '♚ Black Pieces');
     setTxt('timer-plus2-btn', '+2s Phạt WCA (Cập nhật trực tiếp)', '+2s WCA Penalty (Live Update)');
@@ -8847,31 +8539,86 @@
     setTxt('auth-tab-login', '2. Đăng Nhập', '2. Sign In');
     setTxt('auth-logout-btn', 'Đăng Xuất', 'Sign Out');
     setTxt('verify-email-real-btn', '✓ Kiểm Tra', '✓ Verify');
-    const fCross = document.querySelector('[data-cfop-filter="CROSS"]');
-    const f2Look = document.querySelector('[data-cfop-filter="2LOOK"]');
-    const fF2l = document.querySelector('[data-cfop-filter="F2L"]');
-    const fOll = document.querySelector('[data-cfop-filter="OLL"]');
-    const fPll = document.querySelector('[data-cfop-filter="PLL"]');
-    if (fCross) fCross.textContent = isEn ? '1. Cross & X-Cross (9)' : '1. Cross & X-Cross (9)';
-    if (f2Look) f2Look.textContent = isEn ? '2. 2-Look OLL/PLL (16)' : '2. Bộ 2-Look OLL/PLL (16)';
-    if (fF2l) fF2l.textContent = isEn ? '3. Full F2L (41)' : '3. Full F2L (41)';
-    if (fOll) fOll.textContent = isEn ? '4. Full OLL (57)' : '4. Full OLL (57)';
-    if (fPll) fPll.textContent = isEn ? '5. Full PLL (21)' : '5. Full PLL (21)';
 
-    // Re-render dynamic views so language updates immediately
+    // Walk leaf text nodes & options to translate all remaining static labels cleanly
+    const walkElements = document.querySelectorAll('span, div, p, h1, h2, h3, h4, h5, label, button, option');
+    walkElements.forEach(el => {
+     if (el.children.length === 0) {
+      const txt = (el.textContent || '').trim();
+      if (!txt) return;
+      for (const [viStr, enStr] of this.exactTextPairs) {
+       if (isEn && txt === viStr) {
+        el.textContent = enStr;
+        break;
+       } else if (!isEn && txt === enStr) {
+        el.textContent = viStr;
+        break;
+       }
+      }
+     }
+    });
+
+
+    // Compound HTML blocks translation (Hero, Rubik, WCA Timer, Chess, Leaderboard, Footer)
+    const setCompoundSelectorHtml = (sel, viHtml, enHtml) => {
+     const el = document.querySelector(sel);
+     if (el) el.innerHTML = isEn ? enHtml : viHtml;
+    };
+    setCompoundSelectorHtml(
+     '#hero-rubik-slot > div:first-child > span',
+     '🖱️ Kéo/chạm xoay 360° • <strong class="text-yellow-300">U: Vàng</strong> • <strong class="text-white">D: Trắng</strong>',
+     '🖱️ Drag/touch to orbit 360° • <strong class="text-yellow-300">U: Yellow</strong> • <strong class="text-white">D: White</strong>'
+    );
+    setCompoundSelectorHtml(
+     '#rubik-panel-sim .lg\\:col-span-5 p.text-\\[11px\\]',
+     '<strong class="text-yellow-300">U: Vàng</strong> • <strong class="text-white">D: Trắng</strong> • <strong class="text-green-400">F: Xanh lá</strong> • <strong class="text-red-400">R: Đỏ</strong>',
+     '<strong class="text-yellow-300">U: Yellow</strong> • <strong class="text-white">D: White</strong> • <strong class="text-green-400">F: Green</strong> • <strong class="text-red-400">R: Red</strong>'
+    );
+    setCompoundSelectorHtml(
+     '#rubik-panel-sim .lg\\:col-span-7 p.text-xs',
+     'Gồm đủ <strong>9 Cross &amp; X-Cross • 16 Công Thức 2-Look (OLL/PLL) • 41 F2L • 57 OLL • 21 PLL</strong>. Khi bấm nạp thế, trang tự động nhảy lên mô hình 3D!',
+     'Includes all <strong>9 Cross &amp; X-Cross • 16 2-Look (OLL/PLL) • 41 F2L • 57 OLL • 21 PLL</strong>. Clicking Load on 3D Model automatically scrolls to the 3D cube!'
+    );
+    setCompoundSelectorHtml(
+     '#cfop-search-input + div',
+     '<span><strong class="text-yellow-400">■ Ô Vàng</strong>: Mặt Trên (U)</span><span><strong class="text-cyan-400">― Vạch Vàng Viền</strong>: Hướng lật OLL</span><span><strong class="text-rose-400">⇄ Mũi Tên Đỏ</strong>: Hoán vị Góc PLL</span><span><strong class="text-sky-400">⇄ Mũi Tên Xanh</strong>: Hoán vị Cạnh PLL</span>',
+     '<span><strong class="text-yellow-400">■ Yellow</strong>: Top Face (U)</span><span><strong class="text-cyan-400">― Side Bar</strong>: OLL Flip</span><span><strong class="text-rose-400">⇄ Red Arrow</strong>: PLL Corner Swap</span><span><strong class="text-sky-400">⇄ Blue Arrow</strong>: PLL Edge Swap</span>'
+    );
+    setCompoundSelectorHtml(
+     '#rubik-panel-timer .lg\\:col-span-7 p.text-xs',
+     'Nhấn giữ phím <kbd class="px-2 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code">Space</kbd> hoặc <strong>Chạm giữ vào khung đồng hồ đủ 0.5s</strong> đến khi đèn chuyển sang màu Xanh lá rồi thả tay.',
+     'Press &amp; hold <kbd class="px-2 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code">Space</kbd> or <strong>Touch &amp; hold the timer zone for 0.5s</strong> until the indicator turns Green, then release.'
+    );
+    setCompoundSelectorHtml(
+     '#chess-panel-gambit p.text-sm',
+     'Hiểu rõ bản chất từng thế Gambit (hiến tốt đổi lấy tốc độ phát triển quân và mở cột tấn công) cùng nút <strong>"Bày lên bàn cờ"</strong> trực quan',
+     'Master every Gambit (sacrificing material for rapid development and open attacking lines) with one-click <strong>"Set Up on Board"</strong> practice'
+    );
+    setCompoundSelectorHtml(
+     '#view-leaderboard p.text-xs',
+     'Chỉ ghi nhận những người chơi thật đã Đăng Ký &amp; Đăng Nhập tài khoản. Khi có cùng điểm Elo hoặc cùng thời gian giải Rubik, <strong>ai đăng ký tài khoản trước sẽ xếp hạng trên</strong>, người tạo sau xếp lùi phía dưới.',
+     'Exclusively ranks verified registered accounts. When tied in Chess Elo or Rubik Best Time, <strong>the earlier registered account ranks higher</strong>.'
+    );
+    setCompoundSelectorHtml(
+     'footer .max-w-7xl > div:first-child',
+     '<strong>LM Training</strong> — Học Tập, Rèn Luyện &amp; Thi Đấu Rubik 3D • Cờ Vua Quốc Tế',
+     '<strong>LM Training</strong> — 3D Rubik Studio &amp; International Chess Training Arena'
+    );
+
+    // Re-render dynamic views so language updates immediately everywhere
     updateDashboardProgressUI();
     renderAllKnowledgeCards();
-    if (typeof CameraScanner !== 'undefined') {
-     CameraScanner.selectActiveScanFace(CameraScanner.activeFace);
-     CameraScanner.renderSolveTokensView();
-     CameraScanner.renderCfopBreakdownCards();
+    if (typeof RubikTimer !== 'undefined') RubikTimer.renderStats();
+    if (typeof window.MainCube !== 'undefined' && window.MainCube) {
+     window.MainCube.renderStepBadges();
     }
     if (typeof ChessArena !== 'undefined' && ChessArena.game) {
      ChessArena.updateUI();
     }
+    fetchLeaderboardsData(false);
     if (notify) {
      showToast(
-      isEn ? '🌐 Switched language to English (EN)' : '🌐 Đã chuyển ngôn ngữ sang Tiếng Việt (VI)',
+      isEn ? '🌐 Switched language to English (100% Full English UI)' : '🌐 Đã chuyển ngôn ngữ sang Tiếng Việt (VI)',
       'cyan'
      );
     }
@@ -8883,7 +8630,6 @@
    window.MainCube = new InteractiveRubiksCube('main-cube-canvas-wrap');
    ChessArena.init();
    RubikTimer.renderStats();
-   CameraScanner.renderGrid();
    renderAllKnowledgeCards();
    updateDashboardProgressUI();
    (async () => {
@@ -8905,7 +8651,6 @@
    window.addEventListener('resize', () => {
     if (window.HeroCube) window.HeroCube.resize();
     if (window.MainCube) window.MainCube.resize();
-    if (CameraScanner && CameraScanner.twinCube) CameraScanner.twinCube.resize();
     if (ChessArena) ChessArena.syncEvalBarHeight();
    });
    // Top Navigation
@@ -9012,7 +8757,6 @@
    });
    document.getElementById('rubik-scramble-btn').addEventListener('click', () => window.MainCube?.scramble(14));
    document.getElementById('new-scramble-text-btn').addEventListener('click', () => window.MainCube?.scramble(14));
-   document.getElementById('rubik-solve-btn').addEventListener('click', () => window.MainCube?.solveAnimated());
    document.getElementById('rubik-reset-view-btn')?.addEventListener('click', () => {
     window.MainCube?.resetViewAngle();
     showToast('🎯 Đã quay lại góc nhìn chuẩn CFOP (Vàng trên • Xanh lá trước • Đỏ phải)!', 'cyan');
@@ -9028,7 +8772,6 @@
    document.getElementById('rubik-expand-inline-btn')?.addEventListener('click', () => RubikExpandedArena.openModal());
    document.getElementById('rubik-expand-close-btn')?.addEventListener('click', () => RubikExpandedArena.closeModal());
    document.getElementById('exp-rubik-scramble-btn')?.addEventListener('click', () => window.MainCube?.scramble(14));
-   document.getElementById('exp-rubik-solve-btn')?.addEventListener('click', () => window.MainCube?.solveAnimated());
    document.getElementById('exp-rubik-reset-btn')?.addEventListener('click', () => window.MainCube?.reset());
    document.getElementById('exp-rubik-reset-view-btn')?.addEventListener('click', () => {
     window.MainCube?.resetViewAngle();
@@ -9047,19 +8790,32 @@
      showToast('⌨️ Đã chuyển về chế độ phím xoay 1 tầng chuẩn (R, U, F, L, D, B)!', 'cyan');
     }
    });
-   document.querySelectorAll('.cube-speed-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-     const ms = Number(btn.getAttribute('data-cube-speed')) || 110;
-     window.MainCube?.setRotationSpeed(ms);
-     window.HeroCube?.setRotationSpeed(ms);
-     document.querySelectorAll('.cube-speed-btn').forEach(b => {
-      const active = Number(b.getAttribute('data-cube-speed')) === ms;
-      b.className = `cube-speed-btn px-2 py-0.5 rounded-lg text-[11px] font-bold transition ${
-       active ? 'bg-cyan-500 text-slate-950 shadow' : 'bg-slate-800 text-slate-300 hover:text-white'
-      }`;
-     });
-     showToast(`⚡ Đã chỉnh tốc độ xoay Rubik: ${btn.textContent}`, 'cyan');
-    });
+   function applyRubikSpeedMultiplier(multVal) {
+    const mult = Math.max(0.5, Math.min(4.0, Number(multVal) || 1.0));
+    const ms = Math.round(110 / mult);
+    window.MainCube?.setRotationSpeed(ms);
+    window.HeroCube?.setRotationSpeed(ms);
+    const isEn = window.AppI18n?.lang === 'en';
+    let tag = '';
+    if (Math.abs(mult - 1.0) < 0.06) tag = isEn ? ' (Standard)' : ' (Chuẩn)';
+    else if (mult < 1.0) tag = isEn ? ' (Slow)' : ' (Chậm)';
+    else if (mult >= 2.5) tag = isEn ? ' (Turbo)' : ' (Siêu tốc)';
+    else tag = isEn ? ' (Fast)' : ' (Nhanh)';
+    const labelTxt = `${mult.toFixed(1)}x${tag}`;
+    const b1 = document.getElementById('rubik-speed-val-badge');
+    const b2 = document.getElementById('exp-rubik-speed-val-badge');
+    if (b1) b1.textContent = labelTxt;
+    if (b2) b2.textContent = labelTxt;
+    const s1 = document.getElementById('rubik-speed-slider');
+    const s2 = document.getElementById('exp-rubik-speed-slider');
+    if (s1 && Number(s1.value) !== mult) s1.value = String(mult);
+    if (s2 && Number(s2.value) !== mult) s2.value = String(mult);
+   }
+   document.getElementById('rubik-speed-slider')?.addEventListener('input', e => {
+    applyRubikSpeedMultiplier(e.target.value);
+   });
+   document.getElementById('exp-rubik-speed-slider')?.addEventListener('input', e => {
+    applyRubikSpeedMultiplier(e.target.value);
    });
    document.getElementById('timer-new-scramble-btn')?.addEventListener('click', () => {
     const faces = ['U', 'D', 'R', 'L', 'F', 'B'];
@@ -9254,123 +9010,6 @@
      RubikExpandedArena.heldTwo = false;
     }
    });
-   // AI Rubik Full CFOP Solver (6-Face Capture & Step-by-Step Table Breakdown) Events
-   CameraScanner.initDigitalTwin();
-   CameraScanner.loadPresetCase('full_cfop_1');
-   document.getElementById('start-camera-btn')?.addEventListener('click', () => CameraScanner.startCamera());
-   document.getElementById('stop-camera-btn')?.addEventListener('click', () => CameraScanner.stopCamera());
-   document.getElementById('capture-face-btn')?.addEventListener('click', () => {
-    const lockedFace = CameraScanner.activeFace;
-    CameraScanner.captureCurrentFaceFromVideoOrCanvas(null);
-    const nextIdx = (RUBIK_FACE_ORDER.indexOf(lockedFace) + 1) % RUBIK_FACE_ORDER.length;
-    CameraScanner.selectActiveScanFace(RUBIK_FACE_ORDER[nextIdx]);
-    SoundFX.play('beep');
-    const isEn = window.AppI18n?.lang === 'en';
-    showToast(
-     isEn
-      ? `📸 Captured face ${lockedFace} (9/9 stickers)! Switched to face ${RUBIK_FACE_ORDER[nextIdx]}.`
-      : `📸 Đã chụp & lưu mặt ${lockedFace} (9/9 ô màu)! Chuyển sang mặt ${RUBIK_FACE_ORDER[nextIdx]}.`,
-     'emerald'
-    );
-   });
-   document.getElementById('upload-face-photo-btn')?.addEventListener('click', () => {
-    document.getElementById('upload-face-file-input')?.click();
-   });
-   document.getElementById('upload-face-file-input')?.addEventListener('change', e => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-     const img = new Image();
-     img.onload = () => {
-      const lockedFace = CameraScanner.activeFace;
-      CameraScanner.captureCurrentFaceFromVideoOrCanvas(img);
-      const nextIdx = (RUBIK_FACE_ORDER.indexOf(lockedFace) + 1) % RUBIK_FACE_ORDER.length;
-      CameraScanner.selectActiveScanFace(RUBIK_FACE_ORDER[nextIdx]);
-      SoundFX.play('success');
-      showToast(
-       window.AppI18n?.lang === 'en'
-        ? `📁 Analyzed uploaded photo for face ${lockedFace}!`
-        : `📁 Đã phân tích màu từ ảnh tải lên cho mặt ${lockedFace}!`,
-       'emerald'
-      );
-     };
-     img.src = ev.target.result;
-    };
-    reader.readAsDataURL(file);
-   });
-   document.getElementById('capture-all-6-from-3d-btn')?.addEventListener('click', () => {
-    CameraScanner.syncFaceletsFromTwinCube();
-    CameraScanner.scannedFacesSet = new Set(['U', 'R', 'F', 'D', 'L', 'B']);
-    CameraScanner.renderCapturedGallery();
-    CameraScanner.captureAndAnalyze();
-    SoundFX.play('success');
-   });
-   document.getElementById('analyze-scanned-cube-btn')?.addEventListener('click', () => CameraScanner.captureAndAnalyze());
-   document.getElementById('cv-camera-facing-select')?.addEventListener('change', e => {
-    if (RubikCameraManager.isRunning) {
-     RubikCameraManager.startStream(e.target.value);
-    }
-   });
-   document.querySelectorAll('.scan-face-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-     CameraScanner.selectActiveScanFace(btn.getAttribute('data-scan-face'));
-    });
-   });
-   document.getElementById('twin-reset-view-btn')?.addEventListener('click', () => {
-    CameraScanner.twinCube?.resetViewAngle();
-    showToast(
-     window.AppI18n?.lang === 'en' ? '🎯 Reset 3D view angle!' : '🎯 Đã đưa mô hình 3D về góc nhìn chuẩn!',
-     'cyan'
-    );
-   });
-   document.getElementById('twin-scramble-btn')?.addEventListener('click', () => {
-    if (!CameraScanner.twinCube) CameraScanner.initDigitalTwin();
-    CameraScanner.twinCube.scramble(10);
-    setTimeout(() => {
-     CameraScanner.syncFaceletsFromTwinCube();
-     CameraScanner.renderGrid();
-     CameraScanner.renderUnfoldedNet();
-     CameraScanner.renderCapturedGallery();
-     CameraScanner.captureAndAnalyze();
-    }, 1350);
-   });
-   document.getElementById('twin-reset-solved-btn')?.addEventListener('click', () => {
-    if (!CameraScanner.twinCube) CameraScanner.initDigitalTwin();
-    CameraScanner.twinCube.reset();
-    CameraScanner.syncFaceletsFromTwinCube();
-    CameraScanner.renderGrid();
-    CameraScanner.renderUnfoldedNet();
-    CameraScanner.renderCapturedGallery();
-    showToast(
-     window.AppI18n?.lang === 'en' ? '↺ Reset all 54 stickers to solved state!' : '↺ Đã Reset 54 ô màu & mô hình 3D về trạng thái hoàn chỉnh!',
-     'emerald'
-    );
-   });
-   document.getElementById('twin-step-prev-btn')?.addEventListener('click', () => CameraScanner.stepSolvePrev());
-   document.getElementById('twin-step-next-btn')?.addEventListener('click', () => CameraScanner.stepSolveNext());
-   document.getElementById('twin-step-play-btn')?.addEventListener('click', () => CameraScanner.toggleSolveAutoPlay());
-   document.getElementById('scanner-preset-select')?.addEventListener('change', e => {
-    CameraScanner.loadPresetCase(e.target.value);
-   });
-   document.querySelectorAll('#scanner-color-palette button').forEach(btn => {
-    btn.addEventListener('click', () => {
-     CameraScanner.activeBrush = btn.getAttribute('data-pick-color');
-     document.querySelectorAll('#scanner-color-palette button').forEach(b => b.classList.remove('ring-2', 'ring-white', 'scale-110'));
-     btn.classList.add('ring-2', 'ring-white', 'scale-110');
-    });
-   });
-   document.getElementById('scan-res-try3d-btn')?.addEventListener('click', () => {
-    const alg = document.getElementById('scan-res-alg').textContent.trim();
-    switchRubikSubtab('sim');
-    window.MainCube?.loadAlgorithmSteps(alg, 'AI Full CFOP Solution:', true, true, false, true);
-    showToast(
-     window.AppI18n?.lang === 'en'
-      ? `▶ Running AI Full CFOP solution on Main 3D Studio: ${alg}`
-      : `▶ Đang chạy lộ trình giải Full CFOP trên Mô hình 3D Chính: ${alg}`,
-     'cyan'
-    );
-   });
    // Language Switcher (Vietnamese <-> English)
    document.querySelectorAll('[data-lang-switch]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -9391,7 +9030,20 @@
      const alg = demoBtn.getAttribute('data-demo-alg');
      const name = demoBtn.getAttribute('data-demo-name') || 'CFOP';
      window.MainCube.loadAlgorithmSteps(alg, name, true, false, false, true);
-     showToast(`🧊 Đã nạp thế "${name}" từ bảng CFOP! Bấm "Đi Bước ⏭" hoặc "🤖 Giải AI Ít Bước / Tự Chạy" để giải theo đúng công thức chuẩn.`, 'cyan');
+     const cubeViewport = document.getElementById('main-cube-canvas-wrap') || document.getElementById('normal-rubik-viewport-slot');
+     if (cubeViewport) {
+      cubeViewport.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      cubeViewport.classList.remove('cube-focus-highlight');
+      void cubeViewport.offsetWidth;
+      cubeViewport.classList.add('cube-focus-highlight');
+     }
+     const isEn = window.AppI18n?.lang === 'en';
+     showToast(
+      isEn
+       ? `🧊 Loaded "${name}" on 3D Model! Tap "Next Step ⏭" or "▶ Auto-Run" to practice.`
+       : `🧊 Đã nạp "${name}" & tự động nhảy lên Mô hình 3D! Bấm "Đi Bước ⏭" hoặc "▶ Tự Chạy" để luyện tập.`,
+      'cyan'
+     );
     }
    });
    document.getElementById('chess-gambit-cards')?.addEventListener('click', e => {
