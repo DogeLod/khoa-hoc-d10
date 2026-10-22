@@ -582,7 +582,7 @@
    <div class="flex items-center gap-2.5 min-w-0">
     <span class="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-mono-code text-[11px] sm:text-xs font-extrabold shrink-0 flex items-center gap-1.5">
      <span class="w-2 h-2 rounded-full bg-slate-950 animate-ping"></span>
-     <span>📢 THÔNG BÁO QUẢN TRỊ VIÊN</span>
+     <span id="global-admin-broadcast-badge-label">📢 THÔNG BÁO QUẢN TRỊ VIÊN</span>
     </span>
     <span id="global-admin-broadcast-text" class="text-xs sm:text-sm font-extrabold text-amber-200 break-words leading-snug"></span>
    </div>
@@ -9380,19 +9380,21 @@
      const namesEl = document.getElementById('online-matchup-names');
      if (roomBadge) {
       roomBadge.textContent = isTourneyRoom
-       ? (this.isSpectatingTourneyMatch ? '👁️ Đang Xem Trực Tiếp Cặp Đấu Giải' : '🏆 Đang Thi Đấu Bàn Giải Đấu Chính Thức')
+       ? (this.isSpectatingTourneyMatch
+        ? (isEn ? '👁️ Spectating Live Tournament Match' : '👁️ Đang Xem Trực Tiếp Cặp Đấu Giải')
+        : (isEn ? '🏆 Playing Official Tournament Match' : '🏆 Đang Thi Đấu Bàn Giải Đấu Chính Thức'))
        : (isEn ? '🟢 Live Online Match (Real-Time Sync)' : '🟢 Đang Thi Đấu Online (Đồng bộ thời gian thực)');
      }
      if (diffBadge) {
       diffBadge.textContent = isTourneyRoom
-       ? `ΔElo: ${this.onlineMatch.eloDiff} • Tính Elo Giải Đấu`
-       : `Chênh lệch: ${this.onlineMatch.eloDiff} Elo (Công bằng ≤ 100)`;
+       ? (isEn ? `ΔElo: ${this.onlineMatch.eloDiff} • Rated Tournament` : `ΔElo: ${this.onlineMatch.eloDiff} • Tính Elo Giải Đấu`)
+       : (isEn ? `Elo Gap: ${this.onlineMatch.eloDiff} Elo (Fair ≤ 100)` : `Chênh lệch: ${this.onlineMatch.eloDiff} Elo (Công bằng ≤ 100)`);
      }
      if (namesEl) {
       namesEl.innerHTML = `
        <div class="flex flex-wrap items-center justify-between gap-2">
         <span>♔ ${this.onlineMatch.whitePlayer.nickname} (${this.onlineMatch.whitePlayer.elo}) <span class="text-emerald-400 mx-1">⚔️</span> ♚ ${this.onlineMatch.blackPlayer.nickname} (${this.onlineMatch.blackPlayer.elo})</span>
-        ${isTourneyRoom ? `<button type="button" onclick="switchChessSubtab('tournaments')" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-[11px] transition shadow">🏆 Xem Sơ Đồ Giải Đấu</button>` : ''}
+        ${isTourneyRoom ? `<button type="button" onclick="switchChessSubtab('tournaments')" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-[11px] transition shadow">${isEn ? '🏆 View Tournament Bracket' : '🏆 Xem Sơ Đồ Giải Đấu'}</button>` : ''}
        </div>
       `;
      }
@@ -9982,7 +9984,86 @@
     ['Tên hiển thị (Nickname duy nhất trên BXH):', 'Display Name (Unique Leaderboard Nickname):'],
     ['Mật khẩu tài khoản (Tối thiểu 6 ký tự):', 'Account Password (Minimum 6 characters):'],
     ['Nhập lại mật khẩu xác nhận:', 'Confirm Password:'],
-    ['Tự động lưu giữ phiên đăng nhập cho những lần truy cập sau', 'Remember my login session automatically on this device']
+    ['Tự động lưu giữ phiên đăng nhập cho những lần truy cập sau', 'Remember my login session automatically on this device'],
+    ['📢 THÔNG BÁO QUẢN TRỊ VIÊN', '📢 ADMIN ANNOUNCEMENT'],
+    ['✕ Đóng', '✕ Close'],
+    ['Quản Trị Viên', 'Admin'],
+    ['👁️ Hồ Sơ', '👁️ Profile'],
+    ['👁️ Hồ sơ', '👁️ Profile'],
+    ['🤖 Đấu với Bot AI (Luyện tập • Không tính Elo)', '🤖 Play vs AI Bot (Practice • Unrated)'],
+    ['🏆 Giải Đấu Cờ Vua (Sự Kiện Quản Trị Viên Mở)', '🏆 Chess Tournaments (Official Events)'],
+    ['🏆 Giải Đấu Cờ Vua', '🏆 Chess Tournaments'],
+    ['🏆 Giải Đấu Cờ Vua Đang Mở!', '🏆 Live Chess Tournament Open!'],
+    ['Tham Gia Ngay →', 'Join Now →'],
+    ['Quản trị viên vừa mở sự kiện giải đấu Cờ Vua mới. Bấm "Tham Gia Ngay" hoặc chọn mục Giải Đấu Cờ Vua để ghi danh!', 'The Administrator has opened a new Chess Tournament event. Click "Join Now" or open the Chess Tournaments tab to register!'],
+    ['Đấu Trường Giải Đấu Chính Thức • Tính Elo Chuẩn Chess.com', 'Official Tournament Arena • Standard Chess.com Elo Rated'],
+    ['🏆 Hệ Thống Giải Đấu Cờ Vua LM Training', '🏆 LM Training Official Chess Tournaments'],
+    ['Tham gia các giải đấu Cờ Vua do Quản Trị Viên tổ chức. Nhấn vào tên bất kỳ kỳ thủ nào trong giải để xem Hồ Sơ & Tiểu Sử chi tiết!', 'Compete in official Chess Tournaments hosted by the Administrator. Click any player in the tournament to view their full Profile & Bio!'],
+    ['🛡️ Quản Lý & Tạo Giải Đấu (Admin)', '🛡️ Manage & Create Tournaments (Admin)'],
+    ['🛡️ KHU VỰC ẨN DÀNH RIÊNG CHO QUẢN TRỊ VIÊN', '🛡️ DEDICATED ADMINISTRATOR CONTROL CENTER'],
+    ['⚙️ Trung Tâm Quản Trị Học Viên & Giải Đấu Cờ Vua', '⚙️ Student & Chess Tournament Administration Center'],
+    ['Quản lý toàn diện hồ sơ người chơi, điều chỉnh hệ số Elo / kỷ lục Rubik, khóa tài khoản vi phạm, khởi tạo giải đấu Cờ Vua và phát thông báo toàn hệ thống.', 'Comprehensively manage player profiles, adjust Chess Elo / Rubik records, lock violating accounts, host Chess Tournaments, and publish system-wide announcements.'],
+    ['➕ Thêm Người Chơi Mới', '➕ Add New Player'],
+    ['🔄 Đồng Bộ Đám Mây', '🔄 Cloud Sync'],
+    ['👥 Tổng Người Chơi Đăng Ký', '👥 Total Registered Players'],
+    ['🏆 Giải Đấu Cờ Vua Đang Mở', '🏆 Active Chess Tournaments'],
+    ['♟️ Đỉnh Cao Elo Hệ Thống', '♟️ Highest System Chess Elo'],
+    ['⏱️ Kỷ Lục Giải Rubik 3D', '⏱️ Best 3D Rubik Record'],
+    ['👥 1. Quản Lý Người Chơi & Hồ Sơ', '👥 1. Player & Profile Management'],
+    ['🏆 2. Tạo & Điều Hành Giải Đấu Cờ Vua', '🏆 2. Create & Manage Chess Tournaments'],
+    ['📢 3. Thông Báo Hệ Thống & Cài Đặt', '📢 3. System Broadcast & Settings'],
+    ['Tất cả trạng thái', 'All Statuses'],
+    ['Đang hoạt động', 'Active'],
+    ['🔒 Đã bị khóa', '🔒 Locked'],
+    ['Hiển thị tài khoản Admin trên BXH công khai', 'Show Admin account on public Leaderboard'],
+    ['Khởi Tạo Giải Đấu Cờ Vua Mới', 'Create New Chess Tournament'],
+    ['Tên giải đấu Cờ Vua:', 'Tournament Name:'],
+    ['Thể thức thi đấu:', 'Tournament Format:'],
+    ['🇨🇭 Hệ Thụy Sĩ (Swiss)', '🇨🇭 Swiss System'],
+    ['⚔️ Đấu Trường (Arena)', '⚔️ Arena Format'],
+    ['👑 Loại Trực Tiếp (KO)', '👑 Knockout Bracket (KO)'],
+    ['Thời gian (Time Control):', 'Time Control:'],
+    ['Số kỳ thủ tối đa:', 'Max Players:'],
+    ['4 Kỳ thủ', '4 Players'],
+    ['8 Kỳ thủ', '8 Players'],
+    ['16 Kỳ thủ', '16 Players'],
+    ['32 Kỳ thủ', '32 Players'],
+    ['Thưởng Quán Quân:', 'Champion Bonus:'],
+    ['+50 Elo & Cúp Vàng', '+50 Elo & Gold Cup'],
+    ['+100 Elo & Danh Hiệu', '+100 Elo & Champion Title'],
+    ['+150 Elo & Đại Kiện Tướng', '+150 Elo & Grandmaster Trophy'],
+    ['Mô tả & Điều lệ giải đấu:', 'Tournament Description & Rules:'],
+    ['🏆 Phát Hành Giải Đấu Mới', '🏆 Publish New Tournament'],
+    ['📋 Danh Sách Giải Đấu & Điều Phối Cặp Đấu', '📋 Tournament List & Match Pairing Control'],
+    ['Cập nhật kết quả cặp đấu sẽ tự động tính Elo chuẩn Chess.com', 'Updating match results automatically calculates official Chess.com Elo'],
+    ['📢 Phát Thông Báo Toàn Hệ Thống (Global Banner)', '📢 Publish System-Wide Announcement (Global Banner)'],
+    ['Thông báo này sẽ ghim nổi bật ở đầu trang cho tất cả học viên và kỳ thủ truy cập vào LM Training.', 'This announcement will be pinned at the top of the page for all students and players visiting LM Training.'],
+    ['📢 Đăng Thông Báo', '📢 Publish Announcement'],
+    ['✕ Gỡ Thông Báo', '✕ Clear Announcement'],
+    ['Quyền Quản Trị Viên (Admin)', 'Administrator Privileges (Admin)'],
+    ['✏️ Chỉnh Sửa Hồ Sơ Người Chơi', '✏️ Edit Player Profile'],
+    ['Email tài khoản:', 'Account Email:'],
+    ['Nickname hiển thị:', 'Display Nickname:'],
+    ['Danh hiệu (Title):', 'Custom Title:'],
+    ['Hệ số Elo Cờ Vua:', 'Chess Elo Rating:'],
+    ['Kỷ lục Rubik Best (giây):', 'Rubik Best Single (sec):'],
+    ['Avatar (Emoji hoặc URL):', 'Avatar (Emoji or Image URL):'],
+    ['Mật khẩu (Nếu tạo mới/đổi):', 'Password (New or Reset):'],
+    ['Tiểu sử người chơi (Bio):', 'Player Bio:'],
+    ['Hủy', 'Cancel'],
+    ['💾 Lưu Thay Đổi', '💾 Save Changes'],
+    ['Hồ Sơ Kỳ Thủ & Học Viên LM Training', 'LM Training Player & Student Profile'],
+    ['👤 Thông Tin Hồ Sơ Người Chơi', '👤 Player Profile Inspector'],
+    ['📝 Tiểu sử giới thiệu (Bio):', '📝 Personal Bio:'],
+    ['♟️ Hệ Số Elo (Chess.com)', '♟️ Chess Elo (Chess.com)'],
+    ['🧊 Kỷ Lục Giải Rubik 3D', '🧊 3D Rubik Best Record'],
+    ['📚 Chuyên đề CFOP & Gambit đã học:', '📚 Mastered CFOP & Gambit Modules:'],
+    ['Đóng Hồ Sơ', 'Close Profile'],
+    ['🎨 Đổi Avatar & Tiểu Sử (Đồng bộ BXH & Bàn Cờ)', '🎨 Customize Avatar & Bio (Synced to Leaderboard & Board)'],
+    ['📷 Tải Ảnh Lên', '📷 Upload Photo'],
+    ['📝 Tiểu sử giới thiệu (Hiển thị khi đấu Cờ Vua & BXH):', '📝 Personal Bio (Displayed in Chess Arena & Leaderboard):'],
+    ['💾 Lưu Avatar & Tiểu Sử Hồ Sơ', '💾 Save Avatar & Bio'],
+    ['Mở Trung Tâm Quản Trị Viên (Quản Lý Người Chơi & Giải Đấu)', 'Open Admin Control Center (Manage Players & Tournaments)']
    ],
    init() {
     const saved = StorageUtil.getRaw(this.storageKey);
@@ -10490,9 +10571,18 @@
     setTxt('chess-header-kicker', 'Chuyên Đề 02 • International Chess & Tactical AI', 'Module 02 • International Chess & Tactical AI');
     setTxt('chess-header-title', 'Đấu Trường Cờ Vua Quốc Tế & Phân Tích Chiến Thuật', 'International Chess Arena & Tactical Analysis');
     const cTabPlay = document.querySelector('[data-chess-tab="play"]');
+    const cTabTourney = document.querySelector('[data-chess-tab="tournaments"]');
     const cTabGambit = document.querySelector('[data-chess-tab="gambit"]');
     const cExpandBtn = document.getElementById('chess-expand-open-btn');
+    const navAdmin = document.getElementById('nav-admin-tab');
+    if (navAdmin) navAdmin.innerHTML = `<span>🛡️</span> <span class="truncate">${isEn ? 'Admin' : 'Quản Trị Viên'}</span>`;
     if (cTabPlay) cTabPlay.textContent = isEn ? '♟️ Arena & AI Analysis' : '♟️ Bàn Cờ & Bot AI';
+    if (cTabTourney) {
+     const curCount = document.getElementById('chess-tourney-count-badge')?.textContent || '0';
+     cTabTourney.innerHTML = isEn
+      ? `🏆 Chess Tournaments (<span id="chess-tourney-count-badge">${curCount}</span>)`
+      : `🏆 Giải Đấu Cờ Vua (<span id="chess-tourney-count-badge">${curCount}</span>)`;
+    }
     if (cTabGambit) cTabGambit.textContent = isEn ? '📖 Opening & Gambit Library (18)' : '📖 Thư Viện Gambit & Bài Học (18)';
     if (cExpandBtn) cExpandBtn.innerHTML = isEn ? '<span>⛶</span> <span>Fullscreen Board</span>' : '<span>⛶</span> <span>Mở Rộng Bàn Cờ</span>';
     setTxt('chess-expand-inline-btn', '⛶ Phóng To', '⛶ Expand');
@@ -10647,6 +10737,30 @@
       }
      }
      ChessArena.updateUI();
+    }
+    const setPlaceholder = (id, viPh, enPh) => {
+     const el = document.getElementById(id);
+     if (el) el.placeholder = isEn ? enPh : viPh;
+    };
+    setPlaceholder('admin-player-search-input', '🔍 Tìm người chơi theo Nickname, Email hoặc Tiểu sử...', '🔍 Search players by Nickname, Email, or Bio...');
+    setPlaceholder('admin-tourney-name', 'VD: Giải Cờ Vua LM Training Open 2026', 'e.g., LM Training Chess Open 2026');
+    setPlaceholder('admin-tourney-desc', 'Giải đấu chính thức tính điểm Elo theo chuẩn Chess.com. Kỳ thủ vô địch nhận Cúp Vàng và thưởng Elo trực tiếp vào hồ sơ...', 'Official Chess.com Elo-rated tournament. The Champion receives the Gold Cup and bonus Elo credited directly to their profile...');
+    setPlaceholder('admin-broadcast-input', 'Nhập nội dung thông báo (VD: Giải đấu LM Training Open 2026 đang mở đăng ký tại mục Cờ Vua!)...', 'Enter announcement text (e.g., LM Training Open 2026 is now open for registration in the Chess tab!)...');
+    setPlaceholder('admin-edit-nickname', 'Nickname...', 'Nickname...');
+    setPlaceholder('admin-edit-title', 'VD: Kiện Tướng FM, GM...', 'e.g., FM, GM, Club Champion...');
+    setPlaceholder('admin-edit-rubik-best', 'Để trống nếu giữ nguyên', 'Leave blank to keep current');
+    setPlaceholder('admin-edit-avatar', '👑 hoặc https://...', '👑 or https://...');
+    setPlaceholder('admin-edit-password', 'Để trống nếu giữ nguyên', 'Leave blank to keep current');
+    setPlaceholder('admin-edit-bio', 'Tiểu sử học viên...', 'Player bio...');
+    setPlaceholder('profile-avatar-url-input', '🔗 Hoặc dán link ảnh Avatar (https://...)...', '🔗 Or paste an Avatar image URL (https://...)...');
+    setPlaceholder('profile-bio-input', 'Giới thiệu bản thân, sở trường khai cuộc Cờ Vua hoặc mục tiêu Sub-10 Rubik 3D...', 'Introduce yourself, your favorite Chess openings, or your Sub-10 3D Rubik goal...');
+
+    if (typeof AdminController !== 'undefined') {
+     AdminController.renderGlobalBroadcastBanner(false);
+     AdminController.renderPublicTournaments();
+     if (isCurrentUserAdmin()) {
+      AdminController.renderAdminDashboard();
+     }
     }
     fetchLeaderboardsData(false);
     if (notify) {
@@ -10997,8 +11111,25 @@
     return prof;
    },
 
+   formatTourneyType(fmt, isEn) {
+    if (!isEn) return fmt || 'Swiss Hệ Thụy Sĩ';
+    const raw = (fmt || '').toLowerCase();
+    if (raw.includes('knockout') || raw.includes('loại')) return 'Knockout Bracket (KO)';
+    if (raw.includes('arena') || raw.includes('đấu trường')) return 'Arena Format';
+    return 'Swiss System';
+   },
+
+   formatTourneyDesc(desc, isEn) {
+    if (!desc) return isEn ? 'Official Chess.com Elo-rated tournament.' : 'Giải đấu chính thức tính điểm Elo theo chuẩn Chess.com.';
+    if (isEn && desc === 'Giải đấu chính thức tính điểm Elo theo chuẩn Chess.com.') {
+     return 'Official Chess.com Elo-rated tournament. Champion receives bonus Elo and Trophy.';
+    }
+    return desc;
+   },
+
    // Render Visual Tournament Bracket & Live Progression Diagram (Sơ Đồ Nhánh Đấu & Tiến Trình Giải Đấu)
    renderTournamentBracketHTML(t, isAdminView = false) {
+    const isEn = window.AppI18n?.lang === 'en';
     const parts = Array.isArray(t.participants) ? [...t.participants] : [];
     const pairings = Array.isArray(t.pairings) ? t.pairings : [];
     const isKo = (t.format || '').toLowerCase().includes('knockout') || (t.format || '').toLowerCase().includes('loại');
@@ -11018,11 +11149,11 @@
     const roundLabelFor = (rNum, maxR) => {
      if (isKo) {
       const diffFromEnd = maxR - rNum;
-      if (diffFromEnd === 0) return `👑 Chung Kết (Vòng ${rNum})`;
-      if (diffFromEnd === 1) return `⚔️ Bán Kết (Vòng ${rNum})`;
-      if (diffFromEnd === 2) return `🛡️ Tứ Kết (Vòng ${rNum})`;
+      if (diffFromEnd === 0) return isEn ? `👑 Final (Round ${rNum})` : `👑 Chung Kết (Vòng ${rNum})`;
+      if (diffFromEnd === 1) return isEn ? `⚔️ Semifinals (Round ${rNum})` : `⚔️ Bán Kết (Vòng ${rNum})`;
+      if (diffFromEnd === 2) return isEn ? `🛡️ Quarterfinals (Round ${rNum})` : `🛡️ Tứ Kết (Vòng ${rNum})`;
      }
-     return `⚔️ Vòng Đấu ${rNum}`;
+     return isEn ? `⚔️ Round ${rNum}` : `⚔️ Vòng Đấu ${rNum}`;
     };
 
     let roundColumnsHtml = '';
@@ -11036,11 +11167,11 @@
         return `
          <div class="p-2.5 rounded-xl bg-slate-950/90 border border-amber-500/35 space-y-1">
           <div class="flex items-center justify-between text-[10px] font-mono-code text-amber-300 font-bold">
-           <span>🎉 MIỄN ĐẤU (BYE)</span>
-           <span>+1.0 Điểm</span>
+           <span>${isEn ? '🎉 BYE (AUTO-ADVANCE)' : '🎉 MIỄN ĐẤU (BYE)'}</span>
+           <span>${isEn ? '+1.0 Pt' : '+1.0 Điểm'}</span>
           </div>
           <div class="text-xs font-extrabold text-white truncate">♔ ${m.whiteName} (${m.whiteElo} Elo)</div>
-          <div class="text-[10px] text-slate-400">Tự động vào vòng tiếp theo (Số kỳ thủ lẻ)</div>
+          <div class="text-[10px] text-slate-400">${isEn ? 'Automatically advances (Odd number of players)' : 'Tự động vào vòng tiếp theo (Số kỳ thủ lẻ)'}</div>
          </div>
         `;
        }
@@ -11055,8 +11186,8 @@
        const statusPill = isFinished
         ? `<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono-code text-[10px] font-extrabold">✅ ${m.result}</span>`
         : (isLive
-         ? `<span class="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 font-mono-code text-[10px] font-extrabold animate-pulse">🟢 Đang Đấu Live</span>`
-         : `<span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono-code text-[10px] font-bold">⏳ Chờ Đấu</span>`);
+         ? `<span class="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 font-mono-code text-[10px] font-extrabold animate-pulse">${isEn ? '🟢 Live Now' : '🟢 Đang Đấu Live'}</span>`
+         : `<span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono-code text-[10px] font-bold">${isEn ? '⏳ Waiting' : '⏳ Chờ Đấu'}</span>`);
 
        const dWStr = typeof m.deltaW === 'number' ? `<span class="ml-1 text-[10px] font-mono-code ${m.deltaW >= 0 ? 'text-emerald-400' : 'text-rose-400'}">(${m.deltaW >= 0 ? '+' + m.deltaW : m.deltaW})</span>` : '';
        const dBStr = typeof m.deltaB === 'number' ? `<span class="ml-1 text-[10px] font-mono-code ${m.deltaB >= 0 ? 'text-emerald-400' : 'text-rose-400'}">(${m.deltaB >= 0 ? '+' + m.deltaB : m.deltaB})</span>` : '';
@@ -11064,27 +11195,27 @@
        const actionFooter = !isFinished ? `
         <div class="pt-1.5 mt-1 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-1.5">
          <button type="button" data-play-tourney-id="${t.id}" data-play-match-id="${m.id}" class="play-tourney-match-btn flex-1 py-1.5 px-2.5 rounded-lg ${iAmPlayer ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950' : 'bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30'} font-extrabold text-[11px] transition text-center shadow">
-          ${iAmPlayer ? '♟️ Vào Bàn Đấu (PvP)' : '👁️ Xem Bàn Đấu'}
+          ${iAmPlayer ? (isEn ? '♟️ Join Match (PvP)' : '♟️ Vào Bàn Đấu (PvP)') : (isEn ? '👁️ Spectate' : '👁️ Xem Bàn Đấu')}
          </button>
          ${isAdminView ? `
           <div class="flex items-center gap-1">
-           <button type="button" data-t-id="${t.id}" data-m-id="${m.id}" data-res="1-0" class="admin-set-match-res-btn px-1.5 py-1 rounded bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 font-mono-code text-[10px] font-bold transition" title="Xử Trắng thắng (1-0)">1-0</button>
-           <button type="button" data-t-id="${t.id}" data-m-id="${m.id}" data-res="1/2-1/2" class="admin-set-match-res-btn px-1.5 py-1 rounded bg-slate-800 hover:bg-amber-400 hover:text-slate-950 text-amber-300 font-mono-code text-[10px] font-bold transition" title="Xử Hòa (1/2-1/2)">½</button>
-           <button type="button" data-t-id="${t.id}" data-m-id="${m.id}" data-res="0-1" class="admin-set-match-res-btn px-1.5 py-1 rounded bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-cyan-300 font-mono-code text-[10px] font-bold transition" title="Xử Đen thắng (0-1)">0-1</button>
+           <button type="button" data-t-id="${t.id}" data-m-id="${m.id}" data-res="1-0" class="admin-set-match-res-btn px-1.5 py-1 rounded bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 font-mono-code text-[10px] font-bold transition" title="${isEn ? 'Award White Win (1-0)' : 'Xử Trắng thắng (1-0)'}">1-0</button>
+           <button type="button" data-t-id="${t.id}" data-m-id="${m.id}" data-res="1/2-1/2" class="admin-set-match-res-btn px-1.5 py-1 rounded bg-slate-800 hover:bg-amber-400 hover:text-slate-950 text-amber-300 font-mono-code text-[10px] font-bold transition" title="${isEn ? 'Award Draw (1/2-1/2)' : 'Xử Hòa (1/2-1/2)'}">½</button>
+           <button type="button" data-t-id="${t.id}" data-m-id="${m.id}" data-res="0-1" class="admin-set-match-res-btn px-1.5 py-1 rounded bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-cyan-300 font-mono-code text-[10px] font-bold transition" title="${isEn ? 'Award Black Win (0-1)' : 'Xử Đen thắng (0-1)'}">0-1</button>
           </div>
          ` : ''}
         </div>
        ` : (isAdminView && t.status !== 'completed' ? `
         <div class="pt-1 mt-1 border-t border-slate-800/60 flex items-center justify-between text-[10px]">
-         <span class="text-slate-400">Đã khóa kết quả ${m.result}</span>
-         <button type="button" data-reset-t-id="${t.id}" data-reset-m-id="${m.id}" class="admin-reset-match-res-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-rose-500/20 text-amber-300 hover:text-rose-300 font-bold transition">↺ Đấu lại</button>
+         <span class="text-slate-400">${isEn ? `Locked: ${m.result}` : `Đã khóa kết quả ${m.result}`}</span>
+         <button type="button" data-reset-t-id="${t.id}" data-reset-m-id="${m.id}" class="admin-reset-match-res-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-rose-500/20 text-amber-300 hover:text-rose-300 font-bold transition">${isEn ? '↺ Replay' : '↺ Đấu lại'}</button>
         </div>
        ` : '');
 
        return `
         <div class="p-2.5 rounded-xl bg-slate-950/95 border ${iAmPlayer && !isFinished ? 'border-emerald-400 shadow-lg' : (isLive ? 'border-amber-400/60' : 'border-slate-800')} space-y-1.5 relative">
          <div class="flex items-center justify-between gap-1 text-[10px] text-slate-400 font-mono-code">
-          <span>Cặp #${idx + 1} • ΔElo: ${eloGap}</span>
+          <span>${isEn ? `Pair #${idx + 1} • ΔElo: ${eloGap}` : `Cặp #${idx + 1} • ΔElo: ${eloGap}`}</span>
           ${statusPill}
          </div>
          <div data-view-profile-email="${m.whiteEmail}" class="cursor-pointer flex items-center justify-between gap-1.5 px-2 py-1 rounded-lg ${wWon ? 'bg-emerald-500/20 border border-emerald-500/40' : 'bg-slate-900/90'}">
@@ -11119,11 +11250,11 @@
        placeholders.push(`
         <div class="p-2.5 rounded-xl bg-slate-950/50 border border-dashed border-slate-800 space-y-1.5 opacity-75">
          <div class="flex items-center justify-between text-[10px] font-mono-code text-slate-400">
-          <span>Nhánh #${pIdx + 1} (Vòng ${r})</span>
-          <span>Chờ kết quả V${r - 1 > 0 ? r - 1 : 1}</span>
+          <span>${isEn ? `Branch #${pIdx + 1} (Round ${r})` : `Nhánh #${pIdx + 1} (Vòng ${r})`}</span>
+          <span>${isEn ? `Awaiting R${r - 1 > 0 ? r - 1 : 1}` : `Chờ kết quả V${r - 1 > 0 ? r - 1 : 1}`}</span>
          </div>
-         <div class="px-2 py-1 rounded bg-slate-900/60 text-[11px] text-slate-400">♔ Thắng Nhánh ${pIdx * 2 + 1}</div>
-         <div class="px-2 py-1 rounded bg-slate-900/60 text-[11px] text-slate-400">♚ Thắng Nhánh ${pIdx * 2 + 2}</div>
+         <div class="px-2 py-1 rounded bg-slate-900/60 text-[11px] text-slate-400">♔ ${isEn ? `Winner Branch ${pIdx * 2 + 1}` : `Thắng Nhánh ${pIdx * 2 + 1}`}</div>
+         <div class="px-2 py-1 rounded bg-slate-900/60 text-[11px] text-slate-400">♚ ${isEn ? `Winner Branch ${pIdx * 2 + 2}` : `Thắng Nhánh ${pIdx * 2 + 2}`}</div>
         </div>
        `);
       }
@@ -11134,7 +11265,7 @@
       <div class="min-w-[235px] sm:min-w-[255px] flex-1 flex flex-col justify-between bg-slate-900/70 rounded-2xl p-3 border border-slate-800/90 space-y-2.5">
        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
         <span class="text-xs font-extrabold text-amber-300">${rTitle}</span>
-        <span class="text-[10px] font-mono-code text-slate-400">${rMatches.length ? `${rMatches.filter(x => x.result).length}/${rMatches.length} hoàn tất` : 'Đang chờ'}</span>
+        <span class="text-[10px] font-mono-code text-slate-400">${rMatches.length ? `${rMatches.filter(x => x.result).length}/${rMatches.length} ${isEn ? 'done' : 'hoàn tất'}` : (isEn ? 'Pending' : 'Đang chờ')}</span>
        </div>
        <div class="space-y-2.5 my-auto">${cardsHtml}</div>
       </div>
@@ -11148,21 +11279,21 @@
     const champColHtml = t.status === 'completed' && t.winnerName ? `
      <div class="min-w-[220px] sm:min-w-[240px] bg-gradient-to-b from-amber-500/20 via-slate-900 to-slate-950 rounded-2xl p-4 border-2 border-amber-400/70 flex flex-col items-center justify-center text-center space-y-2 shadow-xl">
       <div class="text-3xl animate-bounce">🏆</div>
-      <span class="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-mono-code text-[10px] font-extrabold">QUÁN QUÂN GIẢI ĐẤU</span>
+      <span class="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-mono-code text-[10px] font-extrabold">${isEn ? 'TOURNAMENT CHAMPION' : 'QUÁN QUÂN GIẢI ĐẤU'}</span>
       <div class="text-base font-extrabold text-white break-words">${t.winnerName}</div>
       <div class="text-xs font-mono-code font-extrabold text-emerald-300 bg-slate-950/90 px-3 py-1 rounded-xl border border-emerald-500/40">
-       🎁 Đã thưởng +${t.bonusElo || 100} Elo
+       🎁 ${isEn ? `Awarded +${t.bonusElo || 100} Elo` : `Đã thưởng +${t.bonusElo || 100} Elo`}
       </div>
-      <div class="text-[11px] text-slate-300">Đã cộng trực tiếp vào Hồ sơ &amp; BXH Cờ Vua</div>
+      <div class="text-[11px] text-slate-300">${isEn ? 'Credited directly to Profile &amp; Chess Leaderboard' : 'Đã cộng trực tiếp vào Hồ sơ &amp; BXH Cờ Vua'}</div>
      </div>
     ` : `
      <div class="min-w-[215px] sm:min-w-[235px] bg-slate-900/80 rounded-2xl p-3.5 border border-amber-500/35 flex flex-col items-center justify-center text-center space-y-2">
       <div class="text-2xl">👑</div>
-      <div class="text-xs font-extrabold text-amber-300">Ngôi Vương &amp; Cúp Vô Địch</div>
+      <div class="text-xs font-extrabold text-amber-300">${isEn ? 'Crown &amp; Championship Cup' : 'Ngôi Vương &amp; Cúp Vô Địch'}</div>
       <div class="text-xs font-mono-code font-extrabold text-emerald-300 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">
-       Thưởng: +${t.bonusElo || 100} Elo
+       ${isEn ? `Bonus: +${t.bonusElo || 100} Elo` : `Thưởng: +${t.bonusElo || 100} Elo`}
       </div>
-      ${currentLeader ? `<div class="text-[11px] text-slate-300">Đang dẫn đầu: <strong class="text-white">${currentLeader.nickname}</strong> (${Number(currentLeader.score || 0).toFixed(1)}đ)</div>` : `<div class="text-[11px] text-slate-400">Chờ xác định nhà vô địch</div>`}
+      ${currentLeader ? `<div class="text-[11px] text-slate-300">${isEn ? 'Leading:' : 'Đang dẫn đầu:'} <strong class="text-white">${currentLeader.nickname}</strong> (${Number(currentLeader.score || 0).toFixed(1)} ${isEn ? 'pts' : 'đ'})</div>` : `<div class="text-[11px] text-slate-400">${isEn ? 'Awaiting Champion' : 'Chờ xác định nhà vô địch'}</div>`}
      </div>
     `;
 
@@ -11171,23 +11302,23 @@
       <div class="flex flex-wrap items-center justify-between gap-2">
        <div class="flex items-center gap-2">
         <span class="text-sm">🗺️</span>
-        <span class="text-xs sm:text-sm font-extrabold text-amber-300">Sơ Đồ Nhánh Đấu &amp; Tiến Trình Giải Đấu (Cập Nhật Thời Gian Thực)</span>
+        <span class="text-xs sm:text-sm font-extrabold text-amber-300">${isEn ? 'Tournament Bracket &amp; Live Progression (Real-Time Sync)' : 'Sơ Đồ Nhánh Đấu &amp; Tiến Trình Giải Đấu (Cập Nhật Thời Gian Thực)'}</span>
        </div>
-       <span class="text-[11px] font-mono-code text-slate-400">Ghép cặp công bằng theo Điểm &amp; ΔElo nhỏ nhất • Cân bằng màu quân ♔/♚</span>
+       <span class="text-[11px] font-mono-code text-slate-400">${isEn ? 'Fair pairing by Score &amp; min ΔElo • Balanced ♔/♚ colors' : 'Ghép cặp công bằng theo Điểm &amp; ΔElo nhỏ nhất • Cân bằng màu quân ♔/♚'}</span>
       </div>
       <!-- 4-Step Live Progression Bar -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
        <div class="p-2 rounded-xl border ${step1Done ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-400'} font-bold flex items-center gap-1.5">
-        <span>${step1Done ? '✅' : '1.'}</span> <span class="truncate">Ghi Danh (${parts.length}/${t.maxPlayers})</span>
+        <span>${step1Done ? '✅' : '1.'}</span> <span class="truncate">${isEn ? `Registration (${parts.length}/${t.maxPlayers})` : `Ghi Danh (${parts.length}/${t.maxPlayers})`}</span>
        </div>
        <div class="p-2 rounded-xl border ${step2Done ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-400'} font-bold flex items-center gap-1.5">
-        <span>${step2Done ? '✅' : '2.'}</span> <span class="truncate">Chia Cặp Công Bằng</span>
+        <span>${step2Done ? '✅' : '2.'}</span> <span class="truncate">${isEn ? 'Fair Pairings' : 'Chia Cặp Công Bằng'}</span>
        </div>
        <div class="p-2 rounded-xl border ${step3Done ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300' : (step2Done ? 'bg-amber-500/15 border-amber-400/50 text-amber-300' : 'bg-slate-900 border-slate-800 text-slate-400')} font-bold flex items-center gap-1.5">
-        <span>${step4Done ? '✅' : (step2Done ? '⚔️' : '3.')}</span> <span class="truncate">Đấu Nhánh PvP Online</span>
+        <span>${step4Done ? '✅' : (step2Done ? '⚔️' : '3.')}</span> <span class="truncate">${isEn ? 'Online PvP Matches' : 'Đấu Nhánh PvP Online'}</span>
        </div>
        <div class="p-2 rounded-xl border ${step4Done ? 'bg-amber-500 text-slate-950 border-amber-400 font-extrabold' : 'bg-slate-900 border-slate-800 text-slate-400 font-bold'} flex items-center gap-1.5">
-        <span>👑</span> <span class="truncate">Trao Cúp (+${t.bonusElo || 100} Elo)</span>
+        <span>👑</span> <span class="truncate">${isEn ? `Crown Champion (+${t.bonusElo || 100} Elo)` : `Trao Cúp (+${t.bonusElo || 100} Elo)`}</span>
        </div>
       </div>
       <!-- Visual Bracket Tree Columns -->
@@ -11201,6 +11332,7 @@
 
    renderAdminDashboard() {
     if (!isCurrentUserAdmin()) return;
+    const isEn = window.AppI18n?.lang === 'en';
     const players = this.getAllManagedPlayers();
     const tourneys = this.getTournaments();
 
@@ -11241,7 +11373,7 @@
      });
 
      if (!filtered.length) {
-      wrap.innerHTML = `<div class="p-6 rounded-2xl bg-slate-950 border border-slate-800 text-center text-slate-400 text-xs sm:text-sm">Không tìm thấy người chơi nào khớp bộ lọc.</div>`;
+      wrap.innerHTML = `<div class="p-6 rounded-2xl bg-slate-950 border border-slate-800 text-center text-slate-400 text-xs sm:text-sm">${isEn ? 'No players found matching the current filter.' : 'Không tìm thấy người chơi nào khớp bộ lọc.'}</div>`;
      } else {
       wrap.innerHTML = filtered.map(p => {
        const isSysAdmin = p.email === ADMIN_ACCOUNT_EMAIL;
@@ -11256,7 +11388,10 @@
            <div class="flex flex-wrap items-center gap-1.5">
             <span class="text-sm sm:text-base font-extrabold text-white">${p.nickname}</span>
             ${p.customTitle ? `<span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono-code font-bold">${p.customTitle}</span>` : ''}
-            ${p.locked ? `<span class="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-extrabold">🔒 ĐÃ KHÓA</span>` : `<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">Hoạt động</span>`}
+            ${p.locked
+             ? `<span class="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-extrabold">${isEn ? '🔒 LOCKED' : '🔒 ĐÃ KHÓA'}</span>`
+             : `<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">${isEn ? 'Active' : 'Hoạt động'}</span>`
+            }
            </div>
            <div class="text-xs font-mono-code text-slate-400 truncate">${p.email}</div>
            ${p.bio ? `<div class="text-xs text-slate-300 italic truncate max-w-md">"${p.bio}"</div>` : ''}
@@ -11268,11 +11403,11 @@
            <div class="font-mono-code text-xs text-cyan-300">🧊 Rubik: ${p.bestRubik ? p.bestRubik.toFixed(2) + 's' : '--.--s'} • 📚 ${p.learnedCount || 0}/162</div>
           </div>
           <div class="flex flex-wrap items-center gap-1.5">
-           <button type="button" data-admin-view-email="${p.email}" class="admin-view-prof-btn px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-bold transition">👁️ Hồ sơ</button>
-           <button type="button" data-admin-edit-email="${p.email}" class="admin-edit-prof-btn px-2.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/40 text-xs font-extrabold transition">✏️ Sửa</button>
+           <button type="button" data-admin-view-email="${p.email}" class="admin-view-prof-btn px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-bold transition">${isEn ? '👁️ Profile' : '👁️ Hồ sơ'}</button>
+           <button type="button" data-admin-edit-email="${p.email}" class="admin-edit-prof-btn px-2.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/40 text-xs font-extrabold transition">${isEn ? '✏️ Edit' : '✏️ Sửa'}</button>
            ${!isSysAdmin ? `
-            <button type="button" data-admin-lock-email="${p.email}" class="admin-lock-prof-btn px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-bold transition">${p.locked ? '🔓 Mở khóa' : '🔒 Khóa'}</button>
-            <button type="button" data-admin-del-email="${p.email}" class="admin-del-prof-btn px-2.5 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white border border-rose-500/40 text-xs font-extrabold transition">🗑️ Xóa</button>
+            <button type="button" data-admin-lock-email="${p.email}" class="admin-lock-prof-btn px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-bold transition">${p.locked ? (isEn ? '🔓 Unlock' : '🔓 Mở khóa') : (isEn ? '🔒 Lock' : '🔒 Khóa')}</button>
+            <button type="button" data-admin-del-email="${p.email}" class="admin-del-prof-btn px-2.5 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white border border-rose-500/40 text-xs font-extrabold transition">${isEn ? '🗑️ Delete' : '🗑️ Xóa'}</button>
            ` : ''}
           </div>
          </div>
@@ -11286,14 +11421,15 @@
     const tListEl = document.getElementById('admin-tournaments-list');
     if (tListEl) {
      if (!tourneys.length) {
-      tListEl.innerHTML = `<div class="p-6 rounded-2xl bg-slate-950 border border-slate-800 text-center text-slate-400 text-xs sm:text-sm">Chưa có giải đấu nào. Hãy tạo giải đấu mới ở khung bên trái!</div>`;
+      tListEl.innerHTML = `<div class="p-6 rounded-2xl bg-slate-950 border border-slate-800 text-center text-slate-400 text-xs sm:text-sm">${isEn ? 'No tournaments created yet. Create a new tournament using the form on the left!' : 'Chưa có giải đấu nào. Hãy tạo giải đấu mới ở khung bên trái!'}</div>`;
      } else {
       tListEl.innerHTML = tourneys.map(t => {
+       const fmtText = this.formatTourneyType(t.format, isEn);
        const statusBadge = t.status === 'open'
-        ? `<span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold">🟢 Đang mở đăng ký</span>`
+        ? `<span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold">${isEn ? '🟢 Registration Open' : '🟢 Đang mở đăng ký'}</span>`
         : (t.status === 'active'
-         ? `<span class="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 text-xs font-extrabold">⚔️ Đang thi đấu</span>`
-         : `<span class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-bold">👑 Đã kết thúc (${t.winnerName || 'Quán quân'})</span>`);
+         ? `<span class="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 text-xs font-extrabold">${isEn ? '⚔️ In Progress' : '⚔️ Đang thi đấu'}</span>`
+         : `<span class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-bold">${isEn ? `👑 Completed (${t.winnerName || 'Champion'})` : `👑 Đã kết thúc (${t.winnerName || 'Quán quân'})`}</span>`);
        const parts = Array.isArray(t.participants) ? [...t.participants].sort((a, b) => (b.score - a.score) || (b.elo - a.elo)) : [];
        const bracketHtml = this.renderTournamentBracketHTML(t, true);
 
@@ -11306,14 +11442,17 @@
             ${statusBadge}
            </div>
            <div class="text-xs text-slate-300 mt-1">
-            Thể thức: <strong>${t.format}</strong> • Thời gian: <strong>${Math.round((t.timeControl || 600) / 60)} phút</strong> • Kỳ thủ: <strong>${parts.length}/${t.maxPlayers}</strong> • Thưởng Quán Quân: <strong class="text-amber-300">+${t.bonusElo || 100} Elo</strong>
+            ${isEn
+             ? `Format: <strong>${fmtText}</strong> • Time: <strong>${Math.round((t.timeControl || 600) / 60)} min</strong> • Players: <strong>${parts.length}/${t.maxPlayers}</strong> • Champion Bonus: <strong class="text-amber-300">+${t.bonusElo || 100} Elo</strong>`
+             : `Thể thức: <strong>${fmtText}</strong> • Thời gian: <strong>${Math.round((t.timeControl || 600) / 60)} phút</strong> • Kỳ thủ: <strong>${parts.length}/${t.maxPlayers}</strong> • Thưởng Quán Quân: <strong class="text-amber-300">+${t.bonusElo || 100} Elo</strong>`
+            }
            </div>
           </div>
           <div class="flex flex-wrap gap-1.5">
-           <button type="button" data-tourney-add-all="${t.id}" class="admin-tourney-add-all-btn px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-cyan-300 text-xs font-bold transition" title="Thêm toàn bộ người chơi đã đăng ký vào giải">➕ Nạp Kỳ Thủ Hệ Thống</button>
-           <button type="button" data-tourney-pair="${t.id}" class="admin-tourney-pair-btn px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold transition">⚔️ Chia Cặp Đấu Công Bằng</button>
-           ${t.status !== 'completed' ? `<button type="button" data-tourney-finish="${t.id}" class="admin-tourney-finish-btn px-2.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold transition">👑 Kết Thúc &amp; Trao Thưởng (+${t.bonusElo || 100} Elo)</button>` : ''}
-           <button type="button" data-tourney-del="${t.id}" class="admin-tourney-del-btn px-2.5 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white text-xs font-bold transition">🗑️ Xóa</button>
+           <button type="button" data-tourney-add-all="${t.id}" class="admin-tourney-add-all-btn px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-cyan-300 text-xs font-bold transition" title="${isEn ? 'Add all registered system players into this tournament' : 'Thêm toàn bộ người chơi đã đăng ký vào giải'}">${isEn ? '➕ Add System Players' : '➕ Nạp Kỳ Thủ Hệ Thống'}</button>
+           <button type="button" data-tourney-pair="${t.id}" class="admin-tourney-pair-btn px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold transition">${isEn ? '⚔️ Generate Fair Pairings' : '⚔️ Chia Cặp Đấu Công Bằng'}</button>
+           ${t.status !== 'completed' ? `<button type="button" data-tourney-finish="${t.id}" class="admin-tourney-finish-btn px-2.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold transition">${isEn ? `👑 Finish &amp; Crown (+${t.bonusElo || 100} Elo)` : `👑 Kết Thúc &amp; Trao Thưởng (+${t.bonusElo || 100} Elo)`}</button>` : ''}
+           <button type="button" data-tourney-del="${t.id}" class="admin-tourney-del-btn px-2.5 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white text-xs font-bold transition">${isEn ? '🗑️ Delete' : '🗑️ Xóa'}</button>
           </div>
          </div>
          ${bracketHtml}
@@ -11336,17 +11475,18 @@
     if (inlineBanner) {
      if (activeTourneys.length > 0) {
       const latestT = activeTourneys[0];
+      const fmtText = this.formatTourneyType(latestT.format, isEn);
       const pCount = Array.isArray(latestT.participants) ? latestT.participants.length : 0;
       inlineBanner.classList.remove('hidden');
       if (inlineTitle) {
        inlineTitle.textContent = isEn
-        ? `🏆 Live Tournament: ${latestT.name} (${pCount}/${latestT.maxPlayers})`
+        ? `🏆 Live Tournament: ${latestT.name} (${pCount}/${latestT.maxPlayers} players)`
         : `🏆 Sự Kiện Giải Đấu Đang Mở: ${latestT.name} (${pCount}/${latestT.maxPlayers} kỳ thủ)`;
       }
       if (inlineSub) {
        inlineSub.innerHTML = isEn
-        ? `Format: <strong>${latestT.format}</strong> • Time: <strong>${Math.round((latestT.timeControl || 600) / 60)} min</strong> • Champion Bonus: <strong class="text-amber-300">+${latestT.bonusElo || 100} Elo</strong>. Click "Join Now" to participate!`
-        : `Thể thức: <strong>${latestT.format}</strong> • Thời gian: <strong>${Math.round((latestT.timeControl || 600) / 60)} phút/bên</strong> • Thưởng Quán Quân: <strong class="text-amber-300">+${latestT.bonusElo || 100} Elo</strong>.`;
+        ? `Format: <strong>${fmtText}</strong> • Time: <strong>${Math.round((latestT.timeControl || 600) / 60)} min</strong> • Champion Bonus: <strong class="text-amber-300">+${latestT.bonusElo || 100} Elo</strong>. Click "Join Now" to participate!`
+        : `Thể thức: <strong>${fmtText}</strong> • Thời gian: <strong>${Math.round((latestT.timeControl || 600) / 60)} phút/bên</strong> • Thưởng Quán Quân: <strong class="text-amber-300">+${latestT.bonusElo || 100} Elo</strong>.`;
       }
      } else {
       inlineBanner.classList.add('hidden');
@@ -11365,6 +11505,8 @@
      return;
     }
     container.innerHTML = tourneys.map(t => {
+     const fmtText = this.formatTourneyType(t.format, isEn);
+     const descText = this.formatTourneyDesc(t.desc, isEn);
      const parts = Array.isArray(t.participants) ? [...t.participants].sort((a, b) => (b.score - a.score) || (b.elo - a.elo)) : [];
      const isJoined = Boolean(AppState.userEmail && parts.some(p => (p.email || '').toLowerCase() === AppState.userEmail.toLowerCase()));
      const pairings = Array.isArray(t.pairings) ? t.pairings : [];
@@ -11385,50 +11527,56 @@
           <div class="text-xs sm:text-sm font-extrabold text-white truncate flex flex-wrap items-center gap-1.5">
            <span>${p.nickname}</span>
            <span class="text-[10px] font-mono-code text-amber-300">(${p.elo} Elo)</span>
-           ${isWinner ? `<span class="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 text-[9px] font-extrabold">🏆 QUÁN QUÂN (+${t.bonusElo || 100} Elo)</span>` : `<span class="px-1.5 py-0.5 rounded bg-slate-800 text-[9px] text-cyan-300 font-semibold">👁️ Hồ sơ</span>`}
+           ${isWinner
+            ? `<span class="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 text-[9px] font-extrabold">${isEn ? `🏆 CHAMPION (+${t.bonusElo || 100} Elo)` : `🏆 QUÁN QUÂN (+${t.bonusElo || 100} Elo)`}</span>`
+            : `<span class="px-1.5 py-0.5 rounded bg-slate-800 text-[9px] text-cyan-300 font-semibold">${isEn ? '👁️ Profile' : '👁️ Hồ sơ'}</span>`
+           }
           </div>
           ${p.bio ? `<div class="text-[10px] text-slate-400 italic truncate max-w-[220px]">"${p.bio}"</div>` : ''}
          </div>
         </div>
         <div class="font-mono-code text-xs sm:text-sm font-extrabold text-emerald-300 shrink-0">
-         ${Number(p.score || 0).toFixed(1)} đ <span class="text-[10px] text-slate-400">(${p.played || 0} trận)</span>
+         ${Number(p.score || 0).toFixed(1)} ${isEn ? 'pts' : 'đ'} <span class="text-[10px] text-slate-400">(${p.played || 0} ${isEn ? 'games' : 'trận'})</span>
         </div>
        </div>
       `;
-     }).join('') : `<div class="text-xs text-slate-400 italic">Chưa có kỳ thủ đăng ký. Hãy bấm "✍️ Đăng Ký Tham Gia Giải" để ghi danh đầu tiên!</div>`;
+     }).join('') : `<div class="text-xs text-slate-400 italic">${isEn ? 'No players registered yet. Click "✍️ Register for Tournament" to be the first!' : 'Chưa có kỳ thủ đăng ký. Hãy bấm "✍️ Đăng Ký Tham Gia Giải" để ghi danh đầu tiên!'}</div>`;
 
      const pairingsRows = pairings.length ? pairings.map(m => {
       if (m.isBye) {
        return `
         <div class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-950/90 border border-amber-500/35 text-xs">
-         <span class="font-bold text-amber-300">Vòng ${m.round || 1}: ♔ ${m.whiteName} (${m.whiteElo}) — Miễn đấu (Bye)</span>
-         <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono-code font-extrabold">+1.0 đ</span>
+         <span class="font-bold text-amber-300">${isEn ? `Round ${m.round || 1}: ♔ ${m.whiteName} (${m.whiteElo}) — BYE (Auto-Advance)` : `Vòng ${m.round || 1}: ♔ ${m.whiteName} (${m.whiteElo}) — Miễn đấu (Bye)`}</span>
+         <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono-code font-extrabold">${isEn ? '+1.0 pt' : '+1.0 đ'}</span>
         </div>
        `;
       }
       const myEm = (AppState.userEmail || '').toLowerCase().trim();
       const iAmInMatch = Boolean(myEm && (m.whiteEmail === myEm || m.blackEmail === myEm));
       const eloDiff = Math.abs((m.whiteElo || 1200) - (m.blackElo || 1200));
+      const fairNote = isEn
+       ? `Elo Gap: ${eloDiff} Elo • Fair Pairing & Balanced Colors`
+       : `Chênh lệch cặp đấu: ${eloDiff} Elo • ${m.fairnessNote || 'Ghép cặp công bằng'}`;
       return `
        <div class="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-950/90 border ${iAmInMatch && !m.result ? 'border-emerald-400 shadow-md' : 'border-slate-800'} text-xs">
         <div class="space-y-0.5">
          <div class="font-bold text-slate-200">
-          <span class="text-amber-300 font-mono-code mr-1">Vòng ${m.round || 1}:</span>
+          <span class="text-amber-300 font-mono-code mr-1">${isEn ? `Round ${m.round || 1}:` : `Vòng ${m.round || 1}:`}</span>
           <span>♔ ${m.whiteName} (${m.whiteElo})</span>
           <span class="text-slate-500 mx-1">⚔️</span>
           <span>♚ ${m.blackName} (${m.blackElo})</span>
          </div>
-         <div class="text-[10px] text-slate-400 font-mono-code">Chênh lệch cặp đấu: ${eloDiff} Elo • ${m.fairnessNote || 'Ghép cặp công bằng'}</div>
+         <div class="text-[10px] text-slate-400 font-mono-code">${fairNote}</div>
         </div>
         <div class="flex items-center gap-2">
          ${m.result
           ? `<span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono-code font-extrabold">${m.result}</span>`
-          : `<button type="button" data-play-tourney-id="${t.id}" data-play-match-id="${m.id}" class="play-tourney-match-btn px-3 py-1.5 rounded-lg ${iAmInMatch ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950' : 'bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/35'} font-extrabold text-xs shadow transition">${iAmInMatch ? '♟️ Vào Bàn Đấu (PvP)' : '👁️ Xem Bàn Đấu'}</button>`
+          : `<button type="button" data-play-tourney-id="${t.id}" data-play-match-id="${m.id}" class="play-tourney-match-btn px-3 py-1.5 rounded-lg ${iAmInMatch ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950' : 'bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/35'} font-extrabold text-xs shadow transition">${iAmInMatch ? (isEn ? '♟️ Join Match (PvP)' : '♟️ Vào Bàn Đấu (PvP)') : (isEn ? '👁️ Spectate' : '👁️ Xem Bàn Đấu')}</button>`
          }
         </div>
        </div>
       `;
-     }).join('') : `<div class="text-xs text-slate-400 italic">Đang chờ Quản Trị Viên chia cặp đấu vòng tiếp theo.</div>`;
+     }).join('') : `<div class="text-xs text-slate-400 italic">${isEn ? 'Waiting for the Administrator to generate pairings for the next round.' : 'Đang chờ Quản Trị Viên chia cặp đấu vòng tiếp theo.'}</div>`;
 
      const bracketHtml = this.renderTournamentBracketHTML(t, isCurrentUserAdmin());
 
@@ -11440,18 +11588,21 @@
           <h4 class="text-lg sm:text-xl font-extrabold text-white">🏆 ${t.name}</h4>
           <span class="px-3 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-extrabold">${statusLabel}</span>
          </div>
-         <p class="text-xs sm:text-sm text-slate-300 mt-1">${t.desc || ''}</p>
+         <p class="text-xs sm:text-sm text-slate-300 mt-1">${descText}</p>
          <div class="flex flex-wrap gap-3 text-xs text-slate-400 mt-2 font-mono-code">
-          <span>📋 ${t.format}</span>
-          <span>⏱️ ${Math.round((t.timeControl || 600) / 60)} phút/bên</span>
-          <span>👥 ${parts.length}/${t.maxPlayers} Kỳ thủ</span>
-          <span class="text-amber-300 font-bold">🎁 Quán Quân: +${t.bonusElo || 100} Elo</span>
+          <span>📋 ${fmtText}</span>
+          <span>⏱️ ${Math.round((t.timeControl || 600) / 60)} ${isEn ? 'min/side' : 'phút/bên'}</span>
+          <span>👥 ${parts.length}/${t.maxPlayers} ${isEn ? 'Players' : 'Kỳ thủ'}</span>
+          <span class="text-amber-300 font-bold">🎁 ${isEn ? `Champion: +${t.bonusElo || 100} Elo` : `Quán Quân: +${t.bonusElo || 100} Elo`}</span>
          </div>
         </div>
         <div class="shrink-0">
          ${t.status !== 'completed' ? `
           <button type="button" data-join-tourney-id="${t.id}" class="public-join-tourney-btn px-5 py-2.5 rounded-xl ${isJoined ? 'bg-slate-800 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500 hover:bg-amber-400 text-slate-950'} font-extrabold text-xs sm:text-sm shadow transition">
-           ${isJoined ? '✓ Đã Ghi Danh (Nhấn để Rút)' : '✍️ Đăng Ký Tham Gia Giải'}
+           ${isJoined
+            ? (isEn ? '✓ Registered (Click to Withdraw)' : '✓ Đã Ghi Danh (Nhấn để Rút)')
+            : (isEn ? '✍️ Register for Tournament' : '✍️ Đăng Ký Tham Gia Giải')
+           }
           </button>
          ` : ''}
         </div>
@@ -11460,11 +11611,11 @@
        ${bracketHtml}
        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div class="space-y-2">
-         <div class="text-xs sm:text-sm font-extrabold text-cyan-300">📊 Bảng Xếp Hạng Kỳ Thủ Trong Giải:</div>
+         <div class="text-xs sm:text-sm font-extrabold text-cyan-300">${isEn ? '📊 Tournament Standings:' : '📊 Bảng Xếp Hạng Kỳ Thủ Trong Giải:'}</div>
          <div class="space-y-1.5 max-h-60 overflow-y-auto pr-1">${standingsRows}</div>
         </div>
         <div class="space-y-2">
-         <div class="text-xs sm:text-sm font-extrabold text-emerald-300">⚔️ Chi Tiết Cặp Đấu &amp; Vào Bàn Thi Đấu (PvP Người Thật):</div>
+         <div class="text-xs sm:text-sm font-extrabold text-emerald-300">${isEn ? '⚔️ Match Pairings &amp; Live PvP Rooms:' : '⚔️ Chi Tiết Cặp Đấu &amp; Vào Bàn Thi Đấu (PvP Người Thật):'}</div>
          <div class="space-y-1.5 max-h-60 overflow-y-auto pr-1">${pairingsRows}</div>
         </div>
        </div>
@@ -11475,6 +11626,7 @@
 
    openEditPlayerModal(email = null) {
     this.editingEmail = email;
+    const isEn = window.AppI18n?.lang === 'en';
     const modal = document.getElementById('admin-edit-player-modal');
     if (!modal) return;
     const titleEl = document.getElementById('admin-edit-modal-title');
@@ -11490,7 +11642,7 @@
     if (email) {
      const players = this.getAllManagedPlayers();
      const p = players.find(x => x.email === email.toLowerCase().trim());
-     if (titleEl) titleEl.textContent = `✏️ Chỉnh Sửa Hồ Sơ: ${p ? p.nickname : email}`;
+     if (titleEl) titleEl.textContent = isEn ? `✏️ Edit Profile: ${p ? p.nickname : email}` : `✏️ Chỉnh Sửa Hồ Sơ: ${p ? p.nickname : email}`;
      if (emInput) { emInput.value = email; emInput.disabled = true; }
      if (nickInput) nickInput.value = p ? p.nickname : '';
      if (titleInput) titleInput.value = p ? (p.customTitle || '') : '';
@@ -11500,10 +11652,10 @@
      if (passInput) passInput.value = '';
      if (bioInput) bioInput.value = p ? (p.bio || '') : '';
     } else {
-     if (titleEl) titleEl.textContent = '➕ Tạo Tài Khoản Người Chơi Mới (Admin)';
+     if (titleEl) titleEl.textContent = isEn ? '➕ Create New Player Account (Admin)' : '➕ Tạo Tài Khoản Người Chơi Mới (Admin)';
      if (emInput) { emInput.value = ''; emInput.disabled = false; }
      if (nickInput) nickInput.value = '';
-     if (titleInput) titleInput.value = 'Học Viên LM';
+     if (titleInput) titleInput.value = isEn ? 'LM Student' : 'Học Viên LM';
      if (eloInput) eloInput.value = '1200';
      if (rubikInput) rubikInput.value = '';
      if (avInput) avInput.value = '♞';
@@ -12297,23 +12449,35 @@
      ChessArena.pullOnlineMatchStateFromSupabase();
     }, 250);
 
+    const isEn = window.AppI18n?.lang === 'en';
     const opEl = document.getElementById('chess-opening-name');
     const coachEl = document.getElementById('chess-coach-text');
     if (opEl) {
-     opEl.textContent = `🏆 Giải Đấu ${t.name} (Vòng ${m.round || 1}): ♔ ${m.whiteName} (${m.whiteElo}) vs ♚ ${m.blackName} (${m.blackElo})`;
+     opEl.textContent = isEn
+      ? `🏆 Tournament ${t.name} (Round ${m.round || 1}): ♔ ${m.whiteName} (${m.whiteElo}) vs ♚ ${m.blackName} (${m.blackElo})`
+      : `🏆 Giải Đấu ${t.name} (Vòng ${m.round || 1}): ♔ ${m.whiteName} (${m.whiteElo}) vs ♚ ${m.blackName} (${m.blackElo})`;
     }
     if (coachEl) {
      if (isSpectator) {
-      coachEl.innerHTML = `👁️ <strong>Chế độ Khán Giả Trực Tiếp:</strong> Bạn đang theo dõi bàn đấu giải giữa <strong class="text-emerald-300">♔ ${m.whiteName}</strong> và <strong class="text-amber-300">♚ ${m.blackName}</strong>. Nước đi của 2 kỳ thủ sẽ tự động đồng bộ theo thời gian thực!`;
+      coachEl.innerHTML = isEn
+       ? `👁️ <strong>Live Spectator Mode:</strong> You are watching the official tournament match between <strong class="text-emerald-300">♔ ${m.whiteName}</strong> and <strong class="text-amber-300">♚ ${m.blackName}</strong>. Moves synchronize automatically in real time!`
+       : `👁️ <strong>Chế độ Khán Giả Trực Tiếp:</strong> Bạn đang theo dõi bàn đấu giải giữa <strong class="text-emerald-300">♔ ${m.whiteName}</strong> và <strong class="text-amber-300">♚ ${m.blackName}</strong>. Nước đi của 2 kỳ thủ sẽ tự động đồng bộ theo thời gian thực!`;
      } else {
-      coachEl.innerHTML = `⚔️ <strong>Bàn Đấu Giải Chính Thức (PvP Người Thật — Không Đấu Bot):</strong> Bạn cầm <strong>${iAmWhite ? '♔ Quân Trắng (Đi trước)' : '♚ Quân Đen (Đi sau)'}</strong> đối đầu trực tiếp với kỳ thủ <strong class="text-emerald-300">${oppObj.nickname} (${oppObj.elo} Elo)</strong>. Khi cả 2 kỳ thủ cùng vào bàn đấu này, mọi nước đi sẽ đồng bộ trực tiếp theo thời gian thực!`;
+      coachEl.innerHTML = isEn
+       ? `⚔️ <strong>Official Tournament Match (Real Human PvP — No AI Bot):</strong> You play <strong>${iAmWhite ? '♔ White (First Move)' : '♚ Black'}</strong> against <strong class="text-emerald-300">${oppObj.nickname} (${oppObj.elo} Elo)</strong>. All moves synchronize live across both devices!`
+       : `⚔️ <strong>Bàn Đấu Giải Chính Thức (PvP Người Thật — Không Đấu Bot):</strong> Bạn cầm <strong>${iAmWhite ? '♔ Quân Trắng (Đi trước)' : '♚ Quân Đen (Đi sau)'}</strong> đối đầu trực tiếp với kỳ thủ <strong class="text-emerald-300">${oppObj.nickname} (${oppObj.elo} Elo)</strong>. Khi cả 2 kỳ thủ cùng vào bàn đấu này, mọi nước đi sẽ đồng bộ trực tiếp theo thời gian thực!`;
      }
     }
     if (isSpectator) {
-     showToast(`👁️ Đang xem trực tiếp cặp đấu: ${m.whiteName} vs ${m.blackName}`, 'cyan');
+     showToast(isEn ? `👁️ Spectating live match: ${m.whiteName} vs ${m.blackName}` : `👁️ Đang xem trực tiếp cặp đấu: ${m.whiteName} vs ${m.blackName}`, 'cyan');
     } else {
      SoundFX.play('success');
-     showToast(`⚔️ Đã vào bàn đấu giải với kỳ thủ ${oppObj.nickname} (${oppObj.elo} Elo)! Bạn cầm ${iAmWhite ? 'Quân Trắng' : 'Quân Đen'}.`, 'emerald');
+     showToast(
+      isEn
+       ? `⚔️ Joined tournament match vs ${oppObj.nickname} (${oppObj.elo} Elo)! You play ${iAmWhite ? 'White' : 'Black'}.`
+       : `⚔️ Đã vào bàn đấu giải với kỳ thủ ${oppObj.nickname} (${oppObj.elo} Elo)! Bạn cầm ${iAmWhite ? 'Quân Trắng' : 'Quân Đen'}.`,
+      'emerald'
+     );
     }
    },
 
