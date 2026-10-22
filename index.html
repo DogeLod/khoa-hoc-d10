@@ -542,7 +542,7 @@
     <button data-nav="leaderboard" class="nav-tab w-full sm:w-auto sm:min-w-[8.8rem] justify-center px-1.5 sm:px-3 py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-bold transition-colors whitespace-nowrap text-slate-200 hover:text-white hover:bg-slate-800/70 flex items-center gap-1 sm:gap-1.5">
      <span>🏆</span> <span class="truncate">Bảng Xếp Hạng</span>
     </button>
-    <button id="nav-admin-tab" data-nav="admin" class="nav-tab hidden col-span-4 sm:col-span-1 w-full sm:w-auto sm:min-w-[8.2rem] justify-center px-1.5 sm:px-3 py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-extrabold transition-colors whitespace-nowrap text-amber-300 hover:text-white hover:bg-slate-800/70 border border-amber-400/40 flex items-center gap-1 sm:gap-1.5">
+    <button id="nav-admin-tab" data-nav="admin" style="display: none;" class="nav-tab hidden col-span-4 sm:col-span-1 w-full sm:w-auto sm:min-w-[8.2rem] justify-center px-1.5 sm:px-3 py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-extrabold transition-colors whitespace-nowrap text-amber-300 hover:text-white hover:bg-slate-800/70 border border-amber-400/40 flex items-center gap-1 sm:gap-1.5">
      <span>🛡️</span> <span class="truncate">Quản Trị Viên</span>
     </button>
    </nav>
@@ -1092,7 +1092,7 @@
     </div>
     <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1.5 sm:gap-2 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800 w-full sm:w-auto">
      <button data-chess-tab="play" class="chess-subtab justify-center px-2.5 sm:px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold bg-emerald-500 text-slate-950 transition truncate">♟️ Bàn Cờ & Bot AI</button>
-     <button data-chess-tab="tournaments" class="chess-subtab justify-center px-2.5 sm:px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-200 hover:text-white transition truncate">🏆 Giải Đấu Cờ Vua (<span id="chess-tourney-count-badge">1</span>)</button>
+     <button data-chess-tab="tournaments" class="chess-subtab justify-center px-2.5 sm:px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-200 hover:text-white transition truncate">🏆 Giải Đấu Cờ Vua (<span id="chess-tourney-count-badge">0</span>)</button>
      <button data-chess-tab="gambit" class="chess-subtab justify-center px-2.5 sm:px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-200 hover:text-white transition truncate">📖 Thư Viện Gambit & Bài Học (18)</button>
      <button id="chess-expand-open-btn" type="button" class="col-span-2 sm:col-span-1 justify-center px-3 py-2 rounded-lg text-xs sm:text-sm font-extrabold bg-amber-500/20 border border-amber-400/50 text-amber-300 hover:bg-amber-500 hover:text-slate-950 transition flex items-center gap-1.5">
       <span>⛶</span> <span>Mở Rộng Bàn Cờ</span>
@@ -1198,8 +1198,8 @@
         </button>
        </div>
       </div>
-      <!-- Choose Player Color (White vs Black) & Chess.com Rated Toggle -->
-      <div id="chess-color-picker-wrap" class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
+      <!-- Choose Player Color (White vs Black) -->
+      <div id="chess-color-picker-wrap" class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
        <div class="flex items-center justify-between gap-2">
         <span class="text-xs sm:text-sm font-bold text-slate-200">Chọn màu quân của bạn:</span>
         <div class="flex gap-1.5">
@@ -1207,21 +1207,15 @@
          <button id="pick-black-btn" type="button" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-200 hover:text-white font-bold text-xs sm:text-sm border border-slate-700 transition">♚ Quân Đen</button>
         </div>
        </div>
-       <div class="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-800/80">
-        <label class="flex items-center gap-2 text-xs text-slate-200 cursor-pointer font-semibold">
-         <input id="chess-rated-match-toggle" type="checkbox" checked class="w-4 h-4 rounded bg-slate-800 border-slate-700 text-emerald-500 focus:ring-0" />
-         <span id="chess-rated-toggle-label">📊 Tính điểm Elo chuẩn luật Chess.com (Glicko/K-Factor)</span>
-        </label>
-        <span class="text-[10px] font-mono-code px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold">Chess.com Elo</span>
-       </div>
       </div>
       <!-- Game Mode, 7 AI Elo Levels & Clock Duration Selectors -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
        <div>
         <label class="text-xs text-slate-300 font-semibold block mb-1">🎮 Chế độ chơi:</label>
         <select id="chess-mode-select" class="w-full px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-400">
-         <option value="bot">🤖 Đấu với Bot AI (Luyện tập)</option>
+         <option value="bot">🤖 Đấu với Bot AI (Luyện tập • Không tính Elo)</option>
          <option value="matchmaking">⚔️ Ghép Đấu Online (±100 Elo • Tính Elo)</option>
+         <option value="tournament">🏆 Giải Đấu Cờ Vua (Sự Kiện Quản Trị Viên Mở)</option>
          <option value="pvp">👥 2 Người Chơi (Cùng máy)</option>
          <option value="puzzle">🧩 Giải Thế Cờ Ngẫu Nhiên (42 Bài)</option>
         </select>
@@ -1313,6 +1307,21 @@
         <div id="online-waiting-players-list" class="max-h-28 overflow-y-auto space-y-1.5 pr-1 text-xs">
          <div class="text-slate-400 italic text-[11px]">Bấm "Tìm Đối Thủ Online" để phát tín hiệu ghép trận liên máy.</div>
         </div>
+       </div>
+      </div>
+      <!-- INLINE TOURNAMENT QUICK ACCESS BANNER INSIDE CHESS CONTROL PANEL -->
+      <div id="chess-inline-tourney-banner" class="hidden p-3.5 rounded-2xl bg-slate-900/95 border border-amber-400/50 space-y-2.5 shadow-lg">
+       <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 min-w-0">
+         <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping shrink-0"></span>
+         <span id="chess-inline-tourney-title" class="text-xs sm:text-sm font-extrabold text-amber-300 truncate">🏆 Giải Đấu Cờ Vua Đang Mở!</span>
+        </div>
+        <button id="chess-inline-goto-tourney-btn" type="button" class="px-3 py-1 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shrink-0 transition shadow">
+         Tham Gia Ngay →
+        </button>
+       </div>
+       <div id="chess-inline-tourney-sub" class="text-[11px] text-slate-300 leading-relaxed">
+        Quản trị viên vừa mở sự kiện giải đấu Cờ Vua mới. Bấm "Tham Gia Ngay" hoặc chọn mục Giải Đấu Cờ Vua để ghi danh!
        </div>
       </div>
       <!-- Action Buttons (Includes 🏳️ Đầu Hàng, Removed Undo Button) -->
@@ -1908,8 +1917,9 @@
        <div>
         <label class="text-xs text-slate-300 font-semibold block mb-1">🎮 Chế độ đấu:</label>
         <select id="exp-chess-mode-select" class="w-full px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-400">
-         <option value="bot">🤖 Đấu với Bot AI</option>
+         <option value="bot">🤖 Đấu với Bot AI (Luyện tập)</option>
          <option value="matchmaking">⚔️ Ghép Đấu Online (±100 Elo)</option>
+         <option value="tournament">🏆 Giải Đấu Cờ Vua</option>
          <option value="pvp">👥 2 Người Chơi</option>
          <option value="puzzle">🧩 Giải Thế Cờ Ngẫu Nhiên (42 Bài)</option>
         </select>
@@ -2504,8 +2514,8 @@
   const ADMIN_ACCOUNT_EMAIL = 'admin@lmtraining.vn';
   const ADMIN_ACCOUNT_PASS = 'LMAdmin@2026';
   const ADMIN_ACCOUNT_NICK = 'Quản Trị Viên LM';
-  const TOURNAMENTS_STORAGE_KEY = 'lm_chess_tournaments_v1';
-  const ADMIN_BROADCAST_STORAGE_KEY = 'lm_admin_global_broadcast_v1';
+  const TOURNAMENTS_STORAGE_KEY = 'lm_chess_tournaments_v2_clean';
+  const ADMIN_BROADCAST_STORAGE_KEY = 'lm_admin_global_broadcast_v2_clean';
 
   const AppState = {
    authMode: 'register',
@@ -2538,6 +2548,20 @@
    try {
     const metaPart = rawPassHash.split('|meta:')[1].split('|')[0];
     const jsonStr = decodeURIComponent(escape(atob(decodeURIComponent(metaPart))));
+    const parsed = JSON.parse(jsonStr);
+    return typeof parsed === 'object' && parsed !== null ? parsed : null;
+   } catch (e) {
+    return null;
+   }
+  }
+
+  function extractSystemDataFromPassHash(rawPassHash) {
+   if (!rawPassHash || typeof rawPassHash !== 'string' || !rawPassHash.includes('|sys:')) {
+    return null;
+   }
+   try {
+    const sysPart = rawPassHash.split('|sys:')[1].split('|')[0];
+    const jsonStr = decodeURIComponent(escape(atob(decodeURIComponent(sysPart))));
     const parsed = JSON.parse(jsonStr);
     return typeof parsed === 'object' && parsed !== null ? parsed : null;
    } catch (e) {
@@ -2604,13 +2628,15 @@
   }
   function extractBasePasswordHash(rawPassHash) {
    if (!rawPassHash || typeof rawPassHash !== 'string') return '';
-   return rawPassHash.split('|ts:')[0].split('|meta:')[0];
+   return rawPassHash.split('|ts:')[0].split('|meta:')[0].split('|sys:')[0];
   }
-  function buildPasswordHashWithTimestamp(baseHash, createdAtMs, metaObj = null) {
+  function buildPasswordHashWithTimestamp(baseHash, createdAtMs, metaObj = null, sysObj = null) {
    const cleanBase = extractBasePasswordHash(baseHash);
    const ts = Number(createdAtMs) || Date.now();
    const existingMeta = extractProfileMetaFromPassHash(baseHash) || {};
    const mergedMeta = metaObj ? { ...existingMeta, ...metaObj } : existingMeta;
+   const existingSys = extractSystemDataFromPassHash(baseHash);
+   const finalSys = sysObj !== null ? sysObj : existingSys;
    let metaSuffix = '';
    try {
     if (mergedMeta && Object.keys(mergedMeta).length > 0) {
@@ -2625,7 +2651,14 @@
      metaSuffix = `|meta:${b64}`;
     }
    } catch (e) {}
-   return `${cleanBase}|ts:${ts}${metaSuffix}`;
+   let sysSuffix = '';
+   try {
+    if (finalSys && typeof finalSys === 'object') {
+     const b64Sys = encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(finalSys)))));
+     sysSuffix = `|sys:${b64Sys}`;
+    }
+   } catch (e) {}
+   return `${cleanBase}|ts:${ts}${metaSuffix}${sysSuffix}`;
   }
   function normalizeSolveEntry(entry) {
    if (entry === 'DNF') {
@@ -3078,15 +3111,25 @@
   }
   if (GlobalSyncChannel) {
    GlobalSyncChannel.onmessage = (ev) => {
-    if (ev && ev.data && ev.data.type === 'PROFILE_UPDATED' && ev.data.email && ev.data.profile) {
+    if (!ev || !ev.data) return;
+    if (ev.data.type === 'PROFILE_UPDATED' && ev.data.email && ev.data.profile) {
      saveAccountToRegistry(ev.data.email, ev.data.profile);
      fetchLeaderboardsData(true);
+    } else if (ev.data.type === 'SYSTEM_SYNC' && typeof AdminController !== 'undefined') {
+     AdminController.applyIncomingSystemState(ev.data.sysData, true);
     }
    };
   }
   window.addEventListener('storage', (ev) => {
    if (!ev.key || ev.key === USERS_REGISTRY_KEY || ev.key.startsWith('lm_user_profile_')) {
     fetchLeaderboardsData(false);
+   }
+   if (ev.key === ADMIN_BROADCAST_STORAGE_KEY && typeof AdminController !== 'undefined') {
+    AdminController.renderGlobalBroadcastBanner(true);
+   }
+   if (ev.key === TOURNAMENTS_STORAGE_KEY && typeof AdminController !== 'undefined') {
+    AdminController.renderPublicTournaments();
+    if (isCurrentUserAdmin()) AdminController.renderAdminDashboard();
    }
   });
   function collectAllLocalProfilesIntoRegistry() {
@@ -3282,12 +3325,18 @@
       const cloudEmailSet = new Set([ADMIN_ACCOUNT_EMAIL]);
       data.forEach((row, idx) => {
        const em = (row.email || '').toLowerCase().trim();
+       const passHash = row.password_hash || '';
+       if (em === ADMIN_ACCOUNT_EMAIL && passHash.includes('|sys:')) {
+        const cloudSys = extractSystemDataFromPassHash(passHash);
+        if (cloudSys && typeof AdminController !== 'undefined') {
+         AdminController.applyIncomingSystemState(cloudSys, false);
+        }
+       }
        if (!em || adminDeletedEmails.has(em)) return;
        const nick = row.nickname || row.user_name || (em ? em.split('@')[0] : '');
        const solves = Array.isArray(row.rubik_solves) ? row.rubik_solves : [];
        const elo = typeof row.chess_elo === 'number' ? row.chess_elo : 1200;
        const learned = Array.isArray(row.learned_items) ? row.learned_items : [];
-       const passHash = row.password_hash || '';
        const createdAtMs = getOrLockCreatedTimestamp(em, passHash, row.created_at || null, idx);
        const prevLocal = StorageUtil.get(getUserStorageKey(em), {}) || {};
        const metaFromHash = extractProfileMetaFromPassHash(passHash) || {};
@@ -3467,7 +3516,7 @@
       const wdlText = `${st.w || 0}W/${st.d || 0}D/${st.l || 0}L`;
       const bioLine = p.bio
        ? `<div class="text-[11px] text-emerald-200/85 italic truncate max-w-[210px] sm:max-w-[270px]">"${p.bio}" • <span class="font-mono-code not-italic text-slate-400">${wdlText}</span></div>`
-       : `<div class="text-[11px] text-slate-400">${isEnLb ? `Chess.com Elo • ${wdlText}` : `Elo chuẩn Chess.com • ${wdlText}`}</div>`;
+       : `<div class="text-[11px] text-slate-400 font-mono-code">${wdlText}</div>`;
       return `
        <div data-view-profile-email="${p.email}" class="lb-player-row cursor-pointer hover:border-emerald-400/60 transition flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl border ${isMe ? 'bg-emerald-500/15 border-emerald-400/50' : 'bg-slate-950/80 border-slate-800/90'}" title="${isEnLb ? 'Click to view player profile & bio' : 'Nhấn để xem Hồ sơ & Tiểu sử kỳ thủ'}">
         <div class="flex items-center gap-2.5 min-w-0">
@@ -4135,8 +4184,22 @@
    body.classList.remove('theme-rubik', 'theme-chess');
    if (viewName === 'chess') body.classList.add('theme-chess');
    else body.classList.add('theme-rubik');
+   const adminAllowed = isCurrentUserAdmin();
    document.querySelectorAll('.nav-tab').forEach(btn => {
     const navKey = btn.getAttribute('data-nav');
+    if (navKey === 'admin') {
+     if (!adminAllowed) {
+      btn.className = 'nav-tab hidden';
+      btn.style.display = 'none';
+      return;
+     }
+     btn.style.display = '';
+     const isActiveAdmin = viewName === 'admin';
+     btn.className = `nav-tab col-span-4 sm:col-span-1 w-full sm:w-auto sm:min-w-[8.2rem] justify-center px-1.5 sm:px-3 py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-extrabold transition-colors whitespace-nowrap flex items-center gap-1 sm:gap-1.5 ${
+      isActiveAdmin ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-amber-300 hover:text-white hover:bg-slate-800/70 border border-amber-400/40'
+     }`;
+     return;
+    }
     const isActive = navKey === viewName;
     const activeColor = viewName === 'chess'
      ? 'bg-emerald-500 text-slate-950 shadow-md'
@@ -4189,9 +4252,11 @@
    const isAdminNow = isCurrentUserAdmin();
    if (navAdminBtn) {
     navAdminBtn.classList.toggle('hidden', !isAdminNow);
+    navAdminBtn.style.display = isAdminNow ? '' : 'none';
    }
    if (tourneyAdminBtn) {
     tourneyAdminBtn.classList.toggle('hidden', !isAdminNow);
+    tourneyAdminBtn.style.display = isAdminNow ? '' : 'none';
    }
    if (!isAdminNow) {
     const adminSec = document.getElementById('view-admin');
@@ -7601,10 +7666,10 @@
     let eloDelta = 0;
     let eloBreakdown = null;
     const oldElo = AppState.chessElo || 1200;
-    const ratedBotToggle = document.getElementById('chess-rated-match-toggle')?.checked !== false;
+    const isTourneyMatch = Boolean(this.activeTourneyMatchInfo);
     const isRatedMatch =
      (this.mode === 'matchmaking' && (this.onlineMatch.status === 'playing' || this.onlineMatch.status === 'finished') && !this.onlineMatch.eloAlreadySettled) ||
-     (this.mode === 'bot' && ratedBotToggle && !this.eloSettledForCurrentBotGame);
+     (isTourneyMatch && !this.eloSettledForCurrentBotGame);
 
     if (isRatedMatch) {
      if (this.mode === 'matchmaking') {
@@ -7665,7 +7730,8 @@
        ? 'px-2.5 py-1 rounded-full bg-rose-500 text-white font-mono-code text-xs font-extrabold shadow'
        : 'px-2.5 py-1 rounded-full bg-amber-400 text-slate-950 font-mono-code text-xs font-extrabold shadow');
     } else {
-     badgeEl.textContent = isEn ? `+0 Elo (Unrated: ${AppState.chessElo})` : `+0 Elo (Giao hữu: ${AppState.chessElo})`;
+     const modeTag = this.mode === 'bot' ? (isEn ? 'Bot Practice' : 'Đấu luyện Bot') : (isEn ? 'Unrated' : 'Giao hữu');
+     badgeEl.textContent = `+0 Elo (${modeTag}: ${AppState.chessElo} Elo)`;
      badgeEl.className = 'px-2.5 py-1 rounded-full bg-slate-800 text-amber-300 border border-amber-500/40 font-mono-code text-xs font-extrabold';
     }
     const reasonMapVi = {
@@ -7781,8 +7847,8 @@
      `;
     } else {
      eloDescHtml = isEn
-      ? `<div>• <strong>Elo Rating:</strong> <span class="font-mono-code font-bold text-amber-300">+0 Elo (Unrated Mode • Current: ${AppState.chessElo} Elo)</span></div>`
-      : `<div>• <strong>Hệ số Elo:</strong> <span class="font-mono-code font-bold text-amber-300">+0 Elo (Chế độ Không tính Elo • Hiện tại: ${AppState.chessElo} Elo)</span></div>`;
+      ? `<div>• <strong>Elo Rating:</strong> <span class="font-mono-code font-bold text-amber-300">+0 Elo (Practice vs AI Bot does not affect your official Elo • Current: ${AppState.chessElo} Elo)</span></div>`
+      : `<div>• <strong>Hệ số Elo:</strong> <span class="font-mono-code font-bold text-amber-300">+0 Elo (Đấu luyện với Bot AI không tăng/trừ Elo • Hiện tại: ${AppState.chessElo} Elo)</span></div>`;
     }
     const rText = isEn ? (reasonMapEn[reason] || reason) : (reasonMapVi[reason] || reason);
     sumEl.innerHTML = `
@@ -8873,6 +8939,10 @@
    handleIncomingOnlinePacket(pkt) {
     if (!pkt || pkt.senderClientId === this.onlineMatch.clientId) return;
     const type = pkt.packetType;
+    if (type === 'SYSTEM_SYNC' && pkt.sysData && typeof AdminController !== 'undefined') {
+     AdminController.applyIncomingSystemState(pkt.sysData, true);
+     return;
+    }
     if (type === 'QUEUE_PING') {
      if (this.isSameAccountAsMe(pkt.email, pkt.nickname, pkt.clientId)) {
       this.onlineMatch.waitingPeers.delete(pkt.clientId);
@@ -10547,51 +10617,102 @@
   const AdminController = {
    activeSubtab: 'players',
    editingEmail: null,
+   lastSeenBroadcastTs: 0,
+   lastSysSyncTs: 0,
 
    init() {
     ensureDedicatedAdminAccountSeeded();
+    StorageUtil.remove('lm_chess_tournaments_v1');
     this.ensureDefaultTournamentSeeded();
-    this.renderGlobalBroadcastBanner();
+    this.renderGlobalBroadcastBanner(false);
     this.renderPublicTournaments();
    },
 
    getTournaments() {
     const list = StorageUtil.get(TOURNAMENTS_STORAGE_KEY, null);
-    return Array.isArray(list) ? list : [];
+    if (!Array.isArray(list)) return [];
+    return list.filter(t => t && t.id !== 'tourney_lm_open_2026');
+   },
+
+   async syncSystemStateToCloud(customBroadcast = undefined, customTourneys = undefined) {
+    const broadcastObj = customBroadcast !== undefined ? customBroadcast : StorageUtil.get(ADMIN_BROADCAST_STORAGE_KEY, null);
+    const tourneysArr = customTourneys !== undefined ? customTourneys : this.getTournaments();
+    const sysData = {
+     ts: Date.now(),
+     broadcast: broadcastObj || { text: '', ts: Date.now() },
+     tournaments: Array.isArray(tourneysArr) ? tourneysArr : []
+    };
+    this.lastSysSyncTs = sysData.ts;
+    if (GlobalSyncChannel) {
+     try { GlobalSyncChannel.postMessage({ type: 'SYSTEM_SYNC', sysData }); } catch (e) {}
+    }
+    if (typeof ChessArena !== 'undefined') {
+     ChessArena.broadcastLobbyPacket('SYSTEM_SYNC', { sysData });
+    }
+    const reg = getAllLocalRegisteredAccounts();
+    const adminProf = reg[ADMIN_ACCOUNT_EMAIL] || StorageUtil.get(getUserStorageKey(ADMIN_ACCOUNT_EMAIL), {}) || {};
+    const createdAtMs = adminProf.createdAt || 1690000000000;
+    adminProf.passwordHash = buildPasswordHashWithTimestamp(
+     adminProf.passwordHash || encodePasswordHash(ADMIN_ACCOUNT_PASS),
+     createdAtMs,
+     {
+      av: adminProf.avatar || '🛡️',
+      bio: adminProf.bio || '',
+      st: adminProf.chessStats || { w: 15, d: 2, l: 0 },
+      locked: false,
+      title: '🛡️ Quản Trị Viên'
+     },
+     sysData
+    );
+    StorageUtil.set(getUserStorageKey(ADMIN_ACCOUNT_EMAIL), adminProf);
+    saveAccountToRegistry(ADMIN_ACCOUNT_EMAIL, adminProf);
+    if (AppState.supabaseClient) {
+     await upsertSinglePlayerToSupabase(ADMIN_ACCOUNT_EMAIL, adminProf);
+    }
+   },
+
+   applyIncomingSystemState(sysData, showLiveToast = false) {
+    if (!sysData || typeof sysData !== 'object') return;
+    if (sysData.ts && sysData.ts <= this.lastSysSyncTs) return;
+    if (sysData.ts) this.lastSysSyncTs = sysData.ts;
+
+    if (sysData.broadcast !== undefined) {
+     const prevB = StorageUtil.get(ADMIN_BROADCAST_STORAGE_KEY, null);
+     const prevText = prevB && prevB.text ? prevB.text : '';
+     const newText = sysData.broadcast && sysData.broadcast.text ? sysData.broadcast.text.trim() : '';
+     if (newText) {
+      StorageUtil.set(ADMIN_BROADCAST_STORAGE_KEY, { text: newText, ts: sysData.broadcast.ts || Date.now() });
+      this.renderGlobalBroadcastBanner(showLiveToast && newText !== prevText);
+     } else {
+      StorageUtil.remove(ADMIN_BROADCAST_STORAGE_KEY);
+      this.renderGlobalBroadcastBanner(false);
+     }
+    }
+    if (Array.isArray(sysData.tournaments)) {
+     const cleanTourneys = sysData.tournaments.filter(t => t && t.id !== 'tourney_lm_open_2026');
+     StorageUtil.set(TOURNAMENTS_STORAGE_KEY, cleanTourneys);
+     this.renderPublicTournaments();
+     if (isCurrentUserAdmin()) {
+      this.renderAdminDashboard();
+     }
+    }
    },
 
    saveTournaments(list) {
-    StorageUtil.set(TOURNAMENTS_STORAGE_KEY, list);
+    const cleanList = (Array.isArray(list) ? list : []).filter(t => t && t.id !== 'tourney_lm_open_2026');
+    StorageUtil.set(TOURNAMENTS_STORAGE_KEY, cleanList);
     this.renderPublicTournaments();
     if (isCurrentUserAdmin()) {
      this.renderAdminDashboard();
     }
+    this.syncSystemStateToCloud(undefined, cleanList);
    },
 
    ensureDefaultTournamentSeeded() {
-    const list = this.getTournaments();
-    if (list.length === 0) {
-     const defaultTourney = {
-      id: 'tourney_lm_open_2026',
-      name: 'Giải Cờ Vua LM Training Open Mùa Thu 2026',
-      format: 'Swiss Hệ Thụy Sĩ',
-      timeControl: 600,
-      maxPlayers: 8,
-      bonusElo: 100,
-      status: 'open', // 'open', 'active', 'completed'
-      desc: 'Giải đấu chính thức tính điểm Elo chuẩn luật Chess.com. Các kỳ thủ đăng ký tham gia sẽ được ghép cặp thi đấu tính điểm trực tiếp trên bảng xếp hạng giải.',
-      createdAt: Date.now() - 3600000,
-      winnerName: '',
-      participants: [
-       { email: 'gm.minhkhoi@lmtraining.vn', nickname: 'Kiện Tướng Minh Khôi', avatar: '👑', elo: 1680, bio: 'Sở trường Khai cuộc Tây Ban Nha (Ruy Lopez) & Phòng thủ Sicily.', score: 2.0, played: 2 },
-       { email: 'cm.baongan@lmtraining.vn', nickname: 'Bảo Ngân Chess', avatar: '♞', elo: 1520, bio: 'Yêu thích Queen\'s Gambit & chiến thuật cờ nhanh 10 phút.', score: 1.5, played: 2 },
-       { email: 'cuber.hoangnam@lmtraining.vn', nickname: 'Hoàng Nam Sub-11', avatar: '⚡', elo: 1410, bio: 'Speedcuber CFOP Sub-11 & Kỳ thủ London System.', score: 1.0, played: 2 }
-      ],
-      pairings: [
-       { id: 'm1', round: 1, whiteEmail: 'gm.minhkhoi@lmtraining.vn', whiteName: 'Kiện Tướng Minh Khôi', whiteElo: 1680, blackEmail: 'cm.baongan@lmtraining.vn', blackName: 'Bảo Ngân Chess', blackElo: 1520, result: '1-0' }
-      ]
-     };
-     StorageUtil.set(TOURNAMENTS_STORAGE_KEY, [defaultTourney]);
+    // Keep tournaments list blank by default until Admin explicitly creates an event
+    const existing = StorageUtil.get(TOURNAMENTS_STORAGE_KEY, null);
+    if (!Array.isArray(existing)) {
+     StorageUtil.set(TOURNAMENTS_STORAGE_KEY, []);
     }
    },
 
@@ -10791,11 +10912,40 @@
     const tourneys = this.getTournaments();
     const badge = document.getElementById('chess-tourney-count-badge');
     if (badge) badge.textContent = String(tourneys.length);
+    const isEn = window.AppI18n?.lang === 'en';
+    const inlineBanner = document.getElementById('chess-inline-tourney-banner');
+    const inlineTitle = document.getElementById('chess-inline-tourney-title');
+    const inlineSub = document.getElementById('chess-inline-tourney-sub');
+    const activeTourneys = tourneys.filter(t => t.status !== 'completed');
+    if (inlineBanner) {
+     if (activeTourneys.length > 0) {
+      const latestT = activeTourneys[0];
+      const pCount = Array.isArray(latestT.participants) ? latestT.participants.length : 0;
+      inlineBanner.classList.remove('hidden');
+      if (inlineTitle) {
+       inlineTitle.textContent = isEn
+        ? `🏆 Live Tournament: ${latestT.name} (${pCount}/${latestT.maxPlayers})`
+        : `🏆 Sự Kiện Giải Đấu Đang Mở: ${latestT.name} (${pCount}/${latestT.maxPlayers} kỳ thủ)`;
+      }
+      if (inlineSub) {
+       inlineSub.innerHTML = isEn
+        ? `Format: <strong>${latestT.format}</strong> • Time: <strong>${Math.round((latestT.timeControl || 600) / 60)} min</strong> • Champion Bonus: <strong class="text-amber-300">+${latestT.bonusElo || 100} Elo</strong>. Click "Join Now" to participate!`
+        : `Thể thức: <strong>${latestT.format}</strong> • Thời gian: <strong>${Math.round((latestT.timeControl || 600) / 60)} phút/bên</strong> • Thưởng Quán Quân: <strong class="text-amber-300">+${latestT.bonusElo || 100} Elo</strong>.`;
+      }
+     } else {
+      inlineBanner.classList.add('hidden');
+     }
+    }
     const container = document.getElementById('public-tournaments-container');
     if (!container) return;
-    const isEn = window.AppI18n?.lang === 'en';
     if (!tourneys.length) {
-     container.innerHTML = `<div class="p-8 rounded-2xl bg-slate-900/90 border border-slate-800 text-center text-slate-400 text-sm">${isEn ? 'No active tournaments at the moment.' : 'Hiện chưa có giải đấu Cờ Vua nào được mở.'}</div>`;
+     container.innerHTML = `
+      <div class="p-8 rounded-2xl bg-slate-900/90 border border-slate-800 text-center space-y-2">
+       <div class="text-3xl">🏆</div>
+       <div class="text-base font-extrabold text-white">${isEn ? 'No Chess Tournaments Currently Open' : 'Hiện Chưa Có Sự Kiện Giải Đấu Nào Được Mở'}</div>
+       <p class="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto">${isEn ? 'When the System Administrator creates and publishes a new Chess Tournament, it will automatically appear here for you to register and compete!' : 'Danh sách sự kiện đang trống. Khi nào Quản Trị Viên khởi tạo và phát hành giải đấu Cờ Vua mới, sự kiện sẽ tự động hiển thị tại đây để bạn ghi danh tham gia!'}</p>
+      </div>
+     `;
      return;
     }
     container.innerHTML = tourneys.map(t => {
@@ -11292,21 +11442,24 @@
     this.setTournamentMatchResult(info.tourneyId, info.matchId, res);
    },
 
-   publishBroadcast(text) {
+   async publishBroadcast(text) {
     const clean = (text || '').trim();
     if (!clean) {
      StorageUtil.remove(ADMIN_BROADCAST_STORAGE_KEY);
-     this.renderGlobalBroadcastBanner();
-     showToast('✕ Đã gỡ thông báo toàn hệ thống.', 'amber');
+     this.renderGlobalBroadcastBanner(false);
+     await this.syncSystemStateToCloud({ text: '', ts: Date.now() }, undefined);
+     showToast('✕ Đã gỡ thông báo toàn hệ thống trên tất cả thiết bị.', 'amber');
      return;
     }
-    StorageUtil.set(ADMIN_BROADCAST_STORAGE_KEY, { text: clean, ts: Date.now() });
-    this.renderGlobalBroadcastBanner();
+    const bObj = { text: clean, ts: Date.now() };
+    StorageUtil.set(ADMIN_BROADCAST_STORAGE_KEY, bObj);
+    this.renderGlobalBroadcastBanner(false);
+    await this.syncSystemStateToCloud(bObj, undefined);
     SoundFX.play('success');
-    showToast('📢 Đã phát thông báo toàn hệ thống thành công!', 'emerald');
+    showToast('📢 Đã phát thông báo toàn hệ thống & đồng bộ tới tất cả người dùng!', 'emerald');
    },
 
-   renderGlobalBroadcastBanner() {
+   renderGlobalBroadcastBanner(notifyToast = false) {
     const banner = document.getElementById('global-admin-broadcast-banner');
     const txtEl = document.getElementById('global-admin-broadcast-text');
     if (!banner || !txtEl) return;
@@ -11314,6 +11467,11 @@
     if (data && data.text) {
      txtEl.textContent = data.text;
      banner.classList.remove('hidden');
+     if (notifyToast && data.ts && data.ts !== this.lastSeenBroadcastTs) {
+      this.lastSeenBroadcastTs = data.ts;
+      SoundFX.play('beep');
+      showToast(`📢 Thông báo hệ thống: ${data.text}`, 'amber');
+     }
     } else {
      banner.classList.add('hidden');
     }
@@ -11866,8 +12024,17 @@
      showToast('⚠️ Bạn đang trong trận đấu Online! Hãy thi đấu hết ván hoặc bấm "🏳️ Đầu Hàng" trước khi đổi chế độ.', 'amber');
      return;
     }
+    if (e.target.value === 'tournament') {
+     e.target.value = ChessArena.mode || 'bot';
+     switchChessSubtab('tournaments');
+     showToast('🏆 Đã mở mục Giải Đấu Cờ Vua!', 'amber');
+     return;
+    }
     ChessArena.mode = e.target.value;
     ChessArena.resetGameAndState(false);
+   });
+   document.getElementById('chess-inline-goto-tourney-btn')?.addEventListener('click', () => {
+    switchChessSubtab('tournaments');
    });
    document.getElementById('chess-level-select').addEventListener('change', e => {
     ChessArena.level = Number(e.target.value);
@@ -12102,6 +12269,13 @@
      showToast('⚠️ Bạn đang trong trận đấu Online! Hãy thi đấu hết ván hoặc bấm "🏳️ Đầu Hàng" trước khi đổi chế độ.', 'amber');
      return;
     }
+    if (e.target.value === 'tournament') {
+     e.target.value = ChessArena.mode || 'bot';
+     ChessArena.closeExpandedModal();
+     switchChessSubtab('tournaments');
+     showToast('🏆 Đã mở mục Giải Đấu Cờ Vua!', 'amber');
+     return;
+    }
     const modeSel = document.getElementById('chess-mode-select');
     if (modeSel) modeSel.value = e.target.value;
     ChessArena.mode = e.target.value;
@@ -12138,13 +12312,10 @@
    document.addEventListener('dblclick', e => {
     if (e.cancelable) e.preventDefault();
    }, { passive: false });
-   // Silent background sync every 7 seconds when Leaderboard tab is open + when window regains focus
+   // Silent background sync every 6 seconds across all tabs so all users receive Admin Broadcasts, Tournaments & Leaderboard updates
    setInterval(() => {
-    const lbSec = document.getElementById('view-leaderboard');
-    if (lbSec && !lbSec.classList.contains('hidden')) {
-     fetchLeaderboardsData(true);
-    }
-   }, 7000);
+    fetchLeaderboardsData(true);
+   }, 6000);
    window.addEventListener('focus', () => {
     fetchLeaderboardsData(true);
     if (ChessArena && ChessArena.mode === 'matchmaking' && ChessArena.onlineMatch.status === 'playing') {
