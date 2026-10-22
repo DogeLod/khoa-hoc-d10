@@ -228,8 +228,9 @@
    height: 100%;
    aspect-ratio: 1 / 1;
    overflow: hidden;
-   transition: background-color 0.15s ease;
+   transition: background-color 0.05s linear;
    user-select: none;
+   contain: layout style paint;
   }
   .chess-piece {
    position: relative;
@@ -239,7 +240,7 @@
    justify-content: center;
    width: 100%;
    height: 100%;
-   transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+   transition: transform 0.06s ease-out;
    cursor: pointer;
    filter: drop-shadow(0 3px 5px rgba(0,0,0,0.55));
    line-height: 1;
@@ -293,7 +294,25 @@
   }
   /* Mobile Responsive & Touch Hold Fixes */
   @media (max-width: 640px) {
-   html { font-size: 15px; }
+   html { font-size: 14.5px; }
+   .glass-card {
+    border-radius: 1.15rem !important;
+   }
+   .chess-board-eval-row {
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 0.375rem;
+   }
+   .chess-eval-bar-shell {
+    min-height: 200px;
+    border-radius: 0.5rem;
+   }
+   .chess-move-badge-board {
+    min-width: 1.15rem;
+    height: 1.15rem;
+    font-size: 0.58rem;
+    top: 1px;
+    right: 1px;
+   }
   }
   .touch-hold-zone {
    touch-action: none;
@@ -446,12 +465,12 @@
  <div id="toast-container" class="fixed bottom-4 inset-x-0 sm:inset-x-auto sm:bottom-6 sm:right-6 z-50 flex flex-col gap-2.5 sm:max-w-md w-full pointer-events-none px-3 sm:px-0"></div>
  <!-- TOP NAVIGATION BAR -->
  <header class="glass-nav sticky top-0 z-40">
-  <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 min-h-[4.75rem] flex flex-wrap items-center justify-between gap-2 sm:gap-3">
+  <div class="max-w-7xl mx-auto px-2.5 sm:px-6 py-2 sm:py-2.5 flex flex-wrap items-center justify-between gap-y-2 gap-x-1.5 sm:gap-3">
    <!-- Brand Logo: Hand-Drawn Sketch Style (Rubik's Cube + '+' + Chessboard) -->
-   <button id="brand-home-btn" class="flex items-center gap-3 text-left group focus:outline-none shrink-0">
-    <div class="relative h-12 sm:h-13 px-2.5 py-1 rounded-2xl bg-[#121216] border border-[#d4af37]/45 shadow-[0_6px_22px_rgba(0,0,0,0.65)] group-hover:border-[#dfbd69] group-hover:scale-[1.03] transition-all flex items-center justify-center overflow-hidden shrink-0">
+   <button id="brand-home-btn" class="flex items-center gap-2 sm:gap-3 text-left group focus:outline-none shrink-0">
+    <div class="relative h-10 sm:h-12 px-1.5 sm:px-2.5 py-1 rounded-xl sm:rounded-2xl bg-[#121216] border border-[#d4af37]/45 shadow-[0_6px_22px_rgba(0,0,0,0.65)] group-hover:border-[#dfbd69] group-hover:scale-[1.03] transition-all flex items-center justify-center overflow-hidden shrink-0">
      <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(212,175,55,0.12),transparent_70%)] pointer-events-none"></div>
-     <svg id="brand-fallback-svg" viewBox="0 0 132 48" class="w-28 sm:w-32 h-10 relative z-10 overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="LM Training Hand-Drawn Rubik + Chess Logo">
+     <svg id="brand-fallback-svg" viewBox="0 0 132 48" class="w-20 sm:w-32 h-8 sm:h-10 relative z-10 overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="LM Training Hand-Drawn Rubik + Chess Logo">
       <!-- Hand-drawn Isometric Rubik's Cube (Left) -->
       <g stroke-linecap="round" stroke-linejoin="round">
        <!-- Subtle sketch aura -->
@@ -502,40 +521,40 @@
      </svg>
     </div>
     <div>
-     <div class="font-extrabold text-lg sm:text-2xl tracking-tight text-white flex items-center gap-2">
+     <div class="font-extrabold text-base sm:text-2xl tracking-tight text-white flex items-center gap-1.5 sm:gap-2">
       <span class="drop-shadow-[0_1px_10px_rgba(255,255,255,0.18)]">LM Training</span>
       <span id="brand-arena-badge" class="hidden md:inline-block text-xs font-mono-code uppercase px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-200 border border-cyan-400/40 font-bold">DEMO</span>
      </div>
      <p id="brand-subtitle-text" class="text-xs text-slate-300 hidden sm:block w-[18.5rem] truncate">Học Tập, Rèn Luyện &amp; Thi Đấu Rubik 3D • Cờ Vua</p>
     </div>
    </button>
-   <!-- Main Navigation Tabs -->
-   <nav class="order-3 lg:order-none w-full lg:w-auto flex items-center justify-start sm:justify-center gap-1 sm:gap-1.5 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 overflow-x-auto max-w-full shrink-0">
-    <button data-nav="home" class="nav-tab min-w-[6.8rem] sm:min-w-[7.5rem] justify-center px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors whitespace-nowrap bg-cyan-500 text-slate-950 shadow-md flex items-center gap-1.5">
-     🏠 Trang Chủ
+   <!-- Main Navigation Tabs (Clean 4-Column Grid on Mobile, Pill Row on Desktop) -->
+   <nav class="order-3 lg:order-none w-full lg:w-auto grid grid-cols-4 sm:flex items-center justify-center gap-1 sm:gap-1.5 bg-slate-900/90 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl border border-slate-800 max-w-full shrink-0">
+    <button data-nav="home" class="nav-tab w-full sm:w-auto sm:min-w-[7.5rem] justify-center px-1.5 sm:px-3 py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-bold transition-colors whitespace-nowrap bg-cyan-500 text-slate-950 shadow-md flex items-center gap-1 sm:gap-1.5">
+     🏠 <span>Trang Chủ</span>
     </button>
-    <button data-nav="rubik" class="nav-tab min-w-[6.5rem] sm:min-w-[7.2rem] justify-center px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors whitespace-nowrap text-slate-200 hover:text-white hover:bg-slate-800/70 flex items-center gap-1.5">
-     <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span> <span>Rubik 3D</span>
+    <button data-nav="rubik" class="nav-tab w-full sm:w-auto sm:min-w-[7.2rem] justify-center px-1.5 sm:px-3 py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-bold transition-colors whitespace-nowrap text-slate-200 hover:text-white hover:bg-slate-800/70 flex items-center gap-1 sm:gap-1.5">
+     <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-cyan-400 shrink-0"></span> <span>Rubik 3D</span>
     </button>
-    <button data-nav="chess" class="nav-tab min-w-[6.8rem] sm:min-w-[7.6rem] justify-center px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors whitespace-nowrap text-slate-200 hover:text-white hover:bg-slate-800/70 flex items-center gap-1.5">
-     <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span> <span>Cờ Vua</span>
+    <button data-nav="chess" class="nav-tab w-full sm:w-auto sm:min-w-[7.6rem] justify-center px-1.5 sm:px-3 py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-bold transition-colors whitespace-nowrap text-slate-200 hover:text-white hover:bg-slate-800/70 flex items-center gap-1 sm:gap-1.5">
+     <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 shrink-0"></span> <span>Cờ Vua</span>
     </button>
-    <button data-nav="leaderboard" class="nav-tab min-w-[7.8rem] sm:min-w-[8.8rem] justify-center px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors whitespace-nowrap text-slate-200 hover:text-white hover:bg-slate-800/70 flex items-center gap-1.5">
-     <span>🏆</span> <span>Bảng Xếp Hạng</span>
+    <button data-nav="leaderboard" class="nav-tab w-full sm:w-auto sm:min-w-[8.8rem] justify-center px-1.5 sm:px-3 py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-bold transition-colors whitespace-nowrap text-slate-200 hover:text-white hover:bg-slate-800/70 flex items-center gap-1 sm:gap-1.5">
+     <span>🏆</span> <span class="truncate">Bảng Xếp Hạng</span>
     </button>
    </nav>
-   <!-- Right Actions: Language Switcher (VI/EN), Sound & Email Auth (Fixed Dimensions - Zero Shift) -->
-   <div class="flex items-center gap-2 shrink-0 ml-auto lg:ml-0">
-    <div id="lang-switcher-group" class="inline-flex items-center rounded-xl bg-slate-900/90 border border-slate-800 p-1 gap-1 shrink-0 select-none">
-     <button id="lang-vi-btn" type="button" data-lang-switch="vi" class="w-[3.35rem] h-8 rounded-lg text-xs font-mono-code font-extrabold bg-cyan-500 text-slate-950 transition-colors inline-flex items-center justify-center gap-1.5 shrink-0" title="Tiếng Việt (Vietnamese)">
-      <svg viewBox="0 0 24 16" class="w-4 h-3 rounded-[2px] shadow-sm shrink-0 pointer-events-none" aria-hidden="true">
+   <!-- Right Actions: Language Switcher (VI/EN), Sound & Email Auth / Profile -->
+   <div class="flex items-center gap-1 sm:gap-2 shrink-0 ml-auto lg:ml-0">
+    <div id="lang-switcher-group" class="inline-flex items-center rounded-xl bg-slate-900/90 border border-slate-800 p-0.5 sm:p-1 gap-0.5 sm:gap-1 shrink-0 select-none">
+     <button id="lang-vi-btn" type="button" data-lang-switch="vi" class="w-[2.65rem] sm:w-[3.35rem] h-7 sm:h-8 rounded-lg text-[11px] sm:text-xs font-mono-code font-extrabold bg-cyan-500 text-slate-950 transition-colors inline-flex items-center justify-center gap-1 shrink-0" title="Tiếng Việt (Vietnamese)">
+      <svg viewBox="0 0 24 16" class="w-3.5 sm:w-4 h-2.5 sm:h-3 rounded-[2px] shadow-sm shrink-0 pointer-events-none" aria-hidden="true">
        <rect width="24" height="16" fill="#da251d"/>
        <polygon points="12,2.8 13.25,6.65 17.3,6.65 14.02,9.03 15.27,12.88 12,10.5 8.73,12.88 9.98,9.03 6.7,6.65 10.75,6.65" fill="#ffff00"/>
       </svg>
       <span>VI</span>
      </button>
-     <button id="lang-en-btn" type="button" data-lang-switch="en" class="w-[3.35rem] h-8 rounded-lg text-xs font-mono-code font-extrabold text-slate-300 hover:text-white transition-colors inline-flex items-center justify-center gap-1.5 shrink-0" title="English">
-      <svg viewBox="0 0 24 16" class="w-4 h-3 rounded-[2px] shadow-sm shrink-0 pointer-events-none" aria-hidden="true">
+     <button id="lang-en-btn" type="button" data-lang-switch="en" class="w-[2.65rem] sm:w-[3.35rem] h-7 sm:h-8 rounded-lg text-[11px] sm:text-xs font-mono-code font-extrabold text-slate-300 hover:text-white transition-colors inline-flex items-center justify-center gap-1 shrink-0" title="English">
+      <svg viewBox="0 0 24 16" class="w-3.5 sm:w-4 h-2.5 sm:h-3 rounded-[2px] shadow-sm shrink-0 pointer-events-none" aria-hidden="true">
        <rect width="24" height="16" fill="#012169"/>
        <path d="M0,0 L24,16 M24,0 L0,16" stroke="#ffffff" stroke-width="3.2"/>
        <path d="M0,0 L24,16 M24,0 L0,16" stroke="#c8102e" stroke-width="1.8"/>
@@ -545,10 +564,10 @@
       <span>EN</span>
      </button>
     </div>
-    <button id="sound-toggle-btn" type="button" title="Bật/Tắt Âm Thanh" class="w-10 h-10 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-200 hover:text-white hover:border-slate-700 transition-colors inline-flex items-center justify-center shrink-0">
-     <span id="sound-icon" class="text-base">🔊</span>
+    <button id="sound-toggle-btn" type="button" title="Bật/Tắt Âm Thanh" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-200 hover:text-white hover:border-slate-700 transition-colors inline-flex items-center justify-center shrink-0">
+     <span id="sound-icon" class="text-sm sm:text-base">🔊</span>
     </button>
-    <button id="open-auth-modal-btn" type="button" class="w-[10.75rem] sm:w-[11.75rem] h-10 px-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg hover:opacity-95 transition-opacity whitespace-nowrap inline-flex items-center justify-center text-center shrink-0 overflow-hidden">
+    <button id="open-auth-modal-btn" type="button" class="max-w-[7.8rem] sm:max-w-none sm:w-[11.75rem] h-8 sm:h-10 px-2.5 sm:px-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-extrabold text-[11px] sm:text-sm shadow-lg hover:opacity-95 transition-opacity whitespace-nowrap inline-flex items-center justify-center text-center shrink-0 overflow-hidden">
      <span id="nav-user-label" class="truncate">Đăng Nhập Email</span>
     </button>
    </div>
@@ -559,47 +578,47 @@
   <!-- ==================== VIEW 1: TRANG CHỦ (HOME & DASHBOARD) ==================== -->
   <section id="view-home" class="space-y-10">
    <!-- Hero Banner with Interactive 3D Rubik / Chess Board Preview -->
-   <div class="glass-card rounded-3xl p-6 sm:p-10 relative overflow-hidden border border-cyan-500/25">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+   <div class="glass-card rounded-3xl p-4 sm:p-10 relative overflow-hidden border border-cyan-500/25">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
      <!-- Left Column: Intro & CTA -->
-     <div class="lg:col-span-7 space-y-6">
-      <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-400/30 text-cyan-300 text-sm font-bold">
+     <div class="lg:col-span-7 space-y-4 sm:space-y-6">
+      <div class="inline-flex flex-wrap items-center gap-1.5 sm:gap-2.5 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-cyan-500/15 border border-cyan-400/30 text-cyan-300 text-xs sm:text-sm font-bold">
        <span id="hero-kicker-left">⚡ Nền Tảng Huấn Luyện & Thi Đấu Trí Tuệ</span>
-       <span class="text-slate-500">|</span>
+       <span class="text-slate-500 hidden sm:inline">|</span>
        <span id="hero-kicker-right" class="font-mono-code">Rubik 3D & Cờ Vua</span>
       </div>
-      <h1 id="hero-main-heading" class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.18] text-glow">
+      <h1 id="hero-main-heading" class="text-2xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.2] sm:leading-[1.18] text-glow">
        Khơi Mở Tư Duy Không Gian &amp; Bản Lĩnh Chiến Thuật Cùng <span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400">LM Training</span>
       </h1>
-      <p id="hero-main-description" class="text-slate-200 text-base sm:text-lg leading-relaxed max-w-2xl">
+      <p id="hero-main-description" class="text-slate-200 text-sm sm:text-lg leading-relaxed max-w-2xl">
        Không gian huấn luyện trực quan và thi đấu tiêu chuẩn quốc tế dành cho người đam mê bộ môn trí tuệ. Từ việc làm chủ phương pháp <strong class="text-cyan-300">Speedcubing CFOP trên mô hình 3D tương tác</strong> đến việc rèn luyện tư duy tính toán sâu cùng <strong class="text-emerald-300">Trí tuệ nhân tạo phân tích nước đi Cờ Vua chuyên sâu</strong>, mọi tiến trình học tập và thành tích của bạn đều được đồng bộ hóa liền mạch.
       </p>
-      <div class="flex flex-wrap items-center gap-3.5 pt-1">
-       <button data-goto="rubik" class="px-6 py-3.5 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-base shadow-lg shadow-cyan-500/25 transition flex items-center gap-2">
+      <div class="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2.5 sm:gap-3.5 pt-1">
+       <button data-goto="rubik" class="w-full sm:w-auto justify-center px-5 py-3 sm:px-6 sm:py-3.5 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-sm sm:text-base shadow-lg shadow-cyan-500/25 transition flex items-center gap-2">
         <span>🧊 Vào Phòng Tập Rubik 3D</span>
        </button>
-       <button data-goto="chess" class="px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-base shadow-lg shadow-emerald-500/25 transition flex items-center gap-2">
+       <button data-goto="chess" class="w-full sm:w-auto justify-center px-5 py-3 sm:px-6 sm:py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm sm:text-base shadow-lg shadow-emerald-500/25 transition flex items-center gap-2">
         <span>♟️ Vào Đấu Trường Cờ Vua</span>
        </button>
       </div>
       <!-- Live User Progress Pill Bar -->
-      <div class="pt-3 grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-       <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
-        <div id="stat-label-learned" class="text-xs sm:text-sm text-slate-300 font-medium">Chuyên đề đã lĩnh hội</div>
-        <div class="text-2xl font-extrabold text-cyan-400 mt-1"><span id="stat-learned-count">0</span> <span id="stat-learned-total" class="text-sm font-normal text-slate-400">/ 162</span></div>
+      <div class="pt-2 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5">
+       <div class="p-3 sm:p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+        <div id="stat-label-learned" class="text-[11px] sm:text-sm text-slate-300 font-medium">Chuyên đề đã lĩnh hội</div>
+        <div class="text-xl sm:text-2xl font-extrabold text-cyan-400 mt-1"><span id="stat-learned-count">0</span> <span id="stat-learned-total" class="text-xs sm:text-sm font-normal text-slate-400">/ 162</span></div>
        </div>
-       <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
-        <div id="stat-label-rubik" class="text-xs sm:text-sm text-slate-300 font-medium">Thành tích Rubik tốt nhất</div>
-        <div id="stat-rubik-best" class="text-2xl font-extrabold font-mono-code text-emerald-400 mt-1">--.--s</div>
+       <div class="p-3 sm:p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+        <div id="stat-label-rubik" class="text-[11px] sm:text-sm text-slate-300 font-medium">Thành tích Rubik tốt nhất</div>
+        <div id="stat-rubik-best" class="text-xl sm:text-2xl font-extrabold font-mono-code text-emerald-400 mt-1">--.--s</div>
        </div>
-       <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
-        <div id="stat-label-elo" class="text-xs sm:text-sm text-slate-300 font-medium">Hệ số Elo Cờ Vua</div>
-        <div id="stat-chess-elo" class="text-2xl font-extrabold font-mono-code text-amber-400 mt-1">1200</div>
+       <div class="p-3 sm:p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+        <div id="stat-label-elo" class="text-[11px] sm:text-sm text-slate-300 font-medium">Hệ số Elo Cờ Vua</div>
+        <div id="stat-chess-elo" class="text-xl sm:text-2xl font-extrabold font-mono-code text-amber-400 mt-1">1200</div>
        </div>
-       <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
-        <div id="stat-label-account" class="text-xs sm:text-sm text-slate-300 font-medium">Hồ sơ học viên</div>
-        <div id="stat-sync-badge" class="text-sm font-bold text-slate-300 mt-2 flex items-center gap-2">
-         <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Chưa đăng nhập
+       <div id="stat-account-card" class="p-3 sm:p-4 rounded-2xl bg-slate-900/80 border border-slate-800 cursor-pointer hover:border-cyan-500/40 transition" title="Mở Hồ Sơ Học Viên">
+        <div id="stat-label-account" class="text-[11px] sm:text-sm text-slate-300 font-medium">Hồ sơ học viên</div>
+        <div id="stat-sync-badge" class="text-xs sm:text-sm font-bold text-slate-300 mt-1.5 flex items-center gap-1.5 truncate">
+         <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span> <span class="truncate">Chưa đăng nhập</span>
         </div>
        </div>
       </div>
@@ -713,8 +732,11 @@
        Đăng nhập tài khoản học viên để lưu trữ lộ trình chinh phục 144 thuật toán CFOP và 18 hệ thống khai cuộc Cờ Vua.
       </p>
      </div>
-     <div class="flex flex-wrap items-center gap-2.5">
-      <button id="reset-all-progress-btn" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 text-slate-200 border border-slate-700 text-sm font-bold transition">
+     <div class="flex flex-wrap items-center gap-2">
+      <button id="toggle-learned-collapse-top-btn" type="button" class="hidden px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-500/30 text-xs sm:text-sm font-bold transition">
+       🔽 Xem tất cả chuyên đề
+      </button>
+      <button id="reset-all-progress-btn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 text-slate-200 border border-slate-700 text-xs sm:text-sm font-bold transition">
        ↺ Đặt Lại Tất Cả Công Thức
       </button>
      </div>
@@ -766,15 +788,14 @@
      <span id="rubik-header-kicker" class="text-xs sm:text-sm font-mono-code uppercase text-cyan-400 font-bold">Chuyên Đề 01 • Speedcubing &amp; Full CFOP</span>
      <h2 id="rubik-header-title" class="text-xl sm:text-3xl font-extrabold text-white mt-1">Rubik Studio 3D • 144 Công Thức CFOP &amp; WCA Timer</h2>
     </div>
-    <div class="flex flex-wrap items-center gap-2 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800">
-     <button data-rubik-tab="sim" class="rubik-subtab px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold bg-cyan-500 text-slate-950 transition">
+    <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1.5 sm:gap-2 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800 w-full lg:w-auto">
+     <button data-rubik-tab="sim" class="rubik-subtab justify-center px-2.5 sm:px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold bg-cyan-500 text-slate-950 transition truncate">
       🧊 Mô Hình 3D & Full CFOP (144)
      </button>
-     <button data-rubik-tab="timer" class="rubik-subtab px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-200 hover:text-white transition">
+     <button data-rubik-tab="timer" class="rubik-subtab justify-center px-2.5 sm:px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-200 hover:text-white transition truncate">
       ⏱️ Đồng Hồ WCA Timer Riêng
      </button>
-
-     <button id="rubik-expand-open-btn" type="button" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-extrabold bg-amber-500/20 border border-amber-400/50 text-amber-300 hover:bg-amber-500 hover:text-slate-950 transition flex items-center gap-1.5">
+     <button id="rubik-expand-open-btn" type="button" class="col-span-2 sm:col-span-1 justify-center px-3.5 py-2 rounded-lg text-xs sm:text-sm font-extrabold bg-amber-500/20 border border-amber-400/50 text-amber-300 hover:bg-amber-500 hover:text-slate-950 transition flex items-center gap-1.5">
       <span>⛶</span> <span>Mở Rộng Mô Hình 3D</span>
      </button>
     </div>
@@ -1056,10 +1077,10 @@
      <span id="chess-header-kicker" class="text-xs sm:text-sm font-mono-code uppercase text-emerald-400 font-bold">Chuyên Đề 02 • International Chess &amp; Tactical AI</span>
      <h2 id="chess-header-title" class="text-xl sm:text-3xl font-extrabold text-white mt-1">Đấu Trường Cờ Vua Quốc Tế &amp; Phân Tích Chiến Thuật</h2>
     </div>
-    <div class="flex flex-wrap items-center gap-2 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800">
-     <button data-chess-tab="play" class="chess-subtab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-emerald-500 text-slate-950 transition">♟️ Bàn Cờ & Bot AI</button>
-     <button data-chess-tab="gambit" class="chess-subtab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-200 hover:text-white transition">📖 Thư Viện Gambit & Bài Học (18)</button>
-     <button id="chess-expand-open-btn" type="button" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-extrabold bg-amber-500/20 border border-amber-400/50 text-amber-300 hover:bg-amber-500 hover:text-slate-950 transition flex items-center gap-1.5">
+    <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1.5 sm:gap-2 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800 w-full sm:w-auto">
+     <button data-chess-tab="play" class="chess-subtab justify-center px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-emerald-500 text-slate-950 transition truncate">♟️ Bàn Cờ & Bot AI</button>
+     <button data-chess-tab="gambit" class="chess-subtab justify-center px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-200 hover:text-white transition truncate">📖 Thư Viện Gambit & Bài Học (18)</button>
+     <button id="chess-expand-open-btn" type="button" class="col-span-2 sm:col-span-1 justify-center px-3.5 py-2 rounded-lg text-xs sm:text-sm font-extrabold bg-amber-500/20 border border-amber-400/50 text-amber-300 hover:bg-amber-500 hover:text-slate-950 transition flex items-center gap-1.5">
       <span>⛶</span> <span>Mở Rộng Bàn Cờ</span>
      </button>
     </div>
@@ -1166,33 +1187,33 @@
       <!-- Game Mode, 7 AI Elo Levels & Clock Duration Selectors -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
        <div>
-        <label class="text-xs text-slate-300 font-semibold block mb-1">Chế độ chơi:</label>
+        <label class="text-xs text-slate-300 font-semibold block mb-1">🎮 Chế độ chơi:</label>
         <select id="chess-mode-select" class="w-full px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-400">
-         <option value="bot">Đấu với Bot AI (Luyện tập)</option>
+         <option value="bot">🤖 Đấu với Bot AI (Luyện tập)</option>
          <option value="matchmaking">⚔️ Ghép Đấu Online (±100 Elo • Tính Elo)</option>
-         <option value="pvp">2 Người Chơi (Cùng máy)</option>
-         <option value="puzzle">🎲 Giải Thế Cờ Ngẫu Nhiên (42 Bài)</option>
+         <option value="pvp">👥 2 Người Chơi (Cùng máy)</option>
+         <option value="puzzle">🧩 Giải Thế Cờ Ngẫu Nhiên (42 Bài)</option>
         </select>
        </div>
        <div id="chess-level-select-wrap">
-        <label class="text-xs text-slate-300 font-semibold block mb-1">Mức độ AI Elo:</label>
+        <label class="text-xs text-slate-300 font-semibold block mb-1">🧠 Mức độ AI Elo:</label>
         <select id="chess-level-select" class="w-full px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-400">
-         <option value="1">Tập Sự (Elo 400)</option>
-         <option value="2">Cơ Bản (Elo 800)</option>
-         <option value="3">Phong Trào (Elo 1200)</option>
-         <option value="4" selected>Khu Vực (Elo 1500)</option>
-         <option value="5">Kiện Tướng (Elo 1800)</option>
-         <option value="6">Cao Thủ (Elo 2100)</option>
-         <option value="7">Đại Kiện Tướng (Elo 2500)</option>
+         <option value="1">🌱 Tập Sự (Elo 400)</option>
+         <option value="2">🥉 Cơ Bản (Elo 800)</option>
+         <option value="3">🥈 Phong Trào (Elo 1200)</option>
+         <option value="4" selected>🥇 Khu Vực (Elo 1500)</option>
+         <option value="5">💎 Kiện Tướng (Elo 1800)</option>
+         <option value="6">🔥 Cao Thủ (Elo 2100)</option>
+         <option value="7">👑 Đại Kiện Tướng (Elo 2500)</option>
         </select>
        </div>
        <div>
-        <label class="text-xs text-slate-300 font-semibold block mb-1">Thời gian mỗi bên:</label>
+        <label class="text-xs text-slate-300 font-semibold block mb-1">⏱️ Thời gian mỗi bên:</label>
         <select id="chess-time-select" class="w-full px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-400">
-         <option value="180">3 phút (Bullet)</option>
-         <option value="300">5 phút (Blitz)</option>
-         <option value="600" selected>10 phút (Rapid)</option>
-         <option value="900">15 phút (Standard)</option>
+         <option value="180">⚡ 3 phút (Bullet)</option>
+         <option value="300">🔥 5 phút (Blitz)</option>
+         <option value="600" selected>⏱️ 10 phút (Rapid)</option>
+         <option value="900">🏛️ 15 phút (Standard)</option>
         </select>
        </div>
       </div>
@@ -1664,24 +1685,24 @@
       </div>
       <div class="grid grid-cols-2 gap-2.5">
        <div>
-        <label class="text-xs text-slate-300 font-semibold block mb-1">Chế độ đấu:</label>
+        <label class="text-xs text-slate-300 font-semibold block mb-1">🎮 Chế độ đấu:</label>
         <select id="exp-chess-mode-select" class="w-full px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-400">
-         <option value="bot">Đấu với Bot AI</option>
+         <option value="bot">🤖 Đấu với Bot AI</option>
          <option value="matchmaking">⚔️ Ghép Đấu Online (±100 Elo)</option>
-         <option value="pvp">2 Người Chơi</option>
-         <option value="puzzle">🎲 Giải Thế Cờ Ngẫu Nhiên (42 Bài)</option>
+         <option value="pvp">👥 2 Người Chơi</option>
+         <option value="puzzle">🧩 Giải Thế Cờ Ngẫu Nhiên (42 Bài)</option>
         </select>
        </div>
        <div>
-        <label class="text-xs text-slate-300 font-semibold block mb-1">Mức AI Elo:</label>
+        <label class="text-xs text-slate-300 font-semibold block mb-1">🧠 Mức AI Elo:</label>
         <select id="exp-chess-level-select" class="w-full px-2.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-400">
-         <option value="1">Tập Sự (Elo 400)</option>
-         <option value="2">Cơ Bản (Elo 800)</option>
-         <option value="3">Phong Trào (Elo 1200)</option>
-         <option value="4" selected>Khu Vực (Elo 1500)</option>
-         <option value="5">Kiện Tướng (Elo 1800)</option>
-         <option value="6">Cao Thủ (Elo 2100)</option>
-         <option value="7">Đại Kiện Tướng (Elo 2500)</option>
+         <option value="1">🌱 Tập Sự (Elo 400)</option>
+         <option value="2">🥉 Cơ Bản (Elo 800)</option>
+         <option value="3">🥈 Phong Trào (Elo 1200)</option>
+         <option value="4" selected>🥇 Khu Vực (Elo 1500)</option>
+         <option value="5">💎 Kiện Tướng (Elo 1800)</option>
+         <option value="6">🔥 Cao Thủ (Elo 2100)</option>
+         <option value="7">👑 Đại Kiện Tướng (Elo 2500)</option>
         </select>
        </div>
       </div>
@@ -1758,62 +1779,128 @@
    </div>
   </div>
  </div>
- <!-- ==================== MODAL: REGISTER FIRST THEN LOGIN ==================== -->
- <div id="auth-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
-  <div class="glass-card rounded-3xl max-w-md w-full p-6 sm:p-7 border border-cyan-500/30 space-y-5 view-animate">
-   <div class="flex items-center justify-between">
+ <!-- ==================== MODAL: USER PROFILE & AUTHENTICATION ==================== -->
+ <div id="auth-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
+  <div class="glass-card rounded-3xl max-w-md w-full p-5 sm:p-7 border border-cyan-500/30 space-y-4 sm:space-y-5 view-animate max-h-[92vh] overflow-y-auto">
+   <div class="flex items-center justify-between gap-2">
     <div>
-     <h3 id="auth-modal-title" class="text-xl font-extrabold text-white">📝 Đăng Ký Tài Khoản Học Viên</h3>
-     <p id="auth-modal-subtitle" class="text-xs sm:text-sm text-slate-300 mt-0.5">Bước 1: Đăng ký Email & Nickname duy nhất • Bước 2: Đăng nhập</p>
+     <h3 id="auth-modal-title" class="text-lg sm:text-xl font-extrabold text-white">📝 Đăng Ký Tài Khoản Học Viên</h3>
+     <p id="auth-modal-subtitle" class="text-xs sm:text-sm text-slate-300 mt-0.5">Bước 1: Đăng ký Email &amp; Nickname duy nhất • Bước 2: Đăng nhập</p>
     </div>
-    <button id="close-auth-modal-btn" class="text-slate-400 hover:text-white text-xl font-bold">✕</button>
+    <button id="close-auth-modal-btn" class="w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white text-base font-bold flex items-center justify-center shrink-0">✕</button>
    </div>
-   <div class="grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-slate-900 border border-slate-800">
-    <button id="auth-tab-register" type="button" class="py-2.5 rounded-xl text-xs sm:text-sm font-extrabold bg-cyan-500 text-slate-950 shadow transition">
-     1. Đăng Ký Tài Khoản
-    </button>
-    <button id="auth-tab-login" type="button" class="py-2.5 rounded-xl text-xs sm:text-sm font-extrabold text-slate-300 hover:text-white transition">
-     2. Đăng Nhập
-    </button>
-   </div>
-   <div id="auth-feedback-banner" class="hidden p-3.5 rounded-xl border text-xs sm:text-sm font-bold leading-relaxed"></div>
-   <div class="space-y-3.5">
-    <div>
-     <label class="text-xs sm:text-sm font-bold text-slate-200 block mb-1.5">Email học viên (Xác thực tên miền thật):</label>
-     <div class="flex gap-2">
-      <input id="auth-email-input" type="email" placeholder="ten-cua-ban@gmail.com" class="flex-1 min-w-0 px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400" />
-      <button id="verify-email-real-btn" type="button" class="px-3 py-2.5 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-xs font-bold whitespace-nowrap transition">
-       ✓ Kiểm Tra
-      </button>
+
+   <!-- PANEL A: LOGGED-IN USER PROFILE VIEW (Hidden when not logged in) -->
+   <div id="user-profile-panel" class="hidden space-y-4 pt-1">
+    <div class="p-4 rounded-2xl bg-slate-900/95 border border-cyan-500/35 flex items-center gap-3.5">
+     <div id="profile-avatar-initial" class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-emerald-500 text-slate-950 font-extrabold text-2xl flex items-center justify-center shrink-0 shadow-lg">
+      👤
      </div>
-     <div id="email-verify-status" class="text-xs mt-1 text-slate-400">
-      Hệ thống kiểm tra cấu trúc RFC và máy chủ mail (DNS MX) thực tế.
+     <div class="min-w-0 flex-1 space-y-1">
+      <div class="flex flex-wrap items-center gap-1.5">
+       <span id="profile-view-name" class="text-base sm:text-lg font-extrabold text-white truncate">Học Viên</span>
+       <span id="profile-verified-pill" class="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-mono-code font-bold">✓ Đã xác thực</span>
+      </div>
+      <div id="profile-view-email" class="text-xs font-mono-code text-slate-300 truncate">email@gmail.com</div>
+      <div id="profile-view-joined" class="text-[11px] text-slate-400">Đồng bộ đám mây &amp; Bảng xếp hạng trực tiếp</div>
      </div>
     </div>
-    <div id="auth-nickname-wrap">
-     <label class="text-xs sm:text-sm font-bold text-slate-200 block mb-1.5">Tên hiển thị (Nickname duy nhất trên BXH):</label>
-     <input id="auth-name-input" type="text" placeholder="Nhập Nickname của bạn..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400" />
+
+    <!-- 4 Profile Achievement Stat Cards -->
+    <div class="grid grid-cols-2 gap-2.5">
+     <div class="p-3 rounded-2xl bg-slate-900/90 border border-slate-800">
+      <div id="profile-lbl-elo" class="text-[11px] text-slate-400 font-semibold">♟️ Hệ Số Elo Cờ Vua</div>
+      <div id="profile-view-elo" class="text-lg sm:text-xl font-extrabold font-mono-code text-amber-400 mt-0.5">1200 Elo</div>
+     </div>
+     <div class="p-3 rounded-2xl bg-slate-900/90 border border-slate-800">
+      <div id="profile-lbl-best" class="text-[11px] text-slate-400 font-semibold">🧊 Kỷ Lục Rubik (Best)</div>
+      <div id="profile-view-best-rubik" class="text-lg sm:text-xl font-extrabold font-mono-code text-emerald-400 mt-0.5">--.--s</div>
+     </div>
+     <div class="p-3 rounded-2xl bg-slate-900/90 border border-slate-800">
+      <div id="profile-lbl-solves" class="text-[11px] text-slate-400 font-semibold">⏱️ Số Lượt Giải WCA</div>
+      <div id="profile-view-solves-count" class="text-base sm:text-lg font-extrabold font-mono-code text-cyan-300 mt-0.5">0 lượt</div>
+     </div>
+     <div class="p-3 rounded-2xl bg-slate-900/90 border border-slate-800">
+      <div id="profile-lbl-learned" class="text-[11px] text-slate-400 font-semibold">📚 Chuyên Đề Đã Học</div>
+      <div id="profile-view-learned-count" class="text-base sm:text-lg font-extrabold font-mono-code text-cyan-300 mt-0.5">0 / 162</div>
+     </div>
     </div>
-    <div>
-     <label class="text-xs sm:text-sm font-bold text-slate-200 block mb-1.5">Mật khẩu tài khoản (Tối thiểu 6 ký tự):</label>
-     <input id="auth-pass-input" type="password" placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400" />
+
+    <!-- Breakdown of Rubik CFOP & Chess Gambits Progress -->
+    <div class="p-3.5 rounded-2xl bg-slate-900/75 border border-slate-800 space-y-2 text-xs">
+     <div class="flex items-center justify-between">
+      <span id="profile-lbl-cfop-prog" class="text-slate-300 font-semibold">• Thuật toán Rubik CFOP:</span>
+      <span id="profile-view-cfop-prog" class="font-mono-code font-bold text-cyan-300">0 / 144</span>
+     </div>
+     <div class="flex items-center justify-between">
+      <span id="profile-lbl-chess-prog" class="text-slate-300 font-semibold">• Khai cuộc &amp; Gambit Cờ Vua:</span>
+      <span id="profile-view-chess-prog" class="font-mono-code font-bold text-emerald-300">0 / 18</span>
+     </div>
     </div>
-    <div id="auth-confirm-pass-wrap">
-     <label class="text-xs sm:text-sm font-bold text-slate-200 block mb-1.5">Nhập lại mật khẩu xác nhận:</label>
-     <input id="auth-pass-confirm-input" type="password" placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400" />
+
+    <!-- ONLY Switch Account & Sign Out Buttons when Logged In -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+     <button id="profile-switch-account-btn" type="button" class="py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/35 font-extrabold text-xs sm:text-sm transition flex items-center justify-center gap-1.5">
+      <span>🔄</span> <span id="profile-switch-account-label">Đổi Tài Khoản Khác</span>
+     </button>
+     <button id="profile-logout-btn" type="button" class="py-3 px-4 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-extrabold text-xs sm:text-sm shadow-lg transition flex items-center justify-center gap-1.5">
+      <span>🚪</span> <span id="profile-logout-label">Đăng Xuất</span>
+     </button>
     </div>
-    <label class="flex items-center gap-2.5 text-xs sm:text-sm text-slate-200 cursor-pointer pt-1">
-     <input id="auth-remember-checkbox" type="checkbox" checked class="w-4 h-4 rounded bg-slate-800 border-slate-700 text-cyan-500 focus:ring-0" />
-     <span>Tự động lưu giữ phiên đăng nhập cho những lần truy cập sau</span>
-    </label>
    </div>
-   <div class="flex gap-2.5 pt-1">
-    <button id="auth-submit-btn" type="button" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-extrabold text-sm sm:text-base shadow-lg transition">
-     Đăng Ký Tài Khoản Mới
-    </button>
-    <button id="auth-logout-btn" type="button" class="px-4 py-3 rounded-xl bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 text-slate-200 font-bold text-xs sm:text-sm transition">
-     Đăng Xuất
-    </button>
+
+   <!-- PANEL B: REGISTER / LOGIN FORM (Shown when logged out or switching accounts) -->
+   <div id="auth-form-panel" class="space-y-4">
+    <div id="auth-mode-tabs-bar" class="grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-slate-900 border border-slate-800">
+     <button id="auth-tab-register" type="button" class="py-2.5 rounded-xl text-xs sm:text-sm font-extrabold bg-cyan-500 text-slate-950 shadow transition">
+      1. Đăng Ký Tài Khoản
+     </button>
+     <button id="auth-tab-login" type="button" class="py-2.5 rounded-xl text-xs sm:text-sm font-extrabold text-slate-300 hover:text-white transition">
+      2. Đăng Nhập
+     </button>
+    </div>
+    <div id="auth-feedback-banner" class="hidden p-3.5 rounded-xl border text-xs sm:text-sm font-bold leading-relaxed"></div>
+    <div class="space-y-3.5">
+     <div>
+      <label class="text-xs sm:text-sm font-bold text-slate-200 block mb-1.5">Email học viên (Xác thực tên miền thật):</label>
+      <div class="flex gap-2">
+       <input id="auth-email-input" type="email" placeholder="ten-cua-ban@gmail.com" class="flex-1 min-w-0 px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400" />
+       <button id="verify-email-real-btn" type="button" class="px-3 py-2.5 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-xs font-bold whitespace-nowrap transition">
+        ✓ Kiểm Tra
+       </button>
+      </div>
+      <div id="email-verify-status" class="text-xs mt-1 text-slate-400">
+       Hệ thống kiểm tra cấu trúc RFC và máy chủ mail (DNS MX) thực tế.
+      </div>
+     </div>
+     <div id="auth-nickname-wrap">
+      <label class="text-xs sm:text-sm font-bold text-slate-200 block mb-1.5">Tên hiển thị (Nickname duy nhất trên BXH):</label>
+      <input id="auth-name-input" type="text" placeholder="Nhập Nickname của bạn..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400" />
+     </div>
+     <div>
+      <label class="text-xs sm:text-sm font-bold text-slate-200 block mb-1.5">Mật khẩu tài khoản (Tối thiểu 6 ký tự):</label>
+      <input id="auth-pass-input" type="password" placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400" />
+     </div>
+     <div id="auth-confirm-pass-wrap">
+      <label class="text-xs sm:text-sm font-bold text-slate-200 block mb-1.5">Nhập lại mật khẩu xác nhận:</label>
+      <input id="auth-pass-confirm-input" type="password" placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400" />
+     </div>
+     <label class="flex items-center gap-2.5 text-xs sm:text-sm text-slate-200 cursor-pointer pt-1">
+      <input id="auth-remember-checkbox" type="checkbox" checked class="w-4 h-4 rounded bg-slate-800 border-slate-700 text-cyan-500 focus:ring-0" />
+      <span>Tự động lưu giữ phiên đăng nhập cho những lần truy cập sau</span>
+     </label>
+    </div>
+    <div class="flex gap-2.5 pt-1">
+     <button id="auth-submit-btn" type="button" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-extrabold text-sm sm:text-base shadow-lg transition">
+      Đăng Ký Tài Khoản Mới
+     </button>
+     <button id="auth-back-to-profile-btn" type="button" class="hidden px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold text-xs sm:text-sm transition">
+      ← Hồ Sơ
+     </button>
+     <button id="auth-logout-btn" type="button" class="hidden px-4 py-3 rounded-xl bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 text-slate-200 font-bold text-xs sm:text-sm transition">
+      Đăng Xuất
+     </button>
+    </div>
    </div>
   </div>
  </div>
@@ -2044,6 +2131,8 @@
   };
   const AppState = {
    authMode: 'register',
+   ForceAuthFormWhenLoggedIn: false,
+   learnedListExpanded: false,
    userEmail: '',
    userName: '',
    emailVerified: false,
@@ -2359,16 +2448,104 @@
    banner.innerHTML = msg;
    banner.classList.remove('hidden');
   }
-  function switchAuthModalMode(mode) {
+  function renderUserProfileModalView() {
+   const isEn = window.AppI18n?.lang === 'en';
+   const profilePanel = document.getElementById('user-profile-panel');
+   const formPanel = document.getElementById('auth-form-panel');
+   const titleEl = document.getElementById('auth-modal-title');
+   const subEl = document.getElementById('auth-modal-subtitle');
+   const backToProfBtn = document.getElementById('auth-back-to-profile-btn');
+   const isLoggedIn = Boolean(AppState.userEmail);
+
+   if (isLoggedIn && !AppState.ForceAuthFormWhenLoggedIn) {
+    if (profilePanel) profilePanel.classList.remove('hidden');
+    if (formPanel) formPanel.classList.add('hidden');
+    if (titleEl) titleEl.textContent = isEn ? '👤 Student Profile & Achievements' : '👤 Hồ Sơ Học Viên & Thành Tích';
+    if (subEl) subEl.textContent = isEn ? 'Manage your verified account and training statistics' : 'Quản lý tài khoản đã xác thực và thống kê rèn luyện của bạn';
+
+    const nameStr = AppState.userName || AppState.userEmail.split('@')[0];
+    const initialEl = document.getElementById('profile-avatar-initial');
+    if (initialEl) initialEl.textContent = (nameStr.trim()[0] || 'U').toUpperCase();
+    const pName = document.getElementById('profile-view-name');
+    if (pName) pName.textContent = nameStr;
+    const pEmail = document.getElementById('profile-view-email');
+    if (pEmail) pEmail.textContent = AppState.userEmail;
+    const pVerified = document.getElementById('profile-verified-pill');
+    if (pVerified) pVerified.textContent = isEn ? '✓ Verified' : '✓ Đã xác thực';
+    const pJoined = document.getElementById('profile-view-joined');
+    if (pJoined) pJoined.textContent = isEn ? 'Cloud Sync & Live Leaderboard Active' : 'Đồng bộ đám mây & Bảng xếp hạng trực tiếp';
+
+    const rubikIds = CFOP_DATABASE.map(x => x.id);
+    const chessIds = CHESS_GAMBITS.map(x => x.id);
+    const rCount = AppState.learnedItems.filter(id => rubikIds.includes(id)).length;
+    const cCount = AppState.learnedItems.filter(id => chessIds.includes(id)).length;
+    const totalLearned = rCount + cCount;
+    const maxTotal = rubikIds.length + chessIds.length;
+    const validSolves = (AppState.rubikSolves || []).map(getEffectiveSolveTime).filter(x => typeof x === 'number' && x > 0);
+    const bestRubikStr = validSolves.length ? Math.min(...validSolves).toFixed(2) + 's' : '--.--s';
+
+    const elElo = document.getElementById('profile-view-elo');
+    if (elElo) elElo.textContent = `${AppState.chessElo || 1200} Elo`;
+    const elBest = document.getElementById('profile-view-best-rubik');
+    if (elBest) elBest.textContent = bestRubikStr;
+    const elSolves = document.getElementById('profile-view-solves-count');
+    if (elSolves) elSolves.textContent = isEn ? `${validSolves.length} solves` : `${validSolves.length} lượt`;
+    const elLearned = document.getElementById('profile-view-learned-count');
+    if (elLearned) elLearned.textContent = `${totalLearned} / ${maxTotal}`;
+    const elCfop = document.getElementById('profile-view-cfop-prog');
+    if (elCfop) elCfop.textContent = `${rCount} / ${rubikIds.length}`;
+    const elChess = document.getElementById('profile-view-chess-prog');
+    if (elChess) elChess.textContent = `${cCount} / ${chessIds.length}`;
+
+    const lblElo = document.getElementById('profile-lbl-elo');
+    if (lblElo) lblElo.textContent = isEn ? '♟️ Chess Elo Rating' : '♟️ Hệ Số Elo Cờ Vua';
+    const lblBest = document.getElementById('profile-lbl-best');
+    if (lblBest) lblBest.textContent = isEn ? '🧊 Rubik Best Single' : '🧊 Kỷ Lục Rubik (Best)';
+    const lblSolves = document.getElementById('profile-lbl-solves');
+    if (lblSolves) lblSolves.textContent = isEn ? '⏱️ WCA Timed Solves' : '⏱️ Số Lượt Giải WCA';
+    const lblLearned = document.getElementById('profile-lbl-learned');
+    if (lblLearned) lblLearned.textContent = isEn ? '📚 Mastered Modules' : '📚 Chuyên Đề Đã Học';
+    const lblCfop = document.getElementById('profile-lbl-cfop-prog');
+    if (lblCfop) lblCfop.textContent = isEn ? '• Rubik CFOP Algorithms:' : '• Thuật toán Rubik CFOP:';
+    const lblChess = document.getElementById('profile-lbl-chess-prog');
+    if (lblChess) lblChess.textContent = isEn ? '• Chess Openings & Gambits:' : '• Khai cuộc & Gambit Cờ Vua:';
+    const btnSwitch = document.getElementById('profile-switch-account-label');
+    if (btnSwitch) btnSwitch.textContent = isEn ? 'Switch Account' : 'Đổi Tài Khoản Khác';
+    const btnOut = document.getElementById('profile-logout-label');
+    if (btnOut) btnOut.textContent = isEn ? 'Sign Out' : 'Đăng Xuất';
+    return true;
+   }
+
+   if (profilePanel) profilePanel.classList.add('hidden');
+   if (formPanel) formPanel.classList.remove('hidden');
+   if (backToProfBtn) {
+    backToProfBtn.classList.toggle('hidden', !isLoggedIn);
+    backToProfBtn.textContent = isEn ? '← Profile' : '← Hồ Sơ';
+   }
+   return false;
+  }
+
+  function switchAuthModalMode(mode, forceForm = false) {
+   AppState.ForceAuthFormWhenLoggedIn = Boolean(forceForm);
+   if (AppState.userEmail && !AppState.ForceAuthFormWhenLoggedIn) {
+    renderUserProfileModalView();
+    return;
+   }
+   renderUserProfileModalView();
    AppState.authMode = mode === 'login' ? 'login' : 'register';
    const isReg = AppState.authMode === 'register';
    const tabReg = document.getElementById('auth-tab-register');
    const tabLog = document.getElementById('auth-tab-login');
+   const tabsBar = document.getElementById('auth-mode-tabs-bar');
    const titleEl = document.getElementById('auth-modal-title');
    const subEl = document.getElementById('auth-modal-subtitle');
    const nickWrap = document.getElementById('auth-nickname-wrap');
    const confirmWrap = document.getElementById('auth-confirm-pass-wrap');
    const submitBtn = document.getElementById('auth-submit-btn');
+   // When switching accounts while logged in, hide the Register tab so the user only sees the Login form (or allow switching if logged out)
+   if (tabsBar) {
+    tabsBar.classList.toggle('hidden', Boolean(AppState.userEmail && AppState.ForceAuthFormWhenLoggedIn));
+   }
    if (tabReg && tabLog) {
     tabReg.className = isReg
      ? 'py-2.5 rounded-xl text-xs sm:text-sm font-extrabold bg-cyan-500 text-slate-950 shadow transition'
@@ -2379,14 +2556,24 @@
    }
    const isEn = window.AppI18n?.lang === 'en';
    if (titleEl) {
-    titleEl.textContent = isReg
-     ? (isEn ? '📝 Step 1: Register Student Account' : '📝 Bước 1: Đăng Ký Tài Khoản Học Viên')
-     : (isEn ? '🔐 Step 2: Account Sign In' : '🔐 Bước 2: Đăng Nhập Tài Khoản');
+    if (AppState.userEmail && AppState.ForceAuthFormWhenLoggedIn) {
+     titleEl.textContent = isEn ? '🔄 Switch to Another Account' : '🔄 Đổi Sang Tài Khoản Khác';
+    } else {
+     titleEl.textContent = isReg
+      ? (isEn ? '📝 Step 1: Register Student Account' : '📝 Bước 1: Đăng Ký Tài Khoản Học Viên')
+      : (isEn ? '🔐 Step 2: Account Sign In' : '🔐 Bước 2: Đăng Nhập Tài Khoản');
+    }
    }
    if (subEl) {
-    subEl.textContent = isReg
-     ? (isEn ? 'Create a new account with a verified Email & unique Nickname' : 'Tạo tài khoản mới với Email thật và Nickname duy nhất')
-     : (isEn ? 'Sign in with your registered Email and Password' : 'Đăng nhập bằng Email và Mật khẩu đã đăng ký trước đó');
+    if (AppState.userEmail && AppState.ForceAuthFormWhenLoggedIn) {
+     subEl.textContent = isEn
+      ? 'Enter the Email and Password of the account you want to switch to'
+      : 'Nhập Email và Mật khẩu của tài khoản học viên bạn muốn chuyển sang';
+    } else {
+     subEl.textContent = isReg
+      ? (isEn ? 'Create a new account with a verified Email & unique Nickname' : 'Tạo tài khoản mới với Email thật và Nickname duy nhất')
+      : (isEn ? 'Sign in with your registered Email and Password' : 'Đăng nhập bằng Email và Mật khẩu đã đăng ký trước đó');
+    }
    }
    if (nickWrap) nickWrap.classList.toggle('hidden', !isReg);
    if (confirmWrap) confirmWrap.classList.toggle('hidden', !isReg);
@@ -2914,11 +3101,16 @@
    const authModal = document.getElementById('auth-modal');
    if (!authModal) return;
    setAuthFeedbackBanner('');
-   const reg = collectAllLocalProfilesIntoRegistry();
-   const hasAnyAccount = Object.keys(reg).length > 0;
-   switchAuthModalMode(AppState.userEmail || hasAnyAccount ? 'login' : 'register');
-   document.getElementById('auth-email-input').value = AppState.userEmail || '';
-   document.getElementById('auth-name-input').value = AppState.userName || '';
+   AppState.ForceAuthFormWhenLoggedIn = false;
+   if (AppState.userEmail) {
+    renderUserProfileModalView();
+   } else {
+    const reg = collectAllLocalProfilesIntoRegistry();
+    const hasAnyAccount = Object.keys(reg).length > 0;
+    switchAuthModalMode(hasAnyAccount ? 'login' : 'register', false);
+    document.getElementById('auth-email-input').value = '';
+    document.getElementById('auth-name-input').value = '';
+   }
    authModal.classList.remove('hidden');
    authModal.classList.add('flex');
   }
@@ -3243,9 +3435,9 @@
       ? 'bg-amber-500 text-slate-950 shadow-md'
       : 'bg-cyan-500 text-slate-950 shadow-md';
     const minW = navKey === 'leaderboard'
-     ? 'min-w-[7.8rem] sm:min-w-[8.8rem]'
-     : 'min-w-[6.8rem] sm:min-w-[7.5rem]';
-    btn.className = `nav-tab ${minW} justify-center px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+     ? 'w-full sm:w-auto sm:min-w-[8.8rem]'
+     : 'w-full sm:w-auto sm:min-w-[7.5rem]';
+    btn.className = `nav-tab ${minW} justify-center px-1.5 sm:px-3 py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-bold transition-colors whitespace-nowrap flex items-center gap-1 sm:gap-1.5 ${
      isActive ? activeColor : 'text-slate-200 hover:text-white hover:bg-slate-800/70'
     }`;
    });
@@ -3282,7 +3474,7 @@
    const subtitle = document.getElementById('home-progress-subtitle');
    if (AppState.userEmail) {
     document.getElementById('nav-user-label').textContent = `👤 ${AppState.userName}`;
-    syncBadge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> ${isEn ? 'Signed In' : 'Đã đăng nhập'} (${AppState.userName})`;
+    syncBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span> <span class="truncate">${AppState.userName} (${ isEn ? 'Profile' : 'Hồ sơ' })</span>`;
     if (subtitle) {
      subtitle.innerHTML = isEn
       ? `Signed in as <strong class="text-cyan-300">${AppState.userName}</strong> (${AppState.userEmail}) — Progress &amp; live rankings sync automatically.`
@@ -3290,7 +3482,7 @@
     }
    } else {
     document.getElementById('nav-user-label').textContent = isEn ? 'Register / Sign In' : 'Đăng Ký / Đăng Nhập';
-    syncBadge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> ${isEn ? 'Not Signed In' : 'Chưa đăng nhập'}`;
+    syncBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span> <span class="truncate">${isEn ? 'Not Signed In' : 'Chưa đăng nhập'}</span>`;
     if (subtitle) {
      subtitle.innerHTML = isEn
       ? `Please <strong>Register &amp; Sign In</strong> to save your learned CFOP &amp; Gambit formulas and join the Leaderboard!`
@@ -3298,14 +3490,53 @@
     }
    }
    const badgeContainer = document.getElementById('learned-badges-list');
+   const topCollapseBtn = document.getElementById('toggle-learned-collapse-top-btn');
    const allItems = [...CFOP_DATABASE, ...CHESS_GAMBITS];
    const learnedObjs = allItems.filter(item => AppState.learnedItems.includes(item.id));
+   const COMPACT_LIMIT = 6;
    if (!learnedObjs.length) {
-    badgeContainer.innerHTML = `<span class="text-sm sm:text-base text-slate-400 italic">${isEn ? 'No formulas marked as learned yet. Sign in and click "+ Mark Learned" on any lesson card!' : 'Chưa có công thức nào được đánh dấu. Hãy đăng nhập Email và bấm "+ Đánh dấu đã học" ở từng bài học!'}</span>`;
+    if (topCollapseBtn) topCollapseBtn.classList.add('hidden');
+    badgeContainer.className = 'pt-2 flex flex-wrap gap-2';
+    badgeContainer.innerHTML = `<span class="text-xs sm:text-sm text-slate-400 italic">${isEn ? 'No formulas marked as learned yet. Sign in and click "+ Mark Learned" on any lesson card!' : 'Chưa có chuyên đề nào được ghi nhận. Hãy đăng nhập và đánh dấu các bài học bạn đã làm chủ!'}</span>`;
    } else {
-    badgeContainer.innerHTML = learnedObjs.map(item =>
-     `<span class="px-3 py-1.5 rounded-full bg-slate-900 border border-cyan-500/40 text-xs sm:text-sm text-cyan-300 font-semibold">✓ ${isEn && window.AppI18n ? window.AppI18n.translateCfopName(item.name) : item.name}</span>`
-    ).join('');
+    const hasMore = learnedObjs.length > COMPACT_LIMIT;
+    const isExpanded = Boolean(AppState.learnedListExpanded);
+    const visibleItems = (hasMore && !isExpanded) ? learnedObjs.slice(0, COMPACT_LIMIT) : learnedObjs;
+    const hiddenCount = Math.max(0, learnedObjs.length - COMPACT_LIMIT);
+
+    if (topCollapseBtn) {
+     if (hasMore) {
+      topCollapseBtn.classList.remove('hidden');
+      topCollapseBtn.textContent = isExpanded
+       ? (isEn ? '🔼 Collapse List' : '🔼 Thu Gọn Danh Sách')
+       : (isEn ? `🔽 Show All (${learnedObjs.length})` : `🔽 Xem Tất Cả (${learnedObjs.length})`);
+     } else {
+      topCollapseBtn.classList.add('hidden');
+     }
+    }
+
+    badgeContainer.className = isExpanded
+     ? 'pt-2 flex flex-wrap gap-1.5 sm:gap-2 max-h-48 overflow-y-auto pr-1'
+     : 'pt-2 flex flex-wrap gap-1.5 sm:gap-2 items-center';
+
+    const pillsHtml = visibleItems.map(item => {
+     const itemTitle = isEn ? (item.nameEn || window.AppI18n?.translateCfopName(item.name) || item.name) : item.name;
+     const shortCode = isEn ? (item.codeEn || item.code || itemTitle) : (item.code || itemTitle);
+     return `<span title="${itemTitle}" class="px-2.5 py-1 rounded-full bg-slate-900 border border-cyan-500/40 text-xs text-cyan-300 font-semibold truncate max-w-[14rem] sm:max-w-[18rem]">✓ ${shortCode}</span>`;
+    }).join('');
+
+    const togglePillHtml = hasMore
+     ? `<button type="button" id="toggle-learned-inline-btn" class="px-3 py-1 rounded-full bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 border border-cyan-400/50 text-xs font-extrabold transition shrink-0">
+         ${isExpanded
+          ? (isEn ? '🔼 Collapse List' : '🔼 Thu gọn bớt')
+          : (isEn ? `+${hiddenCount} more learned modules ▾` : `+ Xem thêm ${hiddenCount} công thức đã học ▾`)}
+        </button>`
+     : '';
+
+    badgeContainer.innerHTML = pillsHtml + togglePillHtml;
+   }
+   if (AppState.userEmail && !AppState.ForceAuthFormWhenLoggedIn) {
+    renderUserProfileModalView();
    }
   }
   // ---------- 7. THREE.JS INTERACTIVE 3D RUBIK'S CUBE ENGINE + AI OPTIMAL SOLVER ----------
@@ -5098,7 +5329,7 @@
    mode: 'bot',
    level: 4,
    levelEloMap: { 1: 400, 2: 800, 3: 1200, 4: 1500, 5: 1800, 6: 2100, 7: 2500 },
-   levelDelayMsMap: { 1: 1400, 2: 1450, 3: 1500, 4: 1550, 5: 1650, 6: 1750, 7: 1850 },
+   levelDelayMsMap: { 1: 240, 2: 270, 3: 300, 4: 330, 5: 370, 6: 410, 7: 450 },
    botThinking: false,
    botTimerId: null,
    expandedViewOpen: false,
@@ -5849,14 +6080,40 @@
      }
     }
     grid.innerHTML = html;
-    grid.querySelectorAll('.chess-square').forEach(el => {
-     el.addEventListener('click', () => this.onSquareClick(el.getAttribute('data-sq')));
-    });
+    if (!grid._delegatedBound) {
+     grid._delegatedBound = true;
+     let lastDownTs = 0;
+     grid.addEventListener('pointerdown', e => {
+      if (e.button && e.button !== 0) return;
+      const cell = e.target.closest('.chess-square');
+      if (!cell) return;
+      lastDownTs = performance.now();
+      this.onSquareClick(cell.getAttribute('data-sq'));
+     });
+     grid.addEventListener('click', e => {
+      if (performance.now() - lastDownTs < 420) return;
+      const cell = e.target.closest('.chess-square');
+      if (cell) this.onSquareClick(cell.getAttribute('data-sq'));
+     });
+    }
     if (expGrid) {
      expGrid.innerHTML = html;
-     expGrid.querySelectorAll('.chess-square').forEach(el => {
-      el.addEventListener('click', () => this.onSquareClick(el.getAttribute('data-sq')));
-     });
+     if (!expGrid._delegatedBound) {
+      expGrid._delegatedBound = true;
+      let lastExpDownTs = 0;
+      expGrid.addEventListener('pointerdown', e => {
+       if (e.button && e.button !== 0) return;
+       const cell = e.target.closest('.chess-square');
+       if (!cell) return;
+       lastExpDownTs = performance.now();
+       this.onSquareClick(cell.getAttribute('data-sq'));
+      });
+      expGrid.addEventListener('click', e => {
+       if (performance.now() - lastExpDownTs < 420) return;
+       const cell = e.target.closest('.chess-square');
+       if (cell) this.onSquareClick(cell.getAttribute('data-sq'));
+      });
+     }
     }
    },
    isPromotionMove(fromSq, toSq) {
@@ -5938,15 +6195,14 @@
     for (const m of legalMoves) {
      this.game.move(m);
      const rawAfter1 = this.evaluateBoard();
-     // 2-ply tactical lookahead: check opponent's strongest immediate reply (captures/checks/mate)
+     // Ultra-fast tactical recapture check on destination square to keep move latency < 3ms
      let worstAfter2 = rawAfter1;
      if (!this.game.game_over()) {
       const oppMoves = this.game.moves({ verbose: true });
-      const tacticalOpp = oppMoves.filter(om => om.captured || om.san.includes('+') || om.san.includes('#') || om.promotion);
-      const sampleOpp = tacticalOpp.length > 0 ? tacticalOpp.slice(0, 14) : oppMoves.slice(0, 8);
-      if (sampleOpp.length > 0) {
+      const recaptures = oppMoves.filter(om => om.to === m.to || om.san.includes('#') || (om.captured && (this.pieceValues[om.captured] || 100) >= 320));
+      if (recaptures.length > 0) {
        worstAfter2 = color === 'w' ? 999999 : -999999;
-       for (const om of sampleOpp) {
+       for (const om of recaptures.slice(0, 5)) {
         this.game.move(om);
         const sc2 = this.evaluateBoard();
         this.game.undo();
@@ -5955,7 +6211,7 @@
        }
       }
      }
-     const blendedEval = (rawAfter1 * 0.42) + (worstAfter2 * 0.58);
+     const blendedEval = (rawAfter1 * 0.45) + (worstAfter2 * 0.55);
      let gain = color === 'w' ? (blendedEval - prevEval) : (prevEval - blendedEval);
      if (m.san.includes('#')) gain += 100;
      else if (m.san.includes('+')) gain += 0.24;
@@ -6853,17 +7109,17 @@
     const plyCount = this.game ? this.game.history().length : 0;
     const legalCount = this.game ? this.game.moves().length : 10;
     const inCheck = this.game ? this.game.in_check() : false;
-    let minDelay = 1150;
-    let maxDelay = 2650;
+    let minDelay = 240;
+    let maxDelay = 460;
     if (legalCount <= 2 || inCheck) {
-     minDelay = 900;
-     maxDelay = 1750;
+     minDelay = 180;
+     maxDelay = 320;
     } else if (plyCount < 6) {
-     minDelay = 1000;
-     maxDelay = 2100;
+     minDelay = 200;
+     maxDelay = 360;
     } else if (legalCount >= 22) {
-     minDelay = 1400;
-     maxDelay = 3100;
+     minDelay = 280;
+     maxDelay = 520;
     }
     const delayMs = Math.floor(minDelay + Math.random() * (maxDelay - minDelay));
     this.botThinking = true;
@@ -7176,7 +7432,7 @@
         if (Array.isArray(arr)) {
          arr.forEach(p => {
           if (!p || !p.clientId) return;
-          if (p.clientId !== this.onlineMatch.clientId && p.status === 'searching') {
+          if (!this.isSameAccountAsMe(p.email, p.nickname, p.clientId) && p.status === 'searching') {
            this.onlineMatch.waitingPeers.set(p.clientId, { ...p, lastSeen: Date.now() });
           }
           // Also check if a peer in presence has an active match update for our current matchId!
@@ -7343,7 +7599,7 @@
     // 4. Also update Realtime Presence state so any client automatically syncs
     if (type === 'ONLINE_MOVE') {
      this.trackRoomPresenceState();
-     // Retry sending move packet 350ms later to guarantee delivery over lossy mobile networks
+     // Retry sending move packet 180ms later to guarantee ultra-fast delivery over mobile networks
      setTimeout(() => {
       if (this.onlineMatch.status === 'playing' && !this.isMatchOver()) {
        if (this.onlineMatch.lobbyChannel) {
@@ -7356,7 +7612,7 @@
         } catch (e) {}
        }
       }
-     }, 350);
+     }, 180);
     }
    },
    startOnlineMatchSyncLoop() {
@@ -7385,7 +7641,7 @@
       });
      }
      this.pullOnlineMatchStateFromSupabase();
-    }, 1800);
+    }, 950);
    },
    stopOnlineMatchSyncLoop() {
     if (this.onlineMatch.syncHeartbeatId) {
@@ -7411,8 +7667,19 @@
      this.syncBoardFromRemoteState(remoteHistory, row.fen, row.white_time, row.black_time, row.last_move);
     } catch (e) {}
    },
+   // STRICT ANTI-SELF-MATCHING CHECK: Prevents 1 account from matching with itself across tabs/devices
+   isSameAccountAsMe(peerEmail, peerNick, peerClientId) {
+    if (peerClientId && peerClientId === this.onlineMatch.clientId) return true;
+    const myEm = (AppState.userEmail || '').toLowerCase().trim();
+    const pEm = (peerEmail || '').toLowerCase().trim();
+    if (myEm && pEm && myEm === pEm) return true;
+    const myNick = (AppState.userName || '').toLowerCase().trim();
+    const pNick = (peerNick || '').toLowerCase().trim();
+    if (myNick && pNick && myNick === pNick) return true;
+    return false;
+   },
    isPeerFairMatch(peer) {
-    if (!peer || peer.clientId === this.onlineMatch.clientId) return false;
+    if (!peer || this.isSameAccountAsMe(peer.email, peer.nickname, peer.clientId)) return false;
     const sameTime = Number(peer.timeControl) === Number(this.initialTimeSec);
     const myElo = Number(AppState.chessElo) || 1200;
     const peerElo = Number(peer.elo) || 1200;
@@ -7549,6 +7816,14 @@
    },
    proposeMatchWithPeer(peer) {
     if (this.onlineMatch.status !== 'searching' || !peer) return;
+    if (this.isSameAccountAsMe(peer.email, peer.nickname, peer.clientId)) {
+     const isEn = window.AppI18n?.lang === 'en';
+     showToast(
+      isEn ? '⚠️ Cannot match an account against itself! Please sign in with a 2nd account.' : '⚠️ Không thể tự ghép đấu cùng 1 tài khoản! Hãy đăng nhập tài khoản khác ở máy thứ 2.',
+      'rose'
+     );
+     return;
+    }
     const pairKey = [this.onlineMatch.clientId, peer.clientId].sort().join('_');
     const matchBucket = Math.floor(Date.now() / 4000);
     const matchId = 'm_' + pairKey + '_' + matchBucket;
@@ -7578,6 +7853,11 @@
     if (!pkt || pkt.senderClientId === this.onlineMatch.clientId) return;
     const type = pkt.packetType;
     if (type === 'QUEUE_PING') {
+     if (this.isSameAccountAsMe(pkt.email, pkt.nickname, pkt.clientId)) {
+      this.onlineMatch.waitingPeers.delete(pkt.clientId);
+      this.renderWaitingPeersList();
+      return;
+     }
      this.onlineMatch.waitingPeers.set(pkt.clientId, {
       clientId: pkt.clientId,
       email: pkt.email,
@@ -7601,6 +7881,7 @@
     if (type === 'MATCH_PROPOSAL') {
      if (this.onlineMatch.status === 'searching' && pkt.targetClientId === this.onlineMatch.clientId) {
       const opp = pkt.white.clientId === this.onlineMatch.clientId ? pkt.black : pkt.white;
+      if (this.isSameAccountAsMe(opp.email, opp.nickname, opp.clientId)) return;
       if (Number(pkt.timeControl) === Number(this.initialTimeSec) && Math.abs(opp.elo - AppState.chessElo) <= 100) {
        this.broadcastLobbyPacket('MATCH_ACCEPT', {
         matchId: pkt.matchId,
@@ -7619,6 +7900,8 @@
       (pkt.white && pkt.white.clientId === this.onlineMatch.clientId) ||
       (pkt.black && pkt.black.clientId === this.onlineMatch.clientId);
      if (isParticipant && (this.onlineMatch.status === 'searching' || this.onlineMatch.matchId !== pkt.matchId)) {
+      const opp = pkt.white.clientId === this.onlineMatch.clientId ? pkt.black : pkt.white;
+      if (this.isSameAccountAsMe(opp?.email, opp?.nickname, opp?.clientId)) return;
       this.beginActiveOnlineMatch(pkt);
      }
      return;
@@ -7696,7 +7979,8 @@
      const minElo = myElo - 100;
      const maxElo = myElo + 100;
      const freshCutoff = new Date(Date.now() - 40000).toISOString();
-     const { data: waitingRows, error } = await AppState.supabaseClient
+     const cleanMyEmail = (AppState.userEmail || '').toLowerCase().trim();
+     const { data: rawWaitingRows, error } = await AppState.supabaseClient
       .from('lm_chess_online_matches')
       .select('*')
       .eq('status', 'waiting')
@@ -7705,9 +7989,13 @@
       .lte('host_elo', maxElo)
       .gte('updated_at', freshCutoff)
       .neq('host_client_id', this.onlineMatch.clientId)
+      .neq('host_email', cleanMyEmail)
       .limit(10);
      if (error) return;
-     if (Array.isArray(waitingRows) && waitingRows.length > 0) {
+     const waitingRows = (Array.isArray(rawWaitingRows) ? rawWaitingRows : []).filter(
+      r => !this.isSameAccountAsMe(r.host_email, r.host_name, r.host_client_id)
+     );
+     if (waitingRows.length > 0) {
       waitingRows.sort((a, b) => Math.abs(a.host_elo - myElo) - Math.abs(b.host_elo - myElo));
       const room = waitingRows[0];
       const guestObj = {
@@ -7836,6 +8124,26 @@
     } catch (e) {}
    },
    beginActiveOnlineMatch(matchInfo) {
+    if (!matchInfo || !matchInfo.white || !matchInfo.black) return;
+    // Block any self-match where White and Black belong to the same account (same Email, Nickname, or ClientId)
+    const wEm = (matchInfo.white.email || '').toLowerCase().trim();
+    const bEm = (matchInfo.black.email || '').toLowerCase().trim();
+    const wNick = (matchInfo.white.nickname || '').toLowerCase().trim();
+    const bNick = (matchInfo.black.nickname || '').toLowerCase().trim();
+    if (
+     matchInfo.white.clientId === matchInfo.black.clientId ||
+     (wEm && bEm && wEm === bEm) ||
+     (wNick && bNick && wNick === bNick)
+    ) {
+     const isEn = window.AppI18n?.lang === 'en';
+     showToast(
+      isEn
+       ? '⚠️ Cannot match 1 account against itself! Please sign into a different account on the 2nd device.'
+       : '⚠️ Không thể ghép đấu cùng 1 tài khoản với chính mình! Vui lòng dùng tài khoản khác ở máy thứ 2.',
+      'rose'
+     );
+     return;
+    }
     if (this.onlineMatch.status === 'playing' && this.onlineMatch.matchId === matchInfo.matchId) return;
     clearInterval(this.onlineMatch.pingIntervalId);
     clearInterval(this.onlineMatch.searchTimerId);
@@ -7896,7 +8204,7 @@
     const countBadge = document.getElementById('online-lobby-count-badge');
     if (!listEl) return;
     const peers = Array.from(this.onlineMatch.waitingPeers.values()).filter(
-     p => p.clientId !== this.onlineMatch.clientId && (Date.now() - (p.lastSeen || 0) <= 6500)
+     p => !this.isSameAccountAsMe(p.email, p.nickname, p.clientId) && (Date.now() - (p.lastSeen || 0) <= 6500)
     );
     const isEn = window.AppI18n?.lang === 'en';
     if (countBadge) {
@@ -8462,29 +8770,31 @@
     ['Hủy nước đi', 'Cancel Move'],
     ['⚙️ Bảng Điều Khiển & Thi Đấu', '⚙️ Match Controls & AI Analysis'],
     ['Chọn màu quân của bạn:', 'Choose your piece color:'],
-    ['Chế độ chơi:', 'Game Mode:'],
-    ['Mức độ AI Elo:', 'AI Bot Elo Level:'],
-    ['Thời gian mỗi bên:', 'Time Control:'],
-    ['Đấu với Bot AI (Luyện tập)', 'Play vs AI Bot (Practice)'],
-    ['Đấu với Bot AI', 'Play vs AI Bot'],
+    ['🎮 Chế độ chơi:', '🎮 Game Mode:'],
+    ['🎮 Chế độ đấu:', '🎮 Game Mode:'],
+    ['🧠 Mức độ AI Elo:', '🧠 AI Bot Elo Level:'],
+    ['🧠 Mức AI Elo:', '🧠 AI Elo Level:'],
+    ['⏱️ Thời gian mỗi bên:', '⏱️ Time Control:'],
+    ['🤖 Đấu với Bot AI (Luyện tập)', '🤖 Play vs AI Bot (Practice)'],
+    ['🤖 Đấu với Bot AI', '🤖 Play vs AI Bot'],
     ['⚔️ Ghép Đấu Online (±100 Elo • Tính Elo)', '⚔️ Online Matchmaking (±100 Elo • Rated)'],
     ['⚔️ Ghép Đấu Online (±100 Elo)', '⚔️ Online Matchmaking (±100 Elo)'],
-    ['2 Người Chơi (Cùng máy)', '2 Players (Pass & Play)'],
-    ['2 Người Chơi', '2 Players (Pass & Play)'],
-    ['🎲 Giải Thế Cờ Ngẫu Nhiên (42 Bài)', '🎲 Random Tactical Puzzles (42 Cases)'],
+    ['👥 2 Người Chơi (Cùng máy)', '👥 2 Players (Pass & Play)'],
+    ['👥 2 Người Chơi', '👥 2 Players (Pass & Play)'],
+    ['🧩 Giải Thế Cờ Ngẫu Nhiên (42 Bài)', '🧩 Random Tactical Puzzles (42 Cases)'],
     ['📌 Trạng thái bàn cờ', '📌 Board Status'],
     ['🤖 AI đang tính...', '🤖 AI thinking...'],
-    ['Tập Sự (Elo 400)', 'Beginner (Elo 400)'],
-    ['Cơ Bản (Elo 800)', 'Novice (Elo 800)'],
-    ['Phong Trào (Elo 1200)', 'Club Player (Elo 1200)'],
-    ['Khu Vực (Elo 1500)', 'Regional (Elo 1500)'],
-    ['Kiện Tướng (Elo 1800)', 'Master (Elo 1800)'],
-    ['Cao Thủ (Elo 2100)', 'Expert (Elo 2100)'],
-    ['Đại Kiện Tướng (Elo 2500)', 'Grandmaster (Elo 2500)'],
-    ['3 phút (Bullet)', '3 min (Bullet)'],
-    ['5 phút (Blitz)', '5 min (Blitz)'],
-    ['10 phút (Rapid)', '10 min (Rapid)'],
-    ['15 phút (Standard)', '15 min (Standard)'],
+    ['🌱 Tập Sự (Elo 400)', '🌱 Beginner (Elo 400)'],
+    ['🥉 Cơ Bản (Elo 800)', '🥉 Novice (Elo 800)'],
+    ['🥈 Phong Trào (Elo 1200)', '🥈 Club Player (Elo 1200)'],
+    ['🥇 Khu Vực (Elo 1500)', '🥇 Regional (Elo 1500)'],
+    ['💎 Kiện Tướng (Elo 1800)', '💎 Master (Elo 1800)'],
+    ['🔥 Cao Thủ (Elo 2100)', '🔥 Expert (Elo 2100)'],
+    ['👑 Đại Kiện Tướng (Elo 2500)', '👑 Grandmaster (Elo 2500)'],
+    ['⚡ 3 phút (Bullet)', '⚡ 3 min (Bullet)'],
+    ['🔥 5 phút (Blitz)', '🔥 5 min (Blitz)'],
+    ['⏱️ 10 phút (Rapid)', '⏱️ 10 min (Rapid)'],
+    ['🏛️ 15 phút (Standard)', '🏛️ 15 min (Standard)'],
     ['⚔️ Ghép Đấu Online Công Bằng (Chênh lệch 0 – 100 Elo)', '⚔️ Fair Online Matchmaking (0 – 100 Elo Gap)'],
     ['⚡ Tự lưu ván khi F5', '⚡ Auto-Saves on Reload'],
     ['Elo Của Bạn', 'Your Elo'],
@@ -8873,9 +9183,9 @@
     const navChess = document.querySelector('[data-nav="chess"]');
     const navLb = document.querySelector('[data-nav="leaderboard"]');
     if (navHome) navHome.innerHTML = isEn ? '🏠 <span>Home</span>' : '🏠 <span>Trang Chủ</span>';
-    if (navRubik) navRubik.innerHTML = '<span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span> <span>Rubik 3D</span>';
-    if (navChess) navChess.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span> <span>${isEn ? 'Chess Arena' : 'Cờ Vua'}</span>`;
-    if (navLb) navLb.innerHTML = `<span>🏆</span> <span>${isEn ? 'Leaderboard' : 'Bảng Xếp Hạng'}</span>`;
+    if (navRubik) navRubik.innerHTML = '<span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-cyan-400 shrink-0"></span> <span>Rubik 3D</span>';
+    if (navChess) navChess.innerHTML = `<span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 shrink-0"></span> <span>${isEn ? 'Chess' : 'Cờ Vua'}</span>`;
+    if (navLb) navLb.innerHTML = `<span>🏆</span> <span class="truncate">${isEn ? 'Leaderboard' : 'Bảng Xếp Hạng'}</span>`;
 
     const setTxt = (id, vi, en) => {
      const el = document.getElementById(id);
@@ -9845,20 +10155,48 @@
     ChessArena.loadRandomPuzzle();
     showToast('🎲 Đã tạo một thế cờ chiến thuật ngẫu nhiên mới!', 'amber');
    });
-   // Auth Modal Events
+   // Collapsible Learned Modules Events
+   const toggleLearnedExpand = () => {
+    AppState.learnedListExpanded = !AppState.learnedListExpanded;
+    updateDashboardProgressUI();
+   };
+   document.getElementById('toggle-learned-collapse-top-btn')?.addEventListener('click', toggleLearnedExpand);
+   document.getElementById('learned-badges-list')?.addEventListener('click', e => {
+    if (e.target.closest('#toggle-learned-inline-btn')) {
+     toggleLearnedExpand();
+    }
+   });
+   document.getElementById('stat-account-card')?.addEventListener('click', openAuthModal);
+
+   // Auth & User Profile Modal Events
    const authModal = document.getElementById('auth-modal');
    document.getElementById('open-auth-modal-btn').addEventListener('click', openAuthModal);
    document.getElementById('close-auth-modal-btn').addEventListener('click', () => {
+    AppState.ForceAuthFormWhenLoggedIn = false;
     authModal.classList.add('hidden');
     authModal.classList.remove('flex');
    });
    document.getElementById('auth-tab-register').addEventListener('click', () => {
     setAuthFeedbackBanner('');
-    switchAuthModalMode('register');
+    switchAuthModalMode('register', AppState.ForceAuthFormWhenLoggedIn);
    });
    document.getElementById('auth-tab-login').addEventListener('click', () => {
     setAuthFeedbackBanner('');
-    switchAuthModalMode('login');
+    switchAuthModalMode('login', AppState.ForceAuthFormWhenLoggedIn);
+   });
+   document.getElementById('profile-switch-account-btn')?.addEventListener('click', () => {
+    setAuthFeedbackBanner('');
+    document.getElementById('auth-email-input').value = '';
+    document.getElementById('auth-pass-input').value = '';
+    switchAuthModalMode('login', true);
+   });
+   document.getElementById('auth-back-to-profile-btn')?.addEventListener('click', () => {
+    setAuthFeedbackBanner('');
+    AppState.ForceAuthFormWhenLoggedIn = false;
+    renderUserProfileModalView();
+   });
+   document.getElementById('profile-logout-btn')?.addEventListener('click', () => {
+    document.getElementById('auth-logout-btn')?.click();
    });
    document.getElementById('verify-email-real-btn').addEventListener('click', async () => {
     const email = document.getElementById('auth-email-input').value.trim();
@@ -9887,10 +10225,12 @@
     } else {
      const ok = await loginAndLoadUserProfile(email, name, pass, false);
      if (ok) {
+      AppState.ForceAuthFormWhenLoggedIn = false;
+      renderUserProfileModalView();
       setTimeout(() => {
        authModal.classList.add('hidden');
        authModal.classList.remove('flex');
-      }, 600);
+      }, 500);
      }
     }
    });
