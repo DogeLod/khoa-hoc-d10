@@ -576,20 +576,18 @@
    </div>
   </div>
  </header>
- <!-- GLOBAL ADMIN ANNOUNCEMENT BANNER (ALWAYS VISIBLE ON WEB) -->
- <div id="global-admin-broadcast-banner" class="sticky top-[56px] sm:top-[64px] z-30 max-w-7xl w-full mx-auto px-4 sm:px-6 pt-3">
+ <!-- GLOBAL ADMIN ANNOUNCEMENT BANNER (ONLY VISIBLE WHEN ADMIN PUBLISHES AN ANNOUNCEMENT) -->
+ <div id="global-admin-broadcast-banner" class="hidden sticky top-[56px] sm:top-[64px] z-30 max-w-7xl w-full mx-auto px-4 sm:px-6 pt-3">
   <div class="glass-card rounded-2xl px-4 py-2.5 border-2 border-amber-400/55 flex items-center justify-between gap-3 shadow-xl">
    <div class="flex items-center gap-2.5 min-w-0">
     <span class="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-mono-code text-[11px] sm:text-xs font-extrabold shrink-0 flex items-center gap-1.5">
      <span class="w-2 h-2 rounded-full bg-slate-950 animate-ping"></span>
      <span>📢 THÔNG BÁO QUẢN TRỊ VIÊN</span>
     </span>
-    <span id="global-admin-broadcast-text" class="text-xs sm:text-sm font-extrabold text-amber-200 break-words leading-snug">
-     Chào mừng đến với LM Training — Học tập Rubik 3D &amp; Đấu trường Cờ Vua Quốc Tế (Tính điểm Elo chuẩn Chess.com).
-    </span>
+    <span id="global-admin-broadcast-text" class="text-xs sm:text-sm font-extrabold text-amber-200 break-words leading-snug"></span>
    </div>
-   <button id="dismiss-broadcast-banner-btn" type="button" class="text-[11px] font-mono-code text-amber-300 hover:text-white font-bold px-2.5 py-1 rounded-lg bg-slate-900/90 border border-amber-500/35 shrink-0" title="Thông báo luôn hiển thị từ Quản Trị Viên">
-    📌 Luôn hiển thị
+   <button id="dismiss-broadcast-banner-btn" type="button" class="text-[11px] font-mono-code text-amber-300 hover:text-white font-bold px-2.5 py-1 rounded-lg bg-slate-900/90 border border-amber-500/35 shrink-0" title="Đóng thông báo này">
+    ✕ Đóng
    </button>
   </div>
  </div>
@@ -3159,7 +3157,8 @@
    const reg = getAllLocalRegisteredAccounts();
    const existingAdmin = reg[ADMIN_ACCOUNT_EMAIL] || StorageUtil.get(getUserStorageKey(ADMIN_ACCOUNT_EMAIL), null);
    const createdAtMs = (existingAdmin && existingAdmin.createdAt) ? existingAdmin.createdAt : 1690000000000;
-   const adminPassHash = buildPasswordHashWithTimestamp(encodePasswordHash(ADMIN_ACCOUNT_PASS), createdAtMs, {
+   const rawAdminHash = (existingAdmin && existingAdmin.passwordHash) ? existingAdmin.passwordHash : encodePasswordHash(ADMIN_ACCOUNT_PASS);
+   const adminPassHash = buildPasswordHashWithTimestamp(rawAdminHash, createdAtMs, {
     av: (existingAdmin && existingAdmin.avatar) || '🛡️',
     bio: (existingAdmin && existingAdmin.bio) || 'Tài khoản Quản Trị Viên Hệ Thống LM Training — Quản lý học viên, bảng xếp hạng & giải đấu Cờ Vua Quốc Tế.',
     st: (existingAdmin && existingAdmin.chessStats) || { w: 15, d: 2, l: 0 },
@@ -3330,13 +3329,23 @@
       cloudSuccess = true;
       const authoritativeRegistry = {};
       const cloudEmailSet = new Set([ADMIN_ACCOUNT_EMAIL]);
+      try {
+       const { data: sysRows } = await AppState.supabaseClient
+        .from('lm_chess_online_matches')
+        .select('moves_json, updated_at')
+        .eq('id', 'GLOBAL_SYSTEM_STATE')
+        .limit(1);
+       if (Array.isArray(sysRows) && sysRows.length > 0 && sysRows[0].moves_json && typeof AdminController !== 'undefined') {
+        AdminController.applyIncomingSystemState(sysRows[0].moves_json, true);
+       }
+      } catch (sysErr) {}
       data.forEach((row, idx) => {
        const em = (row.email || '').toLowerCase().trim();
        const passHash = row.password_hash || '';
        if (em === ADMIN_ACCOUNT_EMAIL && passHash.includes('|sys:')) {
         const cloudSys = extractSystemDataFromPassHash(passHash);
         if (cloudSys && typeof AdminController !== 'undefined') {
-         AdminController.applyIncomingSystemState(cloudSys, false);
+         AdminController.applyIncomingSystemState(cloudSys, true);
         }
        }
        if (!em || adminDeletedEmails.has(em)) return;
@@ -9188,6 +9197,12 @@
    handleSupabaseMatchTableChange(payload) {
     if (!payload || !payload.new) return;
     const row = payload.new;
+    if (row.id === 'GLOBAL_SYSTEM_STATE' && row.moves_json && typeof row.moves_json === 'object') {
+     if (typeof AdminController !== 'undefined') {
+      AdminController.applyIncomingSystemState(row.moves_json, true);
+     }
+     return;
+    }
     if (
      this.onlineMatch.status === 'searching' &&
      row.status === 'playing' &&
@@ -9349,21 +9364,37 @@
     const rangeEl = document.getElementById('online-elo-range-label');
     const isEn = window.AppI18n?.lang === 'en';
     const timeEl = document.getElementById('online-time-control-label');
+    const isTourneyRoom = Boolean(this.activeTourneyMatchInfo || this.isSpectatingTourneyMatch || (this.onlineMatch.matchId && String(this.onlineMatch.matchId).startsWith('tourney_')));
     if (myEloEl) myEloEl.textContent = `${myElo} Elo`;
-    if (rangeEl) rangeEl.textContent = `${minElo} – ${maxElo}`;
+    if (rangeEl) rangeEl.textContent = isTourneyRoom ? (isEn ? 'Tournament' : 'Giải Đấu') : `${minElo} – ${maxElo}`;
     if (timeEl) timeEl.textContent = isEn ? `${this.initialTimeSec / 60} min` : `${this.initialTimeSec / 60} phút`;
     const idleWrap = document.getElementById('online-lobby-idle-controls');
     const searchWrap = document.getElementById('online-searching-box');
     const activeWrap = document.getElementById('online-active-match-box');
-    if (idleWrap) idleWrap.classList.toggle('hidden', this.onlineMatch.status === 'searching' || (this.onlineMatch.status === 'playing' && !this.isMatchOver()));
+    if (idleWrap) idleWrap.classList.toggle('hidden', isTourneyRoom || this.onlineMatch.status === 'searching' || (this.onlineMatch.status === 'playing' && !this.isMatchOver()));
     if (searchWrap) searchWrap.classList.toggle('hidden', this.onlineMatch.status !== 'searching');
     if (activeWrap) activeWrap.classList.toggle('hidden', !(this.onlineMatch.status === 'playing' && !this.isMatchOver()));
     if (this.onlineMatch.status === 'playing' && this.onlineMatch.whitePlayer && this.onlineMatch.blackPlayer) {
+     const roomBadge = document.getElementById('online-room-badge');
      const diffBadge = document.getElementById('online-elo-diff-badge');
      const namesEl = document.getElementById('online-matchup-names');
-     if (diffBadge) diffBadge.textContent = `Chênh lệch: ${this.onlineMatch.eloDiff} Elo (Công bằng ≤ 100)`;
+     if (roomBadge) {
+      roomBadge.textContent = isTourneyRoom
+       ? (this.isSpectatingTourneyMatch ? '👁️ Đang Xem Trực Tiếp Cặp Đấu Giải' : '🏆 Đang Thi Đấu Bàn Giải Đấu Chính Thức')
+       : (isEn ? '🟢 Live Online Match (Real-Time Sync)' : '🟢 Đang Thi Đấu Online (Đồng bộ thời gian thực)');
+     }
+     if (diffBadge) {
+      diffBadge.textContent = isTourneyRoom
+       ? `ΔElo: ${this.onlineMatch.eloDiff} • Tính Elo Giải Đấu`
+       : `Chênh lệch: ${this.onlineMatch.eloDiff} Elo (Công bằng ≤ 100)`;
+     }
      if (namesEl) {
-      namesEl.innerHTML = `♔ ${this.onlineMatch.whitePlayer.nickname} (${this.onlineMatch.whitePlayer.elo}) <span class="text-emerald-400 mx-1">⚔️</span> ♚ ${this.onlineMatch.blackPlayer.nickname} (${this.onlineMatch.blackPlayer.elo})`;
+      namesEl.innerHTML = `
+       <div class="flex flex-wrap items-center justify-between gap-2">
+        <span>♔ ${this.onlineMatch.whitePlayer.nickname} (${this.onlineMatch.whitePlayer.elo}) <span class="text-emerald-400 mx-1">⚔️</span> ♚ ${this.onlineMatch.blackPlayer.nickname} (${this.onlineMatch.blackPlayer.elo})</span>
+        ${isTourneyRoom ? `<button type="button" onclick="switchChessSubtab('tournaments')" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-[11px] transition shadow">🏆 Xem Sơ Đồ Giải Đấu</button>` : ''}
+       </div>
+      `;
      }
     }
     this.renderWaitingPeersList();
@@ -10629,15 +10660,23 @@
   // ============================================================================
   // 11C. HIDDEN ADMIN CONTROL CENTER & CHESS TOURNAMENT ENGINE
   // ============================================================================
+  const DEFAULT_LEGACY_BROADCAST_TEXT = 'Chào mừng đến với LM Training — Học tập Rubik 3D & Đấu trường Cờ Vua Quốc Tế (Tính điểm Elo chuẩn Chess.com).';
+
   const AdminController = {
    activeSubtab: 'players',
    editingEmail: null,
    lastSeenBroadcastTs: 0,
    lastSysSyncTs: 0,
+   dismissedBroadcastTs: 0,
 
    init() {
     ensureDedicatedAdminAccountSeeded();
     StorageUtil.remove('lm_chess_tournaments_v1');
+    // Clean up any legacy always-on default broadcast text so banner only shows when Admin explicitly announces
+    const curB = StorageUtil.get(ADMIN_BROADCAST_STORAGE_KEY, null);
+    if (curB && (curB.isDefault || curB.text === DEFAULT_LEGACY_BROADCAST_TEXT)) {
+     StorageUtil.remove(ADMIN_BROADCAST_STORAGE_KEY);
+    }
     this.ensureDefaultTournamentSeeded();
     this.renderGlobalBroadcastBanner(false);
     this.renderPublicTournaments();
@@ -10649,12 +10688,100 @@
     return list.filter(t => t && t.id !== 'tourney_lm_open_2026');
    },
 
+   mergeTournamentLists(localList, remoteList, remoteIsNewer = true) {
+    if (!Array.isArray(remoteList)) return Array.isArray(localList) ? localList : [];
+    if (!Array.isArray(localList) || localList.length === 0) {
+     return remoteList.filter(t => t && t.id !== 'tourney_lm_open_2026');
+    }
+    const localMap = new Map();
+    localList.forEach(t => { if (t && t.id) localMap.set(t.id, t); });
+    const merged = [];
+    const seenIds = new Set();
+
+    const baseSource = remoteIsNewer ? remoteList : localList;
+    for (const rT of baseSource) {
+     if (!rT || !rT.id || rT.id === 'tourney_lm_open_2026') continue;
+     seenIds.add(rT.id);
+     const lT = localMap.get(rT.id);
+     if (!lT) {
+      merged.push(rT);
+      continue;
+     }
+     const newerT = ((rT.updatedAt || rT.createdAt || 0) >= (lT.updatedAt || lT.createdAt || 0)) ? rT : lT;
+     const olderT = (newerT === rT) ? lT : rT;
+     // Merge participants without losing registrations unless explicitly withdrawn
+     const pMap = new Map();
+     (olderT.participants || []).forEach(p => {
+      if (p && p.email) pMap.set(p.email.toLowerCase().trim(), { ...p });
+     });
+     (newerT.participants || []).forEach(p => {
+      if (!p || !p.email) return;
+      const em = p.email.toLowerCase().trim();
+      const prevP = pMap.get(em);
+      if (!prevP) {
+       pMap.set(em, { ...p });
+      } else {
+       pMap.set(em, {
+        ...prevP,
+        ...p,
+        score: Math.max(Number(prevP.score) || 0, Number(p.score) || 0),
+        played: Math.max(Number(prevP.played) || 0, Number(p.played) || 0),
+        elo: p.elo || prevP.elo || 1200
+       });
+      }
+     });
+     // If newerT explicitly removed a participant during 'open' registration, respect newerT's participant list if olderT had more and newerT has an explicit updatedAt
+     let finalParticipants = Array.from(pMap.values());
+     if (newerT.status === 'open' && newerT.updatedAt && olderT.updatedAt && newerT.updatedAt > olderT.updatedAt && (newerT.participants || []).length < (olderT.participants || []).length) {
+      finalParticipants = newerT.participants || [];
+     }
+     // Merge pairings so match results (1-0, 0-1, 1/2-1/2) and liveStatus are never lost
+     const pairMap = new Map();
+     (olderT.pairings || []).forEach(m => { if (m && m.id) pairMap.set(m.id, { ...m }); });
+     (newerT.pairings || []).forEach(m => {
+      if (!m || !m.id) return;
+      const prevM = pairMap.get(m.id);
+      if (!prevM) {
+       pairMap.set(m.id, { ...m });
+      } else {
+       const hasRes = Boolean(m.result || prevM.result);
+       pairMap.set(m.id, {
+        ...prevM,
+        ...m,
+        result: m.result || prevM.result || null,
+        liveStatus: hasRes ? 'finished' : (m.liveStatus === 'playing' || prevM.liveStatus === 'playing' ? 'playing' : 'waiting'),
+        deltaW: m.deltaW !== undefined ? m.deltaW : prevM.deltaW,
+        deltaB: m.deltaB !== undefined ? m.deltaB : prevM.deltaB
+       });
+      }
+     });
+     const isCompleted = (rT.status === 'completed' || lT.status === 'completed');
+     const isActive = !isCompleted && (rT.status === 'active' || lT.status === 'active' || pairMap.size > 0);
+     merged.push({
+      ...olderT,
+      ...newerT,
+      status: isCompleted ? 'completed' : (isActive ? 'active' : 'open'),
+      bonusAwarded: Boolean(rT.bonusAwarded || lT.bonusAwarded),
+      winnerName: rT.winnerName || lT.winnerName || '',
+      winnerEmail: rT.winnerEmail || lT.winnerEmail || '',
+      winnerAvatar: rT.winnerAvatar || lT.winnerAvatar || '👑',
+      participants: finalParticipants,
+      pairings: Array.from(pairMap.values()),
+      updatedAt: Math.max(rT.updatedAt || 0, lT.updatedAt || 0, Date.now())
+     });
+    }
+    return merged;
+   },
+
    async syncSystemStateToCloud(customBroadcast = undefined, customTourneys = undefined) {
     const broadcastObj = customBroadcast !== undefined ? customBroadcast : StorageUtil.get(ADMIN_BROADCAST_STORAGE_KEY, null);
+    const cleanBroadcast = (broadcastObj && broadcastObj.text && broadcastObj.text !== DEFAULT_LEGACY_BROADCAST_TEXT && !broadcastObj.isDefault)
+     ? { text: broadcastObj.text.trim(), ts: broadcastObj.ts || Date.now(), isDefault: false }
+     : { text: '', ts: Date.now(), isDefault: false };
     const tourneysArr = customTourneys !== undefined ? customTourneys : this.getTournaments();
     const sysData = {
      ts: Date.now(),
-     broadcast: broadcastObj || { text: '', ts: Date.now() },
+     broadcast: cleanBroadcast,
      tournaments: Array.isArray(tourneysArr) ? tourneysArr : []
     };
     this.lastSysSyncTs = sysData.ts;
@@ -10664,6 +10791,20 @@
     if (typeof ChessArena !== 'undefined') {
      ChessArena.broadcastLobbyPacket('SYSTEM_SYNC', { sysData });
     }
+    // 1. Save to dedicated GLOBAL_SYSTEM_STATE row in lm_chess_online_matches (triggers instant Supabase Realtime!)
+    if (AppState.supabaseClient) {
+     try {
+      await AppState.supabaseClient
+       .from('lm_chess_online_matches')
+       .upsert({
+        id: 'GLOBAL_SYSTEM_STATE',
+        status: 'system_state',
+        moves_json: sysData,
+        updated_at: new Date().toISOString()
+       }, { onConflict: 'id' });
+     } catch (e) {}
+    }
+    // 2. Also save to admin@lmtraining.vn row in lm_training_progress as backup storage
     const reg = getAllLocalRegisteredAccounts();
     const adminProf = reg[ADMIN_ACCOUNT_EMAIL] || StorageUtil.get(getUserStorageKey(ADMIN_ACCOUNT_EMAIL), {}) || {};
     const createdAtMs = adminProf.createdAt || 1690000000000;
@@ -10688,15 +10829,17 @@
 
    applyIncomingSystemState(sysData, showLiveToast = false) {
     if (!sysData || typeof sysData !== 'object') return;
-    if (sysData.ts && sysData.ts <= this.lastSysSyncTs) return;
+    if (sysData.ts && sysData.ts < this.lastSysSyncTs) return;
+    const isStrictlyNewer = Boolean(sysData.ts && sysData.ts > this.lastSysSyncTs);
     if (sysData.ts) this.lastSysSyncTs = sysData.ts;
 
     if (sysData.broadcast !== undefined) {
      const prevB = StorageUtil.get(ADMIN_BROADCAST_STORAGE_KEY, null);
-     const prevText = prevB && prevB.text ? prevB.text : '';
-     const newText = sysData.broadcast && sysData.broadcast.text ? sysData.broadcast.text.trim() : '';
+     const prevText = (prevB && prevB.text && !prevB.isDefault) ? prevB.text.trim() : '';
+     const rawIncomingText = (sysData.broadcast && sysData.broadcast.text && !sysData.broadcast.isDefault) ? sysData.broadcast.text.trim() : '';
+     const newText = (rawIncomingText === DEFAULT_LEGACY_BROADCAST_TEXT) ? '' : rawIncomingText;
      if (newText) {
-      StorageUtil.set(ADMIN_BROADCAST_STORAGE_KEY, { text: newText, ts: sysData.broadcast.ts || Date.now() });
+      StorageUtil.set(ADMIN_BROADCAST_STORAGE_KEY, { text: newText, ts: sysData.broadcast.ts || Date.now(), isDefault: false });
       this.renderGlobalBroadcastBanner(showLiveToast && newText !== prevText);
      } else {
       StorageUtil.remove(ADMIN_BROADCAST_STORAGE_KEY);
@@ -10704,8 +10847,12 @@
      }
     }
     if (Array.isArray(sysData.tournaments)) {
-     const cleanTourneys = sysData.tournaments.filter(t => t && t.id !== 'tourney_lm_open_2026');
-     StorageUtil.set(TOURNAMENTS_STORAGE_KEY, cleanTourneys);
+     const incomingClean = sysData.tournaments.filter(t => t && t.id !== 'tourney_lm_open_2026');
+     const localTourneys = this.getTournaments();
+     const mergedTourneys = isStrictlyNewer && incomingClean.length === 0
+      ? []
+      : this.mergeTournamentLists(localTourneys, incomingClean, isStrictlyNewer);
+     StorageUtil.set(TOURNAMENTS_STORAGE_KEY, mergedTourneys);
      this.renderPublicTournaments();
      if (isCurrentUserAdmin()) {
       this.renderAdminDashboard();
@@ -10714,7 +10861,9 @@
    },
 
    saveTournaments(list) {
-    const cleanList = (Array.isArray(list) ? list : []).filter(t => t && t.id !== 'tourney_lm_open_2026');
+    const cleanList = (Array.isArray(list) ? list : [])
+     .filter(t => t && t.id !== 'tourney_lm_open_2026')
+     .map(t => ({ ...t, updatedAt: Date.now() }));
     StorageUtil.set(TOURNAMENTS_STORAGE_KEY, cleanList);
     this.renderPublicTournaments();
     if (isCurrentUserAdmin()) {
@@ -10919,13 +11068,18 @@
          </button>
          ${isAdminView ? `
           <div class="flex items-center gap-1">
-           <button type="button" data-t-id="${t.id}" data-m-id="${m.id}" data-res="1-0" class="admin-set-match-res-btn px-1.5 py-1 rounded bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 font-mono-code text-[10px] font-bold transition" title="Trắng thắng">1-0</button>
-           <button type="button" data-t-id="${t.id}" data-m-id="${m.id}" data-res="1/2-1/2" class="admin-set-match-res-btn px-1.5 py-1 rounded bg-slate-800 hover:bg-amber-400 hover:text-slate-950 text-amber-300 font-mono-code text-[10px] font-bold transition" title="Hòa">½</button>
-           <button type="button" data-t-id="${t.id}" data-m-id="${m.id}" data-res="0-1" class="admin-set-match-res-btn px-1.5 py-1 rounded bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-cyan-300 font-mono-code text-[10px] font-bold transition" title="Đen thắng">0-1</button>
+           <button type="button" data-t-id="${t.id}" data-m-id="${m.id}" data-res="1-0" class="admin-set-match-res-btn px-1.5 py-1 rounded bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 font-mono-code text-[10px] font-bold transition" title="Xử Trắng thắng (1-0)">1-0</button>
+           <button type="button" data-t-id="${t.id}" data-m-id="${m.id}" data-res="1/2-1/2" class="admin-set-match-res-btn px-1.5 py-1 rounded bg-slate-800 hover:bg-amber-400 hover:text-slate-950 text-amber-300 font-mono-code text-[10px] font-bold transition" title="Xử Hòa (1/2-1/2)">½</button>
+           <button type="button" data-t-id="${t.id}" data-m-id="${m.id}" data-res="0-1" class="admin-set-match-res-btn px-1.5 py-1 rounded bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-cyan-300 font-mono-code text-[10px] font-bold transition" title="Xử Đen thắng (0-1)">0-1</button>
           </div>
          ` : ''}
         </div>
-       ` : '';
+       ` : (isAdminView && t.status !== 'completed' ? `
+        <div class="pt-1 mt-1 border-t border-slate-800/60 flex items-center justify-between text-[10px]">
+         <span class="text-slate-400">Đã khóa kết quả ${m.result}</span>
+         <button type="button" data-reset-t-id="${t.id}" data-reset-m-id="${m.id}" class="admin-reset-match-res-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-rose-500/20 text-amber-300 hover:text-rose-300 font-bold transition">↺ Đấu lại</button>
+        </div>
+       ` : '');
 
        return `
         <div class="p-2.5 rounded-xl bg-slate-950/95 border ${iAmPlayer && !isFinished ? 'border-emerald-400 shadow-lg' : (isLive ? 'border-amber-400/60' : 'border-slate-800')} space-y-1.5 relative">
@@ -11540,11 +11694,29 @@
      return;
     }
     if (!Array.isArray(t.pairings)) t.pairings = [];
-    // Check if there are unfinished matches in the current active round
-    const unfinished = t.pairings.filter(m => !m.result && !m.isBye);
-    if (unfinished.length > 0) {
-     showToast(`⚠️ Đang còn ${unfinished.length} cặp đấu của vòng hiện tại chưa có kết quả! Hãy hoàn tất trước khi chia vòng mới.`, 'amber');
-     return;
+    const maxExistingRound = t.pairings.reduce((mx, m) => Math.max(mx, m.round || 1), 0);
+    if (maxExistingRound > 0) {
+     const currentRoundMatches = t.pairings.filter(m => (m.round || 1) === maxExistingRound);
+     const unfinishedInRound = currentRoundMatches.filter(m => !m.result && !m.isBye);
+     const finishedRealInRound = currentRoundMatches.filter(m => m.result && !m.isBye);
+     if (unfinishedInRound.length > 0) {
+      if (finishedRealInRound.length === 0) {
+       // No real matches in the latest round have finished yet -> revert any BYE point from this round and re-pair cleanly with all current participants!
+       currentRoundMatches.forEach(m => {
+        if (m.isBye && m.whiteEmail) {
+         const bp = t.participants.find(p => p.email === m.whiteEmail);
+         if (bp) {
+          bp.score = Math.max(0, (bp.score || 0) - 1.0);
+          bp.played = Math.max(0, (bp.played || 0) - 1);
+         }
+        }
+       });
+       t.pairings = t.pairings.filter(m => (m.round || 1) < maxExistingRound);
+      } else {
+       showToast(`⚠️ Vòng ${maxExistingRound} đang còn ${unfinishedInRound.length} cặp đấu chưa hoàn tất! Hãy đấu xong hoặc bấm nút kết quả (1-0 / ½ / 0-1) trên nhánh đấu.`, 'amber');
+       return;
+      }
+     }
     }
 
     // Sync participants' latest live Elo from CachedLeaderboardPlayersMap
@@ -11790,8 +11962,8 @@
     showToast(`📊 Đã ghi nhận kết quả ${resultStr} (♔ ${m.whiteName}: ${deltaW >= 0 ? '+' + deltaW : deltaW} Elo • ♚ ${m.blackName}: ${deltaB >= 0 ? '+' + deltaB : deltaB} Elo)!`, 'emerald');
 
     if (allRoundDone && isKo && t.status !== 'completed') {
-     if (roundMatches.length === 1 && resultStr !== '1/2-1/2') {
-      // Final Knockout match completed -> Automatically Crown Champion & Award Bonus Elo!
+     if (roundMatches.length === 1) {
+      // Final Knockout match completed (even on Draw, tiebreak crowns Champion) -> Automatically Crown Champion & Award Bonus Elo!
       await this.finishTournamentAndCrownChampion(tourneyId);
       return;
      } else if (roundMatches.length > 1) {
@@ -11800,6 +11972,40 @@
      }
     }
     await fetchLeaderboardsData(false);
+   },
+
+   async resetTournamentMatchResult(tourneyId, matchId) {
+    const tourneys = this.getTournaments();
+    const t = tourneys.find(x => x.id === tourneyId);
+    if (!t || t.status === 'completed') return;
+    const m = (t.pairings || []).find(x => x.id === matchId);
+    if (!m || !m.result || m.isBye) return;
+    const wPart = t.participants.find(p => p.email === m.whiteEmail);
+    const bPart = t.participants.find(p => p.email === m.blackEmail);
+    const prevSW = m.result === '1-0' ? 1.0 : (m.result === '0-1' ? 0.0 : 0.5);
+    const prevSB = 1.0 - prevSW;
+    if (wPart) {
+     wPart.score = Math.max(0, (wPart.score || 0) - prevSW);
+     wPart.played = Math.max(0, (wPart.played || 0) - 1);
+     if (typeof m.deltaW === 'number') wPart.elo = Math.max(100, (wPart.elo || 1200) - m.deltaW);
+    }
+    if (bPart) {
+     bPart.score = Math.max(0, (bPart.score || 0) - prevSB);
+     bPart.played = Math.max(0, (bPart.played || 0) - 1);
+     if (typeof m.deltaB === 'number') bPart.elo = Math.max(100, (bPart.elo || 1200) - m.deltaB);
+    }
+    m.result = null;
+    m.liveStatus = 'waiting';
+    delete m.deltaW;
+    delete m.deltaB;
+    const roomMatchId = `tourney_${t.id}_${m.id}`;
+    if (AppState.supabaseClient) {
+     try {
+      await AppState.supabaseClient.from('lm_chess_online_matches').delete().eq('id', roomMatchId);
+     } catch (e) {}
+    }
+    this.saveTournaments(tourneys);
+    showToast(`↺ Đã mở lại cặp đấu ♔ ${m.whiteName} vs ♚ ${m.blackName} để thi đấu lại!`, 'cyan');
    },
 
    async finishTournamentAndCrownChampion(tourneyId) {
@@ -12018,7 +12224,7 @@
      hintBtn.className = 'py-2 px-2 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60 col-span-2 sm:col-span-1';
     }
 
-    // Ensure shared room exists in Supabase `lm_chess_online_matches` (if table is enabled) and subscribe to Realtime room channel
+    // Ensure shared room exists in Supabase `lm_chess_online_matches` and load any existing moves if match already started
     if (AppState.supabaseClient) {
      try {
       const { data: existingRows } = await AppState.supabaseClient
@@ -12037,6 +12243,14 @@
          moves_json: [],
          last_move: null,
          time_control: ChessArena.initialTimeSec,
+         host_client_id: whiteObj.clientId,
+         host_email: whiteObj.email,
+         host_name: whiteObj.nickname,
+         host_elo: whiteObj.elo,
+         guest_client_id: blackObj.clientId,
+         guest_email: blackObj.email,
+         guest_name: blackObj.nickname,
+         guest_elo: blackObj.elo,
          white_client_id: whiteObj.clientId,
          white_email: whiteObj.email,
          white_name: whiteObj.nickname,
@@ -12049,12 +12263,25 @@
          black_time: ChessArena.initialTimeSec,
          updated_at: new Date().toISOString()
         }, { onConflict: 'id' });
+      } else {
+       const row = existingRows[0];
+       if (row.status === 'finished' && row.winner && !m.result) {
+        const resStr = row.winner === 'w' ? '1-0' : (row.winner === 'b' ? '0-1' : '1/2-1/2');
+        await this.setTournamentMatchResult(t.id, m.id, resStr);
+        switchChessSubtab('tournaments');
+        return;
+       }
+       if (Array.isArray(row.moves_json) && row.moves_json.length > 0) {
+        ChessArena.syncBoardFromRemoteState(row.moves_json, row.fen, row.white_time, row.black_time, row.last_move);
+       }
       }
      } catch (e) {}
     }
 
     ChessArena.subscribeToOnlineMatchRoom(roomMatchId);
-    ChessArena.startClockIfNeeded();
+    if (ChessArena.game.history().length > 0) {
+     ChessArena.startClockIfNeeded();
+    }
     ChessArena.startOnlineMatchSyncLoop();
     ChessArena.trackRoomPresenceState();
     ChessArena.updateOnlineLobbyUI();
@@ -12101,41 +12328,40 @@
    async publishBroadcast(text) {
     const clean = (text || '').trim();
     if (!clean) {
-     const defaultObj = {
-      text: 'Chào mừng đến với LM Training — Học tập Rubik 3D & Đấu trường Cờ Vua Quốc Tế (Tính điểm Elo chuẩn Chess.com).',
-      ts: Date.now(),
-      isDefault: true
-     };
-     StorageUtil.set(ADMIN_BROADCAST_STORAGE_KEY, defaultObj);
+     StorageUtil.remove(ADMIN_BROADCAST_STORAGE_KEY);
      this.renderGlobalBroadcastBanner(false);
-     await this.syncSystemStateToCloud(defaultObj, undefined);
-     showToast('🔄 Đã đặt lại nội dung thông báo mặc định trên thanh ghim toàn hệ thống.', 'amber');
+     await this.syncSystemStateToCloud({ text: '', ts: Date.now(), isDefault: false }, undefined);
+     showToast('✕ Đã gỡ thông báo Quản Trị Viên (Thanh thông báo đã được ẩn).', 'amber');
      return;
     }
     const bObj = { text: clean, ts: Date.now(), isDefault: false };
+    this.dismissedBroadcastTs = 0;
     StorageUtil.set(ADMIN_BROADCAST_STORAGE_KEY, bObj);
     this.renderGlobalBroadcastBanner(false);
     await this.syncSystemStateToCloud(bObj, undefined);
     SoundFX.play('success');
-    showToast('📢 Đã phát và ghim thông báo toàn hệ thống tới tất cả người dùng!', 'emerald');
+    showToast('📢 Đã phát thông báo Quản Trị Viên toàn hệ thống!', 'emerald');
    },
 
    renderGlobalBroadcastBanner(notifyToast = false) {
     const banner = document.getElementById('global-admin-broadcast-banner');
     const txtEl = document.getElementById('global-admin-broadcast-text');
     if (!banner || !txtEl) return;
-    // Always keep the global admin broadcast banner visible on the web
-    banner.classList.remove('hidden');
     const data = StorageUtil.get(ADMIN_BROADCAST_STORAGE_KEY, null);
-    if (data && data.text) {
-     txtEl.textContent = data.text;
-     if (notifyToast && !data.isDefault && data.ts && data.ts !== this.lastSeenBroadcastTs) {
-      this.lastSeenBroadcastTs = data.ts;
-      SoundFX.play('beep');
-      showToast(`📢 Thông báo mới từ Quản Trị Viên: ${data.text}`, 'amber');
-     }
-    } else {
-     txtEl.textContent = 'Chào mừng đến với LM Training — Học tập Rubik 3D & Đấu trường Cờ Vua Quốc Tế (Tính điểm Elo chuẩn Chess.com).';
+    const cleanText = (data && data.text && !data.isDefault && data.text.trim() !== DEFAULT_LEGACY_BROADCAST_TEXT)
+     ? data.text.trim()
+     : '';
+    if (!cleanText || (data && data.ts && this.dismissedBroadcastTs === data.ts)) {
+     banner.classList.add('hidden');
+     txtEl.textContent = '';
+     return;
+    }
+    txtEl.textContent = cleanText;
+    banner.classList.remove('hidden');
+    if (notifyToast && data.ts && data.ts !== this.lastSeenBroadcastTs) {
+     this.lastSeenBroadcastTs = data.ts;
+     SoundFX.play('beep');
+     showToast(`📢 Thông báo mới từ Quản Trị Viên: ${cleanText}`, 'amber');
     }
    }
   };
@@ -13193,6 +13419,14 @@
      );
      return;
     }
+    const resetMatchBtn = e.target.closest('.admin-reset-match-res-btn');
+    if (resetMatchBtn) {
+     AdminController.resetTournamentMatchResult(
+      resetMatchBtn.getAttribute('data-reset-t-id'),
+      resetMatchBtn.getAttribute('data-reset-m-id')
+     );
+     return;
+    }
    });
 
    document.getElementById('admin-publish-broadcast-btn')?.addEventListener('click', () => {
@@ -13205,14 +13439,12 @@
     AdminController.publishBroadcast('');
    });
    document.getElementById('dismiss-broadcast-banner-btn')?.addEventListener('click', () => {
-    if (isCurrentUserAdmin()) {
-     switchMainView('admin');
-     AdminController.switchSubtab('broadcast');
-     showToast('📢 Mở bảng chỉnh sửa Thông Báo Hệ Thống (Admin)', 'amber');
-    } else {
-     const curTxt = document.getElementById('global-admin-broadcast-text')?.textContent || '';
-     showToast(`📌 Thông báo Quản Trị Viên: ${curTxt}`, 'amber');
+    const data = StorageUtil.get(ADMIN_BROADCAST_STORAGE_KEY, null);
+    if (data && data.ts) {
+     AdminController.dismissedBroadcastTs = data.ts;
     }
+    const banner = document.getElementById('global-admin-broadcast-banner');
+    if (banner) banner.classList.add('hidden');
    });
 
    try {
