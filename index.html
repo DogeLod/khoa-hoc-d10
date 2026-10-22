@@ -522,9 +522,24 @@
    </nav>
    <!-- Right Actions: Language Switcher (VI/EN), Sound & Email Auth -->
    <div class="flex items-center gap-2">
-    <div class="inline-flex items-center rounded-xl bg-slate-900/90 border border-slate-800 p-1">
-     <button id="lang-vi-btn" type="button" data-lang-switch="vi" class="px-2.5 py-1.5 rounded-lg text-xs font-mono-code font-extrabold bg-cyan-500 text-slate-950 transition">VI</button>
-     <button id="lang-en-btn" type="button" data-lang-switch="en" class="px-2.5 py-1.5 rounded-lg text-xs font-mono-code font-bold text-slate-300 hover:text-white transition">EN</button>
+    <div class="inline-flex items-center rounded-xl bg-slate-900/90 border border-slate-800 p-1 gap-1">
+     <button id="lang-vi-btn" type="button" data-lang-switch="vi" class="px-2.5 py-1.5 rounded-lg text-xs font-mono-code font-extrabold bg-cyan-500 text-slate-950 transition inline-flex items-center gap-1.5" title="Tiếng Việt (Vietnamese)">
+      <svg viewBox="0 0 24 16" class="w-4 h-3 rounded-[2px] shadow-sm shrink-0 pointer-events-none" aria-hidden="true">
+       <rect width="24" height="16" fill="#da251d"/>
+       <polygon points="12,2.8 13.25,6.65 17.3,6.65 14.02,9.03 15.27,12.88 12,10.5 8.73,12.88 9.98,9.03 6.7,6.65 10.75,6.65" fill="#ffff00"/>
+      </svg>
+      <span>VI</span>
+     </button>
+     <button id="lang-en-btn" type="button" data-lang-switch="en" class="px-2.5 py-1.5 rounded-lg text-xs font-mono-code font-bold text-slate-300 hover:text-white transition inline-flex items-center gap-1.5" title="English">
+      <svg viewBox="0 0 24 16" class="w-4 h-3 rounded-[2px] shadow-sm shrink-0 pointer-events-none" aria-hidden="true">
+       <rect width="24" height="16" fill="#012169"/>
+       <path d="M0,0 L24,16 M24,0 L0,16" stroke="#ffffff" stroke-width="3.2"/>
+       <path d="M0,0 L24,16 M24,0 L0,16" stroke="#c8102e" stroke-width="1.8"/>
+       <path d="M12,0 V16 M0,8 H24" stroke="#ffffff" stroke-width="5.2"/>
+       <path d="M12,0 V16 M0,8 H24" stroke="#c8102e" stroke-width="3.2"/>
+      </svg>
+      <span>EN</span>
+     </button>
     </div>
     <button id="sound-toggle-btn" title="Bật/Tắt Âm Thanh" class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-200 hover:text-white hover:border-slate-700 transition">
      <span id="sound-icon" class="text-base">🔊</span>
@@ -545,9 +560,9 @@
      <!-- Left Column: Intro & CTA -->
      <div class="lg:col-span-7 space-y-6">
       <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-400/30 text-cyan-300 text-sm font-bold">
-       <span>⚡ Nền Tảng Huấn Luyện & Thi Đấu Trí Tuệ</span>
+       <span id="hero-kicker-left">⚡ Nền Tảng Huấn Luyện & Thi Đấu Trí Tuệ</span>
        <span class="text-slate-500">|</span>
-       <span class="font-mono-code">Rubik 3D & Cờ Vua</span>
+       <span id="hero-kicker-right" class="font-mono-code">Rubik 3D & Cờ Vua</span>
       </div>
       <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.18] text-glow">
        Làm Chủ Tốc Độ & Chiến Thuật Cùng <span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400">LM Training</span>
@@ -593,7 +608,7 @@
       <div class="glass-card rounded-2xl p-5 border border-slate-700/80 relative">
        <div class="flex items-center justify-between mb-3.5">
         <span class="text-sm font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
-         <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span> Mô Hình Trực Quan
+         <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span> <span id="hero-visual-model-label">Mô Hình Trực Quan</span>
         </span>
         <div class="flex gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800">
          <button id="hero-preview-rubik-btn" class="px-3 py-1.5 rounded-lg text-sm font-bold bg-cyan-500 text-slate-950 transition">Rubik 3D</button>
@@ -620,6 +635,7 @@
          </div>
          <div class="flex flex-wrap gap-1.5">
           <button id="hero-cube-scramble" class="px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500 hover:text-slate-950 text-xs sm:text-sm font-bold transition">🔀 Trộn</button>
+          <button id="hero-cube-ai-solve" type="button" class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs sm:text-sm font-extrabold transition shadow">🤖 Giải Ít Bước Nhất</button>
           <button id="hero-cube-reset" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs sm:text-sm font-bold transition">↺ Reset</button>
          </div>
         </div>
@@ -775,7 +791,7 @@
        </div>
        <div class="flex flex-wrap gap-1">
         <button id="rubik-scramble-btn" class="px-2.5 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs transition shadow">🔀 Trộn</button>
-
+        <button id="rubik-ai-solve-btn" type="button" title="Tích hợp AI giải khối Rubik với số bước ít nhất" class="px-2.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs transition shadow">🤖 Giải Ít Bước Nhất</button>
         <button id="rubik-reset-btn" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition">↺ Reset</button>
         <button id="rubik-expand-inline-btn" type="button" title="Mở rộng mô hình Rubik toàn màn hình" class="px-2.5 py-1.5 rounded-xl bg-amber-500/20 border border-amber-400/50 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-extrabold text-xs transition">⛶ Phóng To</button>
        </div>
@@ -921,8 +937,8 @@
          </span>
         </div>
         <div class="flex items-center gap-2">
-         <span class="text-[10px] font-mono-code text-slate-400">0.5x</span>
-         <input id="rubik-speed-slider" type="range" min="0.5" max="4.0" step="0.1" value="1.0" class="rubik-speed-range flex-1 w-full" />
+         <span class="text-[10px] font-mono-code text-slate-400">0.1x</span>
+         <input id="rubik-speed-slider" type="range" min="0.1" max="4.0" step="0.1" value="1.0" class="rubik-speed-range flex-1 w-full" />
          <span class="text-[10px] font-mono-code text-slate-400">4.0x</span>
         </div>
        </div>
@@ -1246,14 +1262,13 @@
         </div>
        </div>
       </div>
-      <!-- Action Buttons (Includes 🏳️ Đầu Hàng) -->
-      <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2">
+      <!-- Action Buttons (Includes 🏳️ Đầu Hàng, Removed Undo Button) -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5 sm:gap-2">
        <button id="chess-new-btn" class="py-2 px-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs sm:text-sm transition">🔄 Ván Mới</button>
-       <button id="chess-undo-btn" class="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs sm:text-sm transition">↩ Đi Lại</button>
        <button id="chess-draw-btn" class="py-2 px-2 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 font-bold text-xs sm:text-sm transition">🤝 Xin Hòa</button>
        <button id="chess-resign-btn" type="button" class="py-2 px-2 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 hover:bg-rose-500 hover:text-slate-950 font-extrabold text-xs sm:text-sm transition">🏳️ Đầu Hàng</button>
        <button id="chess-flip-btn" class="py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs sm:text-sm transition">🔃 Xoay Bàn</button>
-       <button id="chess-hint-btn" class="py-2 px-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs sm:text-sm transition">💡 Gợi Ý</button>
+       <button id="chess-hint-btn" class="py-2 px-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs sm:text-sm transition col-span-2 sm:col-span-1">💡 Gợi Ý</button>
       </div>
       <!-- Random Puzzle / Opening Coach Banner -->
       <div id="chess-coach-box" class="p-3.5 rounded-xl bg-slate-900/95 border border-emerald-500/30 text-xs sm:text-sm space-y-2">
@@ -1368,18 +1383,18 @@
        <span>Không Gian Mô Hình Rubik 3D Mở Rộng</span>
        <span id="exp-cube-move-badge" class="px-3 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-mono-code text-xs font-bold">Sẵn sàng</span>
       </div>
-      <p class="text-xs text-slate-300">
+      <p id="exp-rubik-top-help" class="text-xs text-slate-300">
        💻 Máy tính: Bấm phím <strong class="text-cyan-300">R, U, F, L, D, B, M, E, S, X, Y, Z</strong> để xoay • Bấm 2 phím cùng lúc <strong class="text-amber-300">R + '</strong> để xoay ngược <strong class="text-amber-300">R'</strong> (hoặc <strong class="text-amber-300">R + 2</strong> để xoay <strong class="text-amber-300">R2</strong>) • 📱 Điện thoại: Chạm các hộp chữ bên dưới
       </p>
      </div>
     </div>
     <div class="flex flex-wrap items-center gap-2">
      <button id="exp-rubik-scramble-btn" type="button" class="px-3.5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs sm:text-sm transition shadow">🔀 Trộn (Scramble)</button>
-
+     <button id="exp-rubik-ai-solve-btn" type="button" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs sm:text-sm transition shadow">🤖 Giải Ít Bước Nhất</button>
      <button id="exp-rubik-reset-btn" type="button" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs sm:text-sm border border-slate-700 transition">↺ Reset</button>
      <button id="exp-rubik-reset-view-btn" type="button" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs sm:text-sm transition shadow">🎯 Góc Nhìn Chuẩn</button>
      <button id="rubik-expand-close-btn" type="button" class="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg transition flex items-center gap-1.5">
-      <span>✕</span> <span>Thu Nhỏ Về Giao Diện Chính</span>
+      <span>✕</span> <span id="rubik-expand-close-label">Thu Nhỏ Về Giao Diện Chính</span>
      </button>
     </div>
    </div>
@@ -1428,7 +1443,7 @@
         <span>⌨️ Hướng Dẫn Bấm Phím Bàn Phím:</span>
         <span id="kb-combo-indicator" class="px-2 py-0.5 rounded bg-slate-950 text-cyan-300 font-mono-code text-[11px] border border-slate-800">Đang chờ phím...</span>
        </div>
-       <div class="text-slate-300 leading-relaxed">
+       <div id="exp-rubik-kb-guide-body" class="text-slate-300 leading-relaxed">
         • Xoay thuận 90°: Bấm phím <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">R</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">U</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">F</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">L</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">D</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">B</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono-code font-bold">M</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono-code font-bold">E</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono-code font-bold">S</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-purple-300 font-mono-code font-bold">X</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-purple-300 font-mono-code font-bold">Y</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-purple-300 font-mono-code font-bold">Z</kbd><br/>
         • Xoay ngược (<strong class="text-amber-300">'</strong>): Bấm <strong>2 nút cùng lúc</strong> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono-code font-bold">Phím Chữ + '</kbd> (VD: <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono-code font-bold">R + '</kbd> → <strong>R'</strong>)<br/>
         • Xoay 2 tầng (<strong class="text-emerald-300">r, u, f...</strong>): Giữ <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-emerald-300 font-mono-code font-bold">Shift + Chữ</kbd> hoặc bật nút <strong>Chế độ 2 tầng</strong>.
@@ -1521,8 +1536,8 @@
        <span id="exp-rubik-speed-val-badge" class="px-2.5 py-0.5 rounded-md bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 font-mono-code text-xs font-extrabold">1.0x (Chuẩn)</span>
       </div>
       <div class="flex items-center gap-2.5">
-       <span class="text-xs font-mono-code text-slate-400">0.5x</span>
-       <input id="exp-rubik-speed-slider" type="range" min="0.5" max="4.0" step="0.1" value="1.0" class="rubik-speed-range flex-1 w-full" />
+       <span class="text-xs font-mono-code text-slate-400">0.1x</span>
+       <input id="exp-rubik-speed-slider" type="range" min="0.1" max="4.0" step="0.1" value="1.0" class="rubik-speed-range flex-1 w-full" />
        <span class="text-xs font-mono-code text-slate-400">4.0x</span>
       </div>
      </div>
@@ -1548,7 +1563,7 @@
      <button id="exp-chess-new-top-btn" type="button" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs sm:text-sm transition shadow">🔄 Ván Mới</button>
      <button id="exp-chess-flip-top-btn" type="button" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs sm:text-sm border border-slate-700 transition">🔃 Xoay Bàn</button>
      <button id="chess-expand-close-btn" type="button" class="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg transition flex items-center gap-1.5">
-      <span>✕</span> <span>Thu Nhỏ Về Giao Diện Chính</span>
+      <span>✕</span> <span id="chess-expand-close-label">Thu Nhỏ Về Giao Diện Chính</span>
      </button>
     </div>
    </div>
@@ -1626,13 +1641,12 @@
         <button id="exp-pick-black-btn" type="button" class="px-3 py-1 rounded-lg bg-slate-800 text-slate-200 font-bold text-xs border border-slate-700">♚ Đen</button>
        </div>
       </div>
-      <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
        <button id="exp-chess-new-btn" type="button" class="py-2.5 px-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs transition">🔄 Ván Mới</button>
-       <button id="exp-chess-undo-btn" type="button" class="py-2.5 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs transition">↩ Đi Lại</button>
        <button id="exp-chess-draw-btn" type="button" class="py-2.5 px-2 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 font-bold text-xs transition">🤝 Xin Hòa</button>
        <button id="exp-chess-resign-btn" type="button" class="py-2.5 px-2 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 hover:bg-rose-500 hover:text-slate-950 font-extrabold text-xs transition">🏳️ Đầu Hàng</button>
        <button id="exp-chess-flip-btn" type="button" class="py-2.5 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs transition">🔃 Xoay Bàn</button>
-       <button id="exp-chess-hint-btn" type="button" class="py-2.5 px-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs transition">💡 Gợi Ý</button>
+       <button id="exp-chess-hint-btn" type="button" class="py-2.5 px-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs transition col-span-2 sm:col-span-1">💡 Gợi Ý</button>
       </div>
       <div class="p-3 rounded-xl bg-slate-900/95 border border-emerald-500/30 text-xs space-y-2">
        <div class="flex items-center justify-between gap-2">
@@ -1756,7 +1770,7 @@
  <footer class="relative z-10 border-t border-slate-800/80 bg-slate-950/85 py-6 px-4 sm:px-6 text-center text-sm text-slate-300">
   <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
    <div><strong>LM Training</strong> — Học Tập, Rèn Luyện & Thi Đấu Rubik 3D • Cờ Vua Quốc Tế</div>
-   <div class="font-mono-code text-xs sm:text-sm text-cyan-300 font-bold bg-slate-900/90 px-4 py-1.5 rounded-full border border-cyan-500/30">
+   <div id="footer-powered-by" class="font-mono-code text-xs sm:text-sm text-cyan-300 font-bold bg-slate-900/90 px-4 py-1.5 rounded-full border border-cyan-500/30">
     Powered by : Đội Khoa Học Kĩ Thuật 12D10 ( Hoàng Mạnh, Văn Long )
    </div>
   </div>
@@ -2312,18 +2326,23 @@
      ? 'py-2.5 rounded-xl text-xs sm:text-sm font-extrabold bg-emerald-500 text-slate-950 shadow transition'
      : 'py-2.5 rounded-xl text-xs sm:text-sm font-extrabold text-slate-300 hover:text-white transition';
    }
+   const isEn = window.AppI18n?.lang === 'en';
    if (titleEl) {
-    titleEl.textContent = isReg ? '📝 Bước 1: Đăng Ký Tài Khoản Học Viên' : '🔐 Bước 2: Đăng Nhập Tài Khoản';
+    titleEl.textContent = isReg
+     ? (isEn ? '📝 Step 1: Register Student Account' : '📝 Bước 1: Đăng Ký Tài Khoản Học Viên')
+     : (isEn ? '🔐 Step 2: Account Sign In' : '🔐 Bước 2: Đăng Nhập Tài Khoản');
    }
    if (subEl) {
     subEl.textContent = isReg
-     ? 'Tạo tài khoản mới với Email thật và Nickname duy nhất'
-     : 'Đăng nhập bằng Email và Mật khẩu đã đăng ký trước đó';
+     ? (isEn ? 'Create a new account with a verified Email & unique Nickname' : 'Tạo tài khoản mới với Email thật và Nickname duy nhất')
+     : (isEn ? 'Sign in with your registered Email and Password' : 'Đăng nhập bằng Email và Mật khẩu đã đăng ký trước đó');
    }
    if (nickWrap) nickWrap.classList.toggle('hidden', !isReg);
    if (confirmWrap) confirmWrap.classList.toggle('hidden', !isReg);
    if (submitBtn) {
-    submitBtn.textContent = isReg ? 'Đăng Ký Tài Khoản Mới →' : 'Đăng Nhập Ngay';
+    submitBtn.textContent = isReg
+     ? (isEn ? 'Register New Account →' : 'Đăng Ký Tài Khoản Mới →')
+     : (isEn ? 'Sign In Now' : 'Đăng Nhập Ngay');
    }
   }
   let GlobalSyncChannel = null;
@@ -3596,44 +3615,40 @@
    }
    computeOptimalAISolution() {
     if (this.isCubeCurrentlySolved()) return [];
-    let bestSolution = [];
-    if (this.moveHistory.length <= 32) {
+    let bestSolution = null;
+    if (this.moveHistory.length > 0) {
      const rawInv = [...this.moveHistory].reverse().map(m => this.invertToken(m.token));
-     bestSolution = this.compressMovesOptimal(rawInv);
+     const compInv = this.compressMovesOptimal(rawInv);
+     if (compInv && compInv.length > 0 && this.verifyCandidateSolvesCube(compInv)) {
+      bestSolution = compInv;
+     }
      try {
       const canonicalCandidate = this.computeRotationNormalizedCandidate(rawInv);
-      if (canonicalCandidate && canonicalCandidate.length < bestSolution.length && this.verifyCandidateSolvesCube(canonicalCandidate)) {
+      if (canonicalCandidate && canonicalCandidate.length > 0 && (!bestSolution || canonicalCandidate.length < bestSolution.length) && this.verifyCandidateSolvesCube(canonicalCandidate)) {
        bestSolution = canonicalCandidate;
       }
      } catch (e) {}
-    } else {
-     const stateSol = this.solveFrom3DCubieState();
-     if (stateSol && stateSol.length > 0 && this.verifyCandidateSolvesCube(stateSol)) {
-      return stateSol;
-     }
-     const rawInv = [...this.moveHistory].reverse().map(m => this.invertToken(m.token));
-     bestSolution = this.compressMovesOptimal(rawInv);
     }
     try {
-     if (bestSolution.length > 1 && bestSolution.length <= 10) {
-      const maxDirectDepth = Math.min(bestSolution.length - 1, 6);
+     if (!bestSolution || bestSolution.length > 8) {
+      const stateSol = this.solveFrom3DCubieState();
+      if (stateSol && stateSol.length > 0 && (!bestSolution || stateSol.length < bestSolution.length) && this.verifyCandidateSolvesCube(stateSol)) {
+       bestSolution = stateSol;
+      }
+     }
+    } catch (e) {}
+    try {
+     if (!bestSolution || (bestSolution.length > 1 && bestSolution.length <= 10)) {
+      const maxDirectDepth = bestSolution ? Math.min(bestSolution.length - 1, 6) : 6;
       if (maxDirectDepth >= 1) {
        const directIDA = this.runDirectCubieIDASearch(maxDirectDepth);
-       if (directIDA && directIDA.length < bestSolution.length && this.verifyCandidateSolvesCube(directIDA)) {
+       if (directIDA && directIDA.length > 0 && (!bestSolution || directIDA.length < bestSolution.length) && this.verifyCandidateSolvesCube(directIDA)) {
         bestSolution = directIDA;
        }
       }
      }
     } catch (e) {}
-    try {
-     if (bestSolution.length > 14) {
-      const stateSol = this.solveFrom3DCubieState();
-      if (stateSol && stateSol.length > 0 && stateSol.length < bestSolution.length && this.verifyCandidateSolvesCube(stateSol)) {
-       bestSolution = stateSol;
-      }
-     }
-    } catch (e) {}
-    return bestSolution;
+    return bestSolution || [];
    }
    initStateSolverTables() {
     if (InteractiveRubiksCube._solverTables) return InteractiveRubiksCube._solverTables;
@@ -3901,90 +3916,114 @@
      }
      return { cp: ncp, cAxis: ncAxis, ep: nep, eAxis: neAxis };
     };
-    const fullPath = [...centerMoves];
-    let eo = T.getEOKey(st.eAxis);
-    while (eo !== 0) {
-     const d = T.eoDist[eo];
+    const initialSt = st;
+    const eoPaths = [];
+    const startEO = T.getEOKey(initialSt.eAxis);
+    const eoBound = T.eoDist[startEO];
+    const findEoPaths = (eoKey, depth, path, lastFace) => {
+     if (eoPaths.length >= 5) return;
+     if (eoKey === 0) {
+      eoPaths.push([...path]);
+      return;
+     }
+     const rem = T.eoDist[eoKey];
+     if (depth + rem > eoBound) return;
      for (const m of T.ALL_MOVES) {
-      const nxt = T.applyEOKey(eo, T.MOVE_TRANS[m]);
-      if (T.eoDist[nxt] === d - 1) {
-       fullPath.push(m);
-       st = applyStMove(st, m);
-       eo = nxt;
-       break;
+      if (m[0] === lastFace) continue;
+      const nxt = T.applyEOKey(eoKey, T.MOVE_TRANS[m]);
+      if (T.eoDist[nxt] === rem - 1) {
+       path.push(m);
+       findEoPaths(nxt, depth + 1, path, m[0]);
+       path.pop();
+       if (eoPaths.length >= 5) return;
       }
      }
-    }
-    {
-     const startCA = T.getCAKey(st.cAxis), startES = T.getESKey(st.ep);
-     for (let bound = Math.max(T.cAxisDist[startCA], T.eSliceDist[startES]); bound <= 12; bound++) {
-      const path = [];
-      const dfs = (ca, es, depth, lastFace, lastAx) => {
-       const h = Math.max(T.cAxisDist[ca], T.eSliceDist[es]);
-       if (h === 0) return true;
-       if (depth + h > bound) return false;
-       for (const m of T.G1_MOVES) {
-        const tr = T.MOVE_TRANS[m];
-        if (tr.face === lastFace || (tr.ax === lastAx && tr.face < lastFace)) continue;
-        path.push(m);
-        if (dfs(T.cAxisTrans[m][ca], T.applyESKey(es, tr.ePerm), depth + 1, tr.face, tr.ax)) return true;
-        path.pop();
+    };
+    findEoPaths(startEO, 0, [], '');
+    if (!eoPaths.length) eoPaths.push([]);
+    let bestCompressed = null;
+    for (const eoPath of eoPaths) {
+     let curSt = initialSt;
+     const fullPath = [...centerMoves];
+     for (const m of eoPath) {
+      fullPath.push(m);
+      curSt = applyStMove(curSt, m);
+     }
+     {
+      const startCA = T.getCAKey(curSt.cAxis), startES = T.getESKey(curSt.ep);
+      for (let bound = Math.max(T.cAxisDist[startCA], T.eSliceDist[startES]); bound <= 12; bound++) {
+       const path = [];
+       const dfs = (ca, es, depth, lastFace, lastAx) => {
+        const h = Math.max(T.cAxisDist[ca], T.eSliceDist[es]);
+        if (h === 0) return true;
+        if (depth + h > bound) return false;
+        for (const m of T.G1_MOVES) {
+         const tr = T.MOVE_TRANS[m];
+         if (tr.face === lastFace || (tr.ax === lastAx && tr.face < lastFace)) continue;
+         path.push(m);
+         if (dfs(T.cAxisTrans[m][ca], T.applyESKey(es, tr.ePerm), depth + 1, tr.face, tr.ax)) return true;
+         path.pop();
+        }
+        return false;
+       };
+       if (dfs(startCA, startES, 0, '', -1)) {
+        for (const m of path) { fullPath.push(m); curSt = applyStMove(curSt, m); }
+        break;
        }
-       return false;
-      };
-      if (dfs(startCA, startES, 0, '', -1)) {
-       for (const m of path) { fullPath.push(m); st = applyStMove(st, m); }
-       break;
       }
      }
-    }
-    {
-     const startCP = T.perm8Key(st.cp), startUD = T.perm8Key(st.ep);
-     for (let bound = Math.max(T.g2CornerDist.get(startCP) ?? 0, T.g2EdgeUDDist.get(startUD) ?? 0); bound <= 15; bound++) {
-      const path = [];
-      const dfs = (cpk, udk, depth, lastFace, lastAx) => {
-       const h = Math.max(T.g2CornerDist.get(cpk) ?? 10, T.g2EdgeUDDist.get(udk) ?? 10);
-       if (h === 0) return true;
-       if (depth + h > bound) return false;
-       for (const m of T.G2_MOVES) {
-        const tr = T.MOVE_TRANS[m];
-        if (tr.face === lastFace || (tr.ax === lastAx && tr.face < lastFace)) continue;
-        path.push(m);
-        if (dfs(T.applyPerm8Key(cpk, tr.cPerm), T.applyPerm8Key(udk, tr.ePerm), depth + 1, tr.face, tr.ax)) return true;
-        path.pop();
+     {
+      const startCP = T.perm8Key(curSt.cp), startUD = T.perm8Key(curSt.ep);
+      for (let bound = Math.max(T.g2CornerDist.get(startCP) ?? 0, T.g2EdgeUDDist.get(startUD) ?? 0); bound <= 15; bound++) {
+       const path = [];
+       const dfs = (cpk, udk, depth, lastFace, lastAx) => {
+        const h = Math.max(T.g2CornerDist.get(cpk) ?? 10, T.g2EdgeUDDist.get(udk) ?? 10);
+        if (h === 0) return true;
+        if (depth + h > bound) return false;
+        for (const m of T.G2_MOVES) {
+         const tr = T.MOVE_TRANS[m];
+         if (tr.face === lastFace || (tr.ax === lastAx && tr.face < lastFace)) continue;
+         path.push(m);
+         if (dfs(T.applyPerm8Key(cpk, tr.cPerm), T.applyPerm8Key(udk, tr.ePerm), depth + 1, tr.face, tr.ax)) return true;
+         path.pop();
+        }
+        return false;
+       };
+       if (dfs(startCP, startUD, 0, '', -1)) {
+        for (const m of path) { fullPath.push(m); curSt = applyStMove(curSt, m); }
+        break;
        }
-       return false;
-      };
-      if (dfs(startCP, startUD, 0, '', -1)) {
-       for (const m of path) { fullPath.push(m); st = applyStMove(st, m); }
-       break;
       }
      }
-    }
-    {
-     const startCP = T.perm8Key(st.cp), startUD = T.perm8Key(st.ep), startE = T.perm4EKey(st.ep);
-     for (let bound = Math.max(T.g3CornerDist.get(startCP) ?? 0, T.g3EdgeDist.get(startUD * 256 + startE) ?? 0); bound <= 15; bound++) {
-      const path = [];
-      const dfs = (cpk, udk, ek, depth, lastFace, lastAx) => {
-       const h = Math.max(T.g3CornerDist.get(cpk) ?? 10, T.g3EdgeDist.get(udk * 256 + ek) ?? 10);
-       if (h === 0) return true;
-       if (depth + h > bound) return false;
-       for (const m of T.G3_MOVES) {
-        const tr = T.MOVE_TRANS[m];
-        if (tr.face === lastFace || (tr.ax === lastAx && tr.face < lastFace)) continue;
-        path.push(m);
-        if (dfs(T.applyPerm8Key(cpk, tr.cPerm), T.applyPerm8Key(udk, tr.ePerm), T.applyPerm4EKey(ek, tr.ePerm), depth + 1, tr.face, tr.ax)) return true;
-        path.pop();
+     {
+      const startCP = T.perm8Key(curSt.cp), startUD = T.perm8Key(curSt.ep), startE = T.perm4EKey(curSt.ep);
+      for (let bound = Math.max(T.g3CornerDist.get(startCP) ?? 0, T.g3EdgeDist.get(startUD * 256 + startE) ?? 0); bound <= 15; bound++) {
+       const path = [];
+       const dfs = (cpk, udk, ek, depth, lastFace, lastAx) => {
+        const h = Math.max(T.g3CornerDist.get(cpk) ?? 10, T.g3EdgeDist.get(udk * 256 + ek) ?? 10);
+        if (h === 0) return true;
+        if (depth + h > bound) return false;
+        for (const m of T.G3_MOVES) {
+         const tr = T.MOVE_TRANS[m];
+         if (tr.face === lastFace || (tr.ax === lastAx && tr.face < lastFace)) continue;
+         path.push(m);
+         if (dfs(T.applyPerm8Key(cpk, tr.cPerm), T.applyPerm8Key(udk, tr.ePerm), T.applyPerm4EKey(ek, tr.ePerm), depth + 1, tr.face, tr.ax)) return true;
+         path.pop();
+        }
+        return false;
+       };
+       if (dfs(startCP, startUD, startE, 0, '', -1)) {
+        for (const m of path) { fullPath.push(m); curSt = applyStMove(curSt, m); }
+        break;
        }
-       return false;
-      };
-      if (dfs(startCP, startUD, startE, 0, '', -1)) {
-       for (const m of path) { fullPath.push(m); st = applyStMove(st, m); }
-       break;
       }
      }
+     const comp = this.compressMovesOptimal(fullPath);
+     if (!bestCompressed || comp.length < bestCompressed.length) {
+      bestCompressed = comp;
+     }
     }
-    return this.compressMovesOptimal(fullPath);
+    return bestCompressed || [];
    }
    captureVirtualCubieState() {
     return this.cubies.map(c => ({
@@ -4234,7 +4273,7 @@
     requestAnimationFrame(animView);
    }
    setRotationSpeed(ms) {
-    this.animDuration = Math.max(30, Math.min(600, Number(ms) || 165));
+    this.animDuration = Math.max(25, Math.min(1500, Number(ms) || 135));
    }
    resize() {
     if (!this.container) return;
@@ -4370,7 +4409,8 @@
     this.isAnimating = true;
     const move = this.moveQueue.shift();
     SoundFX.play('rubik_move');
-    this.updateMoveBadges(`Đang xoay: ${move.label}`);
+    const isEn = window.AppI18n?.lang === 'en';
+    this.updateMoveBadges(isEn ? `Rotating: ${move.label}` : `Đang xoay: ${move.label}`);
     const axisMap = this.getAxisMap();
     const cfg = axisMap[move.face];
     const sign = move.prime ? -cfg.dir : cfg.dir;
@@ -4383,9 +4423,7 @@
     this.rootGroup.add(pivot);
     pivot.updateMatrixWorld(true);
     activeCubies.forEach(c => pivot.attach(c));
-    const baseDur = this.solvingModeActive && this.stepTokens.length > 18
-     ? Math.min(this.animDuration, 85)
-     : this.animDuration;
+    const baseDur = this.animDuration;
     const duration = move.doubleMove ? Math.round(baseDur * 1.2) : baseDur;
     const start = performance.now();
     const animState = {
@@ -4416,21 +4454,33 @@
     animState.rafId = requestAnimationFrame(stepAnim);
    }
    renderStepBadges() {
+    const isEn = window.AppI18n?.lang === 'en';
     const formulaBox = document.getElementById('rubik-solve-formula-text');
     const stepProg = document.getElementById('rubik-solve-step-progress');
     const playLabel = document.getElementById('rubik-step-play-label');
     const expFormulaBox = document.getElementById('exp-rubik-solve-formula-text');
     const expStepProg = document.getElementById('exp-rubik-solve-step-progress');
     const expPlayLabel = document.getElementById('exp-rubik-step-play-label');
-    const pText = this.autoPlaying ? 'Tạm Dừng' : 'Tự Chạy';
+    const pText = this.autoPlaying ? (isEn ? 'Pause' : 'Tạm Dừng') : (isEn ? 'Auto-Run' : 'Tự Chạy');
     if (playLabel) playLabel.textContent = pText;
     if (expPlayLabel) expPlayLabel.textContent = pText;
     if (!this.stepTokens.length) {
-     if (stepProg) stepProg.textContent = 'Sẵn sàng';
-     if (expStepProg) expStepProg.textContent = 'Sẵn sàng';
+     const readyTxt = isEn ? 'Ready' : 'Sẵn sàng';
+     if (stepProg) stepProg.textContent = readyTxt;
+     if (expStepProg) expStepProg.textContent = readyTxt;
+     if (formulaBox) {
+      formulaBox.innerHTML = isEn
+       ? `Select any formula in the <strong>144 CFOP Table</strong> on the right and click <strong>"🧊 Load on 3D Model"</strong>, or click <strong>"🤖 AI Optimal Solve"</strong> to solve any scramble in the fewest moves!`
+       : `Chọn một công thức trong bảng <strong>144 Công Thức CFOP</strong> bên phải và bấm <strong>"🧊 Nạp Thế Lên Mô Hình 3D"</strong>, hoặc bấm <strong>"🤖 Giải Ít Bước Nhất"</strong> để AI giải tối ưu!`;
+     }
+     if (expFormulaBox) {
+      expFormulaBox.innerHTML = isEn
+       ? `Press keyboard keys (e.g. <strong>R</strong> or <strong>R + '</strong>), tap the move buttons on the right, or click <strong>"🤖 AI Optimal Solve"</strong> to solve in the fewest moves!`
+       : `Nhấn phím trên bàn phím (VD: <strong>R</strong> hoặc <strong>R + '</strong>), chạm vào các hộp chữ bên phải, hoặc bấm <strong>"🤖 Giải Ít Bước Nhất"</strong>!`;
+     }
      return;
     }
-    const progStr = `Bước ${this.stepIndex} / ${this.stepTokens.length}`;
+    const progStr = isEn ? `Step ${this.stepIndex} / ${this.stepTokens.length}` : `Bước ${this.stepIndex} / ${this.stepTokens.length}`;
     if (stepProg) stepProg.textContent = progStr;
     if (expStepProg) expStepProg.textContent = progStr;
     const titleHtml = this.stepTitle
@@ -4564,7 +4614,7 @@
     }
    }
    scramble(len = 12) {
-    this.stopAllAnimationsSafely(true);
+    this.stopAllAnimationsSafely(false);
     this.loadedFromFormulaBank = false;
     this.formulaBankAlg = '';
     this.stepTokens = [];
@@ -4593,44 +4643,49 @@
     this.enqueueNotation(s, true, null, false);
    }
    solveAnimated() {
-    this.stopAllAnimationsSafely(true);
+    this.stopAllAnimationsSafely(false);
+    const isEn = window.AppI18n?.lang === 'en';
     const formulaBox = document.getElementById('rubik-solve-formula-text');
     const expFormulaBox = document.getElementById('exp-rubik-solve-formula-text');
     const stepProg = document.getElementById('rubik-solve-step-progress');
     const expStepProg = document.getElementById('exp-rubik-solve-step-progress');
-    if (this.loadedFromFormulaBank && this.stepTokens.length > 0 && this.stepIndex < this.stepTokens.length) {
-     this.autoPlaying = true;
-     this.renderStepBadges();
-     this.runAutoPlayLoop();
-     showToast(`📚 Đang chạy công thức chuẩn từ Bảng CFOP (${this.stepTokens.length - this.stepIndex} bước còn lại)!`, 'cyan');
-     return;
-    }
     if (this.isCubeCurrentlySolved()) {
      this.buildCubies();
-     const msg = `<span class="text-cyan-300">Khối Rubik hiện đã ở trạng thái hoàn chỉnh! Hãy bấm <strong>"🔀 Trộn"</strong> hoặc xoay vài nước rồi bấm <strong>🤖 Giải AI Ít Bước</strong>.</span>`;
+     const msg = isEn
+      ? `<span class="text-cyan-300">The Rubik's Cube is already solved! Click <strong>"🔀 Scramble"</strong> or make some moves, then click <strong>🤖 AI Optimal Solve</strong>.</span>`
+      : `<span class="text-cyan-300">Khối Rubik hiện đã ở trạng thái hoàn chỉnh! Hãy bấm <strong>"🔀 Trộn"</strong> hoặc xoay vài nước rồi bấm <strong>🤖 Giải Ít Bước Nhất</strong>.</span>`;
      if (formulaBox) formulaBox.innerHTML = msg;
      if (expFormulaBox) expFormulaBox.innerHTML = msg;
-     if (stepProg) stepProg.textContent = 'Đã hoàn chỉnh';
-     if (expStepProg) expStepProg.textContent = 'Đã hoàn chỉnh';
-     showToast('Khối Rubik đang ở trạng thái đã giải!', 'cyan');
+     const solvedTxt = isEn ? 'Solved' : 'Đã hoàn chỉnh';
+     if (stepProg) stepProg.textContent = solvedTxt;
+     if (expStepProg) expStepProg.textContent = solvedTxt;
+     showToast(isEn ? 'Cube is already solved!' : 'Khối Rubik đang ở trạng thái đã giải!', 'cyan');
      return;
     }
     const optimalSteps = this.computeOptimalAISolution();
     if (!optimalSteps || optimalSteps.length === 0) {
      this.buildCubies();
-     showToast('✨ Khối Rubik đã hoàn chỉnh!', 'emerald');
+     showToast(isEn ? '✨ Rubik Cube solved!' : '✨ Khối Rubik đã hoàn chỉnh!', 'emerald');
      return;
     }
     const formulaStr = optimalSteps.join(' ');
+    const titleStr = isEn
+     ? `🤖 AI Optimal Shortest Solution (${optimalSteps.length} moves):`
+     : `🤖 AI Giải Tối Ưu Ít Bước Nhất (${optimalSteps.length} bước):`;
     this.loadAlgorithmSteps(
      formulaStr,
-     `🤖 AI Solver Tối Ưu Ít Bước Nhất (${optimalSteps.length} bước):`,
+     titleStr,
      false,
      true,
      true,
      false
     );
-    showToast(`🤖 AI đã tìm ra lời giải tối ưu ngắn nhất gồm ${optimalSteps.length} bước xoay!`, 'emerald');
+    showToast(
+     isEn
+      ? `🤖 AI found the shortest solution in ${optimalSteps.length} moves!`
+      : `🤖 AI đã tìm ra lời giải tối ưu ít bước nhất gồm ${optimalSteps.length} bước xoay!`,
+     'emerald'
+    );
    }
    reset() {
     this.stopAllAnimationsSafely(true);
@@ -4889,18 +4944,21 @@
     document.getElementById('timer-stat-ao12').textContent = this.calcAverage(AppState.rubikSolves, 12);
     const listEl = document.getElementById('timer-history-list');
     if (!listEl) return;
+    const isEn = window.AppI18n?.lang === 'en';
     if (!AppState.rubikSolves.length) {
-     listEl.innerHTML = `<div class="text-slate-400 italic">Chưa có lượt giải nào.</div>`;
+     listEl.innerHTML = `<div class="text-slate-400 italic">${isEn ? 'No solves recorded yet.' : 'Chưa có lượt giải nào.'}</div>`;
      return;
     }
     listEl.innerHTML = AppState.rubikSolves.slice(0, 25).map((rawVal, idx) => {
      const item = normalizeSolveEntry(rawVal);
      const solveNum = AppState.rubikSolves.length - idx;
+     const solveLbl = isEn ? `Solve #${solveNum}` : `Lượt #${solveNum}`;
+     const rawLbl = isEn ? 'Raw' : 'Gốc';
      if (item.status === 'DNF') {
       return `
        <div class="flex items-center justify-between px-3.5 py-2 rounded-xl bg-slate-900/90 border border-rose-500/30">
-        <span class="text-slate-300 font-medium">Lượt #${solveNum}</span>
-        <span class="font-mono-code font-bold text-rose-400">DNF <span class="text-xs text-slate-400">(Gốc: ${item.baseTime.toFixed(2)}s)</span></span>
+        <span class="text-slate-300 font-medium">${solveLbl}</span>
+        <span class="font-mono-code font-bold text-rose-400">DNF <span class="text-xs text-slate-400">(${rawLbl}: ${item.baseTime.toFixed(2)}s)</span></span>
        </div>
       `;
      }
@@ -4908,9 +4966,9 @@
       const total = Number((item.baseTime + item.penalty).toFixed(2));
       return `
        <div class="flex items-center justify-between px-3.5 py-2 rounded-xl bg-slate-900/90 border border-amber-500/40">
-        <span class="text-slate-300 font-medium">Lượt #${solveNum}</span>
+        <span class="text-slate-300 font-medium">${solveLbl}</span>
         <div class="text-right font-mono-code">
-         <span class="text-xs text-slate-400">Gốc: ${item.baseTime.toFixed(2)}s</span>
+         <span class="text-xs text-slate-400">${rawLbl}: ${item.baseTime.toFixed(2)}s</span>
          <span class="text-xs text-amber-400 font-bold mx-1">+${item.penalty}s =</span>
          <span class="font-extrabold text-amber-300">${total.toFixed(2)}s</span>
         </div>
@@ -4919,8 +4977,8 @@
      }
      return `
       <div class="flex items-center justify-between px-3.5 py-2 rounded-xl bg-slate-900/90 border border-slate-800">
-       <span class="text-slate-300 font-medium">Lượt #${solveNum}</span>
-       <span class="font-mono-code font-extrabold text-cyan-300">${item.baseTime.toFixed(2)}s <span class="text-[11px] font-normal text-slate-400">(Gốc)</span></span>
+       <span class="text-slate-300 font-medium">${solveLbl}</span>
+       <span class="font-mono-code font-extrabold text-cyan-300">${item.baseTime.toFixed(2)}s <span class="text-[11px] font-normal text-slate-400">(${rawLbl})</span></span>
       </div>
      `;
     }).join('');
@@ -5217,7 +5275,6 @@
      const levelWrap = document.getElementById('chess-level-select-wrap');
      const puzNavWrap = document.getElementById('chess-puzzle-nav-wrap');
      const expRandBtn = document.getElementById('exp-chess-random-puzzle-btn');
-     const undoBtn = document.getElementById('chess-undo-btn');
      const hintBtn = document.getElementById('chess-hint-btn');
      if (onlineBox) onlineBox.classList.toggle('hidden', this.mode !== 'matchmaking');
      if (colorWrap) colorWrap.classList.toggle('hidden', this.mode === 'matchmaking' || this.mode === 'puzzle');
@@ -5229,10 +5286,6 @@
       if (modeSel) modeSel.value = 'matchmaking';
       if (onlineBox) onlineBox.classList.remove('hidden');
       if (colorWrap) colorWrap.classList.add('hidden');
-      if (undoBtn) {
-       undoBtn.disabled = true;
-       undoBtn.className = 'py-2 px-2 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60';
-      }
       if (hintBtn) {
        hintBtn.disabled = true;
        hintBtn.className = 'py-2 px-2 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60';
@@ -5390,11 +5443,11 @@
     this.legalTargets = [];
     this.lastMoveSquares = [];
     this.resetClocks();
+    const isEn = window.AppI18n?.lang === 'en';
     const puzNavWrap = document.getElementById('chess-puzzle-nav-wrap');
     const expRandBtn = document.getElementById('exp-chess-random-puzzle-btn');
     const openingEl = document.getElementById('chess-opening-name');
     const coachEl = document.getElementById('chess-coach-text');
-    const undoBtn = document.getElementById('chess-undo-btn');
     const hintBtn = document.getElementById('chess-hint-btn');
     const colorWrap = document.getElementById('chess-color-picker-wrap');
     const levelWrap = document.getElementById('chess-level-select-wrap');
@@ -5406,55 +5459,54 @@
      this.ensureSupabaseLobbyChannel();
      if (puzNavWrap) puzNavWrap.classList.add('hidden');
      if (expRandBtn) expRandBtn.classList.add('hidden');
-     if (undoBtn) {
-      undoBtn.disabled = true;
-      undoBtn.className = 'py-2 px-2 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60';
-     }
      if (hintBtn) {
       hintBtn.disabled = true;
-      hintBtn.className = 'py-2 px-2 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60';
+      hintBtn.className = 'py-2 px-2 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60 col-span-2 sm:col-span-1';
      }
      this.updateOnlineLobbyUI();
-     if (openingEl) openingEl.textContent = '⚔️ Đấu Trường Ghép Trận Online Công Bằng (±100 Elo)';
+     if (openingEl) {
+      openingEl.textContent = isEn
+       ? '⚔️ Fair Online Matchmaking Arena (±100 Elo)'
+       : '⚔️ Đấu Trường Ghép Trận Online Công Bằng (±100 Elo)';
+     }
      if (coachEl) {
-      coachEl.innerHTML = `Chọn <strong>Thời gian mỗi bên</strong> (3, 5, 10 hoặc 15 phút) rồi bấm <strong>"⚔️ Tìm Đối Thủ Online"</strong>. Hệ thống chỉ ghép 2 người chơi cùng mức thời gian và có điểm Elo chênh lệch từ <strong>0 đến 100 Elo</strong> (${Math.max(100, AppState.chessElo - 100)} – ${AppState.chessElo + 100} Elo).`;
+      coachEl.innerHTML = isEn
+       ? `Select your <strong>Time Control</strong> (3, 5, 10, or 15 min) and click <strong>"⚔️ Find Online Opponent"</strong>. The system pairs two players with the same time control within a <strong>0 to 100 Elo</strong> difference (${Math.max(100, AppState.chessElo - 100)} – ${AppState.chessElo + 100} Elo).`
+       : `Chọn <strong>Thời gian mỗi bên</strong> (3, 5, 10 hoặc 15 phút) rồi bấm <strong>"⚔️ Tìm Đối Thủ Online"</strong>. Hệ thống chỉ ghép 2 người chơi cùng mức thời gian và có điểm Elo chênh lệch từ <strong>0 đến 100 Elo</strong> (${Math.max(100, AppState.chessElo - 100)} – ${AppState.chessElo + 100} Elo).`;
      }
      this.flipped = false;
      this.renderBoard();
      this.updateUI();
      if (announce) {
-      showToast('♟️ Đã làm mới bàn cờ về vị trí xuất phát! Bấm "⚔️ Tìm Đối Thủ Online" để bắt đầu trận mới.', 'emerald');
+      showToast(isEn ? '♟️ Board reset! Click "⚔️ Find Online Opponent" to start a new match.' : '♟️ Đã làm mới bàn cờ về vị trí xuất phát! Bấm "⚔️ Tìm Đối Thủ Online" để bắt đầu trận mới.', 'emerald');
      }
      return;
     }
     if (hintBtn) {
      hintBtn.disabled = false;
-     hintBtn.className = 'py-2 px-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs sm:text-sm transition';
+     hintBtn.className = 'py-2 px-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-bold text-xs sm:text-sm transition col-span-2 sm:col-span-1';
     }
     if (this.mode === 'puzzle') {
      if (puzNavWrap) puzNavWrap.classList.remove('hidden');
      if (expRandBtn) expRandBtn.classList.remove('hidden');
-     if (undoBtn) {
-      undoBtn.disabled = true;
-      undoBtn.className = 'py-2 px-2 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60';
-     }
      this.loadRandomPuzzle();
      return;
     } else {
      if (puzNavWrap) puzNavWrap.classList.add('hidden');
      if (expRandBtn) expRandBtn.classList.add('hidden');
-     if (openingEl) openingEl.textContent = '📌 Khai cuộc: Khởi đầu tiêu chuẩn';
-     if (coachEl) {
-      coachEl.innerHTML = this.mode === 'pvp'
-       ? 'Chế độ <strong>2 Người Chơi (Cùng máy)</strong>: Nút Đi Lại bị khóa để công bằng. Có thể dùng nút <strong>🤝 Xin Hòa</strong> hoặc <strong>🏳️ Đầu Hàng</strong>.'
-       : `Đang đấu luyện với <strong>Bot AI (Elo ${this.levelEloMap[this.level] || 1500})</strong>. Bạn có thể bấm <strong>🏳️ Đầu Hàng</strong> nếu muốn nhận thua sớm, hoặc chuyển sang <strong>⚔️ Ghép Đấu Online</strong> để thi đấu tính điểm Elo thật!`;
+     if (openingEl) {
+      openingEl.textContent = isEn ? '📌 Opening: Standard Starting Position' : '📌 Khai cuộc: Khởi đầu tiêu chuẩn';
      }
-     if (undoBtn) {
-      const allowUndo = this.mode === 'bot';
-      undoBtn.disabled = !allowUndo;
-      undoBtn.className = allowUndo
-       ? 'py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs sm:text-sm transition'
-       : 'py-2 px-2 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60';
+     if (coachEl) {
+      if (this.mode === 'pvp') {
+       coachEl.innerHTML = isEn
+        ? '<strong>2 Players (Pass &amp; Play)</strong>: Take turns on the same device. You can use <strong>🤝 Offer Draw</strong> or <strong>🏳️ Resign</strong> at any time.'
+        : 'Chế độ <strong>2 Người Chơi (Cùng máy)</strong>: Hai kỳ thủ luân phiên đi quân. Có thể dùng nút <strong>🤝 Xin Hòa</strong> hoặc <strong>🏳️ Đầu Hàng</strong>.';
+      } else {
+       coachEl.innerHTML = isEn
+        ? `Practicing against <strong>LM StockBot AI (Elo ${this.levelEloMap[this.level] || 1500})</strong>. AI evaluates every move you play (<strong>!!, !, ★, ?!, ?, ??</strong>) right on the board and SAN move list!`
+        : `Đang đấu luyện với <strong>Bot AI (Elo ${this.levelEloMap[this.level] || 1500})</strong>. AI chấm điểm trực tiếp từng nước đi của bạn (<strong>!!, !, ★, ?!, ?, ??</strong>) ngay trên bàn cờ &amp; biên bản SAN!`;
+      }
      }
     }
     this.flipped = (this.mode === 'bot' && this.playerColor === 'b');
@@ -5538,27 +5590,27 @@
     const topColor = topIsBlack ? 'b' : 'w';
     const botColor = topIsBlack ? 'w' : 'b';
     const botElo = this.levelEloMap[this.level] || 1500;
+    const isEn = window.AppI18n?.lang === 'en';
     const labelForColor = col => {
      if (this.mode === 'matchmaking') {
       if (this.onlineMatch.status === 'playing' || this.onlineMatch.status === 'finished') {
        const pInfo = col === 'w' ? this.onlineMatch.whitePlayer : this.onlineMatch.blackPlayer;
        if (pInfo) {
         const isMe = pInfo.clientId === this.onlineMatch.clientId || (AppState.userEmail && pInfo.email === AppState.userEmail);
-        return `${pInfo.nickname} (${col === 'w' ? 'Trắng' : 'Đen'} • ${pInfo.elo} Elo)${isMe ? ' [BẠN]' : ''}`;
+        return `${pInfo.nickname} (${col === 'w' ? (isEn ? 'White' : 'Trắng') : (isEn ? 'Black' : 'Đen')} • ${pInfo.elo} Elo)${isMe ? (isEn ? ' [YOU]' : ' [BẠN]') : ''}`;
        }
       }
-      const myName = AppState.userName || 'Bạn';
+      const myName = AppState.userName || (isEn ? 'You' : 'Bạn');
       return col === 'w'
        ? `${myName} (${AppState.chessElo} Elo)`
-       : `Đang chờ đối thủ Online (${Math.max(100, AppState.chessElo - 100)}–${AppState.chessElo + 100} Elo)...`;
+       : (isEn ? `Waiting for Online Opponent (${Math.max(100, AppState.chessElo - 100)}–${AppState.chessElo + 100} Elo)...` : `Đang chờ đối thủ Online (${Math.max(100, AppState.chessElo - 100)}–${AppState.chessElo + 100} Elo)...`);
      }
      if (this.mode === 'pvp') {
-      return col === 'w' ? 'Kỳ Thủ 1 (Quân Trắng)' : 'Kỳ Thủ 2 (Quân Đen)';
+      return col === 'w' ? (isEn ? 'Player 1 (White)' : 'Kỳ Thủ 1 (Quân Trắng)') : (isEn ? 'Player 2 (Black)' : 'Kỳ Thủ 2 (Quân Đen)');
      }
      if (this.mode === 'puzzle') {
-      return col === 'w' ? 'Bạn (Giải Thế Cờ - Quân Trắng)' : 'Thế Cờ Đối Phương (Quân Đen)';
+      return col === 'w' ? (isEn ? 'You (Puzzle Solver - White)' : 'Bạn (Giải Thế Cờ - Quân Trắng)') : (isEn ? 'Puzzle Position (Black)' : 'Thế Cờ Đối Phương (Quân Đen)');
      }
-     const isEn = window.AppI18n?.lang === 'en';
      if (col === this.playerColor) {
       return `${AppState.userName || (isEn ? 'You' : 'Bạn')} (${col === 'w' ? (isEn ? 'White' : 'Quân Trắng') : (isEn ? 'Black' : 'Quân Đen')} • ${AppState.chessElo} Elo)`;
      }
@@ -5742,11 +5794,22 @@
        }
       }
       let moveQualityOverlay = '';
-      const latestEv = this.moveEvaluations && this.moveEvaluations.length
-       ? this.moveEvaluations[this.moveEvaluations.length - 1]
-       : null;
-      if (latestEv && latestEv.to === sqName && latestEv.symbol) {
-       moveQualityOverlay = `<span class="chess-move-badge-board" style="background:${latestEv.badgeBg};color:${latestEv.badgeText};" title="${latestEv.labelVi}">${latestEv.symbol}</span>`;
+      if (this.moveEvaluations && this.moveEvaluations.length) {
+       const isEnBoard = window.AppI18n?.lang === 'en';
+       let targetEv = null;
+       if (this.mode === 'pvp') {
+        targetEv = this.moveEvaluations[this.moveEvaluations.length - 1];
+       } else {
+        for (let idx = this.moveEvaluations.length - 1; idx >= 0; idx--) {
+         if (this.moveEvaluations[idx] && this.moveEvaluations[idx].color === this.playerColor) {
+          targetEv = this.moveEvaluations[idx];
+          break;
+         }
+        }
+       }
+       if (targetEv && targetEv.to === sqName && targetEv.symbol) {
+        moveQualityOverlay = `<span class="chess-move-badge-board" style="background:${targetEv.badgeBg};color:${targetEv.badgeText};" title="${isEnBoard ? targetEv.labelEn : targetEv.labelVi}">${targetEv.symbol}</span>`;
+       }
       }
       html += `
        <div data-sq="${sqName}" class="chess-square flex items-center justify-center ${bgClass} cursor-pointer">
@@ -5800,32 +5863,91 @@
     this.closePromotionModal();
     this.executePlayerMove(from, to, promoPieceType);
    },
-   classifyChessMoveQuality(moveObj, delta, engineBest) {
-    const isEngineBest = !!(engineBest && engineBest.from === moveObj.from && engineBest.to === moveObj.to);
+   evaluatePreMoveCandidates(color, prevEval) {
+    const legalMoves = this.game.moves({ verbose: true });
+    if (!legalMoves.length) return null;
+    const centerSquares = new Set(['d4', 'd5', 'e4', 'e5', 'c4', 'c5', 'f4', 'f5', 'c3', 'f3', 'c6', 'f6']);
+    let bestScore = -999999;
+    let bestMove = legalMoves[0];
+    const scoresMap = {};
+    for (const m of legalMoves) {
+     this.game.move(m);
+     const rawAfter = this.evaluateBoard();
+     let gain = color === 'w' ? (rawAfter - prevEval) : (prevEval - rawAfter);
+     if (m.san.includes('#')) gain += 100;
+     else if (m.san.includes('+')) gain += 0.22;
+     if (m.san === 'O-O' || m.san === 'O-O-O') gain += 0.32;
+     if (m.promotion) gain += 1.5;
+     if (centerSquares.has(m.to) && (m.piece === 'p' || m.piece === 'n' || m.piece === 'b')) gain += 0.14;
+     this.game.undo();
+     const key = `${m.from}-${m.to}`;
+     if (scoresMap[key] === undefined || gain > scoresMap[key]) {
+      scoresMap[key] = gain;
+     }
+     if (gain > bestScore) {
+      bestScore = gain;
+      bestMove = m;
+     }
+    }
+    return { bestMove, bestScore, scoresMap };
+   },
+   classifyChessMoveQuality(moveObj, delta, preMoveAnalysis) {
+    const isPlayerMove = (this.mode === 'pvp') ? true : (moveObj.color === this.playerColor);
+    if (!isPlayerMove) {
+     return {
+      symbol: '',
+      code: 'opponent',
+      labelVi: 'Nước đi của đối thủ',
+      labelEn: 'Opponent Move',
+      badgeBg: '#27272a',
+      badgeText: '#d4d4d8'
+     };
+    }
+    const key = `${moveObj.from}-${moveObj.to}`;
+    const playedScore = (preMoveAnalysis && preMoveAnalysis.scoresMap && preMoveAnalysis.scoresMap[key] !== undefined)
+     ? preMoveAnalysis.scoresMap[key]
+     : delta;
+    const bestScore = (preMoveAnalysis && typeof preMoveAnalysis.bestScore === 'number')
+     ? preMoveAnalysis.bestScore
+     : playedScore;
+    const gapFromBest = Math.max(0, bestScore - playedScore);
+    const isTopEngineMove = gapFromBest <= 0.22;
     const isMate = moveObj.san.includes('#');
     const isCheck = moveObj.san.includes('+');
-    // Chess.com style classification: !! (Brilliant), ! (Great), ★ (Best), ?! (Inaccuracy), ? (Mistake), ?? (Blunder)
-    if (isMate || (isEngineBest && delta >= 1.35) || (moveObj.captured && delta >= 1.85)) {
+    const isCastle = moveObj.san === 'O-O' || moveObj.san === 'O-O-O';
+    const isCenterControl = ['d4', 'd5', 'e4', 'e5', 'c4', 'c5'].includes(moveObj.to);
+    // Chess.com style classification for the Player: !! (Brilliant), ! (Great), ★ (Best), ?! (Inaccuracy), ? (Mistake), ?? (Blunder)
+    if (
+     isMate ||
+     moveObj.promotion ||
+     delta >= 1.15 ||
+     (moveObj.captured && delta >= 0.65 && gapFromBest <= 0.25) ||
+     (isTopEngineMove && isCheck && delta >= 0.15) ||
+     (isTopEngineMove && delta >= 0.42)
+    ) {
      return {
       symbol: '!!',
       code: 'brilliant',
-      labelVi: 'Nước Đi Thiên Tài (Brilliant !!)',
+      labelVi: 'Nước Đi Xuất Sắc / Thiên Tài (Brilliant !!)',
       labelEn: 'Brilliant Move (!!)',
       badgeBg: '#06b6d4',
       badgeText: '#09090b'
      };
     }
-    if ((isEngineBest && delta >= 0.35) || delta >= 0.75 || (isEngineBest && isCheck && delta >= 0.1)) {
+    if (
+     (isTopEngineMove && (delta >= 0.12 || isCastle || isCenterControl || moveObj.captured || isCheck)) ||
+     delta >= 0.45
+    ) {
      return {
       symbol: '!',
       code: 'great',
-      labelVi: 'Nước Đi Tuyệt Vời (Great Move !)',
+      labelVi: 'Nước Đi Xuất Sắc / Tuyệt Vời (Great Move !)',
       labelEn: 'Great Move (!)',
       badgeBg: '#38bdf8',
       badgeText: '#09090b'
      };
     }
-    if (isEngineBest && delta >= -0.25) {
+    if (gapFromBest <= 0.36 && delta >= -0.28) {
      return {
       symbol: '★',
       code: 'best',
@@ -5835,7 +5957,7 @@
       badgeText: '#09090b'
      };
     }
-    if (delta >= -0.38) {
+    if (delta >= -0.42 && gapFromBest <= 0.65) {
      return {
       symbol: '',
       code: 'good',
@@ -5874,10 +5996,11 @@
      badgeText: '#ffffff'
     };
    },
-   recordMoveEvaluation(moveObj, prevEval, engineBest = null) {
+   recordMoveEvaluation(moveObj, prevEval, preMoveAnalysis = null) {
     const afterEval = this.evaluateBoard();
     const delta = moveObj.color === 'w' ? (afterEval - prevEval) : (prevEval - afterEval);
-    const quality = this.classifyChessMoveQuality(moveObj, delta, engineBest);
+    const engineBest = preMoveAnalysis ? preMoveAnalysis.bestMove : null;
+    const quality = this.classifyChessMoveQuality(moveObj, delta, preMoveAnalysis);
     const entry = {
      plyIndex: this.game.history().length - 1,
      moveNumber: Math.ceil(this.game.history().length / 2),
@@ -6217,13 +6340,13 @@
    },
    executePlayerMove(fromSq, toSq, promoType = 'q', isRemoteOnlineMove = false) {
     const prevEval = this.evaluateBoard();
-    const engineBest = !isRemoteOnlineMove ? this.chooseBestMove(this.game.turn()) : null;
+    const preMoveAnalysis = !isRemoteOnlineMove ? this.evaluatePreMoveCandidates(this.game.turn(), prevEval) : null;
     const moveObj = this.game.move({ from: fromSq, to: toSq, promotion: promoType });
     this.selectedSq = null;
     this.legalTargets = [];
     if (moveObj) {
      this.lastMoveSquares = [moveObj.from, moveObj.to];
-     const evEntry = this.recordMoveEvaluation(moveObj, prevEval, engineBest);
+     const evEntry = this.recordMoveEvaluation(moveObj, prevEval, preMoveAnalysis);
      if (!isRemoteOnlineMove && this.mode !== 'puzzle' && evEntry) {
       const isEn = window.AppI18n?.lang === 'en';
       const coachEl = document.getElementById('chess-coach-text');
@@ -6557,7 +6680,7 @@
     const m = this.game.move(best);
     if (m) {
      this.lastMoveSquares = [m.from, m.to];
-     this.recordMoveEvaluation(m, prevEval, best);
+     this.recordMoveEvaluation(m, prevEval, null);
      this.startClockIfNeeded();
      SoundFX.play(m.captured ? 'capture' : 'move');
      this.saveActiveGameSnapshot();
@@ -7474,11 +7597,12 @@
     const peers = Array.from(this.onlineMatch.waitingPeers.values()).filter(
      p => p.clientId !== this.onlineMatch.clientId && (Date.now() - (p.lastSeen || 0) <= 6500)
     );
+    const isEn = window.AppI18n?.lang === 'en';
     if (countBadge) {
-     countBadge.textContent = `${peers.length} người đang tìm trận`;
+     countBadge.textContent = isEn ? `${peers.length} searching` : `${peers.length} người đang tìm trận`;
     }
     if (peers.length === 0) {
-     listEl.innerHTML = `<div class="text-slate-400 italic text-[11px]">Hiện chưa có kỳ thủ nào khác đang phát tín hiệu tìm trận. Hãy mở trên thiết bị/máy thứ 2 và bấm "Tìm Đối Thủ Online"!</div>`;
+     listEl.innerHTML = `<div class="text-slate-400 italic text-[11px]">${isEn ? 'No other players are currently broadcasting a matchmaking signal. Open on a 2nd device/tab and click "Find Online Opponent"!' : 'Hiện chưa có kỳ thủ nào khác đang phát tín hiệu tìm trận. Hãy mở trên thiết bị/máy thứ 2 và bấm "Tìm Đối Thủ Online"!'}</div>`;
      return;
     }
     const myElo = Number(AppState.chessElo) || 1200;
@@ -7508,10 +7632,11 @@
     const maxElo = myElo + 100;
     const myEloEl = document.getElementById('online-my-elo-label');
     const rangeEl = document.getElementById('online-elo-range-label');
+    const isEn = window.AppI18n?.lang === 'en';
     const timeEl = document.getElementById('online-time-control-label');
     if (myEloEl) myEloEl.textContent = `${myElo} Elo`;
     if (rangeEl) rangeEl.textContent = `${minElo} – ${maxElo}`;
-    if (timeEl) timeEl.textContent = `${this.initialTimeSec / 60} phút`;
+    if (timeEl) timeEl.textContent = isEn ? `${this.initialTimeSec / 60} min` : `${this.initialTimeSec / 60} phút`;
     const idleWrap = document.getElementById('online-lobby-idle-controls');
     const searchWrap = document.getElementById('online-searching-box');
     const activeWrap = document.getElementById('online-active-match-box');
@@ -8014,9 +8139,14 @@
     ['Mức độ AI Elo:', 'AI Bot Elo Level:'],
     ['Thời gian mỗi bên:', 'Time Control:'],
     ['Đấu với Bot AI (Luyện tập)', 'Play vs AI Bot (Practice)'],
+    ['Đấu với Bot AI', 'Play vs AI Bot'],
     ['⚔️ Ghép Đấu Online (±100 Elo • Tính Elo)', '⚔️ Online Matchmaking (±100 Elo • Rated)'],
+    ['⚔️ Ghép Đấu Online (±100 Elo)', '⚔️ Online Matchmaking (±100 Elo)'],
     ['2 Người Chơi (Cùng máy)', '2 Players (Pass & Play)'],
+    ['2 Người Chơi', '2 Players (Pass & Play)'],
     ['🎲 Giải Thế Cờ Ngẫu Nhiên (42 Bài)', '🎲 Random Tactical Puzzles (42 Cases)'],
+    ['📌 Trạng thái bàn cờ', '📌 Board Status'],
+    ['🤖 AI đang tính...', '🤖 AI thinking...'],
     ['Tập Sự (Elo 400)', 'Beginner (Elo 400)'],
     ['Cơ Bản (Elo 800)', 'Novice (Elo 800)'],
     ['Phong Trào (Elo 1200)', 'Club Player (Elo 1200)'],
@@ -8399,11 +8529,11 @@
     const enBtn = document.getElementById('lang-en-btn');
     if (viBtn && enBtn) {
      viBtn.className = !isEn
-      ? 'px-2.5 py-1.5 rounded-lg text-xs font-mono-code font-extrabold bg-cyan-500 text-slate-950 transition'
-      : 'px-2.5 py-1.5 rounded-lg text-xs font-mono-code font-bold text-slate-300 hover:text-white transition';
+      ? 'px-2.5 py-1.5 rounded-lg text-xs font-mono-code font-extrabold bg-cyan-500 text-slate-950 transition inline-flex items-center gap-1.5'
+      : 'px-2.5 py-1.5 rounded-lg text-xs font-mono-code font-bold text-slate-300 hover:text-white transition inline-flex items-center gap-1.5';
      enBtn.className = isEn
-      ? 'px-2.5 py-1.5 rounded-lg text-xs font-mono-code font-extrabold bg-cyan-500 text-slate-950 transition'
-      : 'px-2.5 py-1.5 rounded-lg text-xs font-mono-code font-bold text-slate-300 hover:text-white transition';
+      ? 'px-2.5 py-1.5 rounded-lg text-xs font-mono-code font-extrabold bg-cyan-500 text-slate-950 transition inline-flex items-center gap-1.5'
+      : 'px-2.5 py-1.5 rounded-lg text-xs font-mono-code font-bold text-slate-300 hover:text-white transition inline-flex items-center gap-1.5';
     }
 
     // Navigation Tabs
@@ -8471,7 +8601,13 @@
     if (rTabTimer) rTabTimer.textContent = isEn ? '⏱️ Dedicated WCA Timer' : '⏱️ Đồng Hồ WCA Timer Riêng';
     if (rExpandBtn) rExpandBtn.innerHTML = isEn ? '<span>⛶</span> <span>Expand 3D View</span>' : '<span>⛶</span> <span>Mở Rộng Mô Hình 3D</span>';
 
+    setTxt('hero-kicker-left', '⚡ Nền Tảng Huấn Luyện & Thi Đấu Trí Tuệ', '⚡ Mind Sports Training & Competition Platform');
+    setTxt('hero-kicker-right', 'Rubik 3D & Cờ Vua', 'Rubik 3D & Chess');
+    setTxt('hero-visual-model-label', 'Mô Hình Trực Quan', 'Interactive Live Model');
+    setTxt('hero-cube-scramble', '🔀 Trộn', '🔀 Scramble');
+    setTxt('hero-cube-ai-solve', '🤖 Giải Ít Bước Nhất', '🤖 AI Optimal Solve');
     setTxt('rubik-scramble-btn', '🔀 Trộn', '🔀 Scramble');
+    setTxt('rubik-ai-solve-btn', '🤖 Giải Ít Bước Nhất', '🤖 AI Optimal Solve');
     setTxt('rubik-expand-inline-btn', '⛶ Phóng To', '⛶ Expand');
     setTxt('new-scramble-text-btn', 'Đổi mã trộn', 'New Scramble');
     setTxt('reset-all-progress-btn', '↺ Đặt Lại Tất Cả Công Thức', '↺ Reset Learned Formulas');
@@ -8480,9 +8616,50 @@
     setTxt('rubik-speed-title-label', '⚡ Tốc độ xoay Rubik:', '⚡ Rubik Rotation Speed:');
     setTxt('exp-rubik-speed-title-label', '⚡ Tốc độ xoay Rubik:', '⚡ Rubik Rotation Speed:');
     setTxt('exp-rubik-scramble-btn', '🔀 Trộn (Scramble)', '🔀 Scramble');
+    setTxt('exp-rubik-ai-solve-btn', '🤖 Giải Ít Bước Nhất', '🤖 AI Optimal Solve');
     setTxt('exp-rubik-reset-view-btn', '🎯 Góc Nhìn Chuẩn', '🎯 Reset View');
+    setTxt('rubik-expand-close-label', 'Thu Nhỏ Về Giao Diện Chính', 'Exit Fullscreen');
+    setTxt('chess-expand-close-label', 'Thu Nhỏ Về Giao Diện Chính', 'Exit Fullscreen');
     setTxt('exp-rubik-step-prev-btn', '⏮ Lùi Bước', '⏮ Prev Step');
     setTxt('exp-rubik-step-next-btn', 'Đi Bước ⏭', 'Next Step ⏭');
+    setTxt('exp-chess-random-puzzle-btn', '🎲 Bài Ngẫu Nhiên Mới', '🎲 New Random Puzzle');
+    setTxt('online-room-badge', '🟢 Đang Thi Đấu Online (Đồng bộ thời gian thực)', '🟢 Live Online Match (Real-Time Sync)');
+    setTxt('footer-powered-by', 'Powered by : Đội Khoa Học Kĩ Thuật 12D10 ( Hoàng Mạnh, Văn Long )', 'Powered by : 12D10 Science & Engineering Team ( Hoang Manh, Van Long )');
+    setHtml('rubik-step-prev-btn', '<span>⏮</span> <span>Lùi Bước</span>', '<span>⏮</span> <span>Prev Step</span>');
+    setHtml('rubik-step-next-btn', '<span>Đi Bước</span> <span>⏭</span>', '<span>Next Step</span> <span>⏭</span>');
+    setHtml(
+     'exp-rubik-top-help',
+     `💻 Máy tính: Bấm phím <strong class="text-cyan-300">R, U, F, L, D, B, M, E, S, X, Y, Z</strong> để xoay • Bấm 2 phím cùng lúc <strong class="text-amber-300">R + '</strong> để xoay ngược <strong class="text-amber-300">R'</strong> (hoặc <strong class="text-amber-300">R + 2</strong> để xoay <strong class="text-amber-300">R2</strong>) • 📱 Điện thoại: Chạm các hộp chữ bên dưới`,
+     `💻 Desktop: Press <strong class="text-cyan-300">R, U, F, L, D, B, M, E, S, X, Y, Z</strong> to rotate • Press <strong class="text-amber-300">Letter + '</strong> for counter-clockwise <strong class="text-amber-300">R'</strong> (or <strong class="text-amber-300">Letter + 2</strong> for <strong class="text-amber-300">R2</strong>) • 📱 Mobile: Tap move buttons below`
+    );
+    setHtml(
+     'exp-rubik-kb-guide-body',
+     `• Xoay thuận 90°: Bấm phím <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">R</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">U</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">F</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">L</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">D</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">B</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono-code font-bold">M</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono-code font-bold">E</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono-code font-bold">S</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-purple-300 font-mono-code font-bold">X</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-purple-300 font-mono-code font-bold">Y</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-purple-300 font-mono-code font-bold">Z</kbd><br/>• Xoay ngược (<strong class="text-amber-300">'</strong>): Bấm <strong>2 nút cùng lúc</strong> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono-code font-bold">Phím Chữ + '</kbd> (VD: <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono-code font-bold">R + '</kbd> → <strong>R'</strong>)<br/>• Xoay 2 tầng (<strong class="text-emerald-300">r, u, f...</strong>): Giữ <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-emerald-300 font-mono-code font-bold">Shift + Chữ</kbd> hoặc bật nút <strong>Chế độ 2 tầng</strong>.`,
+     `• Clockwise 90°: Press <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">R</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">U</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">F</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">L</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">D</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono-code font-bold">B</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono-code font-bold">M</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono-code font-bold">E</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono-code font-bold">S</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-purple-300 font-mono-code font-bold">X</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-purple-300 font-mono-code font-bold">Y</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-purple-300 font-mono-code font-bold">Z</kbd><br/>• Counter-Clockwise (<strong class="text-amber-300">'</strong>): Press <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono-code font-bold">Letter + '</kbd> together (e.g. <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono-code font-bold">R + '</kbd> → <strong>R'</strong>)<br/>• Wide 2-Layer (<strong class="text-emerald-300">r, u, f...</strong>): Hold <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-emerald-300 font-mono-code font-bold">Shift + Letter</kbd> or toggle <strong>2-Layer Mode</strong>.`
+    );
+    const kbWideBtn = document.getElementById('exp-kb-wide-toggle-btn');
+    if (kbWideBtn) {
+     kbWideBtn.textContent = RubikExpandedArena.keyboardWideMode
+      ? (isEn ? '⌨️ Keys: 2-Layer (r,u,f,l,d,b)' : '⌨️ Phím chữ: 2 Tầng (r,u,f,l,d,b)')
+      : (isEn ? '⌨️ Keys: 1-Layer (R,U,F)' : '⌨️ Phím chữ: 1 Tầng (R,U,F)');
+    }
+    const authNameInput = document.getElementById('auth-name-input');
+    if (authNameInput) authNameInput.placeholder = isEn ? 'Enter your unique Nickname...' : 'Nhập Nickname của bạn...';
+    const authEmailInput = document.getElementById('auth-email-input');
+    if (authEmailInput) authEmailInput.placeholder = isEn ? 'your-name@gmail.com' : 'ten-cua-ban@gmail.com';
+    const heroCaption = document.getElementById('hero-chess-caption');
+    if (heroCaption) {
+     if (isEn && heroCaption.textContent.includes('Thế cờ')) {
+      heroCaption.textContent = heroCaption.textContent.replace('Thế cờ', 'Position:');
+     } else if (!isEn && heroCaption.textContent.includes('Position:')) {
+      heroCaption.textContent = heroCaption.textContent.replace('Position:', 'Thế cờ');
+     }
+    }
+    const cubeBadge1 = document.getElementById('cube-move-history-badge');
+    if (cubeBadge1) {
+     if (isEn && cubeBadge1.textContent.includes('Nước xoay: Sẵn sàng')) cubeBadge1.textContent = 'Move: Ready';
+     else if (!isEn && cubeBadge1.textContent.includes('Move: Ready')) cubeBadge1.textContent = 'Nước xoay: Sẵn sàng';
+    }
 
     // CFOP Filter Buttons & Search Input
     const cfopSearch = document.getElementById('cfop-search-input');
@@ -8513,7 +8690,7 @@
     if (cExpandBtn) cExpandBtn.innerHTML = isEn ? '<span>⛶</span> <span>Expand Board</span>' : '<span>⛶</span> <span>Mở Rộng Bàn Cờ</span>';
     setTxt('chess-expand-inline-btn', '⛶ Phóng To', '⛶ Expand');
     setTxt('chess-new-btn', '🔄 Ván Mới', '🔄 New Game');
-    setTxt('chess-undo-btn', '↩ Đi Lại', '↩ Undo');
+    // chess-undo-btn removed
     setTxt('chess-draw-btn', '🤝 Xin Hòa', '🤝 Offer Draw');
     setTxt('chess-resign-btn', '🏳️ Đầu Hàng', '🏳️ Resign');
     setTxt('chess-flip-btn', '🔃 Xoay Bàn', '🔃 Flip Board');
@@ -8521,7 +8698,7 @@
     setTxt('exp-chess-new-top-btn', '🔄 Ván Mới', '🔄 New Game');
     setTxt('exp-chess-flip-top-btn', '🔃 Xoay Bàn', '🔃 Flip Board');
     setTxt('exp-chess-new-btn', '🔄 Ván Mới', '🔄 New Game');
-    setTxt('exp-chess-undo-btn', '↩ Đi Lại', '↩ Undo');
+    // exp-chess-undo-btn removed
     setTxt('exp-chess-draw-btn', '🤝 Xin Hòa', '🤝 Offer Draw');
     setTxt('exp-chess-resign-btn', '🏳️ Đầu Hàng', '🏳️ Resign');
     setTxt('exp-chess-flip-btn', '🔃 Xoay Bàn', '🔃 Flip Board');
@@ -8600,10 +8777,50 @@
      'Exclusively ranks verified registered accounts. When tied in Chess Elo or Rubik Best Time, <strong>the earlier registered account ranks higher</strong>.'
     );
     setCompoundSelectorHtml(
+     '#online-searching-box p',
+     'Hệ thống tự động ghép khi có người chơi khác máy chọn cùng mức thời gian và có điểm Elo chênh lệch từ <strong>0 đến 100 Elo</strong>.',
+     'Automatically pairs you with another online player who selects the same time control within a <strong>0 to 100 Elo</strong> rating difference.'
+    );
+    setCompoundSelectorHtml(
+     '#online-active-match-box div.text-\[11px\]',
+     'Ván đấu được tự động lưu và đồng bộ hai chiều — nếu lỡ nhấn <strong>F5 hoặc tải lại trang</strong>, ván đấu sẽ tự động khôi phục ngay!',
+     'Your match is auto-saved and synced two-way — if you press <strong>F5 or reload the page</strong>, the game restores automatically!'
+    );
+    setCompoundSelectorHtml(
      'footer .max-w-7xl > div:first-child',
      '<strong>LM Training</strong> — Học Tập, Rèn Luyện &amp; Thi Đấu Rubik 3D • Cờ Vua Quốc Tế',
      '<strong>LM Training</strong> — 3D Rubik Studio &amp; International Chess Training Arena'
     );
+    switchAuthModalMode(AppState.authMode || 'register');
+    const sSlider = document.getElementById('rubik-speed-slider');
+    if (sSlider) {
+     const mult = Math.max(0.1, Math.min(4.0, Number(sSlider.value) || 1.0));
+     let tag = '';
+     if (Math.abs(mult - 1.0) < 0.06) tag = isEn ? ' (Standard)' : ' (Chuẩn)';
+     else if (mult <= 0.4) tag = isEn ? ' (Ultra Slow)' : ' (Siêu chậm)';
+     else if (mult < 1.0) tag = isEn ? ' (Slow)' : ' (Chậm)';
+     else if (mult >= 2.5) tag = isEn ? ' (Turbo)' : ' (Siêu tốc)';
+     else tag = isEn ? ' (Fast)' : ' (Nhanh)';
+     const labelTxt = `${mult.toFixed(1)}x${tag}`;
+     const b1 = document.getElementById('rubik-speed-val-badge');
+     const b2 = document.getElementById('exp-rubik-speed-val-badge');
+     if (b1) b1.textContent = labelTxt;
+     if (b2) b2.textContent = labelTxt;
+    }
+    if (typeof ChessArena !== 'undefined' && ChessArena.game && ChessArena.game.history().length === 0 && ChessArena.mode !== 'puzzle') {
+     const openingEl = document.getElementById('chess-opening-name');
+     const coachEl = document.getElementById('chess-coach-text');
+     if (openingEl) {
+      openingEl.textContent = ChessArena.mode === 'matchmaking'
+       ? (isEn ? '⚔️ Fair Online Matchmaking Arena (±100 Elo)' : '⚔️ Đấu Trường Ghép Trận Online Công Bằng (±100 Elo)')
+       : (isEn ? '📌 Opening: Standard Starting Position' : '📌 Khai cuộc: Khởi đầu tiêu chuẩn');
+     }
+     if (coachEl && ChessArena.mode === 'bot') {
+      coachEl.innerHTML = isEn
+       ? `Practicing against <strong>LM StockBot AI (Elo ${ChessArena.levelEloMap[ChessArena.level] || 1500})</strong>. AI evaluates every move you play (<strong>!!, !, ★, ?!, ?, ??</strong>) right on the board and SAN move list!`
+       : `Đang đấu luyện với <strong>Bot AI (Elo ${ChessArena.levelEloMap[ChessArena.level] || 1500})</strong>. AI chấm điểm trực tiếp từng nước đi của bạn (<strong>!!, !, ★, ?!, ?, ??</strong>) ngay trên bàn cờ &amp; biên bản SAN!`;
+     }
+    }
 
     // Re-render dynamic views so language updates immediately everywhere
     updateDashboardProgressUI();
@@ -8701,9 +8918,10 @@
     });
    });
    document.getElementById('hero-cube-scramble').addEventListener('click', () => window.HeroCube?.scramble(10));
+   document.getElementById('hero-cube-ai-solve')?.addEventListener('click', () => window.HeroCube?.solveAnimated());
    document.getElementById('hero-cube-reset-view')?.addEventListener('click', () => {
     window.HeroCube?.resetViewAngle();
-    showToast('🎯 Đã đưa mô hình Rubik về góc nhìn chuẩn!', 'cyan');
+    showToast(window.AppI18n?.lang === 'en' ? '🎯 Reset 3D Rubik view angle!' : '🎯 Đã đưa mô hình Rubik về góc nhìn chuẩn!', 'cyan');
    });
    document.getElementById('hero-cube-reset').addEventListener('click', () => window.HeroCube?.reset());
    document.getElementById('hero-demo-qg').addEventListener('click', () => {
@@ -8756,10 +8974,11 @@
     });
    });
    document.getElementById('rubik-scramble-btn').addEventListener('click', () => window.MainCube?.scramble(14));
+   document.getElementById('rubik-ai-solve-btn')?.addEventListener('click', () => window.MainCube?.solveAnimated());
    document.getElementById('new-scramble-text-btn').addEventListener('click', () => window.MainCube?.scramble(14));
    document.getElementById('rubik-reset-view-btn')?.addEventListener('click', () => {
     window.MainCube?.resetViewAngle();
-    showToast('🎯 Đã quay lại góc nhìn chuẩn CFOP (Vàng trên • Xanh lá trước • Đỏ phải)!', 'cyan');
+    showToast(window.AppI18n?.lang === 'en' ? '🎯 Returned to standard CFOP view (Yellow Top • Green Front • Red Right)!' : '🎯 Đã quay lại góc nhìn chuẩn CFOP (Vàng trên • Xanh lá trước • Đỏ phải)!', 'cyan');
    });
    document.getElementById('rubik-reset-btn').addEventListener('click', () => window.MainCube?.reset());
    document.getElementById('rubik-step-prev-btn')?.addEventListener('click', () => window.MainCube?.stepBackward());
@@ -8772,6 +8991,7 @@
    document.getElementById('rubik-expand-inline-btn')?.addEventListener('click', () => RubikExpandedArena.openModal());
    document.getElementById('rubik-expand-close-btn')?.addEventListener('click', () => RubikExpandedArena.closeModal());
    document.getElementById('exp-rubik-scramble-btn')?.addEventListener('click', () => window.MainCube?.scramble(14));
+   document.getElementById('exp-rubik-ai-solve-btn')?.addEventListener('click', () => window.MainCube?.solveAnimated());
    document.getElementById('exp-rubik-reset-btn')?.addEventListener('click', () => window.MainCube?.reset());
    document.getElementById('exp-rubik-reset-view-btn')?.addEventListener('click', () => {
     window.MainCube?.resetViewAngle();
@@ -8791,13 +9011,14 @@
     }
    });
    function applyRubikSpeedMultiplier(multVal) {
-    const mult = Math.max(0.5, Math.min(4.0, Number(multVal) || 1.0));
-    const ms = Math.round(110 / mult);
+    const mult = Math.max(0.1, Math.min(4.0, Number(multVal) || 1.0));
+    const ms = Math.round(135 / mult);
     window.MainCube?.setRotationSpeed(ms);
     window.HeroCube?.setRotationSpeed(ms);
     const isEn = window.AppI18n?.lang === 'en';
     let tag = '';
     if (Math.abs(mult - 1.0) < 0.06) tag = isEn ? ' (Standard)' : ' (Chuẩn)';
+    else if (mult <= 0.4) tag = isEn ? ' (Ultra Slow)' : ' (Siêu chậm)';
     else if (mult < 1.0) tag = isEn ? ' (Slow)' : ' (Chậm)';
     else if (mult >= 2.5) tag = isEn ? ' (Turbo)' : ' (Siêu tốc)';
     else tag = isEn ? ' (Fast)' : ' (Nhanh)';
@@ -8930,8 +9151,21 @@
     KeyM: 'M', KeyE: 'E', KeyS: 'S', KeyX: 'x', KeyY: 'y', KeyZ: 'z'
    };
    window.addEventListener('keydown', e => {
-    const activeTag = document.activeElement ? document.activeElement.tagName : '';
+    const activeEl = document.activeElement;
+    const activeTag = activeEl ? activeEl.tagName : '';
     if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') return;
+    if (e.code === 'Space' || e.key === ' ') {
+     e.preventDefault();
+     if (activeEl && activeTag === 'BUTTON') {
+      activeEl.blur();
+     }
+     const rubikVisible = !document.getElementById('view-rubik').classList.contains('hidden');
+     const timerVisible = !document.getElementById('rubik-panel-timer').classList.contains('hidden');
+     if (rubikVisible && timerVisible && !RubikExpandedArena.isOpen) {
+      if (!e.repeat) beginTimerHold();
+     }
+     return;
+    }
     if (e.code === 'Escape') {
      if (RubikExpandedArena.isOpen) {
       RubikExpandedArena.closeModal();
@@ -8943,13 +9177,7 @@
      }
     }
     const rubikVisible = !document.getElementById('view-rubik').classList.contains('hidden');
-    const timerVisible = !document.getElementById('rubik-panel-timer').classList.contains('hidden');
     const simVisible = !document.getElementById('rubik-panel-sim').classList.contains('hidden');
-    if (e.code === 'Space' && rubikVisible && timerVisible && !RubikExpandedArena.isOpen) {
-     e.preventDefault();
-     if (!e.repeat) beginTimerHold();
-     return;
-    }
     if (RubikExpandedArena.isOpen || (rubikVisible && simVisible)) {
      if (e.ctrlKey || e.altKey || e.metaKey) return;
      if (e.code === 'Quote' || e.key === "'" || e.key === '"') {
@@ -8998,9 +9226,13 @@
     }
    });
    window.addEventListener('keyup', e => {
-    if (e.code === 'Space' && RubikTimer.holdTimeout) {
+    const activeTag = document.activeElement ? document.activeElement.tagName : '';
+    if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') return;
+    if (e.code === 'Space' || e.key === ' ') {
      e.preventDefault();
-     releaseTimerHold();
+     if (RubikTimer.holdTimeout) {
+      releaseTimerHold();
+     }
      return;
     }
     if (e.code === 'Quote' || e.key === "'" || e.key === '"') {
@@ -9156,22 +9388,7 @@
      ChessArena.resetGameAndState(true);
     }
    });
-   document.getElementById('chess-undo-btn').addEventListener('click', () => {
-    if (ChessArena.mode !== 'bot') {
-     showToast('⚠️ Chế độ 2 Người Chơi & Giải Thế Cờ không cho phép Đi Lại để đảm bảo công bằng!', 'amber');
-     return;
-    }
-    if (ChessArena.isMatchOver()) return;
-    ChessArena.closePromotionModal();
-    ChessArena.game.undo();
-    ChessArena.game.undo();
-    ChessArena.selectedSq = null;
-    ChessArena.legalTargets = [];
-    ChessArena.lastMoveSquares = [];
-    ChessArena.saveActiveGameSnapshot();
-    ChessArena.renderBoard();
-    ChessArena.updateUI();
-   });
+   // Chess Undo button removed as requested
    document.getElementById('chess-draw-btn').addEventListener('click', () => {
     ChessArena.requestDraw();
    });
@@ -9328,9 +9545,7 @@
     ChessArena.renderBoard();
     ChessArena.renderClocksAndPlayers();
    });
-   document.getElementById('exp-chess-undo-btn')?.addEventListener('click', () => {
-    document.getElementById('chess-undo-btn')?.click();
-   });
+   // Expanded Chess Undo button removed as requested
    document.getElementById('exp-chess-draw-btn')?.addEventListener('click', () => ChessArena.requestDraw());
    document.getElementById('exp-chess-hint-btn')?.addEventListener('click', () => ChessArena.showHint());
    document.getElementById('exp-chess-mode-select')?.addEventListener('change', e => {
