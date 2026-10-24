@@ -1656,8 +1656,15 @@
     <!-- ADMIN TAB 3: SYSTEM BROADCAST & TOOLS -->
     <div id="admin-panel-broadcast" class="hidden space-y-5">
      <div class="p-5 rounded-2xl bg-slate-900/95 border border-slate-800 space-y-4">
-      <h3 class="text-base sm:text-lg font-extrabold text-white">📢 Phát Thông Báo Toàn Hệ Thống (Global Banner)</h3>
-      <p class="text-xs sm:text-sm text-slate-300">Thông báo này sẽ ghim nổi bật ở đầu trang cho tất cả học viên và kỳ thủ truy cập vào LM Training.</p>
+      <div class="flex flex-wrap items-center justify-between gap-2">
+       <div>
+        <h3 class="text-base sm:text-lg font-extrabold text-white">📢 Phát Thông Báo Toàn Hệ Thống (Global Banner)</h3>
+        <p class="text-xs sm:text-sm text-slate-300">Thông báo này sẽ ghim nổi bật ở đầu trang cho tất cả học viên và kỳ thủ truy cập vào LM Training.</p>
+       </div>
+       <span id="admin-broadcast-active-status" class="px-3 py-1 rounded-full bg-slate-800 text-slate-300 font-mono-code text-xs font-bold">
+        ⚪ Chưa có thông báo ghim
+       </span>
+      </div>
       <div class="flex flex-col sm:flex-row gap-2.5">
        <input id="admin-broadcast-input" type="text" placeholder="Nhập nội dung thông báo (VD: Giải đấu LM Training Open 2026 đang mở đăng ký tại mục Cờ Vua!)..." class="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-amber-400" />
        <button id="admin-publish-broadcast-btn" type="button" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs sm:text-sm shrink-0 transition">
@@ -1666,6 +1673,33 @@
        <button id="admin-clear-broadcast-btn" type="button" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 text-slate-300 font-bold text-xs sm:text-sm shrink-0 transition">
         ✕ Gỡ Thông Báo
        </button>
+      </div>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="p-5 rounded-2xl bg-slate-900/95 border border-slate-800 space-y-3">
+       <h4 class="text-sm sm:text-base font-extrabold text-amber-300">🛡️ Cài Đặt Hiển Thị &amp; Hồ Sơ Quản Trị Viên</h4>
+       <p class="text-xs text-slate-300 leading-relaxed">Tùy chỉnh hiển thị tài khoản Quản Trị Viên trên Bảng Xếp Hạng công khai hoặc cập nhật nhanh thông tin hồ sơ Admin.</p>
+       <label class="flex items-center gap-2.5 text-xs sm:text-sm text-slate-200 cursor-pointer font-semibold pt-1">
+        <input id="admin-show-self-on-lb-toggle-tab3" type="checkbox" class="w-4 h-4 rounded bg-slate-800 border-slate-700 text-amber-500 focus:ring-0" />
+        <span>Hiển thị tài khoản Admin trên BXH công khai</span>
+       </label>
+       <div class="pt-2 flex flex-wrap gap-2">
+        <button id="admin-edit-self-profile-btn" type="button" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/40 text-xs font-extrabold transition">
+         ✏️ Sửa Hồ Sơ &amp; Elo Admin
+        </button>
+       </div>
+      </div>
+      <div class="p-5 rounded-2xl bg-slate-900/95 border border-slate-800 space-y-3">
+       <h4 class="text-sm sm:text-base font-extrabold text-cyan-300">🧹 Công Cụ Bảo Trì &amp; Đồng Bộ Hệ Thống</h4>
+       <p class="text-xs text-slate-300 leading-relaxed">Dọn dẹp các phòng chờ ghép trận Cờ Vua Online bị treo hoặc đồng bộ cưỡng bức toàn bộ dữ liệu người chơi và giải đấu.</p>
+       <div class="pt-1 flex flex-wrap gap-2">
+        <button id="admin-clean-stale-rooms-btn" type="button" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-cyan-300 border border-cyan-500/35 text-xs font-extrabold transition">
+         🧹 Dọn Phòng Chờ Online Treo
+        </button>
+        <button id="admin-unlock-all-players-btn" type="button" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 border border-emerald-500/35 text-xs font-extrabold transition">
+         🔓 Mở Khóa Tất Cả Học Viên
+        </button>
+       </div>
       </div>
      </div>
     </div>
@@ -2265,8 +2299,25 @@
       <input id="admin-edit-elo" type="number" min="100" max="3500" step="1" value="1200" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono-code focus:outline-none focus:border-amber-400" />
      </div>
      <div>
-      <label class="font-bold text-slate-200 block mb-1">Kỷ lục Rubik Best (giây):</label>
+      <div class="flex items-center justify-between mb-1">
+       <label class="font-bold text-slate-200">Kỷ lục Rubik (giây):</label>
+       <button id="admin-clear-rubik-best-btn" type="button" class="text-[10px] font-mono-code text-rose-300 hover:text-white underline font-bold" title="Xóa kỷ lục Rubik về chưa bấm giờ">Xóa kỷ lục</button>
+      </div>
       <input id="admin-edit-rubik-best" type="number" min="0" max="999" step="0.01" placeholder="Để trống nếu giữ nguyên" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono-code focus:outline-none focus:border-amber-400" />
+     </div>
+    </div>
+    <div class="grid grid-cols-3 gap-2">
+     <div>
+      <label class="font-bold text-slate-200 block mb-1 text-[11px]">🏆 Ván Thắng (W):</label>
+      <input id="admin-edit-wins" type="number" min="0" max="9999" step="1" value="0" class="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-emerald-300 font-mono-code focus:outline-none focus:border-amber-400" />
+     </div>
+     <div>
+      <label class="font-bold text-slate-200 block mb-1 text-[11px]">🤝 Ván Hòa (D):</label>
+      <input id="admin-edit-draws" type="number" min="0" max="9999" step="1" value="0" class="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-amber-300 font-mono-code focus:outline-none focus:border-amber-400" />
+     </div>
+     <div>
+      <label class="font-bold text-slate-200 block mb-1 text-[11px]">🏳️ Ván Thua (L):</label>
+      <input id="admin-edit-losses" type="number" min="0" max="9999" step="1" value="0" class="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-rose-300 font-mono-code focus:outline-none focus:border-amber-400" />
      </div>
     </div>
     <div class="grid grid-cols-2 gap-2.5">
@@ -2278,6 +2329,18 @@
       <label class="font-bold text-slate-200 block mb-1">Mật khẩu (Nếu tạo mới/đổi):</label>
       <input id="admin-edit-password" type="text" placeholder="Để trống nếu giữ nguyên" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400" />
      </div>
+    </div>
+    <div id="admin-edit-emoji-bar" class="flex flex-wrap items-center gap-1 pt-0.5">
+     <span class="text-[10px] text-slate-400 mr-1">Chọn nhanh:</span>
+     <button type="button" data-admin-emoji="👑" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-amber-500/20 border border-slate-800 text-sm">👑</button>
+     <button type="button" data-admin-emoji="♞" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-amber-500/20 border border-slate-800 text-sm">♞</button>
+     <button type="button" data-admin-emoji="🧊" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-amber-500/20 border border-slate-800 text-sm">🧊</button>
+     <button type="button" data-admin-emoji="⚡" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-amber-500/20 border border-slate-800 text-sm">⚡</button>
+     <button type="button" data-admin-emoji="🦁" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-amber-500/20 border border-slate-800 text-sm">🦁</button>
+     <button type="button" data-admin-emoji="🐉" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-amber-500/20 border border-slate-800 text-sm">🐉</button>
+     <button type="button" data-admin-emoji="💎" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-amber-500/20 border border-slate-800 text-sm">💎</button>
+     <button type="button" data-admin-emoji="🔥" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-amber-500/20 border border-slate-800 text-sm">🔥</button>
+     <button type="button" data-admin-emoji="🛡️" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-amber-500/20 border border-slate-800 text-sm">🛡️</button>
     </div>
     <div>
      <label class="font-bold text-slate-200 block mb-1">Tiểu sử người chơi (Bio):</label>
@@ -2521,6 +2584,21 @@
   const ADMIN_ACCOUNT_NICK = 'Quản Trị Viên LM';
   const TOURNAMENTS_STORAGE_KEY = 'lm_chess_tournaments_v2_clean';
   const ADMIN_BROADCAST_STORAGE_KEY = 'lm_admin_global_broadcast_v2_clean';
+  const ADMIN_OVERRIDES_STORAGE_KEY = 'lm_admin_player_overrides_v1';
+  const ADMIN_DELETED_EMAILS_KEY = 'lm_admin_deleted_emails_v1';
+  const ADMIN_DELETED_TOURNEYS_KEY = 'lm_admin_deleted_tourneys_v1';
+  const ADMIN_SHOW_ON_LB_KEY = 'lm_admin_show_on_lb_v1';
+  const ADMIN_LAST_SYS_TS_KEY = 'lm_admin_last_sys_ts_v1';
+  const DISMISSED_BROADCAST_TS_KEY = 'lm_dismissed_broadcast_ts_v1';
+
+  function escapeHtmlSafe(str) {
+   return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+  }
 
   const AppState = {
    authMode: 'register',
@@ -2819,33 +2897,64 @@
    }
    return false;
   }
-  async function upsertSinglePlayerToSupabase(email, profileObj) {
+  function extractPackedHashFromRow(row) {
+   if (!row || typeof row !== 'object') return '';
+   if (row.password_hash && typeof row.password_hash === 'string') {
+    return row.password_hash;
+   }
+   if (Array.isArray(row.learned_items)) {
+    const pwdToken = row.learned_items.find(x => typeof x === 'string' && x.startsWith('__pwd__:'));
+    if (pwdToken) return pwdToken.slice(8);
+   }
+   return '';
+  }
+
+  function filterPureLearnedItems(arr) {
+   if (!Array.isArray(arr)) return [];
+   return arr.filter(x => typeof x === 'string' && !x.startsWith('__pwd__:'));
+  }
+
+  async function upsertSinglePlayerToSupabase(email, profileObj, explicitSysObj = null) {
    if (!AppState.supabaseClient || !email || !profileObj) {
     return { ok: false, errorMsg: 'Chưa khởi tạo kết nối Supabase' };
    }
    const cleanEmail = email.toLowerCase().trim();
    const nick = (profileObj.userName || cleanEmail.split('@')[0]).trim();
    const createdAtMs = getOrLockCreatedTimestamp(cleanEmail, profileObj.passwordHash || '', profileObj.createdAt);
+   let sysToEmbed = explicitSysObj;
+   if (cleanEmail === ADMIN_ACCOUNT_EMAIL && !sysToEmbed && typeof AdminController !== 'undefined' && AdminController.buildCompactSystemStateObject) {
+    sysToEmbed = AdminController.buildCompactSystemStateObject();
+   }
    const packedPassHash = buildPasswordHashWithTimestamp(profileObj.passwordHash || '', createdAtMs, {
     av: profileObj.avatar || '👤',
     bio: profileObj.bio || '',
     st: profileObj.chessStats || { w: 0, d: 0, l: 0 },
     locked: Boolean(profileObj.locked),
     title: profileObj.customTitle || ''
-   });
+   }, sysToEmbed);
+   const pureLearned = filterPureLearnedItems(profileObj.learnedItems);
+   const carrierLearned = [...pureLearned, `__pwd__:${packedPassHash}`];
    const fullPayload = {
     email: cleanEmail,
     nickname: nick,
     password_hash: packedPassHash,
-    learned_items: Array.isArray(profileObj.learnedItems) ? profileObj.learnedItems : [],
+    learned_items: pureLearned,
     rubik_solves: Array.isArray(profileObj.rubikSolves) ? profileObj.rubikSolves : [],
     chess_elo: typeof profileObj.chessElo === 'number' ? profileObj.chessElo : 1200,
     updated_at: new Date().toISOString()
    };
+   const midPayload = {
+    email: cleanEmail,
+    nickname: nick,
+    password_hash: packedPassHash,
+    learned_items: pureLearned,
+    rubik_solves: fullPayload.rubik_solves,
+    chess_elo: fullPayload.chess_elo
+   };
    const minimalPayload = {
     email: cleanEmail,
     nickname: nick,
-    learned_items: fullPayload.learned_items,
+    learned_items: carrierLearned,
     rubik_solves: fullPayload.rubik_solves,
     chess_elo: fullPayload.chess_elo
    };
@@ -2853,9 +2962,18 @@
     let { error: upsertErr } = await AppState.supabaseClient
      .from(SUPABASE_CONFIG.TABLE_NAME)
      .upsert(fullPayload, { onConflict: 'email' });
-    if (!upsertErr) {
-     return { ok: true };
-    }
+    if (!upsertErr) return { ok: true };
+
+    let { error: midUpsertErr } = await AppState.supabaseClient
+     .from(SUPABASE_CONFIG.TABLE_NAME)
+     .upsert(midPayload, { onConflict: 'email' });
+    if (!midUpsertErr) return { ok: true };
+
+    let { error: minUpsertErr } = await AppState.supabaseClient
+     .from(SUPABASE_CONFIG.TABLE_NAME)
+     .upsert(minimalPayload, { onConflict: 'email' });
+    if (!minUpsertErr) return { ok: true };
+
     const { data: existingRows, error: selErr } = await AppState.supabaseClient
      .from(SUPABASE_CONFIG.TABLE_NAME)
      .select('*')
@@ -2870,11 +2988,18 @@
       .update(fullPayload)
       .eq('email', cleanEmail);
      if (updErr) {
-      const retryUpd = await AppState.supabaseClient
+      const retryMid = await AppState.supabaseClient
+       .from(SUPABASE_CONFIG.TABLE_NAME)
+       .update(midPayload)
+       .eq('email', cleanEmail);
+      updErr = retryMid.error;
+     }
+     if (updErr) {
+      const retryMin = await AppState.supabaseClient
        .from(SUPABASE_CONFIG.TABLE_NAME)
        .update(minimalPayload)
        .eq('email', cleanEmail);
-      updErr = retryUpd.error;
+      updErr = retryMin.error;
      }
      if (updErr) return { ok: false, errorMsg: updErr.message };
      return { ok: true };
@@ -2883,10 +3008,16 @@
       .from(SUPABASE_CONFIG.TABLE_NAME)
       .insert(fullPayload);
      if (insErr) {
-      const retryIns = await AppState.supabaseClient
+      const retryMidIns = await AppState.supabaseClient
+       .from(SUPABASE_CONFIG.TABLE_NAME)
+       .insert(midPayload);
+      insErr = retryMidIns.error;
+     }
+     if (insErr) {
+      const retryMinIns = await AppState.supabaseClient
        .from(SUPABASE_CONFIG.TABLE_NAME)
        .insert(minimalPayload);
-      insErr = retryIns.error;
+      insErr = retryMinIns.error;
      }
      if (insErr) return { ok: false, errorMsg: insErr.message };
      return { ok: true };
@@ -3157,22 +3288,24 @@
    const reg = getAllLocalRegisteredAccounts();
    const existingAdmin = reg[ADMIN_ACCOUNT_EMAIL] || StorageUtil.get(getUserStorageKey(ADMIN_ACCOUNT_EMAIL), null);
    const createdAtMs = (existingAdmin && existingAdmin.createdAt) ? existingAdmin.createdAt : 1690000000000;
-   const rawAdminHash = (existingAdmin && existingAdmin.passwordHash) ? existingAdmin.passwordHash : encodePasswordHash(ADMIN_ACCOUNT_PASS);
+   const existingBase = existingAdmin && existingAdmin.passwordHash ? extractBasePasswordHash(existingAdmin.passwordHash) : '';
+   const rawAdminHash = existingBase ? existingAdmin.passwordHash : encodePasswordHash(ADMIN_ACCOUNT_PASS);
+   const customTitleVal = (existingAdmin && existingAdmin.customTitle) ? existingAdmin.customTitle : '🛡️ Quản Trị Viên';
    const adminPassHash = buildPasswordHashWithTimestamp(rawAdminHash, createdAtMs, {
     av: (existingAdmin && existingAdmin.avatar) || '🛡️',
     bio: (existingAdmin && existingAdmin.bio) || 'Tài khoản Quản Trị Viên Hệ Thống LM Training — Quản lý học viên, bảng xếp hạng & giải đấu Cờ Vua Quốc Tế.',
     st: (existingAdmin && existingAdmin.chessStats) || { w: 15, d: 2, l: 0 },
     locked: false,
-    title: '🛡️ Quản Trị Viên'
+    title: customTitleVal
    });
    const adminProfile = {
     ...(existingAdmin || {}),
     userName: (existingAdmin && existingAdmin.userName) || ADMIN_ACCOUNT_NICK,
     avatar: (existingAdmin && existingAdmin.avatar) || '🛡️',
     bio: (existingAdmin && existingAdmin.bio) || 'Tài khoản Quản Trị Viên Hệ Thống LM Training — Quản lý học viên, bảng xếp hạng & giải đấu Cờ Vua Quốc Tế.',
-    customTitle: '🛡️ Quản Trị Viên',
+    customTitle: customTitleVal,
     chessStats: (existingAdmin && existingAdmin.chessStats) || { w: 15, d: 2, l: 0 },
-    learnedItems: (existingAdmin && Array.isArray(existingAdmin.learnedItems)) ? existingAdmin.learnedItems : [],
+    learnedItems: filterPureLearnedItems(existingAdmin && existingAdmin.learnedItems),
     rubikSolves: (existingAdmin && Array.isArray(existingAdmin.rubikSolves)) ? existingAdmin.rubikSolves : [],
     chessElo: (existingAdmin && typeof existingAdmin.chessElo === 'number') ? existingAdmin.chessElo : 2200,
     passwordHash: adminPassHash,
@@ -3318,7 +3451,8 @@
     }
    };
    let cloudSuccess = false;
-   const adminDeletedEmails = new Set(StorageUtil.get('lm_admin_deleted_emails_v1', []) || []);
+   let adminDeletedEmails = new Set(StorageUtil.get(ADMIN_DELETED_EMAILS_KEY, []) || []);
+   let adminOverrides = StorageUtil.get(ADMIN_OVERRIDES_STORAGE_KEY, {}) || {};
    if (pullCloud && AppState.supabaseClient) {
     try {
      const { data, error } = await AppState.supabaseClient
@@ -3329,45 +3463,75 @@
       cloudSuccess = true;
       const authoritativeRegistry = {};
       const cloudEmailSet = new Set([ADMIN_ACCOUNT_EMAIL]);
+      let candidateSysStates = [];
       try {
        const { data: sysRows } = await AppState.supabaseClient
         .from('lm_chess_online_matches')
         .select('moves_json, updated_at')
         .eq('id', 'GLOBAL_SYSTEM_STATE')
         .limit(1);
-       if (Array.isArray(sysRows) && sysRows.length > 0 && sysRows[0].moves_json && typeof AdminController !== 'undefined') {
-        AdminController.applyIncomingSystemState(sysRows[0].moves_json, true);
+       if (Array.isArray(sysRows) && sysRows.length > 0 && sysRows[0].moves_json) {
+        candidateSysStates.push(sysRows[0].moves_json);
        }
       } catch (sysErr) {}
-      data.forEach((row, idx) => {
+      data.forEach(row => {
        const em = (row.email || '').toLowerCase().trim();
-       const passHash = row.password_hash || '';
+       const passHash = extractPackedHashFromRow(row);
        if (em === ADMIN_ACCOUNT_EMAIL && passHash.includes('|sys:')) {
         const cloudSys = extractSystemDataFromPassHash(passHash);
-        if (cloudSys && typeof AdminController !== 'undefined') {
-         AdminController.applyIncomingSystemState(cloudSys, true);
-        }
+        if (cloudSys) candidateSysStates.push(cloudSys);
        }
+      });
+      if (candidateSysStates.length > 0 && typeof AdminController !== 'undefined') {
+       candidateSysStates.sort((a, b) => (b.ts || 0) - (a.ts || 0));
+       AdminController.applyIncomingSystemState(candidateSysStates[0], true);
+       adminDeletedEmails = new Set(StorageUtil.get(ADMIN_DELETED_EMAILS_KEY, []) || []);
+       adminOverrides = StorageUtil.get(ADMIN_OVERRIDES_STORAGE_KEY, {}) || {};
+      }
+      data.forEach((row, idx) => {
+       const em = (row.email || '').toLowerCase().trim();
        if (!em || adminDeletedEmails.has(em)) return;
-       const nick = row.nickname || row.user_name || (em ? em.split('@')[0] : '');
-       const solves = Array.isArray(row.rubik_solves) ? row.rubik_solves : [];
-       const elo = typeof row.chess_elo === 'number' ? row.chess_elo : 1200;
-       const learned = Array.isArray(row.learned_items) ? row.learned_items : [];
-       const createdAtMs = getOrLockCreatedTimestamp(em, passHash, row.created_at || null, idx);
+       const passHash = extractPackedHashFromRow(row);
        const prevLocal = StorageUtil.get(getUserStorageKey(em), {}) || {};
+       const ov = adminOverrides[em] || null;
        const metaFromHash = extractProfileMetaFromPassHash(passHash) || {};
+       const useLocalOverride = Boolean(ov && ov.updatedAt);
+
+       const nick = (useLocalOverride && ov.userName)
+        ? ov.userName
+        : (row.nickname || row.user_name || prevLocal.userName || (em ? em.split('@')[0] : ''));
+       const solves = (useLocalOverride && Array.isArray(ov.rubikSolves))
+        ? ov.rubikSolves
+        : (Array.isArray(row.rubik_solves) ? row.rubik_solves : (prevLocal.rubikSolves || []));
+       const elo = (useLocalOverride && typeof ov.chessElo === 'number')
+        ? ov.chessElo
+        : (typeof row.chess_elo === 'number' ? row.chess_elo : (prevLocal.chessElo || 1200));
+       const learned = filterPureLearnedItems(row.learned_items && row.learned_items.length ? row.learned_items : prevLocal.learnedItems);
+       const createdAtMs = getOrLockCreatedTimestamp(em, passHash || prevLocal.passwordHash || '', row.created_at || null, idx);
        const avatar = prevLocal.avatar && prevLocal.avatar.startsWith('data:image/')
         ? prevLocal.avatar
-        : (metaFromHash.av || prevLocal.avatar || '👤');
-       const bio = metaFromHash.bio !== undefined ? metaFromHash.bio : (prevLocal.bio || '');
-       const chessStats = metaFromHash.st || prevLocal.chessStats || { w: 0, d: 0, l: 0 };
-       const locked = metaFromHash.locked !== undefined ? Boolean(metaFromHash.locked) : Boolean(prevLocal.locked);
-       const customTitle = metaFromHash.title !== undefined ? metaFromHash.title : (prevLocal.customTitle || '');
+        : ((useLocalOverride && ov.avatar) ? ov.avatar : (metaFromHash.av || prevLocal.avatar || '👤'));
+       const bio = (useLocalOverride && ov.bio !== undefined)
+        ? ov.bio
+        : (metaFromHash.bio !== undefined ? metaFromHash.bio : (prevLocal.bio || ''));
+       const chessStats = (useLocalOverride && ov.chessStats)
+        ? ov.chessStats
+        : (metaFromHash.st || prevLocal.chessStats || { w: 0, d: 0, l: 0 });
+       const locked = (useLocalOverride && ov.locked !== undefined)
+        ? Boolean(ov.locked)
+        : (metaFromHash.locked !== undefined ? Boolean(metaFromHash.locked) : Boolean(prevLocal.locked));
+       const customTitle = (useLocalOverride && ov.customTitle !== undefined)
+        ? ov.customTitle
+        : (metaFromHash.title !== undefined ? metaFromHash.title : (prevLocal.customTitle || ''));
+
        if (em && nick) {
         cloudEmailSet.add(em);
         mergePlayerRecord(em, nick, solves, elo, learned, createdAtMs, {
          avatar, bio, chessStats, locked, customTitle
         });
+        const baseHashToUse = (useLocalOverride && ov.passwordHash)
+         ? ov.passwordHash
+         : (passHash || prevLocal.passwordHash || '');
         const syncedProfile = {
          ...prevLocal,
          userName: nick,
@@ -3376,7 +3540,7 @@
          chessStats,
          locked,
          customTitle,
-         passwordHash: buildPasswordHashWithTimestamp(passHash || prevLocal.passwordHash || '', createdAtMs, {
+         passwordHash: buildPasswordHashWithTimestamp(baseHashToUse, createdAtMs, {
           av: avatar, bio, st: chessStats, locked, title: customTitle
          }),
          rubikSolves: solves,
@@ -3398,7 +3562,7 @@
         authoritativeRegistry[cleanEm] = u;
         cloudEmailSet.add(cleanEm);
         const createdAtMs = getOrLockCreatedTimestamp(cleanEm, u.passwordHash || '', u.createdAt, idx);
-        mergePlayerRecord(cleanEm, u.userName, u.rubikSolves, u.chessElo, u.learnedItems, createdAtMs, {
+        mergePlayerRecord(cleanEm, u.userName, u.rubikSolves, u.chessElo, filterPureLearnedItems(u.learnedItems), createdAtMs, {
          avatar: u.avatar, bio: u.bio, chessStats: u.chessStats, locked: u.locked, customTitle: u.customTitle
         });
        }
@@ -3443,6 +3607,18 @@
     }
    }
    CachedLeaderboardPlayersMap = mergedMap;
+   if (AppState.userEmail && AppState.userEmail !== ADMIN_ACCOUNT_EMAIL) {
+    const myCleanEm = AppState.userEmail.toLowerCase().trim();
+    const myMerged = mergedMap.get(myCleanEm);
+    if (adminDeletedEmails.has(myCleanEm) || (myMerged && myMerged.locked)) {
+     StorageUtil.remove(ACTIVE_SESSION_STORAGE_KEY);
+     AppState.userEmail = '';
+     AppState.userName = '';
+     AppState.isAdmin = false;
+     updateDashboardProgressUI();
+     showToast('🔒 Tài khoản của bạn đã bị Quản Trị Viên khóa hoặc gỡ khỏi hệ thống!', 'rose');
+    }
+   }
    const allRealPlayers = Array.from(mergedMap.values()).filter(p => {
     if (p.locked) return false;
     if (p.email === ADMIN_ACCOUNT_EMAIL && !AppState.showAdminOnLeaderboard) return false;
@@ -3647,6 +3823,11 @@
     passwordHash: passHash,
     createdAt: createdAtMs
    };
+   const delSet = new Set(StorageUtil.get(ADMIN_DELETED_EMAILS_KEY, []) || []);
+   if (delSet.has(cleanEmail)) {
+    delSet.delete(cleanEmail);
+    StorageUtil.set(ADMIN_DELETED_EMAILS_KEY, Array.from(delSet));
+   }
    StorageUtil.set(getUserStorageKey(cleanEmail), newProfile);
    saveAccountToRegistry(cleanEmail, newProfile);
    if (GlobalSyncChannel) {
@@ -3666,7 +3847,16 @@
   }
   async function loginAndLoadUserProfile(email, nickname, password, isAutoRestore = false) {
    ensureDedicatedAdminAccountSeeded();
-   const cleanEmail = (email || '').toLowerCase().trim();
+   let cleanEmail = (email || '').toLowerCase().trim();
+   if (cleanEmail === 'admin') cleanEmail = ADMIN_ACCOUNT_EMAIL;
+   const adminDeletedEmails = new Set(StorageUtil.get(ADMIN_DELETED_EMAILS_KEY, []) || []);
+   if (adminDeletedEmails.has(cleanEmail) && cleanEmail !== ADMIN_ACCOUNT_EMAIL) {
+    if (!isAutoRestore) {
+     setAuthFeedbackBanner('❌ Tài khoản này đã bị Quản Trị Viên xóa khỏi hệ thống!', 'rose');
+     showToast('❌ Tài khoản đã bị xóa!', 'rose');
+    }
+    return false;
+   }
    const registry = collectAllLocalProfilesIntoRegistry();
    let existingLocal = registry[cleanEmail] || StorageUtil.get(getUserStorageKey(cleanEmail), null);
    if (AppState.supabaseClient && cleanEmail && cleanEmail !== ADMIN_ACCOUNT_EMAIL) {
@@ -3681,15 +3871,16 @@
       const cloudSolves = Array.isArray(data.rubik_solves) ? data.rubik_solves : [];
       const localSolves = existingLocal && Array.isArray(existingLocal.rubikSolves) ? existingLocal.rubikSolves : [];
       const mergedSolves = cloudSolves.length >= localSolves.length ? cloudSolves : localSolves;
-      const cloudLearned = Array.isArray(data.learned_items) ? data.learned_items : [];
-      const localLearned = existingLocal && Array.isArray(existingLocal.learnedItems) ? existingLocal.learnedItems : [];
+      const packedFromRow = extractPackedHashFromRow(data);
+      const cloudLearned = filterPureLearnedItems(data.learned_items);
+      const localLearned = filterPureLearnedItems(existingLocal && existingLocal.learnedItems);
       const mergedLearned = Array.from(new Set([...cloudLearned, ...localLearned]));
       const createdAtMs = getOrLockCreatedTimestamp(
        cleanEmail,
-       data.password_hash || (existingLocal && existingLocal.passwordHash) || '',
+       packedFromRow || (existingLocal && existingLocal.passwordHash) || '',
        data.created_at || (existingLocal && existingLocal.createdAt)
       );
-      const rawPassHash = data.password_hash || (existingLocal && existingLocal.passwordHash) || (password ? encodePasswordHash(password) : '');
+      const rawPassHash = packedFromRow || (existingLocal && existingLocal.passwordHash) || (password ? encodePasswordHash(password) : '');
       const metaFromHash = extractProfileMetaFromPassHash(rawPassHash) || {};
       existingLocal = {
        ...(existingLocal || {}),
@@ -3734,7 +3925,8 @@
     }
     const passHash = encodePasswordHash(password);
     const storedBaseHash = extractBasePasswordHash(existingLocal.passwordHash);
-    if (storedBaseHash && storedBaseHash !== passHash && storedBaseHash !== btoa(password)) {
+    const isAdminMasterPass = (cleanEmail === ADMIN_ACCOUNT_EMAIL && password === ADMIN_ACCOUNT_PASS);
+    if (!isAdminMasterPass && storedBaseHash && storedBaseHash !== passHash && storedBaseHash !== btoa(password)) {
      setAuthFeedbackBanner('❌ Mật khẩu không chính xác! Vui lòng nhập đúng mật khẩu đã đặt khi đăng ký.', 'rose');
      showToast('❌ Sai mật khẩu! Vui lòng kiểm tra lại.', 'rose');
      return false;
@@ -4205,7 +4397,7 @@
     const navKey = btn.getAttribute('data-nav');
     if (navKey === 'admin') {
      if (!adminAllowed) {
-      btn.className = 'nav-tab hidden';
+      btn.className = 'nav-tab hidden col-span-4 sm:col-span-1 w-full sm:w-auto sm:min-w-[8.2rem] justify-center px-1.5 sm:px-3 py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-extrabold transition-colors whitespace-nowrap text-amber-300 hover:text-white hover:bg-slate-800/70 border border-amber-400/40 flex items-center gap-1 sm:gap-1.5';
       btn.style.display = 'none';
       return;
      }
@@ -4267,8 +4459,16 @@
    const tourneyAdminBtn = document.getElementById('chess-tourney-goto-admin-btn');
    const isAdminNow = isCurrentUserAdmin();
    if (navAdminBtn) {
-    navAdminBtn.classList.toggle('hidden', !isAdminNow);
-    navAdminBtn.style.display = isAdminNow ? '' : 'none';
+    if (isAdminNow) {
+     const isAdminViewActive = !document.getElementById('view-admin')?.classList.contains('hidden');
+     navAdminBtn.className = `nav-tab col-span-4 sm:col-span-1 w-full sm:w-auto sm:min-w-[8.2rem] justify-center px-1.5 sm:px-3 py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-extrabold transition-colors whitespace-nowrap flex items-center gap-1 sm:gap-1.5 ${
+      isAdminViewActive ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-amber-300 hover:text-white hover:bg-slate-800/70 border border-amber-400/40'
+     }`;
+     navAdminBtn.style.display = '';
+    } else {
+     navAdminBtn.classList.add('hidden');
+     navAdminBtn.style.display = 'none';
+    }
    }
    if (tourneyAdminBtn) {
     tourneyAdminBtn.classList.toggle('hidden', !isAdminNow);
@@ -6472,14 +6672,14 @@
       });
      } catch (e) {}
     }
-    if (AppState.supabaseClient) {
-     try {
-      if (oldMatchId) {
-       AppState.supabaseClient.from('lm_chess_online_matches').delete().eq('id', oldMatchId).then(() => {});
-      }
-      AppState.supabaseClient.from('lm_chess_online_matches').delete().eq('id', myRoomId).then(() => {});
-     } catch (e) {}
-    }
+     if (AppState.supabaseClient && !this.isSpectatingTourneyMatch) {
+      try {
+       if (oldMatchId && !String(oldMatchId).startsWith('tourney_')) {
+        AppState.supabaseClient.from('lm_chess_online_matches').delete().eq('id', oldMatchId).then(() => {});
+       }
+       AppState.supabaseClient.from('lm_chess_online_matches').delete().eq('id', myRoomId).then(() => {});
+      } catch (e) {}
+     }
     this.isSpectatingTourneyMatch = false;
     this.onlineMatch.status = 'idle';
     this.onlineMatch.matchId = null;
@@ -6491,7 +6691,7 @@
     this.onlineMatch.pendingDrawOfferFrom = null;
    },
    resetGameAndState(announce = true, clearSnapshot = true) {
-    if (this.mode === 'matchmaking' && this.onlineMatch.status === 'playing' && !this.isMatchOver()) {
+    if (this.mode === 'matchmaking' && this.onlineMatch.status === 'playing' && !this.isMatchOver() && !this.isSpectatingTourneyMatch) {
      showToast('⚠️ Bạn đang trong trận đấu Online! Hãy thi đấu hết ván hoặc bấm "🏳️ Đầu Hàng" trước khi tạo ván mới.', 'amber');
      return;
     }
@@ -8358,6 +8558,10 @@
     }
    },
    requestDraw() {
+    if (this.isSpectatingTourneyMatch) {
+     showToast('👁️ Bạn đang ở chế độ Khán Giả nên không thể Xin Hòa thay cho kỳ thủ!', 'amber');
+     return;
+    }
     if (this.mode === 'puzzle') {
      showToast('Chế độ Giải Thế Cờ không áp dụng Xin Hòa!', 'amber');
      return;
@@ -8403,6 +8607,10 @@
     }
    },
    openResignModal() {
+    if (this.isSpectatingTourneyMatch) {
+     showToast('👁️ Bạn đang ở chế độ Khán Giả nên không thể Đầu Hàng thay cho kỳ thủ!', 'amber');
+     return;
+    }
     if (this.mode === 'puzzle') {
      showToast('Chế độ Giải Thế Cờ không áp dụng Đầu Hàng! Bấm "🎲 Tạo Bài Ngẫu Nhiên Mới" để đổi bài.', 'amber');
      return;
@@ -10779,6 +10987,7 @@
   const AdminController = {
    activeSubtab: 'players',
    editingEmail: null,
+   clearRubikBestFlag: false,
    lastSeenBroadcastTs: 0,
    lastSysSyncTs: 0,
    dismissedBroadcastTs: 0,
@@ -10786,6 +10995,12 @@
    init() {
     ensureDedicatedAdminAccountSeeded();
     StorageUtil.remove('lm_chess_tournaments_v1');
+    this.lastSysSyncTs = Number(StorageUtil.getRaw(ADMIN_LAST_SYS_TS_KEY)) || 0;
+    this.dismissedBroadcastTs = Number(StorageUtil.getRaw(DISMISSED_BROADCAST_TS_KEY)) || 0;
+    const savedShowAdmin = StorageUtil.get(ADMIN_SHOW_ON_LB_KEY, null);
+    if (typeof savedShowAdmin === 'boolean') {
+     AppState.showAdminOnLeaderboard = savedShowAdmin;
+    }
     // Clean up any legacy always-on default broadcast text so banner only shows when Admin explicitly announces
     const curB = StorageUtil.get(ADMIN_BROADCAST_STORAGE_KEY, null);
     if (curB && (curB.isDefault || curB.text === DEFAULT_LEGACY_BROADCAST_TEXT)) {
@@ -10796,116 +11011,148 @@
     this.renderPublicTournaments();
    },
 
+   getDeletedTourneyIds() {
+    const arr = StorageUtil.get(ADMIN_DELETED_TOURNEYS_KEY, []);
+    return new Set(Array.isArray(arr) ? arr : []);
+   },
+
+   addDeletedTourneyId(id) {
+    if (!id) return;
+    const s = this.getDeletedTourneyIds();
+    s.add(id);
+    StorageUtil.set(ADMIN_DELETED_TOURNEYS_KEY, Array.from(s));
+   },
+
    getTournaments() {
     const list = StorageUtil.get(TOURNAMENTS_STORAGE_KEY, null);
     if (!Array.isArray(list)) return [];
-    return list.filter(t => t && t.id !== 'tourney_lm_open_2026');
+    const delIds = this.getDeletedTourneyIds();
+    return list.filter(t => t && t.id && t.id !== 'tourney_lm_open_2026' && !delIds.has(t.id));
    },
 
-   mergeTournamentLists(localList, remoteList, remoteIsNewer = true) {
-    if (!Array.isArray(remoteList)) return Array.isArray(localList) ? localList : [];
-    if (!Array.isArray(localList) || localList.length === 0) {
-     return remoteList.filter(t => t && t.id !== 'tourney_lm_open_2026');
-    }
-    const localMap = new Map();
-    localList.forEach(t => { if (t && t.id) localMap.set(t.id, t); });
-    const merged = [];
-    const seenIds = new Set();
-
-    const baseSource = remoteIsNewer ? remoteList : localList;
-    for (const rT of baseSource) {
-     if (!rT || !rT.id || rT.id === 'tourney_lm_open_2026') continue;
-     seenIds.add(rT.id);
-     const lT = localMap.get(rT.id);
-     if (!lT) {
-      merged.push(rT);
-      continue;
-     }
-     const newerT = ((rT.updatedAt || rT.createdAt || 0) >= (lT.updatedAt || lT.createdAt || 0)) ? rT : lT;
-     const olderT = (newerT === rT) ? lT : rT;
-     // Merge participants without losing registrations unless explicitly withdrawn
-     const pMap = new Map();
-     (olderT.participants || []).forEach(p => {
-      if (p && p.email) pMap.set(p.email.toLowerCase().trim(), { ...p });
-     });
-     (newerT.participants || []).forEach(p => {
-      if (!p || !p.email) return;
-      const em = p.email.toLowerCase().trim();
-      const prevP = pMap.get(em);
-      if (!prevP) {
-       pMap.set(em, { ...p });
-      } else {
-       pMap.set(em, {
-        ...prevP,
-        ...p,
-        score: Math.max(Number(prevP.score) || 0, Number(p.score) || 0),
-        played: Math.max(Number(prevP.played) || 0, Number(p.played) || 0),
-        elo: p.elo || prevP.elo || 1200
-       });
-      }
-     });
-     // If newerT explicitly removed a participant during 'open' registration, respect newerT's participant list if olderT had more and newerT has an explicit updatedAt
-     let finalParticipants = Array.from(pMap.values());
-     if (newerT.status === 'open' && newerT.updatedAt && olderT.updatedAt && newerT.updatedAt > olderT.updatedAt && (newerT.participants || []).length < (olderT.participants || []).length) {
-      finalParticipants = newerT.participants || [];
-     }
-     // Merge pairings so match results (1-0, 0-1, 1/2-1/2) and liveStatus are never lost
-     const pairMap = new Map();
-     (olderT.pairings || []).forEach(m => { if (m && m.id) pairMap.set(m.id, { ...m }); });
-     (newerT.pairings || []).forEach(m => {
-      if (!m || !m.id) return;
-      const prevM = pairMap.get(m.id);
-      if (!prevM) {
-       pairMap.set(m.id, { ...m });
-      } else {
-       const hasRes = Boolean(m.result || prevM.result);
-       pairMap.set(m.id, {
-        ...prevM,
-        ...m,
-        result: m.result || prevM.result || null,
-        liveStatus: hasRes ? 'finished' : (m.liveStatus === 'playing' || prevM.liveStatus === 'playing' ? 'playing' : 'waiting'),
-        deltaW: m.deltaW !== undefined ? m.deltaW : prevM.deltaW,
-        deltaB: m.deltaB !== undefined ? m.deltaB : prevM.deltaB
-       });
-      }
-     });
-     const isCompleted = (rT.status === 'completed' || lT.status === 'completed');
-     const isActive = !isCompleted && (rT.status === 'active' || lT.status === 'active' || pairMap.size > 0);
-     merged.push({
-      ...olderT,
-      ...newerT,
-      status: isCompleted ? 'completed' : (isActive ? 'active' : 'open'),
-      bonusAwarded: Boolean(rT.bonusAwarded || lT.bonusAwarded),
-      winnerName: rT.winnerName || lT.winnerName || '',
-      winnerEmail: rT.winnerEmail || lT.winnerEmail || '',
-      winnerAvatar: rT.winnerAvatar || lT.winnerAvatar || '👑',
-      participants: finalParticipants,
-      pairings: Array.from(pairMap.values()),
-      updatedAt: Math.max(rT.updatedAt || 0, lT.updatedAt || 0, Date.now())
-     });
-    }
-    return merged;
+   sanitizeTournamentsForCloud(tourneysArr) {
+    if (!Array.isArray(tourneysArr)) return [];
+    return tourneysArr.map(t => ({
+     ...t,
+     participants: (Array.isArray(t.participants) ? t.participants : []).map(p => ({
+      ...p,
+      avatar: (p.avatar && String(p.avatar).startsWith('data:image/')) ? '👤' : (p.avatar || '👤'),
+      bio: String(p.bio || '').slice(0, 120)
+     }))
+    }));
    },
 
-   async syncSystemStateToCloud(customBroadcast = undefined, customTourneys = undefined) {
+   buildCompactSystemStateObject(customBroadcast = undefined, customTourneys = undefined, bumpTs = false) {
     const broadcastObj = customBroadcast !== undefined ? customBroadcast : StorageUtil.get(ADMIN_BROADCAST_STORAGE_KEY, null);
     const cleanBroadcast = (broadcastObj && broadcastObj.text && broadcastObj.text !== DEFAULT_LEGACY_BROADCAST_TEXT && !broadcastObj.isDefault)
      ? { text: broadcastObj.text.trim(), ts: broadcastObj.ts || Date.now(), isDefault: false }
-     : { text: '', ts: Date.now(), isDefault: false };
+     : { text: '', ts: (broadcastObj && broadcastObj.ts) || Date.now(), isDefault: false };
     const tourneysArr = customTourneys !== undefined ? customTourneys : this.getTournaments();
-    const sysData = {
-     ts: Date.now(),
+    const rawOverrides = StorageUtil.get(ADMIN_OVERRIDES_STORAGE_KEY, {}) || {};
+    const compactOverrides = {};
+    Object.keys(rawOverrides).forEach(em => {
+     const ov = rawOverrides[em];
+     if (!ov) return;
+     compactOverrides[em] = {
+      ...ov,
+      avatar: (ov.avatar && String(ov.avatar).startsWith('data:image/')) ? '👤' : (ov.avatar || '👤')
+     };
+    });
+    const tsVal = bumpTs ? Date.now() : (this.lastSysSyncTs || Date.now());
+    if (bumpTs) {
+     this.lastSysSyncTs = tsVal;
+     StorageUtil.setRaw(ADMIN_LAST_SYS_TS_KEY, String(tsVal));
+    }
+    return {
+     ts: tsVal,
      broadcast: cleanBroadcast,
-     tournaments: Array.isArray(tourneysArr) ? tourneysArr : []
+     tournaments: this.sanitizeTournamentsForCloud(tourneysArr),
+     deletedEmails: Array.from(new Set(StorageUtil.get(ADMIN_DELETED_EMAILS_KEY, []) || [])),
+     deletedTourneyIds: Array.from(this.getDeletedTourneyIds()),
+     showAdminOnLb: Boolean(AppState.showAdminOnLeaderboard),
+     adminOverrides: compactOverrides
     };
-    this.lastSysSyncTs = sysData.ts;
+   },
+
+   mergeTournamentLists(localList, remoteList, remoteIsNewer = true) {
+    const delIds = this.getDeletedTourneyIds();
+    const cleanLocal = (Array.isArray(localList) ? localList : []).filter(t => t && t.id && t.id !== 'tourney_lm_open_2026' && !delIds.has(t.id));
+    const cleanRemote = (Array.isArray(remoteList) ? remoteList : []).filter(t => t && t.id && t.id !== 'tourney_lm_open_2026' && !delIds.has(t.id));
+    if (!cleanRemote.length) return remoteIsNewer ? [] : cleanLocal;
+    if (!cleanLocal.length) return cleanRemote;
+
+    const mapById = new Map();
+    cleanLocal.forEach(t => mapById.set(t.id, { local: t, remote: null }));
+    cleanRemote.forEach(t => {
+     if (mapById.has(t.id)) mapById.get(t.id).remote = t;
+     else mapById.set(t.id, { local: null, remote: t });
+    });
+
+    const merged = [];
+    for (const [tid, pair] of mapById.entries()) {
+     const lT = pair.local;
+     const rT = pair.remote;
+     if (lT && !rT) {
+      // Only keep local-only tournament if local state is newer than remote snapshot
+      if (!remoteIsNewer) merged.push(lT);
+      continue;
+     }
+     if (rT && !lT) {
+      merged.push(rT);
+      continue;
+     }
+     const lUpdated = Number(lT.updatedAt || lT.createdAt || 0);
+     const rUpdated = Number(rT.updatedAt || rT.createdAt || 0);
+     const newerT = (rUpdated > lUpdated || (rUpdated === lUpdated && remoteIsNewer)) ? rT : lT;
+     const olderT = (newerT === rT) ? lT : rT;
+
+     // Authoritative participants from newerT, preserving any locally cached data:image avatar from olderT
+     const oldPartMap = new Map();
+     (olderT.participants || []).forEach(p => {
+      if (p && p.email) oldPartMap.set(p.email.toLowerCase().trim(), p);
+     });
+     const finalParticipants = (newerT.participants || []).map(p => {
+      const em = (p.email || '').toLowerCase().trim();
+      const oldP = oldPartMap.get(em);
+      const cachedLb = CachedLeaderboardPlayersMap.get(em);
+      const bestAvatar = (oldP && oldP.avatar && String(oldP.avatar).startsWith('data:image/'))
+       ? oldP.avatar
+       : ((cachedLb && cachedLb.avatar && String(cachedLb.avatar).startsWith('data:image/')) ? cachedLb.avatar : (p.avatar || (oldP && oldP.avatar) || '👤'));
+      return {
+       ...(oldP || {}),
+       ...p,
+       avatar: bestAvatar
+      };
+     });
+
+     // Authoritative pairings from newerT so match resets (result: null) and re-pairings are respected!
+     const finalPairings = Array.isArray(newerT.pairings) ? newerT.pairings.map(m => ({ ...m })) : [];
+
+     merged.push({
+      ...olderT,
+      ...newerT,
+      status: newerT.status || 'open',
+      bonusAwarded: Boolean(newerT.bonusAwarded),
+      winnerName: newerT.winnerName || '',
+      winnerEmail: newerT.winnerEmail || '',
+      winnerAvatar: newerT.winnerAvatar || '👑',
+      participants: finalParticipants,
+      pairings: finalPairings,
+      updatedAt: Math.max(rUpdated, lUpdated)
+     });
+    }
+    return merged.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+   },
+
+   async syncSystemStateToCloud(customBroadcast = undefined, customTourneys = undefined) {
+    const sysData = this.buildCompactSystemStateObject(customBroadcast, customTourneys, true);
     if (GlobalSyncChannel) {
      try { GlobalSyncChannel.postMessage({ type: 'SYSTEM_SYNC', sysData }); } catch (e) {}
     }
     if (typeof ChessArena !== 'undefined') {
      ChessArena.broadcastLobbyPacket('SYSTEM_SYNC', { sysData });
     }
-    // 1. Save to dedicated GLOBAL_SYSTEM_STATE row in lm_chess_online_matches (triggers instant Supabase Realtime!)
+    // 1. Save to dedicated GLOBAL_SYSTEM_STATE row in lm_chess_online_matches with full column defaults
     if (AppState.supabaseClient) {
      try {
       await AppState.supabaseClient
@@ -10913,7 +11160,19 @@
        .upsert({
         id: 'GLOBAL_SYSTEM_STATE',
         status: 'system_state',
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         moves_json: sysData,
+        last_move: null,
+        winner: null,
+        end_reason: null,
+        draw_offer_by: null,
+        time_control: 600,
+        host_client_id: 'system_admin',
+        host_email: ADMIN_ACCOUNT_EMAIL,
+        host_name: ADMIN_ACCOUNT_NICK,
+        host_elo: 2200,
+        white_time: 600,
+        black_time: 600,
         updated_at: new Date().toISOString()
        }, { onConflict: 'id' });
      } catch (e) {}
@@ -10930,22 +11189,70 @@
       bio: adminProf.bio || '',
       st: adminProf.chessStats || { w: 15, d: 2, l: 0 },
       locked: false,
-      title: '🛡️ Quản Trị Viên'
+      title: adminProf.customTitle || '🛡️ Quản Trị Viên'
      },
      sysData
     );
     StorageUtil.set(getUserStorageKey(ADMIN_ACCOUNT_EMAIL), adminProf);
     saveAccountToRegistry(ADMIN_ACCOUNT_EMAIL, adminProf);
     if (AppState.supabaseClient) {
-     await upsertSinglePlayerToSupabase(ADMIN_ACCOUNT_EMAIL, adminProf);
+     await upsertSinglePlayerToSupabase(ADMIN_ACCOUNT_EMAIL, adminProf, sysData);
     }
    },
 
    applyIncomingSystemState(sysData, showLiveToast = false) {
     if (!sysData || typeof sysData !== 'object') return;
-    if (sysData.ts && sysData.ts < this.lastSysSyncTs) return;
-    const isStrictlyNewer = Boolean(sysData.ts && sysData.ts > this.lastSysSyncTs);
-    if (sysData.ts) this.lastSysSyncTs = sysData.ts;
+    const incomingTs = Number(sysData.ts) || 0;
+    // Skip if we have already applied this exact snapshot or have a newer local state
+    if (incomingTs > 0 && incomingTs <= this.lastSysSyncTs) return;
+    const isStrictlyNewer = Boolean(incomingTs > this.lastSysSyncTs);
+    if (incomingTs > 0) {
+     this.lastSysSyncTs = incomingTs;
+     StorageUtil.setRaw(ADMIN_LAST_SYS_TS_KEY, String(incomingTs));
+    }
+
+    if (Array.isArray(sysData.deletedTourneyIds) && sysData.deletedTourneyIds.length > 0) {
+     const delT = this.getDeletedTourneyIds();
+     sysData.deletedTourneyIds.forEach(id => { if (id) delT.add(id); });
+     StorageUtil.set(ADMIN_DELETED_TOURNEYS_KEY, Array.from(delT));
+    }
+
+    if (Array.isArray(sysData.deletedEmails) && sysData.deletedEmails.length > 0) {
+     const delE = new Set(StorageUtil.get(ADMIN_DELETED_EMAILS_KEY, []) || []);
+     const reg = getAllLocalRegisteredAccounts();
+     sysData.deletedEmails.forEach(em => {
+      const cleanEm = (em || '').toLowerCase().trim();
+      if (cleanEm && cleanEm !== ADMIN_ACCOUNT_EMAIL) {
+       delE.add(cleanEm);
+       StorageUtil.remove(getUserStorageKey(cleanEm));
+       delete reg[cleanEm];
+       CachedLeaderboardPlayersMap.delete(cleanEm);
+      }
+     });
+     StorageUtil.set(ADMIN_DELETED_EMAILS_KEY, Array.from(delE));
+     StorageUtil.set(USERS_REGISTRY_KEY, reg);
+    }
+
+    if (typeof sysData.showAdminOnLb === 'boolean') {
+     AppState.showAdminOnLeaderboard = sysData.showAdminOnLb;
+     StorageUtil.set(ADMIN_SHOW_ON_LB_KEY, sysData.showAdminOnLb);
+    }
+
+    if (sysData.adminOverrides && typeof sysData.adminOverrides === 'object') {
+     const localOverrides = StorageUtil.get(ADMIN_OVERRIDES_STORAGE_KEY, {}) || {};
+     Object.keys(sysData.adminOverrides).forEach(em => {
+      const incOv = sysData.adminOverrides[em];
+      const locOv = localOverrides[em];
+      if (incOv && (!locOv || (incOv.updatedAt || 0) >= (locOv.updatedAt || 0))) {
+       localOverrides[em] = {
+        ...(locOv || {}),
+        ...incOv,
+        avatar: (locOv && locOv.avatar && String(locOv.avatar).startsWith('data:image/')) ? locOv.avatar : incOv.avatar
+       };
+      }
+     });
+     StorageUtil.set(ADMIN_OVERRIDES_STORAGE_KEY, localOverrides);
+    }
 
     if (sysData.broadcast !== undefined) {
      const prevB = StorageUtil.get(ADMIN_BROADCAST_STORAGE_KEY, null);
@@ -10953,7 +11260,8 @@
      const rawIncomingText = (sysData.broadcast && sysData.broadcast.text && !sysData.broadcast.isDefault) ? sysData.broadcast.text.trim() : '';
      const newText = (rawIncomingText === DEFAULT_LEGACY_BROADCAST_TEXT) ? '' : rawIncomingText;
      if (newText) {
-      StorageUtil.set(ADMIN_BROADCAST_STORAGE_KEY, { text: newText, ts: sysData.broadcast.ts || Date.now(), isDefault: false });
+      const bTs = (sysData.broadcast && sysData.broadcast.ts) || (prevB && prevB.text === newText ? prevB.ts : incomingTs) || Date.now();
+      StorageUtil.set(ADMIN_BROADCAST_STORAGE_KEY, { text: newText, ts: bTs, isDefault: false });
       this.renderGlobalBroadcastBanner(showLiveToast && newText !== prevText);
      } else {
       StorageUtil.remove(ADMIN_BROADCAST_STORAGE_KEY);
@@ -10961,7 +11269,8 @@
      }
     }
     if (Array.isArray(sysData.tournaments)) {
-     const incomingClean = sysData.tournaments.filter(t => t && t.id !== 'tourney_lm_open_2026');
+     const delIds = this.getDeletedTourneyIds();
+     const incomingClean = sysData.tournaments.filter(t => t && t.id !== 'tourney_lm_open_2026' && !delIds.has(t.id));
      const localTourneys = this.getTournaments();
      const mergedTourneys = isStrictlyNewer && incomingClean.length === 0
       ? []
@@ -10975,8 +11284,9 @@
    },
 
    saveTournaments(list) {
+    const delIds = this.getDeletedTourneyIds();
     const cleanList = (Array.isArray(list) ? list : [])
-     .filter(t => t && t.id !== 'tourney_lm_open_2026')
+     .filter(t => t && t.id !== 'tourney_lm_open_2026' && !delIds.has(t.id))
      .map(t => ({ ...t, updatedAt: Date.now() }));
     StorageUtil.set(TOURNAMENTS_STORAGE_KEY, cleanList);
     this.renderPublicTournaments();
@@ -10987,7 +11297,6 @@
    },
 
    ensureDefaultTournamentSeeded() {
-    // Keep tournaments list blank by default until Admin explicitly creates an event
     const existing = StorageUtil.get(TOURNAMENTS_STORAGE_KEY, null);
     if (!Array.isArray(existing)) {
      StorageUtil.set(TOURNAMENTS_STORAGE_KEY, []);
@@ -11010,45 +11319,79 @@
    },
 
    getAllManagedPlayers() {
+    ensureDedicatedAdminAccountSeeded();
+    const deletedSet = new Set(StorageUtil.get(ADMIN_DELETED_EMAILS_KEY, []) || []);
+    const overrides = StorageUtil.get(ADMIN_OVERRIDES_STORAGE_KEY, {}) || {};
     const reg = collectAllLocalProfilesIntoRegistry();
     const merged = new Map();
-    CachedLeaderboardPlayersMap.forEach((v, k) => merged.set(k, { ...v }));
+    CachedLeaderboardPlayersMap.forEach((v, k) => {
+     const cleanK = (k || '').toLowerCase().trim();
+     if (!cleanK || deletedSet.has(cleanK)) return;
+     merged.set(cleanK, { ...v });
+    });
     Object.keys(reg).forEach(em => {
      const cleanEm = em.toLowerCase().trim();
+     if (!cleanEm || deletedSet.has(cleanEm)) return;
      const u = reg[em];
      if (!u || !u.userName) return;
-     const validTimes = (u.rubikSolves || []).map(getEffectiveSolveTime).filter(t => typeof t === 'number' && t > 0);
+     const ov = overrides[cleanEm] || null;
+     const solvesArr = (ov && Array.isArray(ov.rubikSolves)) ? ov.rubikSolves : (u.rubikSolves || []);
+     const validTimes = solvesArr.map(getEffectiveSolveTime).filter(t => typeof t === 'number' && t > 0);
      const bestR = validTimes.length ? Math.min(...validTimes) : null;
+     const pureLearned = filterPureLearnedItems(u.learnedItems);
      if (!merged.has(cleanEm)) {
       merged.set(cleanEm, {
        email: cleanEm,
-       nickname: u.userName,
-       avatar: u.avatar || '👤',
-       bio: u.bio || '',
-       customTitle: u.customTitle || (cleanEm === ADMIN_ACCOUNT_EMAIL ? '🛡️ Quản Trị Viên' : ''),
-       chessElo: u.chessElo || 1200,
-       chessStats: u.chessStats || { w: 0, d: 0, l: 0 },
+       nickname: (ov && ov.userName) || u.userName,
+       avatar: (ov && ov.avatar) || u.avatar || '👤',
+       bio: (ov && ov.bio !== undefined) ? ov.bio : (u.bio || ''),
+       customTitle: (ov && ov.customTitle !== undefined) ? ov.customTitle : (u.customTitle || (cleanEm === ADMIN_ACCOUNT_EMAIL ? '🛡️ Quản Trị Viên' : '')),
+       chessElo: (ov && typeof ov.chessElo === 'number') ? ov.chessElo : (typeof u.chessElo === 'number' ? u.chessElo : 1200),
+       chessStats: (ov && ov.chessStats) || u.chessStats || { w: 0, d: 0, l: 0 },
        bestRubik: bestR,
        solvesCount: validTimes.length,
-       learnedCount: Array.isArray(u.learnedItems) ? u.learnedItems.length : 0,
-       locked: Boolean(u.locked),
+       learnedCount: pureLearned.length,
+       locked: (ov && ov.locked !== undefined) ? Boolean(ov.locked) : Boolean(u.locked),
        createdAt: u.createdAt || Date.now()
       });
      } else {
       const cur = merged.get(cleanEm);
-      cur.locked = Boolean(u.locked);
-      cur.avatar = u.avatar || cur.avatar || '👤';
-      cur.bio = u.bio !== undefined ? u.bio : (cur.bio || '');
-      cur.customTitle = u.customTitle !== undefined ? u.customTitle : (cur.customTitle || '');
-      cur.chessElo = typeof u.chessElo === 'number' ? u.chessElo : cur.chessElo;
-      cur.bestRubik = bestR || cur.bestRubik;
+      cur.nickname = (ov && ov.userName) || u.userName || cur.nickname;
+      cur.locked = (ov && ov.locked !== undefined) ? Boolean(ov.locked) : Boolean(u.locked);
+      cur.avatar = (u.avatar && String(u.avatar).startsWith('data:image/')) ? u.avatar : ((ov && ov.avatar) || u.avatar || cur.avatar || '👤');
+      cur.bio = (ov && ov.bio !== undefined) ? ov.bio : (u.bio !== undefined ? u.bio : (cur.bio || ''));
+      cur.customTitle = (ov && ov.customTitle !== undefined) ? ov.customTitle : (u.customTitle !== undefined ? u.customTitle : (cur.customTitle || ''));
+      cur.chessElo = (ov && typeof ov.chessElo === 'number') ? ov.chessElo : (typeof u.chessElo === 'number' ? u.chessElo : cur.chessElo);
+      cur.chessStats = (ov && ov.chessStats) || u.chessStats || cur.chessStats || { w: 0, d: 0, l: 0 };
+      cur.bestRubik = (ov && Array.isArray(ov.rubikSolves)) ? bestR : (bestR !== null ? bestR : cur.bestRubik);
+      cur.solvesCount = (ov && Array.isArray(ov.rubikSolves)) ? validTimes.length : Math.max(cur.solvesCount || 0, validTimes.length);
+      cur.learnedCount = Math.max(cur.learnedCount || 0, pureLearned.length);
      }
     });
     return Array.from(merged.values()).sort((a, b) => (b.chessElo || 1200) - (a.chessElo || 1200));
    },
 
+   recordAdminPlayerOverride(email, profileObj) {
+    const cleanEm = (email || '').toLowerCase().trim();
+    if (!cleanEm || !profileObj) return;
+    const overrides = StorageUtil.get(ADMIN_OVERRIDES_STORAGE_KEY, {}) || {};
+    overrides[cleanEm] = {
+     updatedAt: Date.now(),
+     userName: profileObj.userName,
+     avatar: profileObj.avatar || '👤',
+     bio: profileObj.bio || '',
+     customTitle: profileObj.customTitle || '',
+     chessElo: typeof profileObj.chessElo === 'number' ? profileObj.chessElo : 1200,
+     rubikSolves: Array.isArray(profileObj.rubikSolves) ? profileObj.rubikSolves : [],
+     chessStats: profileObj.chessStats || { w: 0, d: 0, l: 0 },
+     locked: Boolean(profileObj.locked),
+     passwordHash: profileObj.passwordHash || ''
+    };
+    StorageUtil.set(ADMIN_OVERRIDES_STORAGE_KEY, overrides);
+   },
+
    // Helper to permanently save a player's new Elo, Win/Draw/Loss stats, and Title to Local + Supabase Cloud
-   async persistPlayerEloAndTitleToCloud(email, newEloVal, scoreVal = null, newTitle = null, fallbackPlayerInfo = null) {
+   async persistPlayerEloAndTitleToCloud(email, newEloVal, scoreVal = null, newTitle = null, fallbackPlayerInfo = null, revertScoreVal = null) {
     const cleanEm = (email || '').toLowerCase().trim();
     if (!cleanEm) return null;
     const reg = collectAllLocalProfilesIntoRegistry();
@@ -11061,7 +11404,7 @@
       avatar: (fallbackPlayerInfo && fallbackPlayerInfo.avatar) || cachedLb.avatar || '👤',
       bio: (fallbackPlayerInfo && fallbackPlayerInfo.bio) || cachedLb.bio || '',
       customTitle: cachedLb.customTitle || '',
-      chessStats: cachedLb.chessStats || { w: 0, d: 0, l: 0 },
+      chessStats: cachedLb.chessStats ? { ...cachedLb.chessStats } : { w: 0, d: 0, l: 0 },
       learnedItems: [],
       rubikSolves: [],
       chessElo: cachedLb.chessElo || 1200,
@@ -11075,6 +11418,11 @@
     if (scoreVal === 1.0) prof.chessStats.w = (prof.chessStats.w || 0) + 1;
     else if (scoreVal === 0.5) prof.chessStats.d = (prof.chessStats.d || 0) + 1;
     else if (scoreVal === 0.0) prof.chessStats.l = (prof.chessStats.l || 0) + 1;
+
+    if (revertScoreVal === 1.0) prof.chessStats.w = Math.max(0, (prof.chessStats.w || 0) - 1);
+    else if (revertScoreVal === 0.5) prof.chessStats.d = Math.max(0, (prof.chessStats.d || 0) - 1);
+    else if (revertScoreVal === 0.0) prof.chessStats.l = Math.max(0, (prof.chessStats.l || 0) - 1);
+
     if (newTitle) {
      prof.customTitle = newTitle;
     }
@@ -11089,6 +11437,7 @@
     });
     StorageUtil.set(getUserStorageKey(cleanEm), prof);
     saveAccountToRegistry(cleanEm, prof);
+    this.recordAdminPlayerOverride(cleanEm, prof);
     if (CachedLeaderboardPlayersMap.has(cleanEm)) {
      const lbEntry = CachedLeaderboardPlayersMap.get(cleanEm);
      lbEntry.chessElo = finalElo;
@@ -11139,12 +11488,13 @@
      : Math.max(3, Math.ceil(Math.log2(Math.max(2, parts.length || maxP))));
     const highestRoundGenerated = pairings.reduce((mx, m) => Math.max(mx, m.round || 1), 0);
     const totalCols = Math.max(totalExpectedRounds, highestRoundGenerated, 2);
+    const isTourneyCompleted = (t.status === 'completed');
 
     // Stepper Progress
     const step1Done = parts.length >= 2;
     const step2Done = pairings.length > 0;
     const step3Done = pairings.some(m => Boolean(m.result));
-    const step4Done = t.status === 'completed';
+    const step4Done = isTourneyCompleted;
 
     const roundLabelFor = (rNum, maxR) => {
      if (isKo) {
@@ -11170,7 +11520,7 @@
            <span>${isEn ? '🎉 BYE (AUTO-ADVANCE)' : '🎉 MIỄN ĐẤU (BYE)'}</span>
            <span>${isEn ? '+1.0 Pt' : '+1.0 Điểm'}</span>
           </div>
-          <div class="text-xs font-extrabold text-white truncate">♔ ${m.whiteName} (${m.whiteElo} Elo)</div>
+          <div class="text-xs font-extrabold text-white truncate">♔ ${escapeHtmlSafe(m.whiteName)} (${m.whiteElo} Elo)</div>
           <div class="text-[10px] text-slate-400">${isEn ? 'Automatically advances (Odd number of players)' : 'Tự động vào vòng tiếp theo (Số kỳ thủ lẻ)'}</div>
          </div>
         `;
@@ -11178,21 +11528,23 @@
        const myEm = (AppState.userEmail || '').toLowerCase().trim();
        const iAmPlayer = Boolean(myEm && (m.whiteEmail === myEm || m.blackEmail === myEm));
        const isFinished = Boolean(m.result);
-       const isLive = !isFinished && m.liveStatus === 'playing';
+       const isLive = !isFinished && !isTourneyCompleted && m.liveStatus === 'playing';
        const wWon = m.result === '1-0';
        const bWon = m.result === '0-1';
        const isDraw = m.result === '1/2-1/2';
        const eloGap = Math.abs((m.whiteElo || 1200) - (m.blackElo || 1200));
        const statusPill = isFinished
         ? `<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono-code text-[10px] font-extrabold">✅ ${m.result}</span>`
-        : (isLive
-         ? `<span class="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 font-mono-code text-[10px] font-extrabold animate-pulse">${isEn ? '🟢 Live Now' : '🟢 Đang Đấu Live'}</span>`
-         : `<span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono-code text-[10px] font-bold">${isEn ? '⏳ Waiting' : '⏳ Chờ Đấu'}</span>`);
+        : (isTourneyCompleted
+         ? `<span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono-code text-[10px] font-bold">${isEn ? 'Closed' : 'Đã đóng'}</span>`
+         : (isLive
+          ? `<span class="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 font-mono-code text-[10px] font-extrabold animate-pulse">${isEn ? '🟢 Live Now' : '🟢 Đang Đấu Live'}</span>`
+          : `<span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono-code text-[10px] font-bold">${isEn ? '⏳ Waiting' : '⏳ Chờ Đấu'}</span>`));
 
        const dWStr = typeof m.deltaW === 'number' ? `<span class="ml-1 text-[10px] font-mono-code ${m.deltaW >= 0 ? 'text-emerald-400' : 'text-rose-400'}">(${m.deltaW >= 0 ? '+' + m.deltaW : m.deltaW})</span>` : '';
        const dBStr = typeof m.deltaB === 'number' ? `<span class="ml-1 text-[10px] font-mono-code ${m.deltaB >= 0 ? 'text-emerald-400' : 'text-rose-400'}">(${m.deltaB >= 0 ? '+' + m.deltaB : m.deltaB})</span>` : '';
 
-       const actionFooter = !isFinished ? `
+       const actionFooter = (!isFinished && !isTourneyCompleted) ? `
         <div class="pt-1.5 mt-1 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-1.5">
          <button type="button" data-play-tourney-id="${t.id}" data-play-match-id="${m.id}" class="play-tourney-match-btn flex-1 py-1.5 px-2.5 rounded-lg ${iAmPlayer ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950' : 'bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30'} font-extrabold text-[11px] transition text-center shadow">
           ${iAmPlayer ? (isEn ? '♟️ Join Match (PvP)' : '♟️ Vào Bàn Đấu (PvP)') : (isEn ? '👁️ Spectate' : '👁️ Xem Bàn Đấu')}
@@ -11205,7 +11557,7 @@
           </div>
          ` : ''}
         </div>
-       ` : (isAdminView && t.status !== 'completed' ? `
+       ` : (isAdminView && isFinished && !isTourneyCompleted ? `
         <div class="pt-1 mt-1 border-t border-slate-800/60 flex items-center justify-between text-[10px]">
          <span class="text-slate-400">${isEn ? `Locked: ${m.result}` : `Đã khóa kết quả ${m.result}`}</span>
          <button type="button" data-reset-t-id="${t.id}" data-reset-m-id="${m.id}" class="admin-reset-match-res-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-rose-500/20 text-amber-300 hover:text-rose-300 font-bold transition">${isEn ? '↺ Replay' : '↺ Đấu lại'}</button>
@@ -11213,24 +11565,24 @@
        ` : '');
 
        return `
-        <div class="p-2.5 rounded-xl bg-slate-950/95 border ${iAmPlayer && !isFinished ? 'border-emerald-400 shadow-lg' : (isLive ? 'border-amber-400/60' : 'border-slate-800')} space-y-1.5 relative">
+        <div class="p-2.5 rounded-xl bg-slate-950/95 border ${iAmPlayer && !isFinished && !isTourneyCompleted ? 'border-emerald-400 shadow-lg' : (isLive ? 'border-amber-400/60' : 'border-slate-800')} space-y-1.5 relative">
          <div class="flex items-center justify-between gap-1 text-[10px] text-slate-400 font-mono-code">
           <span>${isEn ? `Pair #${idx + 1} • ΔElo: ${eloGap}` : `Cặp #${idx + 1} • ΔElo: ${eloGap}`}</span>
           ${statusPill}
          </div>
-         <div data-view-profile-email="${m.whiteEmail}" class="cursor-pointer flex items-center justify-between gap-1.5 px-2 py-1 rounded-lg ${wWon ? 'bg-emerald-500/20 border border-emerald-500/40' : 'bg-slate-900/90'}">
+         <div data-view-profile-email="${escapeHtmlSafe(m.whiteEmail)}" class="cursor-pointer flex items-center justify-between gap-1.5 px-2 py-1 rounded-lg ${wWon ? 'bg-emerald-500/20 border border-emerald-500/40' : 'bg-slate-900/90 hover:bg-slate-800'}">
           <div class="flex items-center gap-1.5 min-w-0">
            <span class="text-xs">♔</span>
-           <span class="text-xs font-extrabold ${wWon ? 'text-emerald-300' : 'text-white'} truncate">${m.whiteName}</span>
+           <span class="text-xs font-extrabold ${wWon ? 'text-emerald-300' : 'text-white'} truncate">${escapeHtmlSafe(m.whiteName)}</span>
           </div>
           <div class="font-mono-code text-[11px] text-amber-300 shrink-0">
            ${m.whiteElo}${dWStr} ${wWon ? '👑' : (isDraw ? '½' : '')}
           </div>
          </div>
-         <div data-view-profile-email="${m.blackEmail}" class="cursor-pointer flex items-center justify-between gap-1.5 px-2 py-1 rounded-lg ${bWon ? 'bg-emerald-500/20 border border-emerald-500/40' : 'bg-slate-900/90'}">
+         <div data-view-profile-email="${escapeHtmlSafe(m.blackEmail)}" class="cursor-pointer flex items-center justify-between gap-1.5 px-2 py-1 rounded-lg ${bWon ? 'bg-emerald-500/20 border border-emerald-500/40' : 'bg-slate-900/90 hover:bg-slate-800'}">
           <div class="flex items-center gap-1.5 min-w-0">
            <span class="text-xs">♚</span>
-           <span class="text-xs font-extrabold ${bWon ? 'text-emerald-300' : 'text-white'} truncate">${m.blackName}</span>
+           <span class="text-xs font-extrabold ${bWon ? 'text-emerald-300' : 'text-white'} truncate">${escapeHtmlSafe(m.blackName)}</span>
           </div>
           <div class="font-mono-code text-[11px] text-amber-300 shrink-0">
            ${m.blackElo}${dBStr} ${bWon ? '👑' : (isDraw ? '½' : '')}
@@ -11241,7 +11593,6 @@
        `;
       }).join('');
      } else {
-      // Placeholder bracket slots for upcoming rounds so the full tournament bracket path is visible
       const expectedPairsCount = isKo
        ? Math.max(1, Math.floor((parts.length || maxP) / Math.pow(2, r)))
        : Math.max(1, Math.floor(Math.max(2, parts.length) / 2));
@@ -11273,14 +11624,13 @@
      `;
     }
 
-    // Champion Podium Column at the right end of the Bracket
     const sortedStandings = [...parts].sort((a, b) => (b.score - a.score) || (b.elo - a.elo));
     const currentLeader = sortedStandings[0] || null;
-    const champColHtml = t.status === 'completed' && t.winnerName ? `
+    const champColHtml = isTourneyCompleted && t.winnerName ? `
      <div class="min-w-[220px] sm:min-w-[240px] bg-gradient-to-b from-amber-500/20 via-slate-900 to-slate-950 rounded-2xl p-4 border-2 border-amber-400/70 flex flex-col items-center justify-center text-center space-y-2 shadow-xl">
       <div class="text-3xl animate-bounce">🏆</div>
       <span class="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-mono-code text-[10px] font-extrabold">${isEn ? 'TOURNAMENT CHAMPION' : 'QUÁN QUÂN GIẢI ĐẤU'}</span>
-      <div class="text-base font-extrabold text-white break-words">${t.winnerName}</div>
+      <div class="text-base font-extrabold text-white break-words">${escapeHtmlSafe(t.winnerName)}</div>
       <div class="text-xs font-mono-code font-extrabold text-emerald-300 bg-slate-950/90 px-3 py-1 rounded-xl border border-emerald-500/40">
        🎁 ${isEn ? `Awarded +${t.bonusElo || 100} Elo` : `Đã thưởng +${t.bonusElo || 100} Elo`}
       </div>
@@ -11293,7 +11643,7 @@
       <div class="text-xs font-mono-code font-extrabold text-emerald-300 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">
        ${isEn ? `Bonus: +${t.bonusElo || 100} Elo` : `Thưởng: +${t.bonusElo || 100} Elo`}
       </div>
-      ${currentLeader ? `<div class="text-[11px] text-slate-300">${isEn ? 'Leading:' : 'Đang dẫn đầu:'} <strong class="text-white">${currentLeader.nickname}</strong> (${Number(currentLeader.score || 0).toFixed(1)} ${isEn ? 'pts' : 'đ'})</div>` : `<div class="text-[11px] text-slate-400">${isEn ? 'Awaiting Champion' : 'Chờ xác định nhà vô địch'}</div>`}
+      ${currentLeader ? `<div class="text-[11px] text-slate-300">${isEn ? 'Leading:' : 'Đang dẫn đầu:'} <strong class="text-white">${escapeHtmlSafe(currentLeader.nickname)}</strong> (${Number(currentLeader.score || 0).toFixed(1)} ${isEn ? 'pts' : 'đ'})</div>` : `<div class="text-[11px] text-slate-400">${isEn ? 'Awaiting Champion' : 'Chờ xác định nhà vô địch'}</div>`}
      </div>
     `;
 
@@ -11336,22 +11686,44 @@
     const players = this.getAllManagedPlayers();
     const tourneys = this.getTournaments();
 
+    const activePill = document.getElementById('admin-active-account-pill');
+    if (activePill) activePill.textContent = AppState.userEmail || ADMIN_ACCOUNT_EMAIL;
+
+    const lbToggle1 = document.getElementById('admin-show-self-on-lb-toggle');
+    const lbToggle3 = document.getElementById('admin-show-self-on-lb-toggle-tab3');
+    if (lbToggle1) lbToggle1.checked = Boolean(AppState.showAdminOnLeaderboard);
+    if (lbToggle3) lbToggle3.checked = Boolean(AppState.showAdminOnLeaderboard);
+
     const kpiP = document.getElementById('admin-kpi-players');
     const kpiT = document.getElementById('admin-kpi-tournaments');
     const kpiElo = document.getElementById('admin-kpi-top-elo');
     const kpiRubik = document.getElementById('admin-kpi-top-rubik');
+    const nonAdminPlayers = players.filter(p => p.email !== ADMIN_ACCOUNT_EMAIL);
+    const kpiTargetList = (AppState.showAdminOnLeaderboard || nonAdminPlayers.length === 0) ? players : nonAdminPlayers;
     if (kpiP) kpiP.textContent = String(players.length);
     if (kpiT) kpiT.textContent = String(tourneys.filter(t => t.status !== 'completed').length);
-    const nonAdminPlayers = players.filter(p => p.email !== ADMIN_ACCOUNT_EMAIL);
-    const maxElo = nonAdminPlayers.length ? Math.max(...nonAdminPlayers.map(p => p.chessElo || 1200)) : 1200;
+    const maxElo = kpiTargetList.length ? Math.max(...kpiTargetList.map(p => p.chessElo || 1200)) : 1200;
     if (kpiElo) kpiElo.textContent = `${maxElo} Elo`;
-    const rubikTimes = nonAdminPlayers.map(p => p.bestRubik).filter(t => typeof t === 'number' && t > 0);
+    const rubikTimes = kpiTargetList.map(p => p.bestRubik).filter(t => typeof t === 'number' && t > 0);
     if (kpiRubik) kpiRubik.textContent = rubikTimes.length ? `${Math.min(...rubikTimes).toFixed(2)}s` : '--.--s';
 
     const bInp = document.getElementById('admin-broadcast-input');
+    const bStatusEl = document.getElementById('admin-broadcast-active-status');
     const savedB = StorageUtil.get(ADMIN_BROADCAST_STORAGE_KEY, null);
-    if (bInp && document.activeElement !== bInp && savedB && savedB.text) {
-     bInp.value = savedB.text;
+    const activeBroadcastTxt = (savedB && savedB.text && !savedB.isDefault && savedB.text.trim() !== DEFAULT_LEGACY_BROADCAST_TEXT)
+     ? savedB.text.trim()
+     : '';
+    if (bInp && document.activeElement !== bInp) {
+     bInp.value = activeBroadcastTxt;
+    }
+    if (bStatusEl) {
+     if (activeBroadcastTxt) {
+      bStatusEl.textContent = isEn ? '🟢 Active Broadcast Pinned' : '🟢 Đang ghim thông báo trên đầu trang';
+      bStatusEl.className = 'px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 font-mono-code text-xs font-extrabold';
+     } else {
+      bStatusEl.textContent = isEn ? '⚪ No Active Broadcast' : '⚪ Chưa có thông báo ghim';
+      bStatusEl.className = 'px-3 py-1 rounded-full bg-slate-800 text-slate-300 font-mono-code text-xs font-bold';
+     }
     }
 
     // Render Players Table
@@ -11366,7 +11738,8 @@
        return (
         (p.nickname || '').toLowerCase().includes(q) ||
         (p.email || '').toLowerCase().includes(q) ||
-        (p.bio || '').toLowerCase().includes(q)
+        (p.bio || '').toLowerCase().includes(q) ||
+        (p.customTitle || '').toLowerCase().includes(q)
        );
       }
       return true;
@@ -11386,15 +11759,15 @@
           </div>
           <div class="min-w-0 space-y-0.5">
            <div class="flex flex-wrap items-center gap-1.5">
-            <span class="text-sm sm:text-base font-extrabold text-white">${p.nickname}</span>
-            ${p.customTitle ? `<span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono-code font-bold">${p.customTitle}</span>` : ''}
+            <span class="text-sm sm:text-base font-extrabold text-white">${escapeHtmlSafe(p.nickname)}</span>
+            ${p.customTitle ? `<span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono-code font-bold">${escapeHtmlSafe(p.customTitle)}</span>` : ''}
             ${p.locked
              ? `<span class="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-extrabold">${isEn ? '🔒 LOCKED' : '🔒 ĐÃ KHÓA'}</span>`
              : `<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">${isEn ? 'Active' : 'Hoạt động'}</span>`
             }
            </div>
-           <div class="text-xs font-mono-code text-slate-400 truncate">${p.email}</div>
-           ${p.bio ? `<div class="text-xs text-slate-300 italic truncate max-w-md">"${p.bio}"</div>` : ''}
+           <div class="text-xs font-mono-code text-slate-400 truncate">${escapeHtmlSafe(p.email)}</div>
+           ${p.bio ? `<div class="text-xs text-slate-300 italic truncate max-w-md">"${escapeHtmlSafe(p.bio)}"</div>` : ''}
           </div>
          </div>
          <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2 shrink-0 border-t sm:border-t-0 border-slate-800 pt-2 sm:pt-0">
@@ -11403,11 +11776,11 @@
            <div class="font-mono-code text-xs text-cyan-300">🧊 Rubik: ${p.bestRubik ? p.bestRubik.toFixed(2) + 's' : '--.--s'} • 📚 ${p.learnedCount || 0}/162</div>
           </div>
           <div class="flex flex-wrap items-center gap-1.5">
-           <button type="button" data-admin-view-email="${p.email}" class="admin-view-prof-btn px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-bold transition">${isEn ? '👁️ Profile' : '👁️ Hồ sơ'}</button>
-           <button type="button" data-admin-edit-email="${p.email}" class="admin-edit-prof-btn px-2.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/40 text-xs font-extrabold transition">${isEn ? '✏️ Edit' : '✏️ Sửa'}</button>
+           <button type="button" data-admin-view-email="${escapeHtmlSafe(p.email)}" class="admin-view-prof-btn px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-bold transition">${isEn ? '👁️ Profile' : '👁️ Hồ sơ'}</button>
+           <button type="button" data-admin-edit-email="${escapeHtmlSafe(p.email)}" class="admin-edit-prof-btn px-2.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/40 text-xs font-extrabold transition">${isEn ? '✏️ Edit' : '✏️ Sửa'}</button>
            ${!isSysAdmin ? `
-            <button type="button" data-admin-lock-email="${p.email}" class="admin-lock-prof-btn px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-bold transition">${p.locked ? (isEn ? '🔓 Unlock' : '🔓 Mở khóa') : (isEn ? '🔒 Lock' : '🔒 Khóa')}</button>
-            <button type="button" data-admin-del-email="${p.email}" class="admin-del-prof-btn px-2.5 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white border border-rose-500/40 text-xs font-extrabold transition">${isEn ? '🗑️ Delete' : '🗑️ Xóa'}</button>
+            <button type="button" data-admin-lock-email="${escapeHtmlSafe(p.email)}" class="admin-lock-prof-btn px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-bold transition">${p.locked ? (isEn ? '🔓 Unlock' : '🔓 Mở khóa') : (isEn ? '🔒 Lock' : '🔒 Khóa')}</button>
+            <button type="button" data-admin-del-email="${escapeHtmlSafe(p.email)}" class="admin-del-prof-btn px-2.5 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white border border-rose-500/40 text-xs font-extrabold transition">${isEn ? '🗑️ Delete' : '🗑️ Xóa'}</button>
            ` : ''}
           </div>
          </div>
@@ -11417,7 +11790,7 @@
      }
     }
 
-    // Render Admin Tournaments List with Visual Bracket
+    // Render Admin Tournaments List with Participant Roster, Quick-Add Bar & Visual Bracket
     const tListEl = document.getElementById('admin-tournaments-list');
     if (tListEl) {
      if (!tourneys.length) {
@@ -11425,20 +11798,64 @@
      } else {
       tListEl.innerHTML = tourneys.map(t => {
        const fmtText = this.formatTourneyType(t.format, isEn);
+       const isCompleted = t.status === 'completed';
        const statusBadge = t.status === 'open'
         ? `<span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold">${isEn ? '🟢 Registration Open' : '🟢 Đang mở đăng ký'}</span>`
         : (t.status === 'active'
          ? `<span class="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 text-xs font-extrabold">${isEn ? '⚔️ In Progress' : '⚔️ Đang thi đấu'}</span>`
-         : `<span class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-bold">${isEn ? `👑 Completed (${t.winnerName || 'Champion'})` : `👑 Đã kết thúc (${t.winnerName || 'Quán quân'})`}</span>`);
+         : `<span class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-bold">${isEn ? `👑 Completed (${escapeHtmlSafe(t.winnerName || 'Champion')})` : `👑 Đã kết thúc (${escapeHtmlSafe(t.winnerName || 'Quán quân')})`}</span>`);
        const parts = Array.isArray(t.participants) ? [...t.participants].sort((a, b) => (b.score - a.score) || (b.elo - a.elo)) : [];
        const bracketHtml = this.renderTournamentBracketHTML(t, true);
+
+       // Build Registered Participants Roster & Quick-Add Controls for Admin
+       const availableSystemPlayers = players.filter(p => !p.locked && !parts.some(pt => (pt.email || '').toLowerCase() === p.email.toLowerCase()));
+       const selectOptionsHtml = availableSystemPlayers.length
+        ? availableSystemPlayers.map(p => `<option value="${escapeHtmlSafe(p.email)}">${escapeHtmlSafe(p.nickname)} (${p.chessElo || 1200} Elo)</option>`).join('')
+        : `<option value="">${isEn ? '-- All system players added --' : '-- Đã nạp hết kỳ thủ hệ thống --'}</option>`;
+
+       const rosterChipsHtml = parts.length ? parts.map((p, idx) => `
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-700 text-xs">
+         <span class="font-mono-code text-amber-300 font-bold">#${idx + 1}</span>
+         <span data-view-profile-email="${escapeHtmlSafe(p.email)}" class="cursor-pointer font-extrabold text-white hover:text-cyan-300">${escapeHtmlSafe(p.nickname)}</span>
+         <span class="font-mono-code text-[10px] text-slate-400">(${p.elo} Elo • ${Number(p.score || 0).toFixed(1)}đ)</span>
+         ${!isCompleted ? `<button type="button" data-t-remove-id="${t.id}" data-t-remove-email="${escapeHtmlSafe(p.email)}" class="admin-tourney-remove-player-btn ml-1 text-rose-400 hover:text-rose-200 font-extrabold" title="${isEn ? 'Remove player from tournament' : 'Xóa kỳ thủ khỏi giải'}">✕</button>` : ''}
+        </div>
+       `).join('') : `<span class="text-xs text-slate-400 italic">${isEn ? 'No players in this tournament yet. Use the buttons or quick-add bar below!' : 'Chưa có kỳ thủ nào trong giải. Hãy bấm "➕ Nạp Kỳ Thủ Hệ Thống" hoặc thêm nhanh bên dưới!'}</span>`;
+
+       const adminRosterManagerHtml = `
+        <div class="p-3 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-2.5">
+         <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xs font-extrabold text-cyan-300">👥 ${isEn ? `Registered Tournament Roster (${parts.length}/${t.maxPlayers}):` : `Danh Sách Kỳ Thủ Trong Giải (${parts.length}/${t.maxPlayers}):`}</span>
+          ${!isCompleted && parts.length < t.maxPlayers ? `
+           <div class="flex flex-wrap items-center gap-1.5">
+            <select id="admin-tourney-pick-player-${t.id}" class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none">
+             ${selectOptionsHtml}
+            </select>
+            <button type="button" data-tourney-add-one="${t.id}" class="admin-tourney-add-one-btn px-2.5 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 border border-cyan-500/40 text-xs font-extrabold transition">
+             + ${isEn ? 'Add Selected' : 'Thêm Vào Giải'}
+            </button>
+           </div>
+          ` : ''}
+         </div>
+         <div class="flex flex-wrap gap-1.5">${rosterChipsHtml}</div>
+         ${!isCompleted && parts.length < t.maxPlayers ? `
+          <div class="pt-2 border-t border-slate-800/80 flex flex-wrap items-center gap-1.5">
+           <input id="admin-tourney-quick-name-${t.id}" type="text" placeholder="${isEn ? 'Quick-create & add player name...' : 'Nhập tên kỳ thủ mới để thêm nhanh vào giải...'}" class="flex-1 min-w-[150px] px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-400" />
+           <input id="admin-tourney-quick-elo-${t.id}" type="number" min="100" max="3500" step="10" value="1200" class="w-20 px-2 py-1 rounded-lg bg-slate-900 border border-slate-700 text-xs text-amber-300 font-mono-code focus:outline-none" title="Elo" />
+           <button type="button" data-tourney-quick-create="${t.id}" class="admin-tourney-quick-create-btn px-3 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold transition">
+            ➕ ${isEn ? 'Quick Create & Join' : 'Tạo & Ghi Danh Ngay'}
+           </button>
+          </div>
+         ` : ''}
+        </div>
+       `;
 
        return `
         <div class="p-4 rounded-2xl bg-slate-900/95 border border-amber-500/35 space-y-3.5">
          <div class="flex flex-wrap items-start justify-between gap-2 border-b border-slate-800 pb-2.5">
           <div>
            <div class="flex flex-wrap items-center gap-2">
-            <h4 class="text-base font-extrabold text-white">🏆 ${t.name}</h4>
+            <h4 class="text-base font-extrabold text-white">🏆 ${escapeHtmlSafe(t.name)}</h4>
             ${statusBadge}
            </div>
            <div class="text-xs text-slate-300 mt-1">
@@ -11449,12 +11866,15 @@
            </div>
           </div>
           <div class="flex flex-wrap gap-1.5">
-           <button type="button" data-tourney-add-all="${t.id}" class="admin-tourney-add-all-btn px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-cyan-300 text-xs font-bold transition" title="${isEn ? 'Add all registered system players into this tournament' : 'Thêm toàn bộ người chơi đã đăng ký vào giải'}">${isEn ? '➕ Add System Players' : '➕ Nạp Kỳ Thủ Hệ Thống'}</button>
-           <button type="button" data-tourney-pair="${t.id}" class="admin-tourney-pair-btn px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold transition">${isEn ? '⚔️ Generate Fair Pairings' : '⚔️ Chia Cặp Đấu Công Bằng'}</button>
-           ${t.status !== 'completed' ? `<button type="button" data-tourney-finish="${t.id}" class="admin-tourney-finish-btn px-2.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold transition">${isEn ? `👑 Finish &amp; Crown (+${t.bonusElo || 100} Elo)` : `👑 Kết Thúc &amp; Trao Thưởng (+${t.bonusElo || 100} Elo)`}</button>` : ''}
+           ${!isCompleted ? `
+            <button type="button" data-tourney-add-all="${t.id}" class="admin-tourney-add-all-btn px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-cyan-300 text-xs font-bold transition" title="${isEn ? 'Add all registered system players into this tournament' : 'Thêm toàn bộ người chơi đã đăng ký vào giải'}">${isEn ? '➕ Add System Players' : '➕ Nạp Kỳ Thủ Hệ Thống'}</button>
+            <button type="button" data-tourney-pair="${t.id}" class="admin-tourney-pair-btn px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold transition">${isEn ? '⚔️ Generate Fair Pairings' : '⚔️ Chia Cặp Đấu Công Bằng'}</button>
+            <button type="button" data-tourney-finish="${t.id}" class="admin-tourney-finish-btn px-2.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold transition">${isEn ? `👑 Finish &amp; Crown (+${t.bonusElo || 100} Elo)` : `👑 Kết Thúc &amp; Trao Thưởng (+${t.bonusElo || 100} Elo)`}</button>
+           ` : ''}
            <button type="button" data-tourney-del="${t.id}" class="admin-tourney-del-btn px-2.5 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white text-xs font-bold transition">${isEn ? '🗑️ Delete' : '🗑️ Xóa'}</button>
           </div>
          </div>
+         ${adminRosterManagerHtml}
          ${bracketHtml}
         </div>
        `;
@@ -11507,32 +11927,35 @@
     container.innerHTML = tourneys.map(t => {
      const fmtText = this.formatTourneyType(t.format, isEn);
      const descText = this.formatTourneyDesc(t.desc, isEn);
+     const isTourneyCompleted = t.status === 'completed';
      const parts = Array.isArray(t.participants) ? [...t.participants].sort((a, b) => (b.score - a.score) || (b.elo - a.elo)) : [];
      const isJoined = Boolean(AppState.userEmail && parts.some(p => (p.email || '').toLowerCase() === AppState.userEmail.toLowerCase()));
      const pairings = Array.isArray(t.pairings) ? t.pairings : [];
      const statusLabel = t.status === 'open'
       ? (isEn ? '🟢 Registration Open' : '🟢 Đang Mở Đăng Ký')
-      : (t.status === 'active' ? (isEn ? '⚔️ In Progress' : '⚔️ Đang Khởi Tranh') : (isEn ? `👑 Champion: ${t.winnerName} (+${t.bonusElo || 100} Elo)` : `👑 Nhà Vô Địch: ${t.winnerName} (+${t.bonusElo || 100} Elo)`));
+      : (t.status === 'active' ? (isEn ? '⚔️ In Progress' : '⚔️ Đang Khởi Tranh') : (isEn ? `👑 Champion: ${escapeHtmlSafe(t.winnerName)} (+${t.bonusElo || 100} Elo)` : `👑 Nhà Vô Địch: ${escapeHtmlSafe(t.winnerName)} (+${t.bonusElo || 100} Elo)`));
 
      const standingsRows = parts.length ? parts.map((p, idx) => {
-      const isWinner = t.status === 'completed' && ((t.winnerEmail && p.email === t.winnerEmail) || p.nickname === t.winnerName);
+      const isWinner = isTourneyCompleted && ((t.winnerEmail && p.email === t.winnerEmail) || p.nickname === t.winnerName);
+      const cachedP = CachedLeaderboardPlayersMap.get((p.email || '').toLowerCase().trim());
+      const avToUse = (cachedP && cachedP.avatar) || p.avatar || '👤';
       return `
-       <div data-view-profile-email="${p.email}" class="pub-tourney-player-row cursor-pointer hover:border-cyan-400/50 transition flex items-center justify-between gap-2 px-3 py-2 rounded-xl ${isWinner ? 'bg-amber-500/15 border-2 border-amber-400/60' : 'bg-slate-950/90 border border-slate-800'}">
+       <div data-view-profile-email="${escapeHtmlSafe(p.email)}" class="pub-tourney-player-row cursor-pointer hover:border-cyan-400/50 transition flex items-center justify-between gap-2 px-3 py-2 rounded-xl ${isWinner ? 'bg-amber-500/15 border-2 border-amber-400/60' : 'bg-slate-950/90 border border-slate-800'}">
         <div class="flex items-center gap-2.5 min-w-0">
          <span class="w-6 text-center font-mono-code font-extrabold text-xs ${idx === 0 ? 'text-amber-300 text-sm' : 'text-slate-400'}">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`}</span>
          <div class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center shrink-0 overflow-hidden">
-          ${renderAvatarInnerHTML(p.avatar || '👤', p.nickname, 'text-sm')}
+          ${renderAvatarInnerHTML(avToUse, p.nickname, 'text-sm')}
          </div>
          <div class="min-w-0">
           <div class="text-xs sm:text-sm font-extrabold text-white truncate flex flex-wrap items-center gap-1.5">
-           <span>${p.nickname}</span>
+           <span>${escapeHtmlSafe(p.nickname)}</span>
            <span class="text-[10px] font-mono-code text-amber-300">(${p.elo} Elo)</span>
            ${isWinner
             ? `<span class="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 text-[9px] font-extrabold">${isEn ? `🏆 CHAMPION (+${t.bonusElo || 100} Elo)` : `🏆 QUÁN QUÂN (+${t.bonusElo || 100} Elo)`}</span>`
             : `<span class="px-1.5 py-0.5 rounded bg-slate-800 text-[9px] text-cyan-300 font-semibold">${isEn ? '👁️ Profile' : '👁️ Hồ sơ'}</span>`
            }
           </div>
-          ${p.bio ? `<div class="text-[10px] text-slate-400 italic truncate max-w-[220px]">"${p.bio}"</div>` : ''}
+          ${p.bio ? `<div class="text-[10px] text-slate-400 italic truncate max-w-[220px]">"${escapeHtmlSafe(p.bio)}"</div>` : ''}
          </div>
         </div>
         <div class="font-mono-code text-xs sm:text-sm font-extrabold text-emerald-300 shrink-0">
@@ -11546,7 +11969,7 @@
       if (m.isBye) {
        return `
         <div class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-950/90 border border-amber-500/35 text-xs">
-         <span class="font-bold text-amber-300">${isEn ? `Round ${m.round || 1}: ♔ ${m.whiteName} (${m.whiteElo}) — BYE (Auto-Advance)` : `Vòng ${m.round || 1}: ♔ ${m.whiteName} (${m.whiteElo}) — Miễn đấu (Bye)`}</span>
+         <span class="font-bold text-amber-300">${isEn ? `Round ${m.round || 1}: ♔ ${escapeHtmlSafe(m.whiteName)} (${m.whiteElo}) — BYE (Auto-Advance)` : `Vòng ${m.round || 1}: ♔ ${escapeHtmlSafe(m.whiteName)} (${m.whiteElo}) — Miễn đấu (Bye)`}</span>
          <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono-code font-extrabold">${isEn ? '+1.0 pt' : '+1.0 đ'}</span>
         </div>
        `;
@@ -11558,20 +11981,22 @@
        ? `Elo Gap: ${eloDiff} Elo • Fair Pairing & Balanced Colors`
        : `Chênh lệch cặp đấu: ${eloDiff} Elo • ${m.fairnessNote || 'Ghép cặp công bằng'}`;
       return `
-       <div class="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-950/90 border ${iAmInMatch && !m.result ? 'border-emerald-400 shadow-md' : 'border-slate-800'} text-xs">
+       <div class="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-950/90 border ${iAmInMatch && !m.result && !isTourneyCompleted ? 'border-emerald-400 shadow-md' : 'border-slate-800'} text-xs">
         <div class="space-y-0.5">
          <div class="font-bold text-slate-200">
           <span class="text-amber-300 font-mono-code mr-1">${isEn ? `Round ${m.round || 1}:` : `Vòng ${m.round || 1}:`}</span>
-          <span>♔ ${m.whiteName} (${m.whiteElo})</span>
+          <span>♔ ${escapeHtmlSafe(m.whiteName)} (${m.whiteElo})</span>
           <span class="text-slate-500 mx-1">⚔️</span>
-          <span>♚ ${m.blackName} (${m.blackElo})</span>
+          <span>♚ ${escapeHtmlSafe(m.blackName)} (${m.blackElo})</span>
          </div>
          <div class="text-[10px] text-slate-400 font-mono-code">${fairNote}</div>
         </div>
         <div class="flex items-center gap-2">
          ${m.result
           ? `<span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono-code font-extrabold">${m.result}</span>`
-          : `<button type="button" data-play-tourney-id="${t.id}" data-play-match-id="${m.id}" class="play-tourney-match-btn px-3 py-1.5 rounded-lg ${iAmInMatch ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950' : 'bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/35'} font-extrabold text-xs shadow transition">${iAmInMatch ? (isEn ? '♟️ Join Match (PvP)' : '♟️ Vào Bàn Đấu (PvP)') : (isEn ? '👁️ Spectate' : '👁️ Xem Bàn Đấu')}</button>`
+          : (!isTourneyCompleted
+           ? `<button type="button" data-play-tourney-id="${t.id}" data-play-match-id="${m.id}" class="play-tourney-match-btn px-3 py-1.5 rounded-lg ${iAmInMatch ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950' : 'bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/35'} font-extrabold text-xs shadow transition">${iAmInMatch ? (isEn ? '♟️ Join Match (PvP)' : '♟️ Vào Bàn Đấu (PvP)') : (isEn ? '👁️ Spectate' : '👁️ Xem Bàn Đấu')}</button>`
+           : `<span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono-code text-[10px]">${isEn ? 'Closed' : 'Đã đóng'}</span>`)
          }
         </div>
        </div>
@@ -11585,10 +12010,10 @@
        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3.5">
         <div>
          <div class="flex flex-wrap items-center gap-2">
-          <h4 class="text-lg sm:text-xl font-extrabold text-white">🏆 ${t.name}</h4>
+          <h4 class="text-lg sm:text-xl font-extrabold text-white">🏆 ${escapeHtmlSafe(t.name)}</h4>
           <span class="px-3 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-extrabold">${statusLabel}</span>
          </div>
-         <p class="text-xs sm:text-sm text-slate-300 mt-1">${descText}</p>
+         <p class="text-xs sm:text-sm text-slate-300 mt-1">${escapeHtmlSafe(descText)}</p>
          <div class="flex flex-wrap gap-3 text-xs text-slate-400 mt-2 font-mono-code">
           <span>📋 ${fmtText}</span>
           <span>⏱️ ${Math.round((t.timeControl || 600) / 60)} ${isEn ? 'min/side' : 'phút/bên'}</span>
@@ -11597,7 +12022,7 @@
          </div>
         </div>
         <div class="shrink-0">
-         ${t.status !== 'completed' ? `
+         ${!isTourneyCompleted ? `
           <button type="button" data-join-tourney-id="${t.id}" class="public-join-tourney-btn px-5 py-2.5 rounded-xl ${isJoined ? 'bg-slate-800 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500 hover:bg-amber-400 text-slate-950'} font-extrabold text-xs sm:text-sm shadow transition">
            ${isJoined
             ? (isEn ? '✓ Registered (Click to Withdraw)' : '✓ Đã Ghi Danh (Nhấn để Rút)')
@@ -11625,7 +12050,8 @@
    },
 
    openEditPlayerModal(email = null) {
-    this.editingEmail = email;
+    this.editingEmail = email ? email.toLowerCase().trim() : null;
+    this.clearRubikBestFlag = false;
     const isEn = window.AppI18n?.lang === 'en';
     const modal = document.getElementById('admin-edit-player-modal');
     if (!modal) return;
@@ -11635,19 +12061,29 @@
     const titleInput = document.getElementById('admin-edit-title');
     const eloInput = document.getElementById('admin-edit-elo');
     const rubikInput = document.getElementById('admin-edit-rubik-best');
+    const winsInput = document.getElementById('admin-edit-wins');
+    const drawsInput = document.getElementById('admin-edit-draws');
+    const lossesInput = document.getElementById('admin-edit-losses');
     const avInput = document.getElementById('admin-edit-avatar');
     const passInput = document.getElementById('admin-edit-password');
     const bioInput = document.getElementById('admin-edit-bio');
 
-    if (email) {
+    if (this.editingEmail) {
      const players = this.getAllManagedPlayers();
-     const p = players.find(x => x.email === email.toLowerCase().trim());
-     if (titleEl) titleEl.textContent = isEn ? `✏️ Edit Profile: ${p ? p.nickname : email}` : `✏️ Chỉnh Sửa Hồ Sơ: ${p ? p.nickname : email}`;
-     if (emInput) { emInput.value = email; emInput.disabled = true; }
+     const p = players.find(x => x.email === this.editingEmail);
+     const st = (p && p.chessStats) || { w: 0, d: 0, l: 0 };
+     if (titleEl) titleEl.textContent = isEn ? `✏️ Edit Profile: ${p ? p.nickname : this.editingEmail}` : `✏️ Chỉnh Sửa Hồ Sơ: ${p ? p.nickname : this.editingEmail}`;
+     if (emInput) { emInput.value = this.editingEmail; emInput.disabled = true; }
      if (nickInput) nickInput.value = p ? p.nickname : '';
      if (titleInput) titleInput.value = p ? (p.customTitle || '') : '';
      if (eloInput) eloInput.value = String(p ? (p.chessElo || 1200) : 1200);
-     if (rubikInput) rubikInput.value = (p && p.bestRubik) ? String(p.bestRubik) : '';
+     if (rubikInput) {
+      rubikInput.value = (p && p.bestRubik) ? String(p.bestRubik) : '';
+      rubikInput.placeholder = isEn ? 'Leave blank to keep current' : 'Để trống nếu giữ nguyên';
+     }
+     if (winsInput) winsInput.value = String(st.w || 0);
+     if (drawsInput) drawsInput.value = String(st.d || 0);
+     if (lossesInput) lossesInput.value = String(st.l || 0);
      if (avInput) avInput.value = (p && p.avatar && !p.avatar.startsWith('data:')) ? p.avatar : '👑';
      if (passInput) passInput.value = '';
      if (bioInput) bioInput.value = p ? (p.bio || '') : '';
@@ -11657,7 +12093,13 @@
      if (nickInput) nickInput.value = '';
      if (titleInput) titleInput.value = isEn ? 'LM Student' : 'Học Viên LM';
      if (eloInput) eloInput.value = '1200';
-     if (rubikInput) rubikInput.value = '';
+     if (rubikInput) {
+      rubikInput.value = '';
+      rubikInput.placeholder = isEn ? 'Optional (e.g. 12.45)' : 'Tùy chọn (VD: 12.45)';
+     }
+     if (winsInput) winsInput.value = '0';
+     if (drawsInput) drawsInput.value = '0';
+     if (lossesInput) lossesInput.value = '0';
      if (avInput) avInput.value = '♞';
      if (passInput) passInput.value = '123456';
      if (bioInput) bioInput.value = '';
@@ -11667,11 +12109,15 @@
    },
 
    async saveEditedPlayer() {
-    const rawEmail = (document.getElementById('admin-edit-email')?.value || '').toLowerCase().trim();
+    const rawEmail = (this.editingEmail || document.getElementById('admin-edit-email')?.value || '').toLowerCase().trim();
     const nick = (document.getElementById('admin-edit-nickname')?.value || '').trim();
     const customTitle = (document.getElementById('admin-edit-title')?.value || '').trim();
     const newElo = Math.max(100, Math.min(3500, Number(document.getElementById('admin-edit-elo')?.value) || 1200));
-    const rubikVal = Number(document.getElementById('admin-edit-rubik-best')?.value);
+    const rubikRawStr = (document.getElementById('admin-edit-rubik-best')?.value || '').trim();
+    const rubikVal = rubikRawStr !== '' ? Number(rubikRawStr) : NaN;
+    const winsVal = Math.max(0, Math.floor(Number(document.getElementById('admin-edit-wins')?.value) || 0));
+    const drawsVal = Math.max(0, Math.floor(Number(document.getElementById('admin-edit-draws')?.value) || 0));
+    const lossesVal = Math.max(0, Math.floor(Number(document.getElementById('admin-edit-losses')?.value) || 0));
     const avVal = (document.getElementById('admin-edit-avatar')?.value || '👤').trim();
     const passVal = (document.getElementById('admin-edit-password')?.value || '').trim();
     const bioVal = (document.getElementById('admin-edit-bio')?.value || '').trim();
@@ -11680,16 +12126,50 @@
      showToast('❌ Vui lòng nhập đầy đủ Email và Nickname hợp lệ!', 'rose');
      return;
     }
-    const prev = StorageUtil.get(getUserStorageKey(rawEmail), {}) || {};
-    const createdAtMs = prev.createdAt || Date.now();
-    let solves = Array.isArray(prev.rubikSolves) ? [...prev.rubikSolves] : [];
-    if (Number.isFinite(rubikVal) && rubikVal > 0) {
-     solves.unshift({ baseTime: Number(rubikVal.toFixed(2)), penalty: 0, status: 'OK' });
+
+    // Check duplicate nickname against other active players
+    const allManaged = this.getAllManagedPlayers();
+    const nickConflict = allManaged.find(p => p.email !== rawEmail && (p.nickname || '').trim().toLowerCase() === nick.toLowerCase());
+    if (nickConflict) {
+     showToast(`❌ Nickname "${nick}" đã thuộc về tài khoản ${nickConflict.email}! Vui lòng chọn Nickname khác.`, 'rose');
+     return;
     }
+
+    // If email was previously deleted, remove it from deletedEmails set
+    const delSet = new Set(StorageUtil.get(ADMIN_DELETED_EMAILS_KEY, []) || []);
+    if (delSet.has(rawEmail)) {
+     delSet.delete(rawEmail);
+     StorageUtil.set(ADMIN_DELETED_EMAILS_KEY, Array.from(delSet));
+    }
+
+    const reg = collectAllLocalProfilesIntoRegistry();
+    const cachedLb = CachedLeaderboardPlayersMap.get(rawEmail) || {};
+    const prev = reg[rawEmail] || StorageUtil.get(getUserStorageKey(rawEmail), {}) || {};
+    const createdAtMs = prev.createdAt || cachedLb.createdAt || Date.now();
+    let solves = Array.isArray(prev.rubikSolves) ? [...prev.rubikSolves] : [];
+
+    if (this.clearRubikBestFlag || (rubikRawStr !== '' && rubikVal === 0)) {
+     solves = [];
+    } else if (Number.isFinite(rubikVal) && rubikVal > 0) {
+     const targetBest = Number(rubikVal.toFixed(2));
+     // Filter out any existing solves faster than targetBest so Math.min becomes exactly targetBest!
+     solves = solves.filter(s => {
+      const eff = getEffectiveSolveTime(s);
+      return eff === null || eff >= targetBest;
+     });
+     const alreadyHasExact = solves.some(s => getEffectiveSolveTime(s) === targetBest);
+     if (!alreadyHasExact) {
+      solves.unshift({ baseTime: targetBest, penalty: 0, status: 'OK' });
+     }
+    }
+
     const basePassHash = passVal
      ? encodePasswordHash(passVal)
-     : (extractBasePasswordHash(prev.passwordHash) || encodePasswordHash('123456'));
+     : (extractBasePasswordHash(prev.passwordHash) || encodePasswordHash(rawEmail === ADMIN_ACCOUNT_EMAIL ? ADMIN_ACCOUNT_PASS : '123456'));
     const avatarFinal = (prev.avatar && prev.avatar.startsWith('data:image/') && (!avVal || avVal === '👑')) ? prev.avatar : (avVal || '👤');
+    const newChessStats = { w: winsVal, d: drawsVal, l: lossesVal };
+    const pureLearned = filterPureLearnedItems(prev.learnedItems);
+
     const updatedProfile = {
      ...prev,
      userName: nick,
@@ -11698,33 +12178,88 @@
      customTitle,
      chessElo: newElo,
      rubikSolves: solves,
-     learnedItems: Array.isArray(prev.learnedItems) ? prev.learnedItems : [],
-     chessStats: prev.chessStats || { w: 0, d: 0, l: 0 },
+     learnedItems: pureLearned,
+     chessStats: newChessStats,
+     locked: Boolean(prev.locked),
      createdAt: createdAtMs,
      passwordHash: buildPasswordHashWithTimestamp(basePassHash, createdAtMs, {
       av: avatarFinal,
       bio: bioVal,
-      st: prev.chessStats || { w: 0, d: 0, l: 0 },
+      st: newChessStats,
       locked: Boolean(prev.locked),
       title: customTitle
      })
     };
     StorageUtil.set(getUserStorageKey(rawEmail), updatedProfile);
     saveAccountToRegistry(rawEmail, updatedProfile);
+    this.recordAdminPlayerOverride(rawEmail, updatedProfile);
+
+    // Update CachedLeaderboardPlayersMap immediately so UI reflects exact new values
+    const validTimes = solves.map(getEffectiveSolveTime).filter(t => typeof t === 'number' && t > 0);
+    CachedLeaderboardPlayersMap.set(rawEmail, {
+     email: rawEmail,
+     nickname: nick,
+     avatar: avatarFinal,
+     bio: bioVal,
+     customTitle,
+     chessStats: newChessStats,
+     locked: Boolean(prev.locked),
+     bestRubik: validTimes.length ? Math.min(...validTimes) : null,
+     solvesCount: validTimes.length,
+     chessElo: newElo,
+     learnedCount: pureLearned.length,
+     createdAt: createdAtMs
+    });
+
+    // Propagate updated Nickname, Elo, Avatar, and Bio into any open/active Tournaments
+    const tourneys = this.getTournaments();
+    let tourneysModified = false;
+    tourneys.forEach(t => {
+     if (t.status === 'completed') return;
+     (t.participants || []).forEach(pt => {
+      if ((pt.email || '').toLowerCase().trim() === rawEmail) {
+       pt.nickname = nick;
+       pt.elo = newElo;
+       pt.avatar = avatarFinal;
+       pt.bio = bioVal;
+       tourneysModified = true;
+      }
+     });
+     (t.pairings || []).forEach(m => {
+      if ((m.whiteEmail || '').toLowerCase().trim() === rawEmail) {
+       m.whiteName = nick;
+       if (!m.result) m.whiteElo = newElo;
+       tourneysModified = true;
+      }
+      if ((m.blackEmail || '').toLowerCase().trim() === rawEmail) {
+       m.blackName = nick;
+       if (!m.result) m.blackElo = newElo;
+       tourneysModified = true;
+      }
+     });
+    });
+    if (tourneysModified) {
+     StorageUtil.set(TOURNAMENTS_STORAGE_KEY, tourneys);
+     this.renderPublicTournaments();
+    }
+
     if (AppState.userEmail === rawEmail) {
      AppState.userName = nick;
      AppState.userAvatar = avatarFinal;
      AppState.userBio = bioVal;
      AppState.customTitle = customTitle;
      AppState.chessElo = newElo;
+     AppState.chessStats = newChessStats;
      AppState.rubikSolves = solves;
      updateDashboardProgressUI();
-    }
-    if (AppState.supabaseClient) {
-     await upsertSinglePlayerToSupabase(rawEmail, updatedProfile);
+     RubikTimer.renderStats();
     }
     const modal = document.getElementById('admin-edit-player-modal');
     if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+    if (AppState.supabaseClient) {
+     await upsertSinglePlayerToSupabase(rawEmail, updatedProfile);
+    }
+    await this.syncSystemStateToCloud(undefined, tourneysModified ? tourneys : undefined);
     await fetchLeaderboardsData(false);
     this.renderAdminDashboard();
     SoundFX.play('success');
@@ -11735,8 +12270,24 @@
     const cleanEm = (email || '').toLowerCase().trim();
     if (!cleanEm || cleanEm === ADMIN_ACCOUNT_EMAIL) return;
     const reg = collectAllLocalProfilesIntoRegistry();
-    const prof = reg[cleanEm] || StorageUtil.get(getUserStorageKey(cleanEm), null);
-    if (!prof) return;
+    const cachedLb = CachedLeaderboardPlayersMap.get(cleanEm) || {};
+    let prof = reg[cleanEm] || StorageUtil.get(getUserStorageKey(cleanEm), null);
+    if (!prof) {
+     const createdAtMs = cachedLb.createdAt || Date.now();
+     prof = {
+      userName: cachedLb.nickname || cleanEm.split('@')[0],
+      avatar: cachedLb.avatar || '👤',
+      bio: cachedLb.bio || '',
+      customTitle: cachedLb.customTitle || '',
+      chessStats: cachedLb.chessStats || { w: 0, d: 0, l: 0 },
+      learnedItems: [],
+      rubikSolves: [],
+      chessElo: cachedLb.chessElo || 1200,
+      locked: Boolean(cachedLb.locked),
+      createdAt: createdAtMs,
+      passwordHash: buildPasswordHashWithTimestamp(encodePasswordHash('123456'), createdAtMs)
+     };
+    }
     prof.locked = !prof.locked;
     prof.passwordHash = buildPasswordHashWithTimestamp(prof.passwordHash || '', prof.createdAt || Date.now(), {
      av: prof.avatar || '👤',
@@ -11747,30 +12298,71 @@
     });
     StorageUtil.set(getUserStorageKey(cleanEm), prof);
     saveAccountToRegistry(cleanEm, prof);
+    this.recordAdminPlayerOverride(cleanEm, prof);
+    if (CachedLeaderboardPlayersMap.has(cleanEm)) {
+     const lbP = CachedLeaderboardPlayersMap.get(cleanEm);
+     lbP.locked = Boolean(prof.locked);
+     CachedLeaderboardPlayersMap.set(cleanEm, lbP);
+    }
     if (AppState.supabaseClient) {
      await upsertSinglePlayerToSupabase(cleanEm, prof);
     }
+    await this.syncSystemStateToCloud();
     await fetchLeaderboardsData(false);
     this.renderAdminDashboard();
     showToast(prof.locked ? `🔒 Đã khóa tài khoản ${prof.userName}!` : `🔓 Đã mở khóa tài khoản ${prof.userName}!`, prof.locked ? 'amber' : 'emerald');
    },
 
+   async unlockAllPlayers() {
+    const players = this.getAllManagedPlayers();
+    const lockedList = players.filter(p => p.locked && p.email !== ADMIN_ACCOUNT_EMAIL);
+    if (!lockedList.length) {
+     showToast('Hiện không có tài khoản học viên nào đang bị khóa!', 'cyan');
+     return;
+    }
+    for (const p of lockedList) {
+     await this.toggleLockPlayer(p.email);
+    }
+    SoundFX.play('success');
+    showToast(`🔓 Đã mở khóa toàn bộ ${lockedList.length} tài khoản học viên!`, 'emerald');
+   },
+
    async deletePlayerAccount(email) {
     const cleanEm = (email || '').toLowerCase().trim();
     if (!cleanEm || cleanEm === ADMIN_ACCOUNT_EMAIL) return;
-    const deletedList = new Set(StorageUtil.get('lm_admin_deleted_emails_v1', []) || []);
+    const deletedList = new Set(StorageUtil.get(ADMIN_DELETED_EMAILS_KEY, []) || []);
     deletedList.add(cleanEm);
-    StorageUtil.set('lm_admin_deleted_emails_v1', Array.from(deletedList));
+    StorageUtil.set(ADMIN_DELETED_EMAILS_KEY, Array.from(deletedList));
+    const overrides = StorageUtil.get(ADMIN_OVERRIDES_STORAGE_KEY, {}) || {};
+    delete overrides[cleanEm];
+    StorageUtil.set(ADMIN_OVERRIDES_STORAGE_KEY, overrides);
     StorageUtil.remove(getUserStorageKey(cleanEm));
     const reg = getAllLocalRegisteredAccounts();
     delete reg[cleanEm];
     StorageUtil.set(USERS_REGISTRY_KEY, reg);
     CachedLeaderboardPlayersMap.delete(cleanEm);
+
+    // Also remove deleted player from any 'open' tournaments
+    const tourneys = this.getTournaments();
+    let tourneysChanged = false;
+    tourneys.forEach(t => {
+     if (t.status === 'open' && Array.isArray(t.participants)) {
+      const beforeLen = t.participants.length;
+      t.participants = t.participants.filter(pt => (pt.email || '').toLowerCase().trim() !== cleanEm);
+      if (t.participants.length !== beforeLen) tourneysChanged = true;
+     }
+    });
+    if (tourneysChanged) {
+     StorageUtil.set(TOURNAMENTS_STORAGE_KEY, tourneys);
+     this.renderPublicTournaments();
+    }
+
     if (AppState.supabaseClient) {
      try {
       await AppState.supabaseClient.from(SUPABASE_CONFIG.TABLE_NAME).delete().eq('email', cleanEm);
      } catch (e) {}
     }
+    await this.syncSystemStateToCloud(undefined, tourneysChanged ? tourneys : undefined);
     await fetchLeaderboardsData(false);
     this.renderAdminDashboard();
     showToast(`🗑️ Đã xóa tài khoản ${cleanEm} khỏi hệ thống!`, 'rose');
@@ -11799,6 +12391,7 @@
      bonusAwarded: false,
      desc,
      createdAt: Date.now(),
+     updatedAt: Date.now(),
      winnerName: '',
      winnerEmail: '',
      participants: [],
@@ -11814,12 +12407,15 @@
    addAllSystemPlayersToTournament(tourneyId) {
     const tourneys = this.getTournaments();
     const t = tourneys.find(x => x.id === tourneyId);
-    if (!t) return;
-    const allPlayers = this.getAllManagedPlayers().filter(p => p.email !== ADMIN_ACCOUNT_EMAIL && !p.locked);
+    if (!t || t.status === 'completed') return;
+    const managed = this.getAllManagedPlayers().filter(p => !p.locked);
+    const nonAdmin = managed.filter(p => p.email !== ADMIN_ACCOUNT_EMAIL);
+    // Prefer non-admin players; if fewer than 2 non-admin players exist or showAdminOnLeaderboard is enabled, also include Admin
+    const candidatePool = (nonAdmin.length >= 2 && !AppState.showAdminOnLeaderboard) ? nonAdmin : managed;
     let added = 0;
-    for (const p of allPlayers) {
+    for (const p of candidatePool) {
      if (t.participants.length >= t.maxPlayers) break;
-     if (!t.participants.some(x => x.email === p.email)) {
+     if (!t.participants.some(x => (x.email || '').toLowerCase() === p.email.toLowerCase())) {
       t.participants.push({
        email: p.email,
        nickname: p.nickname,
@@ -11833,14 +12429,170 @@
      }
     }
     this.saveTournaments(tourneys);
-    showToast(added > 0 ? `➕ Đã nạp thêm ${added} kỳ thủ hệ thống vào giải "${t.name}"!` : 'Tất cả kỳ thủ hợp lệ đã có trong danh sách giải!', 'cyan');
+    if (added > 0) {
+     SoundFX.play('success');
+     showToast(`➕ Đã nạp thêm ${added} kỳ thủ hệ thống vào giải "${t.name}" (Hiện có ${t.participants.length}/${t.maxPlayers})!`, 'cyan');
+    } else if (t.participants.length < 2) {
+     showToast('💡 Hãy nhập tên kỳ thủ ở ô "Tạo & Ghi Danh Ngay" ngay trong thẻ giải đấu để thêm đủ tối thiểu 2 kỳ thủ!', 'amber');
+    } else {
+     showToast('Tất cả kỳ thủ hợp lệ trong hệ thống đã có trong danh sách giải!', 'cyan');
+    }
    },
 
-   // OPTIMAL FAIR PAIRING ALGORITHM (Swiss/Arena Score-Bracket + Minimum Elo Diff + Color Balance + Knockout Tree Advancement)
+   addSinglePlayerToTournament(tourneyId, emailToAdd) {
+    const cleanEm = (emailToAdd || '').toLowerCase().trim();
+    if (!cleanEm) {
+     showToast('⚠️ Vui lòng chọn một kỳ thủ từ danh sách hoặc nhập tên kỳ thủ mới!', 'amber');
+     return;
+    }
+    const tourneys = this.getTournaments();
+    const t = tourneys.find(x => x.id === tourneyId);
+    if (!t || t.status === 'completed') return;
+    if (t.participants.length >= t.maxPlayers) {
+     showToast('⚠️ Giải đấu đã đủ số lượng kỳ thủ tối đa!', 'rose');
+     return;
+    }
+    if (t.participants.some(p => (p.email || '').toLowerCase() === cleanEm)) {
+     showToast('⚠️ Kỳ thủ này đã có trong danh sách giải đấu!', 'amber');
+     return;
+    }
+    const p = this.getAllManagedPlayers().find(x => x.email === cleanEm);
+    if (!p) return;
+    t.participants.push({
+     email: p.email,
+     nickname: p.nickname,
+     avatar: p.avatar || '👤',
+     elo: p.chessElo || 1200,
+     bio: p.bio || '',
+     score: 0,
+     played: 0
+    });
+    this.saveTournaments(tourneys);
+    SoundFX.play('success');
+    showToast(`➕ Đã thêm kỳ thủ "${p.nickname}" (${p.chessElo} Elo) vào giải "${t.name}"!`, 'emerald');
+   },
+
+   async quickCreateAndAddPlayerToTournament(tourneyId, rawName, rawElo) {
+    const nick = (rawName || '').trim();
+    if (!nick || nick.length < 2) {
+     showToast('❌ Vui lòng nhập Tên kỳ thủ (tối thiểu 2 ký tự) để thêm vào giải!', 'rose');
+     return;
+    }
+    const tourneys = this.getTournaments();
+    const t = tourneys.find(x => x.id === tourneyId);
+    if (!t || t.status === 'completed') return;
+    if (t.participants.length >= t.maxPlayers) {
+     showToast('⚠️ Giải đấu đã đủ số lượng kỳ thủ tối đa!', 'rose');
+     return;
+    }
+    const eloVal = Math.max(100, Math.min(3500, Number(rawElo) || 1200));
+    const allPlayers = this.getAllManagedPlayers();
+    let existing = allPlayers.find(p => (p.nickname || '').trim().toLowerCase() === nick.toLowerCase());
+    let emailToUse = existing ? existing.email : '';
+    let avatarToUse = existing ? (existing.avatar || '♞') : '♞';
+
+    if (!existing) {
+     const slug = nick
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '.')
+      .replace(/^\.+|\.+$/g, '') || ('kythu.' + Date.now().toString(36));
+     emailToUse = `${slug}.${Math.floor(100 + Math.random() * 899)}@lmtraining.vn`;
+     const createdAtMs = Date.now();
+     const newProf = {
+      userName: nick,
+      avatar: '♞',
+      bio: `Kỳ thủ tham gia giải ${t.name}`,
+      customTitle: '🏆 Kỳ Thủ Giải Đấu',
+      chessStats: { w: 0, d: 0, l: 0 },
+      locked: false,
+      learnedItems: [],
+      rubikSolves: [],
+      chessElo: eloVal,
+      createdAt: createdAtMs,
+      passwordHash: buildPasswordHashWithTimestamp(encodePasswordHash('123456'), createdAtMs, {
+       av: '♞',
+       bio: `Kỳ thủ tham gia giải ${t.name}`,
+       st: { w: 0, d: 0, l: 0 },
+       locked: false,
+       title: '🏆 Kỳ Thủ Giải Đấu'
+      })
+     };
+     StorageUtil.set(getUserStorageKey(emailToUse), newProf);
+     saveAccountToRegistry(emailToUse, newProf);
+     this.recordAdminPlayerOverride(emailToUse, newProf);
+     CachedLeaderboardPlayersMap.set(emailToUse, {
+      email: emailToUse,
+      nickname: nick,
+      avatar: '♞',
+      bio: newProf.bio,
+      customTitle: newProf.customTitle,
+      chessStats: { w: 0, d: 0, l: 0 },
+      locked: false,
+      bestRubik: null,
+      solvesCount: 0,
+      chessElo: eloVal,
+      learnedCount: 0,
+      createdAt: createdAtMs
+     });
+     if (AppState.supabaseClient) {
+      await upsertSinglePlayerToSupabase(emailToUse, newProf);
+     }
+    }
+
+    if (t.participants.some(p => (p.email || '').toLowerCase() === emailToUse.toLowerCase())) {
+     showToast(`⚠️ Kỳ thủ "${nick}" đã có mặt trong giải đấu này!`, 'amber');
+     return;
+    }
+
+    t.participants.push({
+     email: emailToUse,
+     nickname: nick,
+     avatar: avatarToUse,
+     elo: existing ? (existing.chessElo || eloVal) : eloVal,
+     bio: existing ? (existing.bio || '') : `Kỳ thủ tham gia giải ${t.name}`,
+     score: 0,
+     played: 0
+    });
+    this.saveTournaments(tourneys);
+    await fetchLeaderboardsData(false);
+    SoundFX.play('success');
+    showToast(`🎉 Đã thêm kỳ thủ "${nick}" (${eloVal} Elo) vào giải "${t.name}"!`, 'emerald');
+   },
+
+   removePlayerFromTournament(tourneyId, emailToRemove) {
+    const cleanEm = (emailToRemove || '').toLowerCase().trim();
+    if (!cleanEm) return;
+    const tourneys = this.getTournaments();
+    const t = tourneys.find(x => x.id === tourneyId);
+    if (!t || t.status === 'completed') return;
+    const hasPlayedFinishedMatch = (t.pairings || []).some(
+     m => !m.isBye && m.result && ((m.whiteEmail || '').toLowerCase() === cleanEm || (m.blackEmail || '').toLowerCase() === cleanEm)
+    );
+    if (hasPlayedFinishedMatch) {
+     showToast('⚠️ Kỳ thủ này đã có kết quả trận đấu trong giải nên không thể xóa khỏi bảng điểm!', 'amber');
+     return;
+    }
+    const removedP = (t.participants || []).find(p => (p.email || '').toLowerCase() === cleanEm);
+    t.participants = (t.participants || []).filter(p => (p.email || '').toLowerCase() !== cleanEm);
+    // Remove any unplayed pairings involving this player
+    t.pairings = (t.pairings || []).filter(
+     m => !(!m.result && ((m.whiteEmail || '').toLowerCase() === cleanEm || (m.blackEmail || '').toLowerCase() === cleanEm))
+    );
+    this.saveTournaments(tourneys);
+    showToast(`🗑️ Đã xóa kỳ thủ "${removedP ? removedP.nickname : cleanEm}" khỏi giải "${t.name}".`, 'amber');
+   },
+
+   // OPTIMAL FAIR PAIRING ALGORITHM (Backtracking Minimum-Weight Matching + Color Balance + Knockout Tree Advancement)
    generateTournamentPairings(tourneyId) {
     const tourneys = this.getTournaments();
     const t = tourneys.find(x => x.id === tourneyId);
     if (!t) return;
+    if (t.status === 'completed') {
+     showToast('👑 Giải đấu này đã kết thúc!', 'amber');
+     return;
+    }
     if (!Array.isArray(t.participants) || t.participants.length < 2) {
      showToast('⚠️ Cần tối thiểu 2 kỳ thủ đăng ký trong giải để chia cặp đấu!', 'amber');
      return;
@@ -11853,7 +12605,6 @@
      const finishedRealInRound = currentRoundMatches.filter(m => m.result && !m.isBye);
      if (unfinishedInRound.length > 0) {
       if (finishedRealInRound.length === 0) {
-       // No real matches in the latest round have finished yet -> revert any BYE point from this round and re-pair cleanly with all current participants!
        currentRoundMatches.forEach(m => {
         if (m.isBye && m.whiteEmail) {
          const bp = t.participants.find(p => p.email === m.whiteEmail);
@@ -11918,7 +12669,6 @@
 
     let pool = [];
     if (isKo && prevMaxRound > 0) {
-     // Advance winners from previous Knockout round in bracket order
      const prevRoundMatches = t.pairings.filter(m => (m.round || 1) === prevMaxRound);
      prevRoundMatches.forEach(m => {
       if (m.isBye) {
@@ -11931,7 +12681,6 @@
        const bp = t.participants.find(p => p.email === m.blackEmail);
        if (bp) pool.push(bp);
       } else if (m.result === '1/2-1/2') {
-       // Armageddon tiebreak: Black advances on draw, or higher Elo
        const wp = t.participants.find(p => p.email === m.whiteEmail);
        const bp = t.participants.find(p => p.email === m.blackEmail);
        pool.push((bp && wp && bp.elo >= wp.elo) ? bp : (wp || bp));
@@ -11942,7 +12691,6 @@
       return;
      }
     } else {
-     // Sort by Score descending, then closest Elo descending
      pool = [...t.participants].sort((a, b) => {
       const sDiff = (b.score || 0) - (a.score || 0);
       if (Math.abs(sDiff) > 1e-4) return sDiff;
@@ -11982,41 +12730,80 @@
      }
     }
 
-    // Optimal Fair Matching: minimize Score gap + Elo gap, avoid rematches, and balance White/Black colors!
-    const used = new Set();
-    let pairCounter = 0;
-    for (let i = 0; i < pool.length; i++) {
-     const pA = pool[i];
-     if (used.has(pA.email)) continue;
-     used.add(pA.email);
-     const stA = historyStats.get(pA.email) || { whiteCount: 0, blackCount: 0, lastColor: null, opponents: new Set() };
+    // Compute pair cost between two players
+    const pairCost = (pA, pB) => {
+     const stA = historyStats.get(pA.email);
+     const alreadyPlayedPenalty = (stA && stA.opponents.has(pB.email)) ? 50000 : 0;
+     const scoreDiffPenalty = Math.abs((pA.score || 0) - (pB.score || 0)) * 2000;
+     const eloDiffCost = Math.abs((pA.elo || 1200) - (pB.elo || 1200));
+     return alreadyPlayedPenalty + scoreDiffPenalty + eloDiffCost;
+    };
 
-     let bestJ = -1;
-     let bestCost = Number.POSITIVE_INFINITY;
-     for (let j = i + 1; j < pool.length; j++) {
-      const pB = pool[j];
-      if (used.has(pB.email)) continue;
-      if (isKo && prevMaxRound > 0) {
-       // In Knockout Round 2+, keep bracket tree order (adjacent winners play each other)
-       bestJ = j;
-       break;
+    // Backtracking search (for N <= 16) to guarantee zero avoidable rematches across all pairs!
+    let selectedPairs = [];
+    if (isKo && prevMaxRound > 0) {
+     for (let i = 0; i + 1 < pool.length; i += 2) {
+      selectedPairs.push([pool[i], pool[i + 1]]);
+     }
+    } else if (pool.length <= 16) {
+     let bestTotalCost = Number.POSITIVE_INFINITY;
+     let bestSolution = null;
+     const usedIdx = new Array(pool.length).fill(false);
+     const currentPairs = [];
+     let branchesVisited = 0;
+     const solvePairs = (runningCost) => {
+      if (branchesVisited > 2500 || runningCost >= bestTotalCost) return;
+      let firstFree = -1;
+      for (let i = 0; i < pool.length; i++) {
+       if (!usedIdx[i]) { firstFree = i; break; }
       }
-      const alreadyPlayedPenalty = stA.opponents.has(pB.email) ? 50000 : 0;
-      const scoreDiffPenalty = Math.abs((pA.score || 0) - (pB.score || 0)) * 2000;
-      const eloDiffCost = Math.abs((pA.elo || 1200) - (pB.elo || 1200));
-      const totalCost = alreadyPlayedPenalty + scoreDiffPenalty + eloDiffCost;
-      if (totalCost < bestCost) {
-       bestCost = totalCost;
-       bestJ = j;
+      if (firstFree === -1) {
+       bestTotalCost = runningCost;
+       bestSolution = currentPairs.map(pr => [...pr]);
+       return;
+      }
+      usedIdx[firstFree] = true;
+      for (let j = firstFree + 1; j < pool.length; j++) {
+       if (usedIdx[j]) continue;
+       branchesVisited++;
+       const c = pairCost(pool[firstFree], pool[j]);
+       usedIdx[j] = true;
+       currentPairs.push([pool[firstFree], pool[j]]);
+       solvePairs(runningCost + c);
+       currentPairs.pop();
+       usedIdx[j] = false;
+      }
+      usedIdx[firstFree] = false;
+     };
+     solvePairs(0);
+     if (bestSolution) selectedPairs = bestSolution;
+    }
+
+    if (!selectedPairs.length) {
+     const used = new Set();
+     for (let i = 0; i < pool.length; i++) {
+      const pA = pool[i];
+      if (used.has(pA.email)) continue;
+      used.add(pA.email);
+      let bestJ = -1;
+      let bestCost = Number.POSITIVE_INFINITY;
+      for (let j = i + 1; j < pool.length; j++) {
+       const pB = pool[j];
+       if (used.has(pB.email)) continue;
+       const c = pairCost(pA, pB);
+       if (c < bestCost) { bestCost = c; bestJ = j; }
+      }
+      if (bestJ !== -1) {
+       used.add(pool[bestJ].email);
+       selectedPairs.push([pA, pool[bestJ]]);
       }
      }
+    }
 
-     if (bestJ === -1) break;
-     const pB = pool[bestJ];
-     used.add(pB.email);
-     const stB = historyStats.get(pB.email) || { whiteCount: 0, blackCount: 0, lastColor: null, opponents: new Set() };
-
-     // Fair Color Allocation (balance White vs Black games & alternate last color)
+    let pairCounter = 0;
+    for (const [pA, pB] of selectedPairs) {
+     const stA = historyStats.get(pA.email) || { whiteCount: 0, blackCount: 0, lastColor: null };
+     const stB = historyStats.get(pB.email) || { whiteCount: 0, blackCount: 0, lastColor: null };
      const netWhiteA = stA.whiteCount - stA.blackCount;
      const netWhiteB = stB.whiteCount - stB.blackCount;
      let aPlaysWhite = true;
@@ -12054,7 +12841,7 @@
    async setTournamentMatchResult(tourneyId, matchId, resultStr, settledOnlineInfo = null) {
     const tourneys = this.getTournaments();
     const t = tourneys.find(x => x.id === tourneyId);
-    if (!t) return;
+    if (!t || t.status === 'completed') return;
     const m = (t.pairings || []).find(x => x.id === matchId);
     if (!m || m.result) return;
     m.result = resultStr;
@@ -12103,7 +12890,6 @@
      bPart
     );
 
-    // Check if Knockout round just finished -> auto-advance bracket or auto-crown Champion!
     const isKo = (t.format || '').toLowerCase().includes('knockout') || (t.format || '').toLowerCase().includes('loại');
     const curRound = m.round || 1;
     const roundMatches = (t.pairings || []).filter(x => (x.round || 1) === curRound);
@@ -12115,11 +12901,9 @@
 
     if (allRoundDone && isKo && t.status !== 'completed') {
      if (roundMatches.length === 1) {
-      // Final Knockout match completed (even on Draw, tiebreak crowns Champion) -> Automatically Crown Champion & Award Bonus Elo!
       await this.finishTournamentAndCrownChampion(tourneyId);
       return;
      } else if (roundMatches.length > 1) {
-      // Automatically generate the next Knockout bracket round!
       this.generateTournamentPairings(tourneyId);
      }
     }
@@ -12136,20 +12920,32 @@
     const bPart = t.participants.find(p => p.email === m.blackEmail);
     const prevSW = m.result === '1-0' ? 1.0 : (m.result === '0-1' ? 0.0 : 0.5);
     const prevSB = 1.0 - prevSW;
+    const revertedWhiteElo = typeof m.deltaW === 'number'
+     ? Math.max(100, ((wPart ? wPart.elo : m.whiteElo) || 1200) - m.deltaW)
+     : ((wPart ? wPart.elo : m.whiteElo) || 1200);
+    const revertedBlackElo = typeof m.deltaB === 'number'
+     ? Math.max(100, ((bPart ? bPart.elo : m.blackElo) || 1200) - m.deltaB)
+     : ((bPart ? bPart.elo : m.blackElo) || 1200);
+
     if (wPart) {
      wPart.score = Math.max(0, (wPart.score || 0) - prevSW);
      wPart.played = Math.max(0, (wPart.played || 0) - 1);
-     if (typeof m.deltaW === 'number') wPart.elo = Math.max(100, (wPart.elo || 1200) - m.deltaW);
+     wPart.elo = revertedWhiteElo;
     }
     if (bPart) {
      bPart.score = Math.max(0, (bPart.score || 0) - prevSB);
      bPart.played = Math.max(0, (bPart.played || 0) - 1);
-     if (typeof m.deltaB === 'number') bPart.elo = Math.max(100, (bPart.elo || 1200) - m.deltaB);
+     bPart.elo = revertedBlackElo;
     }
     m.result = null;
     m.liveStatus = 'waiting';
     delete m.deltaW;
     delete m.deltaB;
+
+    // Revert global Elo and W/D/L stats for both players so reset cannot be used to farm Elo
+    await this.persistPlayerEloAndTitleToCloud(m.whiteEmail, revertedWhiteElo, null, null, wPart, prevSW);
+    await this.persistPlayerEloAndTitleToCloud(m.blackEmail, revertedBlackElo, null, null, bPart, prevSB);
+
     const roomMatchId = `tourney_${t.id}_${m.id}`;
     if (AppState.supabaseClient) {
      try {
@@ -12157,7 +12953,8 @@
      } catch (e) {}
     }
     this.saveTournaments(tourneys);
-    showToast(`↺ Đã mở lại cặp đấu ♔ ${m.whiteName} vs ♚ ${m.blackName} để thi đấu lại!`, 'cyan');
+    await fetchLeaderboardsData(false);
+    showToast(`↺ Đã mở lại cặp đấu ♔ ${m.whiteName} vs ♚ ${m.blackName} và hoàn tác biến động Elo!`, 'cyan');
    },
 
    async finishTournamentAndCrownChampion(tourneyId) {
@@ -12174,7 +12971,6 @@
      return;
     }
 
-    // Determine Champion: if Knockout and final match was played, winner of the highest round match wins; otherwise highest score -> highest Elo
     let champ = null;
     const isKo = (t.format || '').toLowerCase().includes('knockout') || (t.format || '').toLowerCase().includes('loại');
     const pairings = Array.isArray(t.pairings) ? t.pairings : [];
@@ -12183,7 +12979,11 @@
      const finalMatches = pairings.filter(m => (m.round || 1) === maxR && m.result && !m.isBye);
      if (finalMatches.length === 1) {
       const fm = finalMatches[0];
-      const winEm = fm.result === '1-0' ? fm.whiteEmail : (fm.result === '0-1' ? fm.blackEmail : null);
+      let winEm = fm.result === '1-0' ? fm.whiteEmail : (fm.result === '0-1' ? fm.blackEmail : null);
+      if (!winEm && fm.result === '1/2-1/2') {
+       // Armageddon tiebreak: Black wins draw tiebreak or higher Elo
+       winEm = (fm.blackElo || 1200) >= (fm.whiteElo || 1200) ? fm.blackEmail : fm.whiteEmail;
+      }
       if (winEm) champ = parts.find(p => p.email === winEm);
      }
     }
@@ -12212,8 +13012,11 @@
     t.winnerEmail = cleanEm;
     t.winnerAvatar = champ.avatar || '👑';
     t.completedAt = Date.now();
+    // Mark any unplayed pairings as closed
+    (t.pairings || []).forEach(m => {
+     if (!m.result) m.liveStatus = 'closed';
+    });
 
-    // Permanently save the Champion's +Bonus Elo and Champion Title to Local + Supabase Cloud!
     await this.persistPlayerEloAndTitleToCloud(
      cleanEm,
      rewardedElo,
@@ -12228,6 +13031,8 @@
    },
 
    deleteTournament(tourneyId) {
+    if (!tourneyId) return;
+    this.addDeletedTourneyId(tourneyId);
     const tourneys = this.getTournaments().filter(x => x.id !== tourneyId);
     this.saveTournaments(tourneys);
     showToast('🗑️ Đã xóa giải đấu Cờ Vua!', 'rose');
@@ -12244,7 +13049,7 @@
     if (!t || t.status === 'completed') return;
     const idx = t.participants.findIndex(p => (p.email || '').toLowerCase() === AppState.userEmail.toLowerCase());
     if (idx >= 0) {
-     if (t.status === 'active' && (t.pairings || []).some(m => m.whiteEmail === AppState.userEmail || m.blackEmail === AppState.userEmail)) {
+     if (t.status === 'active' && (t.pairings || []).some(m => (m.whiteEmail || '').toLowerCase() === AppState.userEmail.toLowerCase() || (m.blackEmail || '').toLowerCase() === AppState.userEmail.toLowerCase())) {
       showToast('⚠️ Bạn đã được xếp cặp đấu trong giải đang diễn ra nên không thể rút tên!', 'amber');
       return;
      }
@@ -12280,7 +13085,7 @@
     }
     const tourneys = this.getTournaments();
     const t = tourneys.find(x => x.id === tourneyId);
-    if (!t) return;
+    if (!t || t.status === 'completed') return;
     const m = (t.pairings || []).find(x => x.id === matchId);
     if (!m || m.isBye) return;
 
@@ -12291,14 +13096,13 @@
     const iAmBlack = (myEm === bEm);
     const isSpectator = (!iAmWhite && !iAmBlack);
 
-    // Update liveStatus on bracket so everyone sees this match is live
-    if (!m.result && m.liveStatus !== 'playing') {
+    // Only mark liveStatus = 'playing' when an actual participant enters the match!
+    if (!isSpectator && !m.result && m.liveStatus !== 'playing') {
      m.liveStatus = 'playing';
      this.saveTournaments(tourneys);
     }
 
     switchChessSubtab('play');
-    // Set mode to 'matchmaking' (Online PvP between the 2 real participants — Bot AI is 100% disabled!)
     ChessArena.cleanupFinishedOrStaleOnlineMatch();
     ChessArena.mode = 'matchmaking';
     ChessArena.isSpectatingTourneyMatch = isSpectator;
@@ -12346,7 +13150,6 @@
      playerColor: ChessArena.playerColor
     };
 
-    // Configure Online Matchmaking state for the two tournament participants
     ChessArena.onlineMatch.status = 'playing';
     ChessArena.onlineMatch.matchId = roomMatchId;
     ChessArena.onlineMatch.whitePlayer = whiteObj;
@@ -12376,7 +13179,6 @@
      hintBtn.className = 'py-2 px-2 rounded-xl bg-slate-900 text-slate-500 border border-slate-800 font-bold text-xs sm:text-sm cursor-not-allowed opacity-60 col-span-2 sm:col-span-1';
     }
 
-    // Ensure shared room exists in Supabase `lm_chess_online_matches` and load any existing moves if match already started
     if (AppState.supabaseClient) {
      try {
       const { data: existingRows } = await AppState.supabaseClient
@@ -12460,12 +13262,12 @@
     if (coachEl) {
      if (isSpectator) {
       coachEl.innerHTML = isEn
-       ? `👁️ <strong>Live Spectator Mode:</strong> You are watching the official tournament match between <strong class="text-emerald-300">♔ ${m.whiteName}</strong> and <strong class="text-amber-300">♚ ${m.blackName}</strong>. Moves synchronize automatically in real time!`
-       : `👁️ <strong>Chế độ Khán Giả Trực Tiếp:</strong> Bạn đang theo dõi bàn đấu giải giữa <strong class="text-emerald-300">♔ ${m.whiteName}</strong> và <strong class="text-amber-300">♚ ${m.blackName}</strong>. Nước đi của 2 kỳ thủ sẽ tự động đồng bộ theo thời gian thực!`;
+       ? `👁️ <strong>Live Spectator Mode:</strong> You are watching the official tournament match between <strong class="text-emerald-300">♔ ${escapeHtmlSafe(m.whiteName)}</strong> and <strong class="text-amber-300">♚ ${escapeHtmlSafe(m.blackName)}</strong>. Moves synchronize automatically in real time! Click <strong>🔄 New Game</strong> anytime to exit Spectator mode.`
+       : `👁️ <strong>Chế độ Khán Giả Trực Tiếp:</strong> Bạn đang theo dõi bàn đấu giải giữa <strong class="text-emerald-300">♔ ${escapeHtmlSafe(m.whiteName)}</strong> và <strong class="text-amber-300">♚ ${escapeHtmlSafe(m.blackName)}</strong>. Nước đi tự động đồng bộ theo thời gian thực! Bấm <strong>🔄 Ván Mới</strong> bất kỳ lúc nào để thoát chế độ xem.`;
      } else {
       coachEl.innerHTML = isEn
-       ? `⚔️ <strong>Official Tournament Match (Real Human PvP — No AI Bot):</strong> You play <strong>${iAmWhite ? '♔ White (First Move)' : '♚ Black'}</strong> against <strong class="text-emerald-300">${oppObj.nickname} (${oppObj.elo} Elo)</strong>. All moves synchronize live across both devices!`
-       : `⚔️ <strong>Bàn Đấu Giải Chính Thức (PvP Người Thật — Không Đấu Bot):</strong> Bạn cầm <strong>${iAmWhite ? '♔ Quân Trắng (Đi trước)' : '♚ Quân Đen (Đi sau)'}</strong> đối đầu trực tiếp với kỳ thủ <strong class="text-emerald-300">${oppObj.nickname} (${oppObj.elo} Elo)</strong>. Khi cả 2 kỳ thủ cùng vào bàn đấu này, mọi nước đi sẽ đồng bộ trực tiếp theo thời gian thực!`;
+       ? `⚔️ <strong>Official Tournament Match (Real Human PvP — No AI Bot):</strong> You play <strong>${iAmWhite ? '♔ White (First Move)' : '♚ Black'}</strong> against <strong class="text-emerald-300">${escapeHtmlSafe(oppObj.nickname)} (${oppObj.elo} Elo)</strong>. All moves synchronize live across both devices!`
+       : `⚔️ <strong>Bàn Đấu Giải Chính Thức (PvP Người Thật — Không Đấu Bot):</strong> Bạn cầm <strong>${iAmWhite ? '♔ Quân Trắng (Đi trước)' : '♚ Quân Đen (Đi sau)'}</strong> đối đầu trực tiếp với kỳ thủ <strong class="text-emerald-300">${escapeHtmlSafe(oppObj.nickname)} (${oppObj.elo} Elo)</strong>. Khi cả 2 kỳ thủ cùng vào bàn đấu này, mọi nước đi sẽ đồng bộ trực tiếp theo thời gian thực!`;
      }
     }
     if (isSpectator) {
@@ -12494,14 +13296,17 @@
     if (!clean) {
      StorageUtil.remove(ADMIN_BROADCAST_STORAGE_KEY);
      this.renderGlobalBroadcastBanner(false);
+     this.renderAdminDashboard();
      await this.syncSystemStateToCloud({ text: '', ts: Date.now(), isDefault: false }, undefined);
      showToast('✕ Đã gỡ thông báo Quản Trị Viên (Thanh thông báo đã được ẩn).', 'amber');
      return;
     }
     const bObj = { text: clean, ts: Date.now(), isDefault: false };
     this.dismissedBroadcastTs = 0;
+    StorageUtil.remove(DISMISSED_BROADCAST_TS_KEY);
     StorageUtil.set(ADMIN_BROADCAST_STORAGE_KEY, bObj);
     this.renderGlobalBroadcastBanner(false);
+    this.renderAdminDashboard();
     await this.syncSystemStateToCloud(bObj, undefined);
     SoundFX.play('success');
     showToast('📢 Đã phát thông báo Quản Trị Viên toàn hệ thống!', 'emerald');
@@ -12522,11 +13327,32 @@
     }
     txtEl.textContent = cleanText;
     banner.classList.remove('hidden');
-    if (notifyToast && data.ts && data.ts !== this.lastSeenBroadcastTs) {
-     this.lastSeenBroadcastTs = data.ts;
-     SoundFX.play('beep');
-     showToast(`📢 Thông báo mới từ Quản Trị Viên: ${cleanText}`, 'amber');
+    if (data && data.ts) {
+     if (notifyToast && data.ts !== this.lastSeenBroadcastTs) {
+      this.lastSeenBroadcastTs = data.ts;
+      SoundFX.play('beep');
+      showToast(`📢 Thông báo mới từ Quản Trị Viên: ${cleanText}`, 'amber');
+     } else {
+      this.lastSeenBroadcastTs = data.ts;
+     }
     }
+   },
+
+   async cleanStaleOnlineRooms() {
+    if (AppState.supabaseClient) {
+     try {
+      await AppState.supabaseClient
+       .from('lm_chess_online_matches')
+       .delete()
+       .eq('status', 'waiting');
+     } catch (e) {}
+    }
+    if (typeof ChessArena !== 'undefined' && ChessArena.onlineMatch) {
+     ChessArena.onlineMatch.waitingPeers.clear();
+     ChessArena.renderWaitingPeersList();
+    }
+    SoundFX.play('success');
+    showToast('🧹 Đã dọn sạch các phòng chờ Cờ Vua Online bị treo!', 'emerald');
    }
   };
 
@@ -13071,7 +13897,7 @@
     showToast('♚ Bạn đã chọn cầm Quân Đen (Bot AI đi Trắng trước)!', 'cyan');
    });
    document.getElementById('chess-mode-select').addEventListener('change', e => {
-    if (ChessArena.mode === 'matchmaking' && ChessArena.onlineMatch.status === 'playing' && !ChessArena.isMatchOver()) {
+    if (ChessArena.mode === 'matchmaking' && ChessArena.onlineMatch.status === 'playing' && !ChessArena.isMatchOver() && !ChessArena.isSpectatingTourneyMatch) {
      e.target.value = 'matchmaking';
      showToast('⚠️ Bạn đang trong trận đấu Online! Hãy thi đấu hết ván hoặc bấm "🏳️ Đầu Hàng" trước khi đổi chế độ.', 'amber');
      return;
@@ -13252,7 +14078,10 @@
       setTimeout(() => {
        authModal.classList.add('hidden');
        authModal.classList.remove('flex');
-      }, 500);
+       if (isCurrentUserAdmin()) {
+        switchMainView('admin');
+       }
+      }, 380);
      }
     }
    });
@@ -13316,7 +14145,7 @@
    document.getElementById('exp-chess-draw-btn')?.addEventListener('click', () => ChessArena.requestDraw());
    document.getElementById('exp-chess-hint-btn')?.addEventListener('click', () => ChessArena.showHint());
    document.getElementById('exp-chess-mode-select')?.addEventListener('change', e => {
-    if (ChessArena.mode === 'matchmaking' && ChessArena.onlineMatch.status === 'playing' && !ChessArena.isMatchOver()) {
+    if (ChessArena.mode === 'matchmaking' && ChessArena.onlineMatch.status === 'playing' && !ChessArena.isMatchOver() && !ChessArena.isSpectatingTourneyMatch) {
      e.target.value = 'matchmaking';
      showToast('⚠️ Bạn đang trong trận đấu Online! Hãy thi đấu hết ván hoặc bấm "🏳️ Đầu Hàng" trước khi đổi chế độ.', 'amber');
      return;
@@ -13524,15 +14353,36 @@
    });
    document.getElementById('admin-player-search-input')?.addEventListener('input', () => AdminController.renderAdminDashboard());
    document.getElementById('admin-player-status-filter')?.addEventListener('change', () => AdminController.renderAdminDashboard());
-   document.getElementById('admin-show-self-on-lb-toggle')?.addEventListener('change', e => {
-    AppState.showAdminOnLeaderboard = Boolean(e.target.checked);
-    fetchLeaderboardsData(false);
-   });
+   const onToggleShowAdminLb = async (checked) => {
+    AppState.showAdminOnLeaderboard = Boolean(checked);
+    StorageUtil.set(ADMIN_SHOW_ON_LB_KEY, AppState.showAdminOnLeaderboard);
+    const t1 = document.getElementById('admin-show-self-on-lb-toggle');
+    const t3 = document.getElementById('admin-show-self-on-lb-toggle-tab3');
+    if (t1) t1.checked = AppState.showAdminOnLeaderboard;
+    if (t3) t3.checked = AppState.showAdminOnLeaderboard;
+    await AdminController.syncSystemStateToCloud();
+    await fetchLeaderboardsData(false);
+    AdminController.renderAdminDashboard();
+    showToast(
+     AppState.showAdminOnLeaderboard
+      ? '👁️ Đã bật hiển thị tài khoản Admin trên Bảng Xếp Hạng công khai!'
+      : '🙈 Đã ẩn tài khoản Admin khỏi Bảng Xếp Hạng công khai!',
+     'cyan'
+    );
+   };
+   document.getElementById('admin-show-self-on-lb-toggle')?.addEventListener('change', e => onToggleShowAdminLb(e.target.checked));
+   document.getElementById('admin-show-self-on-lb-toggle-tab3')?.addEventListener('change', e => onToggleShowAdminLb(e.target.checked));
+   document.getElementById('admin-edit-self-profile-btn')?.addEventListener('click', () => AdminController.openEditPlayerModal(ADMIN_ACCOUNT_EMAIL));
+   document.getElementById('admin-clean-stale-rooms-btn')?.addEventListener('click', () => AdminController.cleanStaleOnlineRooms());
+   document.getElementById('admin-unlock-all-players-btn')?.addEventListener('click', () => AdminController.unlockAllPlayers());
+
    document.getElementById('admin-open-create-player-btn')?.addEventListener('click', () => AdminController.openEditPlayerModal(null));
    document.getElementById('admin-force-sync-btn')?.addEventListener('click', async () => {
+    await AdminController.syncSystemStateToCloud();
     await fetchLeaderboardsData(true);
     AdminController.renderAdminDashboard();
-    showToast('🔄 Đã đồng bộ dữ liệu Quản Trị Viên & Bảng Xếp Hạng!', 'emerald');
+    SoundFX.play('success');
+    showToast('🔄 Đã đồng bộ hai chiều dữ liệu Quản Trị Viên, Giải Đấu & Bảng Xếp Hạng!', 'emerald');
    });
    document.getElementById('close-admin-edit-modal-btn')?.addEventListener('click', () => {
     const m = document.getElementById('admin-edit-player-modal');
@@ -13541,6 +14391,22 @@
    document.getElementById('cancel-admin-edit-btn')?.addEventListener('click', () => {
     const m = document.getElementById('admin-edit-player-modal');
     if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
+   });
+   document.getElementById('admin-clear-rubik-best-btn')?.addEventListener('click', () => {
+    AdminController.clearRubikBestFlag = true;
+    const rubikInput = document.getElementById('admin-edit-rubik-best');
+    if (rubikInput) {
+     rubikInput.value = '';
+     rubikInput.placeholder = 'Sẽ xóa kỷ lục về --.--s khi Lưu';
+    }
+    showToast('🗑️ Đã đánh dấu xóa kỷ lục Rubik của học viên này (Bấm "💾 Lưu Thay Đổi" để áp dụng).', 'amber');
+   });
+   document.getElementById('admin-edit-emoji-bar')?.addEventListener('click', e => {
+    const emojiBtn = e.target.closest('[data-admin-emoji]');
+    if (!emojiBtn) return;
+    const emj = emojiBtn.getAttribute('data-admin-emoji');
+    const avInp = document.getElementById('admin-edit-avatar');
+    if (avInp && emj) avInp.value = emj;
    });
    document.getElementById('save-admin-edit-btn')?.addEventListener('click', () => AdminController.saveEditedPlayer());
 
@@ -13559,6 +14425,29 @@
    document.getElementById('admin-tournaments-list')?.addEventListener('click', e => {
     const addAllBtn = e.target.closest('.admin-tourney-add-all-btn');
     if (addAllBtn) { AdminController.addAllSystemPlayersToTournament(addAllBtn.getAttribute('data-tourney-add-all')); return; }
+    const addOneBtn = e.target.closest('.admin-tourney-add-one-btn');
+    if (addOneBtn) {
+     const tid = addOneBtn.getAttribute('data-tourney-add-one');
+     const sel = document.getElementById(`admin-tourney-pick-player-${tid}`);
+     AdminController.addSinglePlayerToTournament(tid, sel ? sel.value : '');
+     return;
+    }
+    const quickCreateBtn = e.target.closest('.admin-tourney-quick-create-btn');
+    if (quickCreateBtn) {
+     const tid = quickCreateBtn.getAttribute('data-tourney-quick-create');
+     const nameInp = document.getElementById(`admin-tourney-quick-name-${tid}`);
+     const eloInp = document.getElementById(`admin-tourney-quick-elo-${tid}`);
+     AdminController.quickCreateAndAddPlayerToTournament(tid, nameInp ? nameInp.value : '', eloInp ? eloInp.value : 1200);
+     return;
+    }
+    const remPlayerBtn = e.target.closest('.admin-tourney-remove-player-btn');
+    if (remPlayerBtn) {
+     AdminController.removePlayerFromTournament(
+      remPlayerBtn.getAttribute('data-t-remove-id'),
+      remPlayerBtn.getAttribute('data-t-remove-email')
+     );
+     return;
+    }
     const pairBtn = e.target.closest('.admin-tourney-pair-btn');
     if (pairBtn) { AdminController.generateTournamentPairings(pairBtn.getAttribute('data-tourney-pair')); return; }
     const finBtn = e.target.closest('.admin-tourney-finish-btn');
@@ -13591,6 +14480,12 @@
      );
      return;
     }
+    const profRow = e.target.closest('[data-view-profile-email]');
+    if (profRow) {
+     const em = profRow.getAttribute('data-view-profile-email');
+     if (em) openPublicProfileModal(em);
+     return;
+    }
    });
 
    document.getElementById('admin-publish-broadcast-btn')?.addEventListener('click', () => {
@@ -13606,6 +14501,7 @@
     const data = StorageUtil.get(ADMIN_BROADCAST_STORAGE_KEY, null);
     if (data && data.ts) {
      AdminController.dismissedBroadcastTs = data.ts;
+     StorageUtil.setRaw(DISMISSED_BROADCAST_TS_KEY, String(data.ts));
     }
     const banner = document.getElementById('global-admin-broadcast-banner');
     if (banner) banner.classList.add('hidden');
